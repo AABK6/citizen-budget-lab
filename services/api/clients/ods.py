@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, Optional
 
-from ..http_client import get
+from .. import http_client as hc
 
 
 def records(base: str, dataset: str, select: Optional[str] = None, where: Optional[str] = None,
@@ -23,6 +23,5 @@ def records(base: str, dataset: str, select: Optional[str] = None, where: Option
         params["group_by"] = group_by
     if order_by:
         params["order_by"] = order_by
-    resp = get(url, params=params)
+    resp = hc.get(url, params=params)
     return resp.json()
-

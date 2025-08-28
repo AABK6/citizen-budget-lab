@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
 
-from ..http_client import get
+from .. import http_client as hc
 from ..settings import get_settings
 
 
@@ -24,7 +24,7 @@ def fetch(dataset: str, params: Dict[str, Any]) -> Dict[str, Any]:
     cookie = get_settings().eurostat_cookie
     if cookie:
         headers["Cookie"] = cookie
-    resp = get(url, headers=headers, params=params)
+    resp = hc.get(url, headers=headers, params=params)
     return resp.json()
 
 
@@ -89,4 +89,3 @@ def cofog_shares(js: Dict[str, Any], year: int, geo: str, unit: str = "MIO_EUR",
     shares = [(code, label, v / totals) for code, label, v in vals]
     shares.sort(key=lambda x: x[2], reverse=True)
     return shares
-

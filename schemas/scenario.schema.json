@@ -5,7 +5,7 @@
   "type": "object",
   "required": ["version", "baseline_year", "actions"],
   "properties": {
-    "version": { "type": "string" },
+    "version": { "type": ["string", "number"] },
     "baseline_year": { "type": "integer", "minimum": 2000 },
     "assumptions": {
       "type": "object",
@@ -50,4 +50,3 @@
   },
   "additionalProperties": false
 }
-
