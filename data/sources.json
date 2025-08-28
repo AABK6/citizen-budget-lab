@@ -1,0 +1,51 @@
+[
+  {
+    "id": "state_budget_sample",
+    "dataset_name": "Sample State Budget (missions/programmes)",
+    "url": "local:data/sample_state_budget.csv",
+    "license": "Demo/sample data",
+    "refresh_cadence": "manual",
+    "vintage": "2026-sample"
+  },
+  {
+    "id": "procurement_sample",
+    "dataset_name": "Sample Procurement (DECP-like)",
+    "url": "local:data/sample_procurement.csv",
+    "license": "Demo/sample data",
+    "refresh_cadence": "manual",
+    "vintage": "2024-sample"
+  },
+  {
+    "id": "gdp_series",
+    "dataset_name": "GDP series (INSEE-like)",
+    "url": "local:data/gdp_series.csv",
+    "license": "Demo/sample data",
+    "refresh_cadence": "manual",
+    "vintage": "2024-sample"
+  },
+  {
+    "id": "baseline_deficit_debt",
+    "dataset_name": "Baseline deficit/debt",
+    "url": "local:data/baseline_deficit_debt.csv",
+    "license": "Demo/sample data",
+    "refresh_cadence": "manual",
+    "vintage": "2026-2030-sample"
+  },
+  {
+    "id": "cofog_mapping",
+    "dataset_name": "COFOG mapping (mission→function)",
+    "url": "local:data/cofog_mapping.json",
+    "license": "Demo/sample mapping",
+    "refresh_cadence": "manual",
+    "vintage": "v0"
+  },
+  {
+    "id": "macro_irfs",
+    "dataset_name": "Macro IRFs (placeholder)",
+    "url": "local:data/macro_irfs.json",
+    "license": "Demo/sample parameters",
+    "refresh_cadence": "manual",
+    "vintage": "v0"
+  }
+]
+

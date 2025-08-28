@@ -15,6 +15,14 @@ class Settings:
     http_timeout: float = float(os.getenv("HTTP_TIMEOUT", "15"))
     http_retries: int = int(os.getenv("HTTP_RETRIES", "3"))
 
+    # Eurostat
+    eurostat_base: str = os.getenv(
+        "EUROSTAT_BASE",
+        "https://ec.europa.eu/eurostat/wdds/rest/data/v2.1/json",
+    )
+    eurostat_lang: str = os.getenv("EUROSTAT_LANG", "en")
+    eurostat_cookie: str | None = os.getenv("EUROSTAT_COOKIE")
+
 
 def get_settings() -> Settings:
     # Load .env once at first import

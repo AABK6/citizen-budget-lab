@@ -16,6 +16,7 @@ from .models import (
     Allocation,
     Basis,
     Compliance,
+    Source,
     MacroResult,
     MissionAllocation,
     ProcurementItem,
@@ -31,6 +32,7 @@ GDP_CSV = os.path.join(DATA_DIR, "gdp_series.csv")
 BASELINE_DEF_DEBT_CSV = os.path.join(DATA_DIR, "baseline_deficit_debt.csv")
 COFOG_MAP_JSON = os.path.join(DATA_DIR, "cofog_mapping.json")
 MACRO_IRF_JSON = os.path.join(DATA_DIR, "macro_irfs.json")
+SOURCES_JSON = os.path.join(DATA_DIR, "sources.json")
 
 
 def _read_csv(path: str) -> Iterable[Dict[str, str]]:
@@ -103,7 +105,15 @@ def allocation_by_cofog(year: int, basis: Basis) -> List[MissionAllocation]:
     return items
 
 
-def procurement_top_suppliers(year: int, region: str, top_n: int = 10) -> List[ProcurementItem]:
+def procurement_top_suppliers(
+    year: int,
+    region: str,
+    top_n: int = 10,
+    cpv_prefix: str | None = None,
+    procedure_type: str | None = None,
+    min_amount_eur: float | None = None,
+    max_amount_eur: float | None = None,
+) -> List[ProcurementItem]:
     # Aggregate by supplier within region code prefix (e.g., "75")
     by_supplier: Dict[str, Dict[str, float | str]] = {}
     for row in _read_csv(PROCUREMENT_CSV):
@@ -114,6 +124,15 @@ def procurement_top_suppliers(year: int, region: str, top_n: int = 10) -> List[P
             continue
         siren = row["supplier_siren"]
         amount = float(row["amount_eur"]) if row["amount_eur"] else 0.0
+        # Filters
+        if cpv_prefix and not (row.get("cpv_code") or "").startswith(cpv_prefix):
+            continue
+        if procedure_type and (row.get("procedure_type") or "").lower() != procedure_type.lower():
+            continue
+        if min_amount_eur is not None and amount < float(min_amount_eur):
+            continue
+        if max_amount_eur is not None and amount > float(max_amount_eur):
+            continue
         ent = by_supplier.setdefault(
             siren,
             {
@@ -159,6 +178,23 @@ def _read_baseline_def_debt() -> Dict[int, Tuple[float, float]]:
 def _load_json(path: str) -> dict:
     with open(path, "r", encoding="utf-8") as f:
         return yaml.safe_load(f)
+
+
+def list_sources() -> List[Source]:
+    raw = _load_json(SOURCES_JSON) or []
+    out: List[Source] = []
+    for r in raw:
+        out.append(
+            Source(
+                id=str(r.get("id")),
+                dataset_name=str(r.get("dataset_name")),
+                url=str(r.get("url")),
+                license=str(r.get("license")),
+                refresh_cadence=str(r.get("refresh_cadence")),
+                vintage=str(r.get("vintage")),
+            )
+        )
+    return out
 
 
 def _map_action_to_cofog(action: dict) -> List[Tuple[str, float]]:

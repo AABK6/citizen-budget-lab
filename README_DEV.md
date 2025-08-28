@@ -23,17 +23,9 @@ Run locally
 
   http://127.0.0.1:8000/graphql
 
-Frontend (optional)
+Frontend
 
-1) In `web/` install and run Next.js dev server:
-
-   cd web
-   npm install
-   npm run dev
-
-2) Visit http://127.0.0.1:3000
-
-   The frontend reads `NEXT_PUBLIC_GRAPHQL_URL` (default `http://localhost:8000/graphql`).
+- The full frontend scope is tracked in `BACKLOG.md` and `docs/FRONTEND_PLAN.md`. No scaffold is included here to avoid duplication.
 
 Example queries
 
@@ -45,9 +37,14 @@ Example queries
 
   query { allocation(year: 2026, basis: CP, lens: COFOG) { cofog { code label amountEur share } } }
 
-- Top suppliers in département 75 for 2024 (mocked aggregation):
+- Top suppliers in département 75 for 2024 (filters supported):
 
-  query { procurement(year: 2024, region: "75") { supplier { siren name } amountEur cpv procedureType } }
+  query {
+    procurement(year: 2024, region: "75", cpvPrefix: "30", minAmountEur: 100000) {
+      supplier { siren name }
+      amountEur cpv procedureType
+    }
+  }
 
 - Run a scenario (encode the YAML as base64):
 
@@ -73,6 +70,31 @@ Encode the YAML (macOS/Linux):
       op: rate_change
       delta_bps: -50
   EOF
+
+- Scenario persistence (in-memory):
+
+  mutation { saveScenario(id: "<scenario-id>", title: "My scenario", description: "demo") }
+  mutation { deleteScenario(id: "<scenario-id>") }
+
+- List data sources (provenance registry placeholder):
+
+  query { sources { id datasetName url license refreshCadence vintage } }
+
+- EU comparisons (stubs until Eurostat integration):
+
+  query { euCofogCompare(year: 2026, countries: ["FR","DE"]) { country code label share } }
+
+  query { euFiscalPath(country: "FR", years: [2026,2027,2028]) { years deficitRatio debtRatio } }
+
+- List data sources (provenance registry placeholder):
+
+  query { sources { id datasetName url license refreshCadence vintage } }
+
+- EU comparisons (stubs until Eurostat integration):
+
+  query { euCofogCompare(year: 2026, countries: ["FR","DE"]) { country code label share } }
+
+  query { euFiscalPath(country: "FR", years: [2026,2027,2028]) { years deficitRatio debtRatio } }
 
 Notes
 

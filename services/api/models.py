@@ -71,3 +71,13 @@ class DistributionResult:
     decile_delta_net_income_pct: List[float]
     gini_delta: float
     poverty_rate_delta_pp: float
+
+
+@dataclass
+class Source:
+    id: str
+    dataset_name: str
+    url: str
+    license: str
+    refresh_cadence: str
+    vintage: str

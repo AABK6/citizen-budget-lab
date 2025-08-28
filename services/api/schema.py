@@ -6,7 +6,13 @@ from typing import List, Optional
 import strawberry
 from strawberry.scalars import JSON
 
-from .data_loader import allocation_by_mission, allocation_by_cofog, procurement_top_suppliers, run_scenario
+from .data_loader import (
+    allocation_by_mission,
+    allocation_by_cofog,
+    procurement_top_suppliers,
+    run_scenario,
+    list_sources,
+)
 from .models import Basis
 from .clients import insee as insee_client
 from .clients import data_gouv as datagouv_client
@@ -71,6 +77,16 @@ class RunScenarioPayload:
     macro: "MacroType"
 
 
+@strawberry.type
+class SourceType:
+    id: str
+    datasetName: str
+    url: str
+    license: str
+    refreshCadence: str
+    vintage: str
+
+
 import enum
 
 
@@ -84,6 +100,22 @@ class BasisEnum(str, enum.Enum):
 class LensEnum(str, enum.Enum):
     ADMIN = "ADMIN"
     COFOG = "COFOG"
+
+
+@strawberry.type
+class EUCountryCofogType:
+    country: str
+    code: str
+    label: str
+    amountEur: float
+    share: float
+
+
+@strawberry.type
+class FiscalPathType:
+    years: List[int]
+    deficitRatio: List[float]
+    debtRatio: List[float]
 
 
 @strawberry.input
@@ -114,14 +146,44 @@ class Query:
             )
 
     @strawberry.field
-    def procurement(self, year: int, region: str) -> List[ProcurementItemType]:
-        items = procurement_top_suppliers(year, region)
+    def procurement(
+        self,
+        year: int,
+        region: str,
+        cpvPrefix: Optional[str] = None,  # noqa: N803
+        procedureType: Optional[str] = None,
+        minAmountEur: Optional[float] = None,
+        maxAmountEur: Optional[float] = None,
+    ) -> List[ProcurementItemType]:
+        items = procurement_top_suppliers(
+            year,
+            region,
+            cpv_prefix=cpvPrefix,
+            procedure_type=procedureType,
+            min_amount_eur=minAmountEur,
+            max_amount_eur=maxAmountEur,
+        )
         return [
             ProcurementItemType(
                 supplier=SupplierType(siren=i.supplier.siren, name=i.supplier.name),
                 amountEur=i.amount_eur,
                 cpv=i.cpv,
                 procedureType=i.procedure_type,
+            )
+            for i in items
+        ]
+
+    @strawberry.field
+    def sources(self) -> List[SourceType]:
+        items = list_sources()
+        return [
+            SourceType(
+                id=i.id,
+                datasetName=i.dataset_name,
+                url=i.url,
+                license=i.license,
+                refreshCadence=i.refresh_cadence,
+                vintage=i.vintage,
             )
             for i in items
         ]
@@ -146,6 +208,44 @@ class Query:
     def communes(self, department: str) -> JSON:
         return geo_client.communes_by_departement(department)
 
+    # V1 stubs (EU comparisons)
+    @strawberry.field
+    def euCofogCompare(self, year: int, countries: List[str], level: int = 1) -> List[EUCountryCofogType]:  # noqa: N802
+        # Placeholder: reuse France COFOG shares for all requested countries
+        items = allocation_by_cofog(year, Basis("CP"))
+        out: List[EUCountryCofogType] = []
+        for c in countries:
+            for i in items:
+                out.append(
+                    EUCountryCofogType(
+                        country=c,
+                        code=i.code,
+                        label=i.label,
+                        amountEur=i.amount_eur,
+                        share=i.share,
+                    )
+                )
+        return out
+
+    @strawberry.field
+    def euFiscalPath(self, country: str, years: List[int]) -> FiscalPathType:  # noqa: N802
+        # Placeholder: return zeros for non-FR; simple flat path for FR
+        if country.upper() != "FR":
+            return FiscalPathType(years=years, deficitRatio=[0.0] * len(years), debtRatio=[0.0] * len(years))
+        # Use baseline files to approximate ratios for requested years if present
+        from .data_loader import _read_gdp_series, _read_baseline_def_debt  # type: ignore
+
+        gdp = _read_gdp_series()
+        base = _read_baseline_def_debt()
+        def_ratios: List[float] = []
+        debt_ratios: List[float] = []
+        for y in years:
+            bd = base.get(y, (0.0, 0.0))
+            gy = gdp.get(y, 1.0)
+            def_ratios.append(bd[0] / gy if gy else 0.0)
+            debt_ratios.append(bd[1] / gy if gy else 0.0)
+        return FiscalPathType(years=years, deficitRatio=def_ratios, debtRatio=debt_ratios)
+
 
 @strawberry.type
 class Mutation:
@@ -168,6 +268,23 @@ class Mutation:
                 assumptions={k: v for k, v in macro.assumptions.items()},
             ),
         )
+
+    # In-memory scenario metadata store
+    @strawberry.mutation
+    def saveScenario(self, id: str, title: Optional[str] = None, description: Optional[str] = None) -> bool:  # noqa: N802
+        from .store import scenario_store
+
+        scenario_store[id] = {"title": title or "", "description": description or ""}
+        return True
+
+    @strawberry.mutation
+    def deleteScenario(self, id: str) -> bool:  # noqa: N802
+        from .store import scenario_store
+
+        if id in scenario_store:
+            del scenario_store[id]
+            return True
+        return False
 
 
 schema = strawberry.Schema(query=Query, mutation=Mutation)
