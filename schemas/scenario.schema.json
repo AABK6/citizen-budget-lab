@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://citizen-budget-lab.org/schemas/scenario.schema.json",
+  "title": "Citizen Budget Lab Scenario DSL",
+  "type": "object",
+  "required": ["version", "baseline_year", "actions"],
+  "properties": {
+    "version": { "type": "string" },
+    "baseline_year": { "type": "integer", "minimum": 2000 },
+    "assumptions": {
+      "type": "object",
+      "properties": {
+        "macro_kernel": { "type": "string" },
+        "horizon_years": { "type": "integer", "minimum": 1, "maximum": 10 },
+        "compliance_checks": { "type": "array", "items": { "type": "string" } },
+        "price_index": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "target", "op"],
+        "properties": {
+          "id": { "type": "string" },
+          "target": { "type": "string" },
+          "dimension": { "type": "string", "enum": ["cp", "ae", "tax"] },
+          "op": { "type": "string" },
+          "amount_eur": { "type": "number" },
+          "delta_bps": { "type": "number" },
+          "recurring": { "type": "boolean" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "offsets": {
+      "type": "array",
+      "items": { "type": "object" }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "author": { "type": "string" },
+        "description": { "type": "string" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}
+
