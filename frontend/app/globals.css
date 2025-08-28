@@ -1,0 +1,25 @@
+:root { --bg: #0f172a; --fg: #e2e8f0; --muted: #94a3b8; --accent: #22c55e; --card: #111827; --border: #1f2937 }
+* { box-sizing: border-box }
+html, body { margin: 0; padding: 0; background: var(--bg); color: var(--fg); font: 16px/1.5 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji" }
+.container { max-width: 1200px; margin: 0 auto; padding: 1rem }
+.site-header { border-bottom: 1px solid var(--border); background: #0b1224 }
+.brand { margin: 0 0 .5rem 0; font-size: 1.25rem }
+.tabs { display: flex; gap: .5rem; flex-wrap: wrap }
+.tab { padding: .5rem .75rem; border-radius: .375rem; color: var(--fg); text-decoration: none; background: #0b1224; border: 1px solid var(--border) }
+.tab.active { background: #111b35; border-color: #334155 }
+.row { display: flex; align-items: flex-end }
+.gap { gap: .75rem }
+.stack { display: grid; gap: 1rem }
+.field { display: grid; gap: .25rem }
+.field > span { color: var(--muted); font-size: .85rem }
+input, select, button { background: var(--card); color: var(--fg); border: 1px solid var(--border); padding: .5rem .6rem; border-radius: .375rem }
+button { cursor: pointer; background: #173157; border-color: #264766 }
+button:hover { background: #1b3a66 }
+.error { color: #f87171 }
+.table-wrap { overflow: auto; border: 1px solid var(--border); border-radius: .5rem }
+table { border-collapse: collapse; width: 100% }
+th, td { padding: .5rem .75rem; border-bottom: 1px solid var(--border) }
+th { text-align: left; color: var(--muted); background: #0b1224; position: sticky; top: 0 }
+.code { background: #0b1224; padding: .75rem; border-radius: .5rem; border: 1px solid var(--border) }
+.footer { color: var(--muted); padding-top: 2rem; padding-bottom: 2rem }
+
