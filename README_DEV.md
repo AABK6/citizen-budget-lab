@@ -6,6 +6,8 @@ Overview
   - Python FastAPI + Strawberry GraphQL API in `services/api/`.
   - Sample datasets in `data/` to drive example queries.
   - Scenario DSL JSON Schema in `schemas/scenario.schema.json`.
+  - Backlog and schema contract under `BACKLOG.md` and `docs/GRAPHQL_CONTRACT.md`.
+  - Client codegen config in `graphql/codegen.yml` with canonical SDL in `graphql/schema.sdl.graphql`.
 
 Run locally
 
@@ -19,7 +21,19 @@ Run locally
 
 3) Visit GraphQL Playground at:
 
-   http://127.0.0.1:8000/graphql
+  http://127.0.0.1:8000/graphql
+
+Frontend (optional)
+
+1) In `web/` install and run Next.js dev server:
+
+   cd web
+   npm install
+   npm run dev
+
+2) Visit http://127.0.0.1:3000
+
+   The frontend reads `NEXT_PUBLIC_GRAPHQL_URL` (default `http://localhost:8000/graphql`).
 
 Example queries
 
@@ -66,6 +80,7 @@ Notes
 - Compliance flags implement a minimal, illustrative logic only.
 - The JSON Schema is a starting point for validating the DSL payload.
 - Macro outputs now include ΔGDP/Δemployment/Δdeficit using a simple IRF convolution with COFOG mapping and default elasticities.
+ - See `docs/GRAPHQL_CONTRACT.md` for the full GraphQL contract targeted by MVP/V1/V2. Implement resolvers incrementally.
 
 Official API wiring
 
@@ -87,3 +102,11 @@ Examples
   query { dataGouvSearch(query: "budget de l'Etat", pageSize: 3) }
 
   query { communes(department: "75") { code nom population } }
+
+Client codegen (optional)
+
+- Ensure the API runs at `http://localhost:8000/graphql`.
+- Put your `.graphql` documents under `graphql/queries/` and `graphql/mutations/`.
+- Generate types/hooks (requires Node and @graphql-codegen):
+
+  npx graphql-code-generator --config graphql/codegen.yml

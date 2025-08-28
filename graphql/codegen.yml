@@ -1,0 +1,21 @@
+schema: http://localhost:8000/graphql
+documents:
+  - ./graphql/queries/**/*.graphql
+  - ./graphql/mutations/**/*.graphql
+generates:
+  ./graphql/generated/types.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-react-apollo
+    config:
+      withHooks: true
+      reactApolloVersion: 3
+hooks:
+  afterAllFileWrite:
+    - prettier --write
+
+# Usage:
+#   npx graphql-code-generator --config graphql/codegen.yml
+# Ensure dev server is running at localhost:8000
+
