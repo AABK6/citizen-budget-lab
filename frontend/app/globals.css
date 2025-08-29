@@ -7,6 +7,7 @@ html, body { margin: 0; padding: 0; background: var(--bg); color: var(--fg); fon
 .tabs { display: flex; gap: .5rem; flex-wrap: wrap }
 .tab { padding: .5rem .75rem; border-radius: .375rem; color: var(--fg); text-decoration: none; background: #0b1224; border: 1px solid var(--border) }
 .tab.active { background: #111b35; border-color: #334155 }
+.tab:focus-visible { outline: 2px solid #fbbf24; outline-offset: 2px }
 .row { display: flex; align-items: flex-end }
 .gap { gap: .75rem }
 .stack { display: grid; gap: 1rem }
@@ -15,6 +16,7 @@ html, body { margin: 0; padding: 0; background: var(--bg); color: var(--fg); fon
 input, select, button { background: var(--card); color: var(--fg); border: 1px solid var(--border); padding: .5rem .6rem; border-radius: .375rem }
 button { cursor: pointer; background: #173157; border-color: #264766 }
 button:hover { background: #1b3a66 }
+button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible { outline: 2px solid #fbbf24; outline-offset: 2px }
 .error { color: #f87171 }
 .table-wrap { overflow: auto; border: 1px solid var(--border); border-radius: .5rem }
 table { border-collapse: collapse; width: 100% }

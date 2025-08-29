@@ -1,0 +1,26 @@
+{
+  "nav.explore": "Explorer 1€",
+  "nav.procurement": "Qui est payé ?",
+  "nav.whatif": "Et si… ?",
+  "nav.compare_eu": "Comparer UE",
+  "nav.sources": "Sources",
+
+  "home.welcome": "Bienvenue",
+  "home.pick_section": "Choisissez une section pour commencer :",
+
+  "explore.title": "Explorer 1€",
+  "label.year": "Année",
+  "explore.basis": "Base",
+  "explore.lens": "Lentille",
+  "explore.chart": "Graphique",
+  "basis.cp": "CP",
+  "basis.ae": "AE",
+  "lens.admin": "Administratif",
+  "lens.cofog": "COFOG",
+  "chart.sunburst": "Rayonnement",
+  "chart.treemap": "Treemap",
+
+  "loading": "Chargement…",
+  "error.generic": "Échec du chargement"
+}
+

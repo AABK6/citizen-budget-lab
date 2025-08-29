@@ -161,6 +161,7 @@ Status Snapshot (MVP) — 2025-08-29
 - [~] Data cache warmers (PLF mission aggregates, Eurostat COFOG shares). No warehouse/dbt yet.
 - [ ] Provenance registry table + ingestion pipelines (ODS/DECP/SIRENE joins), semantic layer (dbt) and Postgres/DuckDB backing.
 - [ ] Net expenditure and local balance calculators; offsets/guardrails in scenarios; ops/observability.
+- [~] Net expenditure rule (simplified) implemented; local balance calculators pending; offsets/guardrails; ops/observability.
 
 Next Sprint (2 weeks) — Top Priorities
 
@@ -168,11 +169,12 @@ Next Sprint (2 weeks) — Top Priorities
    - AC: Render mission/COFOG allocations with basic tooltips + “show table”; reuse API; client-only acceptable for MVP.
 
 2) Net expenditure rule (simplified) [MVP] [API]
-   - AC: Implement growth-of-net-primary-expenditure calculator (inputs documented), emit rule lights per year.
+   - DONE: Implemented growth-of-net-primary-expenditure calculator (env `NET_EXP_REFERENCE_RATE`), emits rule lights per year.
 
 3) i18n baseline + a11y pass [MVP] [UI]
-   - AC: EN/FR message catalog for core labels; visible focus styles; quick axe check in CI.
+   - DONE: EN/FR message catalog for core labels; visible focus states; axe check runs in CI (home route).
 
 Notes
 - Keep `docs/GRAPHQL_CONTRACT.md` as contract; implement incrementally.
 - Warehouse/dbt tracks to follow in subsequent sprints after MVP feature parity.
+

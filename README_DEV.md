@@ -119,6 +119,8 @@ Official API wiring
     - `HTTP_CACHE_TTL_EUROSTAT` — seconds (default 86400)
     - `HTTP_CACHE_TTL_DATAGOUV` — seconds (default 86400)
     - `HTTP_CACHE_TTL_GEO` — seconds (default 604800)
+  - Compliance parameters:
+    - `NET_EXP_REFERENCE_RATE` — annual allowed growth for net primary expenditure (default 0.015 = 1.5%)
 - Endpoints exposed via GraphQL:
   - `sirene(siren: String!)`: INSEE SIRENE v3 lookup.
   - `inseeSeries(dataset: String!, series: [String!]!, sinceYear: Int)`: INSEE BDM.

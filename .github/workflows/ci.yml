@@ -41,10 +41,22 @@ jobs:
           NEXT_TELEMETRY_DISABLED: '1'
         run: npm run build
 
+      - name: Start frontend server
+        working-directory: frontend
+        run: |
+          nohup npm run start >/dev/null 2>&1 &
+          for i in {1..30}; do
+            if curl -sSf http://127.0.0.1:3000 >/dev/null; then echo "Frontend up"; break; fi
+            sleep 1
+          done
+
+      - name: Run axe accessibility check (home)
+        working-directory: frontend
+        run: npx @axe-core/cli http://127.0.0.1:3000 --exit 0
+
       - name: Build API Docker image
         run: docker build -f services/api/Dockerfile -t citizen-budget-lab-api:ci .
 
       - name: Build Frontend Docker image
         working-directory: frontend
         run: docker build -t citizen-budget-lab-frontend:ci .
-

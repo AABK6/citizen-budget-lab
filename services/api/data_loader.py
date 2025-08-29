@@ -24,6 +24,7 @@ from .models import (
     Supplier,
 )
 from .validation import validate_scenario
+from .settings import get_settings
 
 
 DATA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data"))
@@ -329,6 +330,26 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
     # Macro kernel
     macro = _macro_kernel(horizon_years, shocks_pct_gdp, gdp_series)
 
+    # Net expenditure rule (simplified):
+    # - Baseline net primary expenditure (NPE) assumed at 50% of GDP in year 0
+    # - Baseline NPE grows by reference rate each year
+    # - Scenario NPE_t = BaselineNPE_t + spending delta for year t (from mechanical layer)
+    # - Rule: YOY growth(NPE) <= reference rate ⇒ ok, else breach
+    settings = get_settings()
+    ref = float(getattr(settings, "net_exp_reference_rate", 0.015))
+    base_npe0 = 0.50 * gdp_series[0]
+    base_npe_path: List[float] = [base_npe0]
+    for i in range(1, horizon_years):
+        base_npe_path.append(base_npe_path[-1] * (1.0 + ref))
+    scen_npe: List[float] = [base_npe_path[i] + deltas_by_year[i] for i in range(horizon_years)]
+    net_exp_status: List[str] = []
+    for i in range(horizon_years):
+        if i == 0 or scen_npe[i - 1] == 0:
+            net_exp_status.append("ok")
+            continue
+        growth = (scen_npe[i] / scen_npe[i - 1]) - 1.0
+        net_exp_status.append("ok" if growth <= ref + 1e-9 else "breach")
+
     # Baseline series for compliance
     base_map = _read_baseline_def_debt()
     eu3 = []
@@ -346,7 +367,7 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
     comp = Compliance(
         eu3pct=eu3,
         eu60pct=eu60,
-        net_expenditure=["n/a" for _ in range(horizon_years)],
+        net_expenditure=net_exp_status,
         local_balance=["n/a" for _ in range(horizon_years)],
     )
 

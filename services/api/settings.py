@@ -26,6 +26,9 @@ class Settings:
     # CORS (comma-separated list of origins)
     cors_allow_origins: str | None = os.getenv("CORS_ALLOW_ORIGINS")
 
+    # Compliance parameters
+    net_exp_reference_rate: float = float(os.getenv("NET_EXP_REFERENCE_RATE", "0.015"))
+
 
 def get_settings() -> Settings:
     # Load .env once at first import

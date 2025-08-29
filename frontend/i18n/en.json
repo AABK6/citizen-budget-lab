@@ -1,0 +1,26 @@
+{
+  "nav.explore": "Explore €1",
+  "nav.procurement": "Who gets paid?",
+  "nav.whatif": "What‑if?",
+  "nav.compare_eu": "Compare EU",
+  "nav.sources": "Sources",
+
+  "home.welcome": "Welcome",
+  "home.pick_section": "Select a section to get started:",
+
+  "explore.title": "Explore €1",
+  "label.year": "Year",
+  "explore.basis": "Basis",
+  "explore.lens": "Lens",
+  "explore.chart": "Chart",
+  "basis.cp": "CP",
+  "basis.ae": "AE",
+  "lens.admin": "Administrative",
+  "lens.cofog": "COFOG",
+  "chart.sunburst": "Sunburst",
+  "chart.treemap": "Treemap",
+
+  "loading": "Loading…",
+  "error.generic": "Failed to load"
+}
+

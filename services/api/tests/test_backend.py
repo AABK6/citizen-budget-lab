@@ -92,7 +92,7 @@ actions:
         runScenario(input: { dsl: $dsl }) {
           id
           accounting { deficitPath debtPath }
-          compliance { eu3pct eu60pct }
+          compliance { eu3pct eu60pct netExpenditure }
           macro { deltaGDP deltaEmployment deltaDeficit assumptions }
         }
       }
@@ -106,10 +106,38 @@ actions:
     assert len(data["accounting"]["debtPath"]) == 5
     assert len(data["compliance"]["eu3pct"]) == 5
     assert len(data["compliance"]["eu60pct"]) == 5
+    assert len(data["compliance"]["netExpenditure"]) == 5
     assert len(data["macro"]["deltaGDP"]) == 5
     assert len(data["macro"]["deltaEmployment"]) == 5
     assert len(data["macro"]["deltaDeficit"]) == 5
     assert isinstance(data["macro"]["assumptions"], dict)
+
+
+def test_net_expenditure_rule_lights():
+    sdl = """
+version: 0.1
+baseline_year: 2026
+assumptions:
+  horizon_years: 5
+actions:
+  - id: ed_invest_boost
+    target: mission.education
+    dimension: cp
+    op: increase
+    amount_eur: 1000000000
+    recurring: true
+"""
+    dsl_b64 = _encode_scenario_yaml(sdl)
+    query = """
+      mutation Run($dsl: String!) {
+        runScenario(input: { dsl: $dsl }) { compliance { netExpenditure } }
+      }
+    """
+    res = gql_schema.schema.execute_sync(query, variable_values={"dsl": dsl_b64})
+    assert not res.errors
+    status = res.data["runScenario"]["compliance"]["netExpenditure"]
+    assert len(status) == 5
+    assert all(s in ("ok", "breach") for s in status)
 
 
 def test_graphql_queries_without_network(monkeypatch):

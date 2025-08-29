@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { useEffect, useMemo, useState } from 'react'
 import { gqlRequest } from '@/lib/graphql'
@@ -6,6 +6,7 @@ import { Select } from '@/components/Select'
 import { YearPicker } from '@/components/YearPicker'
 import { DataTable } from '@/components/Table'
 import { AllocationChart } from '@/components/AllocationChart'
+import { useI18n } from '@/lib/i18n'
 
 type Lens = 'ADMIN' | 'COFOG'
 type Basis = 'CP' | 'AE'
@@ -13,6 +14,7 @@ type Basis = 'CP' | 'AE'
 type MissionRow = { code: string; label: string; amountEur: number; share: number }
 
 export default function ExplorePage() {
+  const { t } = useI18n()
   const [year, setYear] = useState<number>(2026)
   const [lens, setLens] = useState<Lens>('ADMIN')
   const [basis, setBasis] = useState<Basis>('CP')
@@ -46,7 +48,7 @@ export default function ExplorePage() {
         const list: MissionRow[] = lens === 'ADMIN' ? data.allocation.mission : (data.allocation.cofog || [])
         if (!cancelled) setRows(list)
       } catch (e: any) {
-        if (!cancelled) setError(e?.message || 'Failed to load')
+        if (!cancelled) setError(e?.message || t('error.generic'))
       } finally {
         if (!cancelled) setLoading(false)
       }
@@ -57,14 +59,14 @@ export default function ExplorePage() {
 
   return (
     <div className="stack">
-      <h2>Explore €1</h2>
+      <h2>{t('explore.title')}</h2>
       <div className="row gap">
-        <YearPicker value={year} onChange={setYear} />
-        <Select label="Basis" value={basis} onChange={v => setBasis(v as Basis)} options={[{ label: 'CP', value: 'CP' }, { label: 'AE', value: 'AE' }]} />
-        <Select label="Lens" value={lens} onChange={v => setLens(v as Lens)} options={[{ label: 'Administrative', value: 'ADMIN' }, { label: 'COFOG', value: 'COFOG' }]} />
-        <Select label="Chart" value={chartType} onChange={v => setChartType(v as any)} options={[{ label: 'Sunburst', value: 'sunburst' }, { label: 'Treemap', value: 'treemap' }]} />
+        <YearPicker value={year} onChange={setYear} label={t('label.year')} />
+        <Select label={t('explore.basis')} value={basis} onChange={v => setBasis(v as Basis)} options={[{ label: t('basis.cp'), value: 'CP' }, { label: t('basis.ae'), value: 'AE' }]} />
+        <Select label={t('explore.lens')} value={lens} onChange={v => setLens(v as Lens)} options={[{ label: t('lens.admin'), value: 'ADMIN' }, { label: t('lens.cofog'), value: 'COFOG' }]} />
+        <Select label={t('explore.chart')} value={chartType} onChange={v => setChartType(v as any)} options={[{ label: t('chart.sunburst'), value: 'sunburst' }, { label: t('chart.treemap'), value: 'treemap' }]} />
       </div>
-      {loading && <p>Loading…</p>}
+      {loading && <p>{t('loading')}</p>}
       {error && <p className="error">{error}</p>}
       {!loading && !error && (
         <>
@@ -79,4 +81,3 @@ export default function ExplorePage() {
     </div>
   )
 }
-

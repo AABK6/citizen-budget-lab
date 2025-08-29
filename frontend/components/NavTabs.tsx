@@ -1,18 +1,20 @@
-"use client"
+﻿"use client"
 
 import Link from 'next/link'
+import type { Route } from 'next'
 import { usePathname } from 'next/navigation'
-
-const tabs = [
-  { href: '/explore', label: 'Explore €1' },
-  { href: '/procurement', label: 'Who gets paid?' },
-  { href: '/what-if', label: 'What‑if?' },
-  { href: '/compare-eu', label: 'Compare EU' },
-  { href: '/sources', label: 'Sources' }
-]
+import { useI18n } from '@/lib/i18n'
 
 export function NavTabs() {
   const pathname = usePathname()
+  const { t } = useI18n()
+  const tabs: { href: Route; label: string }[] = [
+    { href: '/explore' as Route, label: t('nav.explore') },
+    { href: '/procurement' as Route, label: t('nav.procurement') },
+    { href: '/what-if' as Route, label: t('nav.whatif') },
+    { href: '/compare-eu' as Route, label: t('nav.compare_eu') },
+    { href: '/sources' as Route, label: t('nav.sources') }
+  ]
   return (
     <nav className="tabs">
       {tabs.map(t => (
@@ -23,4 +25,3 @@ export function NavTabs() {
     </nav>
   )
 }
-

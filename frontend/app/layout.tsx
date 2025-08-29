@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { NavTabs } from '@/components/NavTabs'
+import { LangSwitcher } from '@/components/LangSwitcher'
 import { I18nProvider } from '@/lib/i18n'
 
 export const metadata: Metadata = {
@@ -19,7 +20,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <header className="site-header">
             <div className="container">
               <h1 className="brand">Citizen Budget Lab</h1>
-              <NavTabs />
+              <div className="row gap" style={{ alignItems: 'center' }}>
+                <NavTabs />
+                <LangSwitcher />
+              </div>
             </div>
           </header>
           <main className="container">

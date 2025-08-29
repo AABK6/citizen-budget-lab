@@ -1,20 +1,11 @@
-"use client"
+﻿"use client"
 
 import { createContext, useContext, useMemo, useState } from 'react'
+import en from '../i18n/en.json'
+import fr from '../i18n/fr.json'
 
 type Dict = Record<string, string>
-const EN: Dict = {
-  explore: 'Explore €1',
-  procurement: 'Who gets paid?',
-  whatif: 'What‑if?'
-}
-const FR: Dict = {
-  explore: 'Explorer 1€',
-  procurement: 'Qui est payé ?',
-  whatif: 'Et si…?'
-}
-
-const langs = { en: EN, fr: FR }
+const langs: Record<'en'|'fr', Dict> = { en, fr }
 
 const I18nCtx = createContext<{ t: (k: string) => string; lang: 'en'|'fr'; setLang: (l: 'en'|'fr') => void }>({ t: (k) => k, lang: 'en', setLang: () => {} })
 
@@ -25,4 +16,3 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function useI18n() { return useContext(I18nCtx) }
-
