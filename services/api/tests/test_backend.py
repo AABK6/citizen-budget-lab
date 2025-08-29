@@ -202,3 +202,41 @@ def test_graphql_queries_without_network(monkeypatch):
     """)
     assert data["communes"]["ok"] is True
 
+
+def test_run_scenario_id_is_deterministic():
+    sdl = """
+version: 0.1
+baseline_year: 2026
+assumptions:
+  horizon_years: 5
+actions:
+  - id: ed_invest_boost
+    target: mission.education
+    dimension: cp
+    op: increase
+    amount_eur: 1000000000
+    recurring: true
+"""
+    dsl_b64 = base64.b64encode(sdl.encode("utf-8")).decode("utf-8")
+    query = """
+      mutation Run($dsl: String!) {
+        runScenario(input: { dsl: $dsl }) { id }
+      }
+    """
+    res1 = gql_schema.schema.execute_sync(query, variable_values={"dsl": dsl_b64})
+    assert not res1.errors
+    id1 = res1.data["runScenario"]["id"]
+
+    # Second identical run ⇒ same ID
+    res2 = gql_schema.schema.execute_sync(query, variable_values={"dsl": dsl_b64})
+    assert not res2.errors
+    id2 = res2.data["runScenario"]["id"]
+    assert id1 == id2
+
+    # Modify DSL (amount) ⇒ different ID
+    sdl2 = sdl.replace("1000000000", "1000000001")
+    dsl_b64_2 = base64.b64encode(sdl2.encode("utf-8")).decode("utf-8")
+    res3 = gql_schema.schema.execute_sync(query, variable_values={"dsl": dsl_b64_2})
+    assert not res3.errors
+    id3 = res3.data["runScenario"]["id"]
+    assert id3 != id1

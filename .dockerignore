@@ -1,0 +1,20 @@
+# Global docker ignore to keep build contexts small
+.git
+.gitignore
+.github
+.DS_Store
+*.pyc
+__pycache__/
+.pytest_cache/
+.venv/
+.pyenv/
+data/.http_cache/
+
+# Frontend artifacts
+frontend/node_modules/
+frontend/.next/
+
+# OS/editor
+.vscode/
+.idea/
+

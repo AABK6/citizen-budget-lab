@@ -1,0 +1,16 @@
+version: "3.9"
+
+# Windows override: build the frontend with a GraphQL endpoint pointing to the host
+# Useful when you want to run the API on the host and only the frontend in Docker.
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_GRAPHQL_URL: http://host.docker.internal:8000/graphql
+    # For Docker Desktop on Linux hosts, you may need the extra_hosts mapping below:
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"
+

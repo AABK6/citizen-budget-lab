@@ -1,12 +1,13 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import base64
 import csv
 import datetime as dt
 import io
 import os
-import uuid
 from collections import defaultdict
+import json
+import hashlib
 from typing import Dict, Iterable, List, Tuple
 
 import yaml
@@ -262,9 +263,14 @@ def _macro_kernel(horizon: int, shocks_pct_gdp: Dict[str, List[float]], gdp_seri
     )
 
 
+
 def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult]:
     data = _decode_yaml_base64(dsl_b64)
     validate_scenario(data)
+    # Deterministic scenario ID from canonicalized DSL
+    canonical = json.dumps(data, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    sid = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
     horizon_years = int((data.get("assumptions") or {}).get("horizon_years", 5))
     baseline_year = int(data.get("baseline_year", 2026))
     actions = data.get("actions") or []
@@ -345,4 +351,6 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
     )
 
     acc = Accounting(deficit_path=deficit_path, debt_path=debt_path)
-    return str(uuid.uuid4()), acc, comp, macro
+    return sid, acc, comp, macro
+
+

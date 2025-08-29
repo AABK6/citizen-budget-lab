@@ -160,3 +160,45 @@ Client codegen (optional)
 - Generate types/hooks (requires Node and @graphql-codegen):
 
   npx graphql-code-generator --config graphql/codegen.yml
+
+Docker
+
+- API (FastAPI + GraphQL):
+
+  - Build: `docker build -f services/api/Dockerfile -t cbl-api .`
+  - Run: `docker run --rm -p 8000:8000 cbl-api`
+  - GraphQL: http://127.0.0.1:8000/graphql
+  - CORS: the API allows `http://localhost:3000` and `http://127.0.0.1:3000` by default.
+    - Override with `CORS_ALLOW_ORIGINS` (comma-separated) if your frontend runs elsewhere.
+
+- Frontend (Next.js):
+
+  - Build: `docker build -t cbl-frontend ./frontend`
+  - Run (point to API):
+    - macOS/Windows: `docker run --rm -p 3000:3000 -e NEXT_PUBLIC_GRAPHQL_URL=http://host.docker.internal:8000/graphql cbl-frontend`
+    - Linux: `docker run --rm -p 3000:3000 --add-host=host.docker.internal:host-gateway -e NEXT_PUBLIC_GRAPHQL_URL=http://host.docker.internal:8000/graphql cbl-frontend`
+
+CI
+
+- `/.github/workflows/ci.yml` builds and tests the backend (pytest), builds the frontend, and builds both Docker images on push/PR.
+
+Docker Compose (run both)
+
+- Start both services (API on 8000, frontend on 3000):
+
+  docker compose up --build
+
+  - Frontend talks to API via internal DNS `http://api:8000/graphql` (injected at build time).
+
+- Windows option (Frontend only in Docker hitting host API):
+
+  - Run API on host (e.g., `uvicorn services.api.app:app --reload`).
+  - Build/run frontend with Windows override:
+
+    docker compose -f docker-compose.windows.yml up --build frontend
+
+  - If using Docker Desktop on Linux, add `extra_hosts: ["host.docker.internal:host-gateway"]` as hinted in `docker-compose.windows.yml`.
+
+Notes
+
+- If your browser console shows a missing `/favicon.ico`, add a favicon under `frontend/public/` or use the default SVG we include (linked in `app/layout.tsx`).

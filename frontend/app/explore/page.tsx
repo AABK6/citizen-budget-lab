@@ -5,6 +5,7 @@ import { gqlRequest } from '@/lib/graphql'
 import { Select } from '@/components/Select'
 import { YearPicker } from '@/components/YearPicker'
 import { DataTable } from '@/components/Table'
+import { AllocationChart } from '@/components/AllocationChart'
 
 type Lens = 'ADMIN' | 'COFOG'
 type Basis = 'CP' | 'AE'
@@ -18,6 +19,7 @@ export default function ExplorePage() {
   const [rows, setRows] = useState<MissionRow[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [chartType, setChartType] = useState<'sunburst' | 'treemap'>('sunburst')
 
   const columns = useMemo(() => [
     { key: 'code', label: 'Code' },
@@ -60,11 +62,15 @@ export default function ExplorePage() {
         <YearPicker value={year} onChange={setYear} />
         <Select label="Basis" value={basis} onChange={v => setBasis(v as Basis)} options={[{ label: 'CP', value: 'CP' }, { label: 'AE', value: 'AE' }]} />
         <Select label="Lens" value={lens} onChange={v => setLens(v as Lens)} options={[{ label: 'Administrative', value: 'ADMIN' }, { label: 'COFOG', value: 'COFOG' }]} />
+        <Select label="Chart" value={chartType} onChange={v => setChartType(v as any)} options={[{ label: 'Sunburst', value: 'sunburst' }, { label: 'Treemap', value: 'treemap' }]} />
       </div>
       {loading && <p>Loading…</p>}
       {error && <p className="error">{error}</p>}
       {!loading && !error && (
-        <DataTable columns={columns} rows={rows} />
+        <>
+          <AllocationChart rows={rows} kind={chartType} />
+          <DataTable columns={columns} rows={rows} />
+        </>
       )}
       <details>
         <summary>Show GraphQL</summary>

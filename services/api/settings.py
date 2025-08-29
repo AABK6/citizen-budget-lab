@@ -23,6 +23,9 @@ class Settings:
     eurostat_lang: str = os.getenv("EUROSTAT_LANG", "en")
     eurostat_cookie: str | None = os.getenv("EUROSTAT_COOKIE")
 
+    # CORS (comma-separated list of origins)
+    cors_allow_origins: str | None = os.getenv("CORS_ALLOW_ORIGINS")
+
 
 def get_settings() -> Settings:
     # Load .env once at first import
