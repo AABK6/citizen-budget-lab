@@ -157,7 +157,7 @@ Status Snapshot (MVP) — 2025-08-29
 - [x] Scenario DSL validation + mechanical engine; macro kernel (lite) integrated; compliance lights (EU 3%/60%) minimal.
 - [x] Deterministic scenario IDs in runScenario (hash of canonical DSL) with tests.
 - [x] Dockerfiles + CI baseline; docker-compose with Windows override to run API+frontend together.
-- [~] Frontend scaffold (Explore/Procurement/What‑if/Compare EU/Sources) wired to API; charts/maps/i18n/tests pending.
+- [~] Frontend: Explore charts added (sunburst/treemap with tooltips + table); i18n+a11y in place; Procurement table/map initial; tests pending.
 - [x] Procurement table: CSV export, sorting, basic pagination; generic DECP link (per-row source links pending).
 - [~] Data cache warmers (PLF mission aggregates, Eurostat COFOG shares). No warehouse/dbt yet.
 - [ ] Provenance registry table + ingestion pipelines (ODS/DECP/SIRENE joins), semantic layer (dbt) and Postgres/DuckDB backing.
@@ -167,7 +167,7 @@ Status Snapshot (MVP) — 2025-08-29
 Next Sprint (2 weeks) — Top Priorities
 
 1) Explore charts (sunburst/treemap) [MVP] [UI]
-   - AC: Render mission/COFOG allocations with basic tooltips + “show table”; reuse API; client-only acceptable for MVP.
+   - DONE: Mission/COFOG allocations rendered with tooltips + “show the table”; client-only via ECharts.
 
 2) Net expenditure rule (simplified) [MVP] [API]
    - DONE: Implemented growth-of-net-primary-expenditure calculator (env `NET_EXP_REFERENCE_RATE`), emits rule lights per year.
