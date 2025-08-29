@@ -46,6 +46,7 @@ class ProcurementItemType:
     cpv: Optional[str]
     procedureType: Optional[str]
     locationCode: Optional[str]
+    sourceUrl: Optional[str]
 
 
 @strawberry.type
@@ -171,6 +172,7 @@ class Query:
                 cpv=i.cpv,
                 procedureType=i.procedure_type,
                 locationCode=getattr(i, "location_code", None),
+                sourceUrl=getattr(i, "source_url", None),
             )
             for i in items
         ]

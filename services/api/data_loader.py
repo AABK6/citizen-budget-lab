@@ -150,6 +150,7 @@ def procurement_top_suppliers(
                 "cpv": row.get("cpv_code"),
                 "procedure_type": row.get("procedure_type"),
                 "location_code": row.get("location_code"),
+                "source_url": f"https://www.data.gouv.fr/fr/search/?q={siren}",
             },
         )
         ent["amount"] = float(ent["amount"]) + amount
@@ -169,6 +170,7 @@ def procurement_top_suppliers(
                 cpv=str(ent.get("cpv") or ""),
                 procedure_type=str(ent.get("procedure_type") or ""),
                 location_code=str(ent.get("location_code") or ""),
+                source_url=str(ent.get("source_url") or ""),
             )
         )
     return items

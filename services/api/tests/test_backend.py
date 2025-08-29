@@ -1,4 +1,4 @@
-import base64
+﻿import base64
 import json
 from typing import Any, Dict, List
 
@@ -170,13 +170,15 @@ def test_graphql_queries_without_network(monkeypatch):
       query($y: Int!, $r: String!, $cpv: String, $min: Float) {
         procurement(year: $y, region: $r, cpvPrefix: $cpv, minAmountEur: $min) {
           supplier { siren name }
-          amountEur cpv procedureType
+          amountEur cpv procedureType locationCode sourceUrl
         }
       }
     """,
         {"y": 2024, "r": "75", "cpv": "30", "min": 100000},
     )
     assert data["procurement"], "Expected filtered procurement results"
+    # locationCode exposed for map lookup (5-char INSEE commune where available)
+    assert all(isinstance(r.get("locationCode"), (str, type(None))) for r in data["procurement"])  # may be empty
 
     # sources
     data = gql("""
@@ -230,6 +232,12 @@ def test_graphql_queries_without_network(monkeypatch):
     """)
     assert data["communes"]["ok"] is True
 
+    # Singular commune lookup
+    data = gql("""
+      query { commune(code: "75001") }
+    """)
+    assert data["commune"]["ok"] is True
+
 
 def test_run_scenario_id_is_deterministic():
     sdl = """
@@ -255,16 +263,17 @@ actions:
     assert not res1.errors
     id1 = res1.data["runScenario"]["id"]
 
-    # Second identical run ⇒ same ID
+    # Second identical run â‡’ same ID
     res2 = gql_schema.schema.execute_sync(query, variable_values={"dsl": dsl_b64})
     assert not res2.errors
     id2 = res2.data["runScenario"]["id"]
     assert id1 == id2
 
-    # Modify DSL (amount) ⇒ different ID
+    # Modify DSL (amount) â‡’ different ID
     sdl2 = sdl.replace("1000000000", "1000000001")
     dsl_b64_2 = base64.b64encode(sdl2.encode("utf-8")).decode("utf-8")
     res3 = gql_schema.schema.execute_sync(query, variable_values={"dsl": dsl_b64_2})
     assert not res3.errors
     id3 = res3.data["runScenario"]["id"]
     assert id3 != id1
+

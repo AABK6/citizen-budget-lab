@@ -36,6 +36,7 @@ class ProcurementItem:
     cpv: Optional[str]
     procedure_type: Optional[str]
     location_code: Optional[str] = None
+    source_url: Optional[str] = None
 
 
 @dataclass

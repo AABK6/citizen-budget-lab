@@ -40,7 +40,7 @@ export default function ProcurementPage() {
     { key: 'cpv', label: 'CPV' },
     { key: 'procedureType', label: 'Procedure' },
     { key: 'amountEur', label: 'Amount (EUR)', format: (v: number) => v.toLocaleString(undefined, { maximumFractionDigits: 0 }) },
-    { key: 'source', label: 'Source', render: () => <a href="https://www.data.gouv.fr/fr/datasets/donnees-essentielles-de-la-commande-publique-marches-publics-et-concessions/" target="_blank" rel="noreferrer">DECP</a> }
+    { key: 'sourceUrl', label: 'Source', render: (v: string) => v ? <a href={v} target="_blank" rel="noreferrer">Open</a> : '' }
   ], [])
 
   async function load() {
