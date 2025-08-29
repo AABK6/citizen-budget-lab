@@ -76,10 +76,28 @@ def cofog_shares(js: Dict[str, Any], year: int, geo: str, unit: str = "MIO_EUR",
     dims, _, idx_maps, labels = _dim_maps(js)
     if cofog_dim not in idx_maps:
         return []
+    # Best-effort defaults for extra dimensions
+    default_coords: Dict[str, str] = {"unit": unit, "geo": geo, "time": str(year)}
+    for d in dims:
+        if d in ("unit", "geo", "time", cofog_dim):
+            continue
+        # Prefer known general codes
+        m = idx_maps.get(d, {})
+        if not m:
+            continue
+        if d.lower().startswith("sector") and "S13" in m:
+            default_coords[d] = "S13"
+        elif d.lower().startswith("na_item") and "TE" in m:
+            default_coords[d] = "TE"
+        else:
+            # Fallback to the first available code deterministically
+            default_coords[d] = sorted(m.keys(), key=lambda k: m[k])[0]
     totals = 0.0
     vals: List[tuple[str, str, float]] = []
     for code in idx_maps[cofog_dim].keys():
-        v = value_at(js, {"unit": unit, cofog_dim: code, "geo": geo, "time": str(year)})
+        coords = dict(default_coords)
+        coords[cofog_dim] = code
+        v = value_at(js, coords)
         if v is None:
             continue
         totals += v

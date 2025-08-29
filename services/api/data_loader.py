@@ -26,6 +26,7 @@ from .validation import validate_scenario
 
 
 DATA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data"))
+CACHE_DIR = os.path.join(DATA_DIR, "cache")
 STATE_BUDGET_CSV = os.path.join(DATA_DIR, "sample_state_budget.csv")
 PROCUREMENT_CSV = os.path.join(DATA_DIR, "sample_procurement.csv")
 GDP_CSV = os.path.join(DATA_DIR, "gdp_series.csv")
@@ -42,10 +43,16 @@ def _read_csv(path: str) -> Iterable[Dict[str, str]]:
             yield row
 
 
+def _state_budget_path(year: int) -> str:
+    """Prefer a cached mission-level snapshot for the requested year if present."""
+    cached = os.path.join(CACHE_DIR, f"state_budget_mission_{year}.csv")
+    return cached if os.path.exists(cached) else STATE_BUDGET_CSV
+
+
 def allocation_by_mission(year: int, basis: Basis) -> Allocation:
     total = 0.0
     agg: Dict[Tuple[str, str], float] = defaultdict(float)
-    for row in _read_csv(STATE_BUDGET_CSV):
+    for row in _read_csv(_state_budget_path(year)):
         if int(row["year"]) != year:
             continue
         key = (row["mission_code"], row["mission_label"])
@@ -79,7 +86,7 @@ def allocation_by_cofog(year: int, basis: Basis) -> List[MissionAllocation]:
     # Aggregate mission values
     mission_amounts: Dict[str, float] = {}
     total = 0.0
-    for row in _read_csv(STATE_BUDGET_CSV):
+    for row in _read_csv(_state_budget_path(year)):
         if int(row["year"]) != year:
             continue
         val = float(row["cp_eur"]) if basis == Basis.CP else float(row["ae_eur"])
@@ -197,7 +204,7 @@ def list_sources() -> List[Source]:
     return out
 
 
-def _map_action_to_cofog(action: dict) -> List[Tuple[str, float]]:
+def _map_action_to_cofog(action: dict, baseline_year: int) -> List[Tuple[str, float]]:
     """
     Returns a list of (category, weight) e.g., [("09", 1.0)] or [("tax.ir", 1.0)].
     """
@@ -215,7 +222,7 @@ def _map_action_to_cofog(action: dict) -> List[Tuple[str, float]]:
         # Try mapping by label via sample CSV (first matching mission label)
         # Build label->code map lazily from sample data
         label_to_code: Dict[str, str] = {}
-        for row in _read_csv(STATE_BUDGET_CSV):
+        for row in _read_csv(_state_budget_path(baseline_year)):
             label_to_code[row["mission_label"].strip().lower()] = row["mission_code"]
         code = label_to_code.get(key.replace("_", " ").lower())
         if code and code in cfg["mission_to_cofog"]:
@@ -284,7 +291,7 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
                 else:
                     deltas_by_year[0] += amount
                 # Map to macro categories for shocks (% GDP)
-                for cat, w in _map_action_to_cofog(act):
+                for cat, w in _map_action_to_cofog(act, baseline_year):
                     path = shocks_pct_gdp.setdefault(cat, [0.0] * horizon_years)
                     shock_eur = amount * float(w)
                     if recurring:
@@ -294,7 +301,7 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
                         path[0] += 100.0 * shock_eur / gdp_series[0]
         # Basic tax op handling: rate change approximated as revenue change proxy (stub)
         if dim == "tax" and "delta_bps" in act:
-            for cat, w in _map_action_to_cofog(act):
+            for cat, w in _map_action_to_cofog(act, baseline_year):
                 path = shocks_pct_gdp.setdefault(cat, [0.0] * horizon_years)
                 # Assume 1bp IR cut ~ 0.001% GDP negative revenue in first year only (placeholder)
                 bps = float(act["delta_bps"])  # negative for cut

@@ -211,7 +211,30 @@ class Query:
     # V1 stubs (EU comparisons)
     @strawberry.field
     def euCofogCompare(self, year: int, countries: List[str], level: int = 1) -> List[EUCountryCofogType]:  # noqa: N802
-        # Placeholder: reuse France COFOG shares for all requested countries
+        # Try Eurostat live fetch with caching; on failure, fall back to FR sample mapping
+        try:
+            from .clients import eurostat as eu
+
+            js = eu.fetch("gov_10a_exp", {"time": str(year), "unit": "MIO_EUR", "sector": "S13"})
+            out: List[EUCountryCofogType] = []
+            for c in countries:
+                shares = eu.cofog_shares(js, year=year, geo=c)
+                for code, label, share in shares:
+                    out.append(
+                        EUCountryCofogType(
+                            country=c,
+                            code=code,
+                            label=label,
+                            amountEur=0.0,  # share-only compare for now
+                            share=share,
+                        )
+                    )
+            if out:
+                return out
+        except Exception:
+            pass
+
+        # Fallback: reuse France COFOG shares from local sample for all requested countries
         items = allocation_by_cofog(year, Basis("CP"))
         out: List[EUCountryCofogType] = []
         for c in countries:

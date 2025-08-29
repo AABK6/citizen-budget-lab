@@ -109,6 +109,16 @@ Official API wiring
 - Env vars (required for INSEE):
   - `INSEE_CLIENT_ID`, `INSEE_CLIENT_SECRET`
     - Get credentials from https://api.insee.fr (Scopes used: `seriesbdm.read`, `sireneV3`).
+    - Local: copy `.env.example` to `.env` and fill in values (git‑ignored).
+    - CI: add repository secrets `INSEE_CLIENT_ID` and `INSEE_CLIENT_SECRET` (see `docs/SECRETS.md`).
+  - HTTP cache (enabled by default):
+    - `HTTP_CACHE_ENABLED=1|0` — toggle on/off (default 1)
+    - `HTTP_CACHE_DIR` — override cache dir (default `data/.http_cache`)
+    - `HTTP_CACHE_TTL_DEFAULT` — seconds (default 86400)
+    - `HTTP_CACHE_TTL_INSEE` — seconds (default 21600)
+    - `HTTP_CACHE_TTL_EUROSTAT` — seconds (default 86400)
+    - `HTTP_CACHE_TTL_DATAGOUV` — seconds (default 86400)
+    - `HTTP_CACHE_TTL_GEO` — seconds (default 604800)
 - Endpoints exposed via GraphQL:
   - `sirene(siren: String!)`: INSEE SIRENE v3 lookup.
   - `inseeSeries(dataset: String!, series: [String!]!, sinceYear: Int)`: INSEE BDM.
@@ -124,6 +134,24 @@ Examples
   query { dataGouvSearch(query: "budget de l'Etat", pageSize: 3) }
 
   query { communes(department: "75") { code nom population } }
+
+Warm essential datasets (optional but recommended)
+
+- Pre-download and cache key datasets so the app doesn’t hit upstreams at runtime.
+
+  python -m services.api.cache_warm plf \
+    --base https://data.economie.gouv.fr \
+    --dataset plf25-depenses-2025-selon-destination \
+    --year 2025
+
+  python -m services.api.cache_warm eurostat-cofog --year 2026 --countries FR,DE,IT
+
+- Outputs go to `data/cache/`. The API will automatically use `state_budget_mission_{year}.csv` when present for allocation queries; otherwise, it falls back to `data/sample_state_budget.csv`.
+
+Caching behavior
+
+- All GET requests through the internal HTTP client are cached to disk as JSON by URL+params.
+- Cached entries respect domain-specific TTLs (see env vars above). Use `force_refresh: true` (internal) or delete files under `data/.http_cache` to refresh.
 
 Client codegen (optional)
 

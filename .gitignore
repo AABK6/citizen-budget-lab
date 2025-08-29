@@ -1,6 +1,7 @@
 .venv
 .env
 .env.*
+.pyenv
 secrets.local.env
 __pycache__/
 *.py[cod]
@@ -8,6 +9,10 @@ __pycache__/
 dist/
 build/
 .pytest_cache/
+
+# Local data caches
+data/.http_cache/
+data/cache/
 
 # Node/Next.js
 **/node_modules/
