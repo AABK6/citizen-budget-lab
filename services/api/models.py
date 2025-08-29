@@ -35,6 +35,7 @@ class ProcurementItem:
     amount_eur: float
     cpv: Optional[str]
     procedure_type: Optional[str]
+    location_code: Optional[str] = None
 
 
 @dataclass

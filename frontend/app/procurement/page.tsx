@@ -5,6 +5,8 @@ import { gqlRequest } from '@/lib/graphql'
 import { YearPicker } from '@/components/YearPicker'
 import { Select } from '@/components/Select'
 import { DataTable } from '@/components/Table'
+import dynamic from 'next/dynamic'
+const ProcurementMap = dynamic(() => import('@/components/ProcurementMap').then(m => m.ProcurementMap), { ssr: false }) as any
 import { downloadCSV } from '@/lib/csv'
 
 type Row = {
@@ -12,6 +14,7 @@ type Row = {
   amountEur: number
   cpv?: string | null
   procedureType?: string | null
+  locationCode?: string | null
 }
 
 const DEPARTMENTS = [
@@ -29,13 +32,15 @@ export default function ProcurementPage() {
   const [rows, setRows] = useState<Row[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [view, setView] = useState<'table' | 'map'>('table')
 
   const columns = useMemo(() => [
     { key: 'supplier.name', label: 'Supplier' },
     { key: 'supplier.siren', label: 'SIREN' },
     { key: 'cpv', label: 'CPV' },
     { key: 'procedureType', label: 'Procedure' },
-    { key: 'amountEur', label: 'Amount (EUR)', format: (v: number) => v.toLocaleString(undefined, { maximumFractionDigits: 0 }) }
+    { key: 'amountEur', label: 'Amount (EUR)', format: (v: number) => v.toLocaleString(undefined, { maximumFractionDigits: 0 }) },
+    { key: 'source', label: 'Source', render: () => <a href="https://www.data.gouv.fr/fr/datasets/donnees-essentielles-de-la-commande-publique-marches-publics-et-concessions/" target="_blank" rel="noreferrer">DECP</a> }
   ], [])
 
   async function load() {
@@ -49,6 +54,7 @@ export default function ProcurementPage() {
             amountEur
             cpv
             procedureType
+            locationCode
           }
         }
       `
@@ -85,6 +91,7 @@ export default function ProcurementPage() {
           <input type="number" value={minAmount} onChange={e => setMinAmount(e.target.value === '' ? '' : Number(e.target.value))} />
         </label>
         <button onClick={load}>Apply</button>
+        <Select label="View" value={view} onChange={v => setView(v as any)} options={[{ label: 'Table', value: 'table' }, { label: 'Map', value: 'map' }]} />
         <button onClick={() => downloadCSV(`procurement_${region}_${year}.csv`, [
           { key: 'supplier.name', label: 'Supplier' },
           { key: 'supplier.siren', label: 'SIREN' },
@@ -95,7 +102,12 @@ export default function ProcurementPage() {
       </div>
       {loading && <p>Loading…</p>}
       {error && <p className="error">{error}</p>}
-      {!loading && !error && <DataTable columns={columns} rows={rows} />}
+      {!loading && !error && (
+        view === 'table'
+          ? <DataTable columns={columns} rows={rows} sortable pageSize={10} />
+          : <ProcurementMap rows={rows as any} region={region} />
+      )}
     </div>
   )
 }
+

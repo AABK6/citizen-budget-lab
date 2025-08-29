@@ -149,9 +149,17 @@ def procurement_top_suppliers(
                 "amount": 0.0,
                 "cpv": row.get("cpv_code"),
                 "procedure_type": row.get("procedure_type"),
+                "location_code": row.get("location_code"),
             },
         )
         ent["amount"] = float(ent["amount"]) + amount
+        # Update non-aggregated fields if missing
+        if not ent.get("cpv") and row.get("cpv_code"):
+            ent["cpv"] = row.get("cpv_code")
+        if not ent.get("procedure_type") and row.get("procedure_type"):
+            ent["procedure_type"] = row.get("procedure_type")
+        if not ent.get("location_code") and row.get("location_code"):
+            ent["location_code"] = row.get("location_code")
     items: List[ProcurementItem] = []
     for siren, ent in sorted(by_supplier.items(), key=lambda x: x[1]["amount"], reverse=True)[:top_n]:
         items.append(
@@ -160,6 +168,7 @@ def procurement_top_suppliers(
                 amount_eur=float(ent["amount"]),
                 cpv=str(ent.get("cpv") or ""),
                 procedure_type=str(ent.get("procedure_type") or ""),
+                location_code=str(ent.get("location_code") or ""),
             )
         )
     return items

@@ -45,6 +45,7 @@ class ProcurementItemType:
     amountEur: float
     cpv: Optional[str]
     procedureType: Optional[str]
+    locationCode: Optional[str]
 
 
 @strawberry.type
@@ -169,6 +170,7 @@ class Query:
                 amountEur=i.amount_eur,
                 cpv=i.cpv,
                 procedureType=i.procedure_type,
+                locationCode=getattr(i, "location_code", None),
             )
             for i in items
         ]

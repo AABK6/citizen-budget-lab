@@ -158,7 +158,7 @@ Status Snapshot (MVP) — 2025-08-29
 - [x] Deterministic scenario IDs in runScenario (hash of canonical DSL) with tests.
 - [x] Dockerfiles + CI baseline; docker-compose with Windows override to run API+frontend together.
 - [~] Frontend scaffold (Explore/Procurement/What‑if/Compare EU/Sources) wired to API; charts/maps/i18n/tests pending.
-- [~] Procurement table CSV export implemented; sorting/pagination/source links pending.
+- [x] Procurement table: CSV export, sorting, basic pagination; generic DECP link (per-row source links pending).
 - [~] Data cache warmers (PLF mission aggregates, Eurostat COFOG shares). No warehouse/dbt yet.
 - [ ] Provenance registry table + ingestion pipelines (ODS/DECP/SIRENE joins), semantic layer (dbt) and Postgres/DuckDB backing.
 - [ ] Net expenditure and local balance calculators; offsets/guardrails in scenarios; ops/observability.
@@ -178,4 +178,6 @@ Next Sprint (2 weeks) — Top Priorities
 Notes
 - Keep `docs/GRAPHQL_CONTRACT.md` as contract; implement incrementally.
 - Warehouse/dbt tracks to follow in subsequent sprints after MVP feature parity.
+
+
 

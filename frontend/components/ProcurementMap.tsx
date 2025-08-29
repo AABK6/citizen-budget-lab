@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic'
 import { useEffect, useMemo, useState } from 'react'
 import { gqlRequest } from '@/lib/graphql'
+import 'leaflet/dist/leaflet.css'
 
 const MapContainer = dynamic(() => import('react-leaflet').then(m => m.MapContainer), { ssr: false }) as any
 const TileLayer = dynamic(() => import('react-leaflet').then(m => m.TileLayer), { ssr: false }) as any
@@ -19,7 +20,14 @@ type Row = {
 
 type GeoInfo = { lat: number; lon: number; nom: string }
 
-export function ProcurementMap({ rows }: { rows: Row[] }) {
+const DEPT_CENTER: Record<string, [number, number]> = {
+  '75': [48.8566, 2.3522],
+  '69': [45.7640, 4.8357],
+  '13': [43.2965, 5.3698],
+  '33': [44.8378, -0.5792]
+}
+
+export function ProcurementMap({ rows, region }: { rows: Row[]; region?: string }) {
   const [geo, setGeo] = useState<Record<string, GeoInfo>>({})
 
   const locationCodes = useMemo(() => Array.from(new Set(rows.map(r => (r as any).locationCode).filter(Boolean) as string[])), [rows])
@@ -65,8 +73,8 @@ export function ProcurementMap({ rows }: { rows: Row[] }) {
     })
   }, [rows, geo])
 
-  // Default center: Paris
-  const center: [number, number] = [48.8566, 2.3522]
+  // Default center by department if provided; fallback to Paris
+  const center: [number, number] = (region && DEPT_CENTER[region]) ? DEPT_CENTER[region] : [48.8566, 2.3522]
 
   return (
     <div className="card" style={{ height: 420 }}>
@@ -80,4 +88,3 @@ export function ProcurementMap({ rows }: { rows: Row[] }) {
     </div>
   )
 }
-
