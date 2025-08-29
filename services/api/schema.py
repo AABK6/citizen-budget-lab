@@ -208,6 +208,11 @@ class Query:
     def communes(self, department: str) -> JSON:
         return geo_client.communes_by_departement(department)
 
+    @strawberry.field
+    def commune(self, code: str) -> JSON:
+        """Lookup a commune by INSEE code (geo.api.gouv.fr)."""
+        return geo_client.commune_by_code(code)
+
     # V1 stubs (EU comparisons)
     @strawberry.field
     def euCofogCompare(self, year: int, countries: List[str], level: int = 1) -> List[EUCountryCofogType]:  # noqa: N802

@@ -1,10 +1,11 @@
-"use client"
+﻿"use client"
 
 import { useEffect, useMemo, useState } from 'react'
 import { gqlRequest } from '@/lib/graphql'
 import { YearPicker } from '@/components/YearPicker'
 import { Select } from '@/components/Select'
 import { DataTable } from '@/components/Table'
+import { downloadCSV } from '@/lib/csv'
 
 type Row = {
   supplier: { siren: string; name: string }
@@ -67,7 +68,6 @@ export default function ProcurementPage() {
 
   useEffect(() => {
     load()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -85,6 +85,13 @@ export default function ProcurementPage() {
           <input type="number" value={minAmount} onChange={e => setMinAmount(e.target.value === '' ? '' : Number(e.target.value))} />
         </label>
         <button onClick={load}>Apply</button>
+        <button onClick={() => downloadCSV(`procurement_${region}_${year}.csv`, [
+          { key: 'supplier.name', label: 'Supplier' },
+          { key: 'supplier.siren', label: 'SIREN' },
+          { key: 'cpv', label: 'CPV' },
+          { key: 'procedureType', label: 'Procedure' },
+          { key: 'amountEur', label: 'Amount (EUR)' },
+        ], rows as any)}>Export CSV</button>
       </div>
       {loading && <p>Loading…</p>}
       {error && <p className="error">{error}</p>}
@@ -92,4 +99,3 @@ export default function ProcurementPage() {
     </div>
   )
 }
-

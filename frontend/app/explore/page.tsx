@@ -6,6 +6,7 @@ import { Select } from '@/components/Select'
 import { YearPicker } from '@/components/YearPicker'
 import { DataTable } from '@/components/Table'
 import { AllocationChart } from '@/components/AllocationChart'
+import { downloadCSV } from '@/lib/csv'
 import { useI18n } from '@/lib/i18n'
 
 type Lens = 'ADMIN' | 'COFOG'
@@ -81,3 +82,6 @@ export default function ExplorePage() {
     </div>
   )
 }
+
+
+

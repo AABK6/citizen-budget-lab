@@ -9,21 +9,22 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "cross-fetch": "4.0.0",
+    "echarts": "^5.5.0",
+    "echarts-for-react": "^3.0.2",
+    "leaflet": "^1.9.4",
     "next": "14.2.5",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "cross-fetch": "4.0.0",
-    "echarts": "^5.5.0",
-    "echarts-for-react": "^3.0.2"
+    "react-leaflet": "^4.2.1"
   },
   "devDependencies": {
+    "@axe-core/cli": "^4.7.3",
     "@types/node": "20.12.12",
     "@types/react": "18.2.66",
     "@types/react-dom": "18.2.22",
     "eslint": "8.57.0",
     "eslint-config-next": "14.2.5",
-    "typescript": "5.4.5",
-    "@axe-core/cli": "^4.7.3"
+    "typescript": "5.4.5"
   }
 }
-
