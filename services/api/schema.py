@@ -220,7 +220,36 @@ class Query:
     # V1 stubs (EU comparisons)
     @strawberry.field
     def euCofogCompare(self, year: int, countries: List[str], level: int = 1) -> List[EUCountryCofogType]:  # noqa: N802
-        # Try Eurostat live fetch with caching; on failure, fall back to FR sample mapping
+        # Try warmed cache first if present, then Eurostat live fetch; on failure, fall back to local FR mapping
+        import os
+        import json
+        from .data_loader import DATA_DIR  # type: ignore
+
+        # 1) Warmed cache path
+        cache_path = os.path.join(DATA_DIR, "cache", f"eu_cofog_shares_{year}.json")
+        if os.path.exists(cache_path):
+            try:
+                with open(cache_path, "r", encoding="utf-8") as f:
+                    js = json.load(f)
+                out: List[EUCountryCofogType] = []
+                for c in countries:
+                    arr = js.get(c.upper()) or js.get(c) or []
+                    for ent in arr:
+                        out.append(
+                            EUCountryCofogType(
+                                country=c,
+                                code=str(ent.get("code")),
+                                label=str(ent.get("label")),
+                                amountEur=0.0,
+                                share=float(ent.get("share") or 0.0),
+                            )
+                        )
+                if out:
+                    return out
+            except Exception:
+                pass
+
+        # 2) Eurostat live fetch with HTTP caching layer
         try:
             from .clients import eurostat as eu
 
@@ -243,7 +272,7 @@ class Query:
         except Exception:
             pass
 
-        # Fallback: reuse France COFOG shares from local sample for all requested countries
+        # 3) Fallback: reuse France COFOG shares from local sample for all requested countries
         items = allocation_by_cofog(year, Basis("CP"))
         out: List[EUCountryCofogType] = []
         for c in countries:

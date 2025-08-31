@@ -125,6 +125,11 @@ Epic: EU Comparisons [V1] [API]
   - AC: Compare France vs peers; GraphQL queries; UI.
 - Issue: Front-end â€” Compare EU page [V1] [UI]
   - AC: Country selector (min peer set), COFOG shares chart and deficit/debt ratios over time; export; sourcing notes.
+  - Status: Implemented COFOG shares 100% stacked bar chart with legend; country/year inputs wired to GraphQL `euCofogCompare`; falls back to local shares if Eurostat unavailable. Export and deficit/debt charts pending.
+
+Tech Notes (this sprint)
+
+- Compare EU: Fixed ECharts runtime error by switching tooltip to axis mode; added backend support for reading warmed Eurostat cache at `data/cache/eu_cofog_shares_{year}.json` before live fetch, then local fallback if needed.
 
 Epic: Macro Priors & Uncertainty [V2] [API]
 
@@ -178,6 +183,4 @@ Next Sprint (2 weeks) — Top Priorities
 Notes
 - Keep `docs/GRAPHQL_CONTRACT.md` as contract; implement incrementally.
 - Warehouse/dbt tracks to follow in subsequent sprints after MVP feature parity.
-
-
 
