@@ -11,7 +11,7 @@ type MissionAllocation { code: String!, label: String!, amountEur: Float!, share
 type Allocation { mission: [MissionAllocation!]!, cofog: [MissionAllocation!] }
 
 type Supplier { siren: String!, name: String! }
-type ProcurementItem { supplier: Supplier!, amountEur: Float!, cpv: String, procedureType: String }
+type ProcurementItem { supplier: Supplier!, amountEur: Float!, cpv: String, procedureType: String, locationCode: String, sourceUrl: String }
 
 type Accounting { deficitPath: [Float!]!, debtPath: [Float!]! }
 type Compliance { eu3pct: [String!]!, eu60pct: [String!]!, netExpenditure: [String!]!, localBalance: [String!]! }
@@ -30,7 +30,7 @@ type FiscalPath { years: [Int!]!, deficitRatio: [Float!]!, debtRatio: [Float!]! 
 
 type Query {
   allocation(year: Int!, basis: BasisEnum = CP, lens: LensEnum = ADMIN): Allocation!
-  procurement(year: Int!, region: String!): [ProcurementItem!]!
+  procurement(year: Int!, region: String!, cpvPrefix: String, procedureType: String, minAmountEur: Float, maxAmountEur: Float): [ProcurementItem!]!
   sources: [Source!]!
   sirene(siren: String!): JSON!
   inseeSeries(dataset: String!, series: [String!]!, sinceYear: Int): JSON!
@@ -45,4 +45,3 @@ type Mutation {
   saveScenario(id: ID!, title: String, description: String): Boolean!
   deleteScenario(id: ID!): Boolean!
 }
-

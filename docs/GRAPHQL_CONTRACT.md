@@ -38,6 +38,8 @@ type ProcurementItem {
   amountEur: Float!
   cpv: String
   procedureType: String
+  locationCode: String
+  sourceUrl: String
 }
 
 type Accounting {
@@ -110,7 +112,14 @@ type FiscalPath {
 
 type Query {
   allocation(year: Int!, basis: BasisEnum = CP, lens: LensEnum = ADMIN): Allocation!
-  procurement(year: Int!, region: String!): [ProcurementItem!]!
+  procurement(
+    year: Int!
+    region: String!
+    cpvPrefix: String
+    procedureType: String
+    minAmountEur: Float
+    maxAmountEur: Float
+  ): [ProcurementItem!]!
   sources: [Source!]!
 
   # Official API convenience
@@ -140,4 +149,3 @@ Notes
 Client Codegen
 
 - See `graphql/codegen.yml` for TS React client generation.
-

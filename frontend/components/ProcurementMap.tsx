@@ -16,6 +16,7 @@ type Row = {
   cpv?: string | null
   procedureType?: string | null
   locationCode?: string | null
+  sourceUrl?: string | null
 }
 
 type GeoInfo = { lat: number; lon: number; nom: string }
@@ -57,19 +58,20 @@ export function ProcurementMap({ rows, region }: { rows: Row[]; region?: string 
       const code = (r as any).locationCode as string | undefined
       const g = code ? geo[code] : undefined
       if (!g) return null
-      return (
-        <Marker key={idx} position={[g.lat, g.lon]}>
-          <Popup>
-            <div>
-              <div><strong>{r.supplier?.name}</strong> ({r.supplier?.siren})</div>
-              <div>€ {r.amountEur.toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
-              {code && <div>{g.nom} ({code})</div>}
-              {r.cpv && <div>CPV: {r.cpv}</div>}
-              {r.procedureType && <div>Procedure: {r.procedureType}</div>}
-            </div>
-          </Popup>
-        </Marker>
-      )
+          return (
+            <Marker key={idx} position={[g.lat, g.lon]}>
+              <Popup>
+                <div>
+                  <div><strong>{r.supplier?.name}</strong> ({r.supplier?.siren})</div>
+                  <div>€ {r.amountEur.toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
+                  {code && <div>{g.nom} ({code})</div>}
+                  {r.cpv && <div>CPV: {r.cpv}</div>}
+                  {r.procedureType && <div>Procedure: {r.procedureType}</div>}
+                  {(r as any).sourceUrl && <div><a href={(r as any).sourceUrl} target="_blank" rel="noreferrer">Source</a></div>}
+                </div>
+              </Popup>
+            </Marker>
+          )
     })
   }, [rows, geo])
 

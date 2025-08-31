@@ -4,6 +4,7 @@
 .pyenv
 secrets.local.env
 __pycache__/
+**/services/api/__pycache__
 *.py[cod]
 *.egg-info/
 dist/

@@ -15,6 +15,7 @@ type Row = {
   cpv?: string | null
   procedureType?: string | null
   locationCode?: string | null
+  sourceUrl?: string | null
 }
 
 const DEPARTMENTS = [
@@ -55,6 +56,7 @@ export default function ProcurementPage() {
             cpv
             procedureType
             locationCode
+            sourceUrl
           }
         }
       `
@@ -110,4 +112,3 @@ export default function ProcurementPage() {
     </div>
   )
 }
-
