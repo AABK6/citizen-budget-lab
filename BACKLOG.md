@@ -1,169 +1,122 @@
-﻿Citizen Budget Lab â€” Backlog (MVP â†’ V1 â†’ V2)
+Citizen Budget Lab — Backlog (MVP → MVP+ → V1 → V2)
 
 Purpose
 
-- Single source of truth for scope, broken into epics and issues that align with readme.md. Use labels [MVP], [V1], [V2], [Tech], [Data], [API], [UI], [Ops], [Docs], [QA].
+- Single source of truth for scope, grouped by milestones. Each epic links to concrete acceptance criteria (AC) and maps to the product brief in readme.md. Use labels [MVP], [MVP+], [V1], [V2], [Tech], [Data], [API], [UI], [Ops], [Docs], [QA].
 
-Delivery Milestones
+Roadmap Overview
 
-- MVP (8â€“12 weeks): Explorer, procurement, scenarios (mechanical), EU lights, macro-lite.
-- V1 (12â€“20 weeks): Distributional (OpenFisca), EU compare, classroom mode.
-- V2 (20â€“32 weeks): Macro priors + uncertainty, local finance module + constraints.
+- MVP (8–12 weeks): Explorer, procurement, mechanical scenarios, EU lights, macro‑lite.
+- MVP+ (4–8 weeks after MVP): LEGO Budget Builder (public‑facing expenditure/revenue pieces), beneficiary lens, permalinks/exports.
+- V1 (12–20 weeks): Distributional (OpenFisca), EU compare, classroom mode.
+- V2 (20–32 weeks): Macro priors + uncertainty, local finance module + constraints.
 
-Epic: Data Ingestion & Provenance [MVP] [Data]
+Milestone: MVP
 
-- Issue: Central budget ingestion via ODS (PLF/LFI/PLR)
-  - AC: Incremental pulls, dedup, per-year vintage; mission/programme/action fields with AE/CP and execution where available.
-- Issue: COFOG mapping (programme/action, year-aware)
-  - AC: Weighted mappings sum to 1.0 per source code; schema + tests; fallback for unknowns.
-- Issue: Procurement (DECP) pipeline
-  - AC: Ingest consolidated datasets; dedup by id+publication; lotâ†’contract aggregation; amount quality flags.
-- Issue: SIRENE join
-  - AC: Supplier normalization by SIREN/SIRET; NAF/size fields; cache and rate limiting.
-- Issue: Macro series (INSEE BDM)
-  - AC: GDP, deflators, employment; provenance recorded.
-- Issue: Source registry
-  - AC: Table `Source(id, dataset, url, license, cadence, vintage, checksum)` populated per ingestion.
+Product outcomes
+- Explore €1 with ADMIN/COFOG lenses and sources; Procurement (table+map); run simple scenarios; show EU rule lights; macro‑lite deltas.
 
-Epic: Semantic Layer (dbt + DuckDB/Postgres) [MVP] [Data]
+Epics
+- Data Ingestion & Provenance [Data]
+  - Central budget via ODS (PLF/LFI/PLR): incremental pulls, dedupe, per‑year vintage; mission/program/action; AE/CP/execution when available.
+  - COFOG mapping (programme/action, year‑aware): weights sum to 1.0; schema+tests; fallback for unknowns.
+  - Procurement (DECP) pipeline: ingest consolidated; dedup id+publication; lot→contract; amount quality flags.
+  - SIRENE join: normalize SIREN/SIRET; NAF/size; cache + rate limiting.
+  - Macro series (INSEE BDM): GDP/deflators/employment; provenance.
+  - Source registry: `Source(id, dataset, url, license, cadence, vintage, checksum)`.
+- Semantic Layer (dbt + DuckDB/Postgres) [Data]
+  - Admin↔COFOG aggregates; procurement semantic views; APU subsector tagging.
+- GraphQL API (Explorer & Procurement) [API]
+  - `allocation(year, basis, lens)` from warehouse; P95 < 1.5s.
+  - `procurement(year, region)` with filters; export fields.
+  - `sources()` lists datasets w/ vintages/links.
+- Scenario DSL & Engine (Mechanical) [API]
+  - DSL schema finalize; resolver & guardrails (target→ids, year aware); offsets; AE/CP arithmetic.
+- Compliance Checks [API]
+  - EU 3%/60% flags; Net expenditure rule (simplified, env reference rate).
+- Macro Kernel (Lite) [API]
+  - IRF store + convolution (ΔGDP/Δemployment/Δdeficit); apply stabilizers.
+- Front‑end — Full Scope (Next.js) [UI]
+  - Shell & nav; Explore ADMIN/COFOG; outcome panel; Procurement map/table; What‑if builder + results cards; Sources page; a11y+i18n; performance; tests.
+- Quality, Ops, Security [Ops][QA]
+  - Tests & QA; caching & rate limiting; observability; Docker & CI.
 
-- Issue: Adminâ†”COFOG aggregates
-  - AC: Models for mission/program/action and COFOG rollups; tested totals.
-- Issue: Procurement semantic views
-  - AC: Contract-level, supplier rollups by geo/sector/size; competition flag derivations.
-- Issue: APU subsector tagging
-  - AC: Central/local/social tagging for reporting.
+Milestone: MVP+
 
-Epic: GraphQL API (Explorer & Procurement) [MVP] [API]
+Product outcomes
+- “Build your budget” with intuitive pieces (expenditure/revenue), beneficiary lens, live balance/deficit/debt/EU lights, distance‑to‑current, shareable scenarios.
 
-- Issue: Swap CSV readers to semantic views
-  - AC: `allocation(year, basis, lens)` reads warehouse; P95 <1.5s.
-- Issue: Procurement queries
-  - AC: `procurement(year, region)` returns top suppliers with filters; export fields.
-- Issue: Sources endpoint
-  - AC: `sources()` lists datasets with vintages/links.
+Epics
+- LEGO Budget Builder — Data & Config [Data]
+  - Define pieces (config): `data/lego_pieces.json` v0 (≥30 spend, ≥15 revenue) with public‑friendly labels, examples, precise COFOG/ESA mapping, implied beneficiaries, bounds/locks, revenue elasticities, sources.
+  - LEGO baseline warmer (S13): `python -m services.api.cache_warm lego --year 2026` writes `data/cache/lego_baseline_YYYY.json` with amounts/shares, totals, GDP, metadata. Consistency: sum of pieces = APU S13 totals (tolerance < 0.1%).
+- LEGO Budget Builder — GraphQL API [API]
+  - SDL: `Scope`, `LegoPiece`, `LegoBaseline`, `Distance`; queries `legoPieces`, `legoBaseline`, `legoDistance`.
+  - Resolvers & loaders: read `lego_pieces.json` and warmed baseline; graceful fallbacks.
+  - Allocation lens: `BENEFICIARY` returns households/enterprises/collective from na_item rules; tests.
+  - DSL extension: targets `piece.<id>`; `delta_pct|amount_eur`; `recurring`; readable validation.
+- LEGO Budget Builder — Calculation Engine [API]
+  - Apply deltas on pieces → (COFOG×na_item | ESA revenue) vectors; update mechanical deficit/debt; enforce locks/bounds.
+  - Static v0 elasticities for revenue (VAT/PIT/CIT/excises/CSG/contributions) with guardrails + docs.
+  - Distance‑to‑budget metric (L1 share delta + cosine similarity) exposed via `legoDistance`.
+- LEGO Budget Builder — Front‑end [UI]
+  - “Build” page: two columns (Expenditures/Revenues), cards (what it funds / who pays, current share, source), search & beneficiary filters, sliders ±% and EUR input; reset.
+  - Scoreboard & comparator: balance, debt, EU lights, distance; stacked bars “Your budget vs current”; scale tooltips.
+  - Modes & sharing: “From scratch” and “From current”; permalinks (DSL hash) and image export with sources.
+  - Accessibility & i18n: full FR/EN, keyboard, contrast; “show the table”.
+- LEGO Budget Builder — Documentation [Docs]
+  - `docs/LEGO_METHOD.md`: sources, mapping, beneficiary rules, elasticities (v0), limitations, versioning; audit tables.
 
-Epic: Scenario DSL & Engine (Mechanical) [MVP] [API]
+Milestone: V1
 
-- Issue: DSL schema finalize
-  - AC: Offsets (`share_across`, `cap`), guardrails, better messages.
-- Issue: Resolver & guardrails
-  - AC: Targetâ†’ids with year-awareness; deterministic scenario ids.
-- Issue: Offsets application
-  - AC: Distribute reductions across pools (with exclusions), caps priority.
-- Issue: Accounting arithmetic
-  - AC: AE/CP rules, rolling recurring changes; baseline merge.
+Product outcomes
+- Add distributional analysis (OpenFisca), full EU comparisons, and classroom mode.
 
-Epic: Compliance Checks [MVP] [API]
+Epics
+- Distributional (OpenFisca) [API]
+  - Host OpenFisca + wrapper; translate DSL to parameters; GraphQL outputs (deciles/households/regions); UI charts.
+- EU Comparisons [API][UI]
+  - Eurostat COFOG & deficit/debt comparisons; Front‑end Compare EU page (selector, charts, export, sourcing notes).
+- Classroom Mode [UI]
+  - Guided scenarios, teacher/student modes, printable handouts.
 
-- Issue: EU 3% and 60%
-  - AC: Correct sign conventions; path over horizon; explainable flags.
-- Issue: Net expenditure rule (simplified)
-  - AC: Compute growth of net primary expenditure adjusted; country reference rate input.
+Milestone: V2
 
-Epic: Macro Kernel (Lite) [MVP] [API]
+Product outcomes
+- Add macro prior families (uncertainty) and a local finance module with balance constraints.
 
-- Issue: IRF store and convolution
-  - AC: Single prior set; Î”GDP/Î”employment/Î”deficit; documented parameters.
-- Issue: Integrate macro deltas with accounting
-  - AC: Automatic stabilizers applied to deficit path.
+Epics
+- Macro Priors & Uncertainty [API]
+  - Multiple prior families; IRF low/base/high; fan charts; toggle.
+- Local Finance Module [Data][API][UI]
+  - Ingest DGFiP/OFGL balances; Équilibre réel validation; local entity views + rule feedback.
 
-Epic: Front-end â€” Full Scope (Next.js) [MVP] [UI]
+Milestone‑Wide Conventions
 
-- Issue: Core shell & navigation
-  - AC: Top tabs (Explore â‚¬1 â€¢ Who gets paid? â€¢ Whatâ€‘if? â€¢ Compare EU â€¢ Sources), EN/FR toggle, keyboard-friendly nav.
-- Issue: Explore â‚¬1 â€” Administrative lens
-  - AC: Sunburst/treemap by mission/program/action; basis toggle (CP/AE/execution); time slider with vintage badges; â€œshow the tableâ€; export PNG/SVG/PDF.
-- Issue: Explore â‚¬1 â€” COFOG lens (parallel view)
-  - AC: Switch to COFOG view with consistent colors; cross-highlight between lenses; tooltips with code/label/source link.
-- Issue: Outcome indicators panel (PAP/RAP)
-  - AC: Side panel listing selected programme indicators and latest execution/targets with sourcing.
-- Issue: Procurement â€” Map view
-  - AC: MapLibre/Leaflet map with clustering; filters (sector/NAF or CPV, firm size, geography); top counterparties by selected area; competition flags; export.
-- Issue: Procurement â€” Table view
-  - AC: Sortable table; CSV export; source links per row; pagination.
-- Issue: Whatâ€‘if â€” Scenario builder
-  - AC: Target pickers (searchable mission/program/action & tax params), sliders/inputs for amounts and recurrence, offsets UI (share_across/cap), validation messages, DSL drawer copy.
-- Issue: Whatâ€‘if â€” Results cards
-  - AC: Accounting (deficit/debt), EU lights, Macro (charts), Distribution placeholder; assumptions & sources drawer; permalink share.
-- Issue: Sources page
-  - AC: Dataset catalog with provenance (license, vintage, cadence), search/filter, direct links.
-- Issue: Accessibility & trust
-  - AC: WCAG 2.1 AA checks, color-blind palettes, all charts have a "show the table" option, plain-language tooltips.
-- Issue: Internationalization
-  - AC: Full FR/EN translations; RTL-ready styles baseline; locale routing.
-- Issue: State & performance
-  - AC: Scenario state machine (XState/Zustand), URL sync (permalinks), Suspense-friendly data layer, code-splitting; P95 < 1.5s for explorer queries.
-- Issue: Testing & quality
-  - AC: Unit tests (components), e2e (Playwright/Cypress) for core flows; a11y tests (axe) in CI.
-
-Epic: Quality, Ops, Security [MVP] [Ops] [QA]
-
-- Issue: Tests & QA
-  - AC: Unit tests (mappings, calculators), GraphQL snapshots; Great Expectations on ingest.
-- Issue: Caching & rate limiting
-  - AC: HTTP cache for official APIs; semantic query cache; simple rate limits.
-- Issue: Observability
-  - AC: Structured logs + tracing spans; health checks.
-- Issue: Docker & CI
-  - AC: Dockerfiles; CI for lint/test/build; secrets via env.
-
-Epic: Distributional (OpenFisca) [V1] [API]
-
-- Issue: Host OpenFisca & wrapper service
-  - AC: Batch calls; cache; timeouts.
-- Issue: Policy deltas translation
-  - AC: Map DSL actions â†’ OpenFisca parameters; tests.
-- Issue: GraphQL outputs
-  - AC: Deciles/households/regions; assumptions metadata.
-- Issue: UI integration
-  - AC: Decile charts; assumptions drawer; export.
-
-Epic: EU Comparisons [V1] [API]
-
-- Issue: Eurostat COFOG & deficit/debt
-  - AC: Compare France vs peers; GraphQL queries; UI.
-- Issue: Front-end â€” Compare EU page [V1] [UI]
-  - AC: Country selector (min peer set), COFOG shares chart and deficit/debt ratios over time; export; sourcing notes.
-  - Status: Implemented COFOG shares 100% stacked bar chart with legend; country/year inputs wired to GraphQL `euCofogCompare`; falls back to local shares if Eurostat unavailable. Export and deficit/debt charts pending.
-
-Tech Notes (this sprint)
-
-- Compare EU: Fixed ECharts runtime error by switching tooltip to axis mode; added backend support for reading warmed Eurostat cache at `data/cache/eu_cofog_shares_{year}.json` before live fetch, then local fallback if needed.
-
-Epic: Macro Priors & Uncertainty [V2] [API]
-
-- Issue: Multiple prior families & fan charts
-  - AC: IRF low/base/high; fan charts; toggle.
-
-Epic: Local Finance Module [V2] [Data] [API]
-
-- Issue: Ingest DGFiP/OFGL balances
-  - AC: Harmonize frames; provenance.
-- Issue: Local constraints
-  - AC: Ã‰quilibre rÃ©el validation; scenario enforcement.
-- Issue: UI
-  - AC: Local entity views; rule feedback in scenarios.
-
-Epic: Classroom Mode [V1] [UI]
-
-- Issue: Guided scenarios & handouts
-  - AC: Teacher mode with preset exercises, student view with step-by-step prompts, printable PDFs.
-
+- Definitions
+  - AE/CP: Authorisations d’engagement / Crédits de paiement (commitment vs payment authorizations).
+  - COFOG: UN functional classification of government outlays (01..10).
+  - S13: General Government sector (APU) in ESA (central, local, social security consolidated).
+  - ESA codes (D./P.): Revenue/expenditure categories (e.g., D.62 social benefits, P.51g gross fixed capital formation).
+- How to validate
+  - Every AC implies a test or a demo endpoint/page; add tests under `services/api/tests/` and UI screenshots in PRs.
+  - Performance targets refer to P95 measured locally against warmed caches.
+- Out of scope
+  - Legal determinations on compliance; personal data; non‑public datasets.
 
 Tracking & Ownership
 
-- Assign owners per epic: Product, Tech Lead, Data Eng, Backend, Front-end, Economist.
-- Use labels above; prefix titles with milestone ([MVP], [V1], [V2]).
+- Assign owners per epic: Product, Tech Lead, Data Eng, Backend, Front‑end, Economist.
+- Use labels above; prefix titles with milestone ([MVP], [MVP+], [V1], [V2]).
 
-Status Snapshot (MVP) — 2025-08-29
+Status Snapshot (MVP) — 2025‑08‑29
 
 - [x] GraphQL API skeleton with allocation, procurement, sources; official API wrappers (INSEE/Eurostat/ODS/data.gouv/geo) with HTTP caching.
 - [x] Scenario DSL validation + mechanical engine; macro kernel (lite) integrated; compliance lights (EU 3%/60%) minimal.
 - [x] Deterministic scenario IDs in runScenario (hash of canonical DSL) with tests.
-- [x] Dockerfiles + CI baseline; docker-compose with Windows override to run API+frontend together.
+- [x] Dockerfiles + CI baseline; docker‑compose with Windows override to run API+frontend together.
 - [~] Frontend: Explore charts added (sunburst/treemap with tooltips + table); i18n+a11y in place; Procurement table/map initial; tests pending.
-- [x] Procurement table: CSV export, sorting, basic pagination; generic DECP link; per-row source links (sourceUrl) wired to UI.
+- [x] Procurement table: CSV export, sorting, basic pagination; generic DECP link; per‑row source links (sourceUrl) wired to UI.
 - [~] Data cache warmers (PLF mission aggregates, Eurostat COFOG shares). No warehouse/dbt yet.
 - [ ] Provenance registry table + ingestion pipelines (ODS/DECP/SIRENE joins), semantic layer (dbt) and Postgres/DuckDB backing.
 - [ ] Net expenditure and local balance calculators; offsets/guardrails in scenarios; ops/observability.
@@ -172,15 +125,31 @@ Status Snapshot (MVP) — 2025-08-29
 Next Sprint (2 weeks) — Top Priorities
 
 1) Explore charts (sunburst/treemap) [MVP] [UI]
-   - DONE: Mission/COFOG allocations rendered with tooltips + “show the table”; client-only via ECharts.
+   - DONE: Mission/COFOG allocations rendered with tooltips + “show the table”; client‑only via ECharts.
 
 2) Net expenditure rule (simplified) [MVP] [API]
-   - DONE: Implemented growth-of-net-primary-expenditure calculator (env `NET_EXP_REFERENCE_RATE`), emits rule lights per year.
+   - DONE: Implemented growth‑of‑net‑primary‑expenditure calculator (env `NET_EXP_REFERENCE_RATE`), emits rule lights per year.
 
 3) i18n baseline + a11y pass [MVP] [UI]
    - DONE: EN/FR message catalog for core labels; visible focus states; axe check runs in CI (home route).
 
 Notes
-- Keep `docs/GRAPHQL_CONTRACT.md` as contract; implement incrementally.
+- Keep `docs/GRAPHQL_CONTRACT.md` as the contract; implement incrementally.
 - Warehouse/dbt tracks to follow in subsequent sprints after MVP feature parity.
 
+Appendix — Newcomer Guide
+
+- Quick start
+  - Backend: `pip install -r services/api/requirements.txt` then `uvicorn services.api.app:app --reload` → GraphQL at http://127.0.0.1:8000/graphql
+  - Front‑end: `cd frontend && npm install && npm run dev` → http://127.0.0.1:3000
+  - Docker: `docker compose up --build` to run both.
+- Key files
+  - Product brief: `readme.md` (concept, scope, data contracts)
+  - Backlog: `BACKLOG.md` (this file)
+  - Purpose: `purpose.md` (why/what/how)
+  - GraphQL contract: `docs/GRAPHQL_CONTRACT.md` + `graphql/schema.sdl.graphql`
+  - Cache warmers: `services/api/cache_warm.py`
+  - API schema/resolvers: `services/api/schema.py`, `services/api/data_loader.py`
+  - Front‑end plan: `docs/FRONTEND_PLAN.md`
+  - Scenario schema: `schemas/scenario.schema.json`
+  - Sample data: `data/` (including `lego_pieces.json` and warmed caches under `data/cache/`)

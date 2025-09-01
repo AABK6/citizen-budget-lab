@@ -1,0 +1,140 @@
+{
+  "version": "0.1",
+  "year_default": 2026,
+  "scope_default": "S13",
+  "beneficiary_rules_note": "Beneficiary weights derive from ESA 'na_item': D.62->households, D.1->households (public wages), D.3/P.2->enterprises (suppliers, subsidies), P.51g->collective (public capital).",
+  "sources": [
+    {
+      "id": "eurostat_gov_10a_exp",
+      "label": "Eurostat COFOG x ESA (gov_10a_exp)",
+      "url": "https://ec.europa.eu/eurostat/api/discoveries/tgm/table?code=gov_10a_exp"
+    },
+    {
+      "id": "insee_s13",
+      "label": "INSEE Comptes APU (S13)",
+      "url": "https://api.insee.fr/"
+    },
+    {
+      "id": "lfi_plf",
+      "label": "LFI/PLF (État central) — drill-down option",
+      "url": "https://data.economie.gouv.fr/"
+    }
+  ],
+  "pieces": [
+    {
+      "id": "ed_schools_staff_ops",
+      "type": "expenditure",
+      "label": "Enseignants et écoles",
+      "description": "Salaires des enseignants, cantines, manuels, entretien des écoles primaires/élémentaires.",
+      "examples": ["Professeurs des écoles", "Cantines", "Manuels", "Entretien des bâtiments"],
+      "mapping": {"cofog": [{"code": "09.1", "weight": 1.0}], "na_item": [{"code": "D.1", "weight": 0.7}, {"code": "P.2", "weight": 0.3}]},
+      "beneficiaries": {"households": 0.7, "enterprises": 0.3, "collective": 0.0},
+      "sources": ["eurostat_gov_10a_exp", "insee_s13"]
+    },
+    {
+      "id": "ed_secondary",
+      "type": "expenditure",
+      "label": "Collèges & lycées",
+      "description": "Fonctionnement des collèges et lycées, vie scolaire.",
+      "examples": ["CPE et vie scolaire", "Entretien", "Fournitures"],
+      "mapping": {"cofog": [{"code": "09.2", "weight": 1.0}], "na_item": [{"code": "D.1", "weight": 0.65}, {"code": "P.2", "weight": 0.35}]},
+      "beneficiaries": {"households": 0.65, "enterprises": 0.35, "collective": 0.0},
+      "sources": ["eurostat_gov_10a_exp", "insee_s13"]
+    },
+    {
+      "id": "ed_universities",
+      "type": "expenditure",
+      "label": "Universités",
+      "description": "Facs, bourses, vie étudiante.",
+      "examples": ["Bourses", "Logement étudiant", "Services universitaires"],
+      "mapping": {"cofog": [{"code": "09.5", "weight": 1.0}], "na_item": [{"code": "D.1", "weight": 0.6}, {"code": "P.2", "weight": 0.3}, {"code": "P.51g", "weight": 0.1}]},
+      "beneficiaries": {"households": 0.6, "enterprises": 0.3, "collective": 0.1},
+      "sources": ["eurostat_gov_10a_exp", "insee_s13"]
+    },
+    {
+      "id": "ed_research_public",
+      "type": "expenditure",
+      "label": "Recherche publique",
+      "description": "Laboratoires et projets rattachés au supérieur.",
+      "examples": ["CNRS/INSERM (part publique)", "Equipements de laboratoires"],
+      "mapping": {"cofog": [{"code": "09.7", "weight": 1.0}], "na_item": [{"code": "D.1", "weight": 0.5}, {"code": "P.2", "weight": 0.3}, {"code": "P.51g", "weight": 0.2}]},
+      "beneficiaries": {"households": 0.5, "enterprises": 0.3, "collective": 0.2},
+      "sources": ["eurostat_gov_10a_exp"]
+    },
+
+    {"id": "health_hospitals", "type": "expenditure", "label": "Hôpitaux & urgences", "description": "Personnel, équipements, lits, SAMU.", "examples": ["Urgences", "Blocs opératoires", "SAMU"], "mapping": {"cofog": [{"code": "07.3", "weight": 1.0}], "na_item": [{"code": "D.1", "weight": 0.5}, {"code": "P.2", "weight": 0.25}, {"code": "P.51g", "weight": 0.25}]}, "beneficiaries": {"households": 0.5, "enterprises": 0.25, "collective": 0.25}, "sources": ["eurostat_gov_10a_exp"]},
+    {"id": "health_citycare", "type": "expenditure", "label": "Médecins & médicaments", "description": "Remboursements de soins de ville et pharmacie.", "examples": ["Consultations", "Pharmacie", "Kinésithérapie"], "mapping": {"cofog": [{"code": "07.1", "weight": 0.5}, {"code": "07.2", "weight": 0.5}], "na_item": [{"code": "D.62", "weight": 0.85}, {"code": "D.63", "weight": 0.15}]}, "beneficiaries": {"households": 1.0, "enterprises": 0.0, "collective": 0.0}, "sources": ["eurostat_gov_10a_exp"]},
+    {"id": "health_public_health", "type": "expenditure", "label": "Prévention & santé publique", "description": "Vaccins, dépistages, agences sanitaires.", "examples": ["Vaccination", "Santé publique France"], "mapping": {"cofog": [{"code": "07.4", "weight": 0.5}, {"code": "07.5", "weight": 0.25}, {"code": "07.6", "weight": 0.25}], "na_item": [{"code": "D.1", "weight": 0.6}, {"code": "P.2", "weight": 0.4}]}, "beneficiaries": {"households": 0.6, "enterprises": 0.4, "collective": 0.0}, "sources": ["eurostat_gov_10a_exp"]},
+
+    {"id": "soc_pensions", "type": "expenditure", "label": "Retraites", "description": "Pensions versées aux retraités.", "examples": ["Pensions de base et complémentaires"], "mapping": {"cofog": [{"code": "10.2", "weight": 1.0}], "na_item": [{"code": "D.62", "weight": 1.0}]}, "beneficiaries": {"households": 1.0, "enterprises": 0.0, "collective": 0.0}, "sources": ["eurostat_gov_10a_exp", "insee_s13"]},
+    {"id": "soc_family", "type": "expenditure", "label": "Famille & enfance", "description": "Allocations familiales, garde, naissance.", "examples": ["Allocations familiales", "Naissance"], "mapping": {"cofog": [{"code": "10.1", "weight": 1.0}], "na_item": [{"code": "D.62", "weight": 1.0}]}, "beneficiaries": {"households": 1.0, "enterprises": 0.0, "collective": 0.0}, "sources": ["eurostat_gov_10a_exp"]},
+    {"id": "soc_unemployment", "type": "expenditure", "label": "Chômage & insertion", "description": "Indemnisation et accompagnement vers l’emploi.", "examples": ["Allocation chômage", "Accompagnement"], "mapping": {"cofog": [{"code": "10.5", "weight": 0.8}, {"code": "10.9", "weight": 0.2}], "na_item": [{"code": "D.62", "weight": 0.9}, {"code": "D.63", "weight": 0.1}]}, "beneficiaries": {"households": 1.0, "enterprises": 0.0, "collective": 0.0}, "sources": ["eurostat_gov_10a_exp"]},
+    {"id": "soc_disability_dependence", "type": "expenditure", "label": "Handicap & dépendance", "description": "APA, PCH, aides aux aidants.", "examples": ["APA", "PCH"], "mapping": {"cofog": [{"code": "10.4", "weight": 0.6}, {"code": "10.7", "weight": 0.4}], "na_item": [{"code": "D.62", "weight": 1.0}]}, "beneficiaries": {"households": 1.0, "enterprises": 0.0, "collective": 0.0}},
+    {"id": "soc_housing", "type": "expenditure", "label": "Logement", "description": "APL et aides à l’accès/maintien.", "examples": ["APL"], "mapping": {"cofog": [{"code": "06.1", "weight": 0.25}, {"code": "06.2", "weight": 0.25}, {"code": "06.3", "weight": 0.25}, {"code": "06.4", "weight": 0.25}], "na_item": [{"code": "D.62", "weight": 1.0}]}, "beneficiaries": {"households": 1.0, "enterprises": 0.0, "collective": 0.0}},
+
+    {"id": "sec_police_gendarmerie", "type": "expenditure", "label": "Police & gendarmerie", "description": "Présence, équipement, proximité.", "examples": ["Patrouilles", "Véhicules"], "mapping": {"cofog": [{"code": "03.1", "weight": 0.6}, {"code": "03.2", "weight": 0.4}], "na_item": [{"code": "D.1", "weight": 0.7}, {"code": "P.2", "weight": 0.3}]}, "beneficiaries": {"households": 0.7, "enterprises": 0.3, "collective": 0.0}},
+    {"id": "sec_justice_prisons", "type": "expenditure", "label": "Justice & prisons", "description": "Tribunaux, aide juridictionnelle, pénitentiaire.", "examples": ["Tribunaux", "Maisons d’arrêt"], "mapping": {"cofog": [{"code": "03.3", "weight": 1.0}], "na_item": [{"code": "D.1", "weight": 0.65}, {"code": "P.2", "weight": 0.35}]}, "beneficiaries": {"households": 0.65, "enterprises": 0.35, "collective": 0.0}},
+    {"id": "sec_civil_protection", "type": "expenditure", "label": "Secours & pompiers", "description": "Sécurité civile et prévention des risques.", "examples": ["Pompiers"], "mapping": {"cofog": [{"code": "03.4", "weight": 1.0}], "na_item": [{"code": "D.1", "weight": 0.5}, {"code": "P.2", "weight": 0.5}]}, "beneficiaries": {"households": 0.5, "enterprises": 0.5, "collective": 0.0}},
+
+    {"id": "defense_personnel", "type": "expenditure", "label": "Militaires & opérations", "description": "Solde, entraînement, missions.", "examples": ["Opérations extérieures", "Formation"], "mapping": {"cofog": [{"code": "02.1", "weight": 1.0}], "na_item": [{"code": "D.1", "weight": 1.0}]}, "beneficiaries": {"households": 1.0, "enterprises": 0.0, "collective": 0.0}},
+    {"id": "defense_equipment", "type": "expenditure", "label": "Matériel & innovation", "description": "Équipements, maintenance, R&D.", "examples": ["Matériels", "Maintenance", "R&D"], "mapping": {"cofog": [{"code": "02.2", "weight": 0.6}, {"code": "02.3", "weight": 0.4}], "na_item": [{"code": "P.2", "weight": 0.5}, {"code": "P.51g", "weight": 0.5}]}, "beneficiaries": {"households": 0.0, "enterprises": 0.5, "collective": 0.5}},
+
+    {"id": "transport_ops", "type": "expenditure", "label": "Transports du quotidien", "description": "Entretien routes, TER, RER/bus.", "examples": ["Entretien routier", "TER"], "mapping": {"cofog": [{"code": "04.5", "weight": 1.0}], "na_item": [{"code": "P.2", "weight": 1.0}]}, "beneficiaries": {"households": 0.0, "enterprises": 1.0, "collective": 0.0}},
+    {"id": "transport_invest", "type": "expenditure", "label": "Construire infrastructures", "description": "Routes, rails, métro, mobilités douces.", "examples": ["Lignes ferroviaires", "Pistes cyclables"], "mapping": {"cofog": [{"code": "04.5", "weight": 1.0}], "na_item": [{"code": "P.51g", "weight": 1.0}]}, "beneficiaries": {"households": 0.0, "enterprises": 0.0, "collective": 1.0}},
+
+    {"id": "env_renov_energy", "type": "expenditure", "label": "Rénovation & énergie propre", "description": "Bâtiments, renouvelables, efficacité.", "examples": ["Rénovation thermique", "Solaire"], "mapping": {"cofog": [{"code": "05.0", "weight": 1.0}], "na_item": [{"code": "P.51g", "weight": 0.5}, {"code": "D.3", "weight": 0.5}]}, "beneficiaries": {"households": 0.0, "enterprises": 0.5, "collective": 0.5}},
+    {"id": "env_waste_sanitation", "type": "expenditure", "label": "Déchets & assainissement", "description": "Collecte, tri, traitement, réseaux.", "examples": ["Centres de tri", "Réseaux"], "mapping": {"cofog": [{"code": "05.1", "weight": 0.5}, {"code": "05.2", "weight": 0.5}], "na_item": [{"code": "P.2", "weight": 0.7}, {"code": "P.51g", "weight": 0.3}]}, "beneficiaries": {"households": 0.0, "enterprises": 0.7, "collective": 0.3}},
+    {"id": "env_water_biodiversity", "type": "expenditure", "label": "Eau & biodiversité", "description": "Rivières, zones protégées.", "examples": ["Rivières", "Réserves naturelles"], "mapping": {"cofog": [{"code": "05.3", "weight": 0.5}, {"code": "05.4", "weight": 0.5}], "na_item": [{"code": "P.2", "weight": 0.6}, {"code": "P.51g", "weight": 0.4}]}, "beneficiaries": {"households": 0.0, "enterprises": 0.6, "collective": 0.4}},
+
+    {"id": "econ_business_support", "type": "expenditure", "label": "Soutien aux entreprises & à l’emploi", "description": "Aides ciblées, innovation, filières.", "examples": ["Crédits innovation", "Aides à l’embauche"], "mapping": {"cofog": [{"code": "04.1", "weight": 0.4}, {"code": "04.2", "weight": 0.3}, {"code": "04.3", "weight": 0.3}], "na_item": [{"code": "D.3", "weight": 1.0}]}, "beneficiaries": {"households": 0.0, "enterprises": 1.0, "collective": 0.0}},
+    {"id": "agri_food", "type": "expenditure", "label": "Agriculture & alimentation", "description": "Soutien aux agriculteurs, sécurité alimentaire.", "examples": ["Aides PAC (part nationale)", "Sécurité alimentaire"], "mapping": {"cofog": [{"code": "04.4", "weight": 1.0}], "na_item": [{"code": "D.3", "weight": 0.8}, {"code": "P.2", "weight": 0.2}]}, "beneficiaries": {"households": 0.0, "enterprises": 0.8, "collective": 0.2}},
+    {"id": "labor_market_services", "type": "expenditure", "label": "Services de l’emploi", "description": "Accompagnement, formation, agences.", "examples": ["Pôle emploi", "Formations"], "mapping": {"cofog": [{"code": "04.9", "weight": 1.0}], "na_item": [{"code": "D.1", "weight": 0.4}, {"code": "P.2", "weight": 0.6}]}, "beneficiaries": {"households": 0.4, "enterprises": 0.6, "collective": 0.0}},
+
+    {"id": "culture_heritage", "type": "expenditure", "label": "Culture & patrimoine", "description": "Musées, bibliothèques, monuments.", "examples": ["Musées", "Monuments"], "mapping": {"cofog": [{"code": "08.2", "weight": 1.0}], "na_item": [{"code": "D.1", "weight": 0.5}, {"code": "P.2", "weight": 0.3}, {"code": "P.51g", "weight": 0.2}]}, "beneficiaries": {"households": 0.5, "enterprises": 0.3, "collective": 0.2}},
+    {"id": "sport_youth", "type": "expenditure", "label": "Sport & jeunesse", "description": "Équipements, associations, encadrement.", "examples": ["Stades", "Associations"], "mapping": {"cofog": [{"code": "08.1", "weight": 1.0}], "na_item": [{"code": "D.1", "weight": 0.5}, {"code": "P.2", "weight": 0.5}]}, "beneficiaries": {"households": 0.5, "enterprises": 0.5, "collective": 0.0}},
+    {"id": "media_public", "type": "expenditure", "label": "Médias publics", "description": "Audiovisuel public, information, création.", "examples": ["Radio/TV publiques"], "mapping": {"cofog": [{"code": "08.3", "weight": 1.0}], "na_item": [{"code": "D.1", "weight": 0.6}, {"code": "P.2", "weight": 0.4}]}, "beneficiaries": {"households": 0.6, "enterprises": 0.4, "collective": 0.0}},
+
+    {"id": "admin_services", "type": "expenditure", "label": "Services publics au quotidien", "description": "Préfectures, impôts, numérique, bâtiments.", "examples": ["Démarches", "Systèmes d’information"], "mapping": {"cofog": [{"code": "01.1", "weight": 0.7}, {"code": "01.4", "weight": 0.3}], "na_item": [{"code": "D.1", "weight": 0.6}, {"code": "P.2", "weight": 0.4}]}, "beneficiaries": {"households": 0.6, "enterprises": 0.4, "collective": 0.0}},
+    {"id": "europe_diplomacy", "type": "expenditure", "label": "Europe & diplomatie", "description": "Action extérieure et contributions internationales.", "examples": ["Réseaux diplomatiques", "Contributions internationales"], "mapping": {"cofog": [{"code": "01.2", "weight": 0.6}, {"code": "01.3", "weight": 0.4}], "na_item": [{"code": "D.7", "weight": 0.6}, {"code": "P.2", "weight": 0.4}]}, "beneficiaries": {"households": 0.0, "enterprises": 0.4, "collective": 0.6}},
+
+    {"id": "grants_to_locals", "type": "expenditure", "label": "Transferts aux collectivités", "description": "Dotations État→collectivités (vue État).",
+      "examples": ["DGF"],
+      "mapping": {"cofog": [{"code": "01.6", "weight": 1.0}], "na_item": [{"code": "D.7", "weight": 1.0}]},
+      "beneficiaries": {"households": 0.0, "enterprises": 0.0, "collective": 1.0},
+      "visibility": {"central_only": true}
+    },
+
+    {"id": "debt_interest", "type": "expenditure", "label": "Intérêts de la dette", "description": "Service de la dette.", "examples": ["Intérêts sur titres"], "mapping": {"cofog": [{"code": "01.7", "weight": 1.0}], "na_item": [{"code": "D.41", "weight": 1.0}]}, "beneficiaries": {"households": 0.0, "enterprises": 0.0, "collective": 0.0}, "policy": {"locked_default": true}}
+    ,
+
+    {
+      "id": "rev_vat_standard",
+      "type": "revenue",
+      "label": "TVA — taux normal",
+      "description": "TVA sur la plupart des achats (taux normal).",
+      "examples": ["Biens et services taux normal"],
+      "mapping": {"esa": [{"code": "D.211", "weight": 1.0}]},
+      "payers": {"households": 0.8, "enterprises": 0.2},
+      "elasticity": {"method": "rate_delta_to_yield_pct", "value": 1.0}
+    },
+    {"id": "rev_vat_reduced", "type": "revenue", "label": "TVA — taux réduits", "description": "TVA à taux réduits.", "examples": ["Alimentation", "Livres", "Transport public"], "mapping": {"esa": [{"code": "D.211", "weight": 1.0}]}, "payers": {"households": 0.9, "enterprises": 0.1}, "elasticity": {"method": "rate_delta_to_yield_pct", "value": 1.0}},
+    {"id": "rev_excise_energy", "type": "revenue", "label": "Taxes carburants & énergie", "description": "TICPE et assimilées.", "examples": ["Carburants"], "mapping": {"esa": [{"code": "D.214A", "weight": 1.0}]}, "payers": {"households": 0.6, "enterprises": 0.4}, "elasticity": {"method": "rate_delta_to_yield_pct", "value": 0.9}},
+    {"id": "rev_excise_tob_alc", "type": "revenue", "label": "Taxes tabac & alcool", "description": "Accises santé publique.", "examples": ["Tabac", "Alcool"], "mapping": {"esa": [{"code": "D.214B", "weight": 0.6}, {"code": "D.214C", "weight": 0.4}]}, "payers": {"households": 1.0, "enterprises": 0.0}, "elasticity": {"method": "rate_delta_to_yield_pct", "value": 0.8}},
+    {"id": "rev_pit", "type": "revenue", "label": "Impôt sur le revenu", "description": "Barème et crédits d’impôt.", "examples": ["IRPP"], "mapping": {"esa": [{"code": "D.51_pit", "weight": 1.0}]}, "payers": {"households": 1.0, "enterprises": 0.0}, "elasticity": {"method": "rate_delta_to_yield_pct", "value": 0.9}},
+    {"id": "rev_cit", "type": "revenue", "label": "Impôt sur les sociétés", "description": "Imposition des bénéfices.", "examples": ["IS"], "mapping": {"esa": [{"code": "D.51_cit", "weight": 1.0}]}, "payers": {"households": 0.0, "enterprises": 1.0}, "elasticity": {"method": "rate_delta_to_yield_pct", "value": 0.8}},
+    {"id": "rev_csg_crds", "type": "revenue", "label": "CSG/CRDS", "description": "Contributions sur revenus d’activité/remplacement.", "examples": ["CSG", "CRDS"], "mapping": {"esa": [{"code": "D.611_csg", "weight": 1.0}]}, "payers": {"households": 1.0, "enterprises": 0.0}, "elasticity": {"method": "rate_delta_to_yield_pct", "value": 0.9}},
+    {"id": "rev_soc_employee", "type": "revenue", "label": "Cotisations sociales salariés", "description": "Part prélevée sur salaires.", "examples": ["Cotisations retraite", "Assurance maladie"], "mapping": {"esa": [{"code": "D.611", "weight": 1.0}]}, "payers": {"households": 1.0, "enterprises": 0.0}, "elasticity": {"method": "rate_delta_to_yield_pct", "value": 0.9}},
+    {"id": "rev_soc_employer", "type": "revenue", "label": "Cotisations sociales employeurs", "description": "Part versée par les entreprises.", "examples": ["Charges patronales"], "mapping": {"esa": [{"code": "D.612", "weight": 1.0}]}, "payers": {"households": 0.0, "enterprises": 1.0}, "elasticity": {"method": "rate_delta_to_yield_pct", "value": 0.85}},
+    {"id": "rev_soc_self", "type": "revenue", "label": "Cotisations indépendants", "description": "Contributions des travailleurs indépendants.", "examples": ["Cotisations artisans/commerçants"], "mapping": {"esa": [{"code": "D.613", "weight": 1.0}]}, "payers": {"households": 1.0, "enterprises": 0.0}, "elasticity": {"method": "rate_delta_to_yield_pct", "value": 0.85}},
+    {"id": "rev_prod_taxes", "type": "revenue", "label": "Autres impôts sur la production", "description": "CFE et assimilés.", "examples": ["CFE"], "mapping": {"esa": [{"code": "D.29", "weight": 1.0}]}, "payers": {"households": 0.0, "enterprises": 1.0}, "elasticity": {"method": "rate_delta_to_yield_pct", "value": 0.8}},
+    {"id": "rev_wage_tax", "type": "revenue", "label": "Taxe sur les salaires", "description": "Taxe assise sur salaires versés.", "examples": ["Taxe sur les salaires"], "mapping": {"esa": [{"code": "D.29_wage_tax", "weight": 1.0}]}, "payers": {"households": 0.0, "enterprises": 1.0}, "elasticity": {"method": "rate_delta_to_yield_pct", "value": 0.8}},
+    {"id": "rev_property_taxes", "type": "revenue", "label": "Impôts fonciers", "description": "Impôts récurrents sur la propriété.", "examples": ["Foncier"], "mapping": {"esa": [{"code": "D.59_prop", "weight": 1.0}]}, "payers": {"households": 0.7, "enterprises": 0.3}, "elasticity": {"method": "rate_delta_to_yield_pct", "value": 0.7}},
+    {"id": "rev_transfer_taxes", "type": "revenue", "label": "Droits de mutation", "description": "Taxes sur transactions immobilières.", "examples": ["DMTO"], "mapping": {"esa": [{"code": "D.59_trans", "weight": 1.0}]}, "payers": {"households": 0.8, "enterprises": 0.2}, "elasticity": {"method": "rate_delta_to_yield_pct", "value": 0.6}},
+    {"id": "rev_env_taxes", "type": "revenue", "label": "Taxes environnement (hors accises)", "description": "Écotaxes diverses.", "examples": ["TGAP", "Écotaxe"], "mapping": {"esa": [{"code": "D.29_env", "weight": 1.0}]}, "payers": {"households": 0.5, "enterprises": 0.5}, "elasticity": {"method": "rate_delta_to_yield_pct", "value": 0.7}},
+    {"id": "rev_public_income", "type": "revenue", "label": "Dividendes & intérêts publics", "description": "Revenus d’actifs publics.", "examples": ["Dividendes", "Intérêts reçus"], "mapping": {"esa": [{"code": "D.4", "weight": 1.0}]}, "payers": {"households": 0.0, "enterprises": 0.0}, "elasticity": {"method": "none"}},
+    {"id": "rev_sales_fees", "type": "revenue", "label": "Services payants & redevances", "description": "Titres, concessions, péages.", "examples": ["Titres", "Péages"], "mapping": {"esa": [{"code": "P.11", "weight": 0.6}, {"code": "P.12", "weight": 0.4}]}, "payers": {"households": 0.6, "enterprises": 0.4}, "elasticity": {"method": "none"}},
+    {"id": "rev_fines", "type": "revenue", "label": "Amendes & pénalités", "description": "Amendes routières et autres.", "examples": ["PV routiers"], "mapping": {"esa": [{"code": "D.29_fines", "weight": 1.0}]}, "payers": {"households": 0.9, "enterprises": 0.1}, "elasticity": {"method": "none"}},
+    {"id": "rev_transfers_in", "type": "revenue", "label": "Aides reçues (UE & autres APU)", "description": "Transferts nets entrants.", "examples": ["Fonds UE"], "mapping": {"esa": [{"code": "D.7_res", "weight": 1.0}]}, "payers": {"households": 0.0, "enterprises": 0.0}, "elasticity": {"method": "none"}}
+  ]
+}
+
