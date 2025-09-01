@@ -134,7 +134,7 @@ Next Sprint (2 weeks) — Top Priorities
    - DONE: EN/FR message catalog for core labels; visible focus states; axe check runs in CI (home route).
 
 4) Build Page (skeleton) [MVP+] [UI]
-   - TODO: Palette (expenditures/revenues), sliders, DSL builder in memory, scoreboard, permalink.
+   - DONE: Palette (expenditures/revenues), sliders (±% per piece), DSL builder in memory, scoreboard (deficitPath/EU lights), permalink via URL hash; Nav entry added.
 
 5) LEGO Revenue Baseline v0.1 [MVP+] [Data]
    - TODO: Extend warmer to compute revenue baselines from ESA categories; reconcile with S13 totals.

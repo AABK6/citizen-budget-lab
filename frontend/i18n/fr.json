@@ -1,5 +1,6 @@
 {
   "nav.explore": "Explorer 1€",
+  "nav.build": "Construire",
   "nav.procurement": "Qui est payé ?",
   "nav.whatif": "Et si… ?",
   "nav.compare_eu": "Comparer UE",
@@ -23,4 +24,3 @@
   "loading": "Chargement…",
   "error.generic": "Échec du chargement"
 }
-

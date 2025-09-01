@@ -9,6 +9,7 @@ export function NavTabs() {
   const pathname = usePathname()
   const { t } = useI18n()
   const tabs: { href: Route; label: string }[] = [
+    { href: '/build' as Route, label: t('nav.build') },
     { href: '/explore' as Route, label: t('nav.explore') },
     { href: '/procurement' as Route, label: t('nav.procurement') },
     { href: '/what-if' as Route, label: t('nav.whatif') },

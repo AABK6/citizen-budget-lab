@@ -1,5 +1,6 @@
 {
   "nav.explore": "Explore €1",
+  "nav.build": "Build",
   "nav.procurement": "Who gets paid?",
   "nav.whatif": "What‑if?",
   "nav.compare_eu": "Compare EU",
@@ -23,4 +24,3 @@
   "loading": "Loading…",
   "error.generic": "Failed to load"
 }
-
