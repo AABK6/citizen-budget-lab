@@ -376,27 +376,31 @@ def _map_action_to_cofog(action: dict, baseline_year: int) -> List[Tuple[str, fl
 
 def _macro_kernel(horizon: int, shocks_pct_gdp: Dict[str, List[float]], gdp_series: List[float]) -> MacroResult:
     params = _load_json(MACRO_IRF_JSON)
-    H = int(params.get("horizon", horizon))
+    H_param = int(params.get("horizon", horizon))
+    T = min(int(horizon), len(gdp_series), H_param)
     okun = float(params.get("okun_elasticity", 0.4))
     rev_el = float(params.get("revenue_elasticity", 0.5))
     cats = params.get("categories", {})
 
-    delta_gdp_pct: List[float] = [0.0] * H
+    delta_gdp_pct: List[float] = [0.0] * T
     for k, s_path in shocks_pct_gdp.items():
         if k not in cats:
             continue
-        irf = cats[k]["irf_gdp"]
-        for t in range(H):
+        irf = list(cats[k]["irf_gdp"])
+        for t in range(T):
             # Convolution: sum_h irf[h] * s[t-h]
-            for h in range(0, t + 1):
+            max_h = min(len(irf) - 1, t)
+            for h in range(0, max_h + 1):
+                if (t - h) < 0 or (t - h) >= len(s_path):
+                    continue
                 delta_gdp_pct[t] += irf[h] * s_path[t - h]
 
     # Convert GDP pct to euros using baseline GDP series for each year
-    delta_gdp_eur: List[float] = [delta_gdp_pct[t] * gdp_series[t] / 100.0 for t in range(H)]
+    delta_gdp_eur: List[float] = [delta_gdp_pct[t] * gdp_series[t] / 100.0 for t in range(T)]
     # Employment via Okun
-    delta_emp_index: List[float] = [okun * delta_gdp_pct[t] for t in range(H)]
+    delta_emp_index: List[float] = [okun * delta_gdp_pct[t] for t in range(T)]
     # Automatic stabilizers effect on deficit: -rev_elasticity * dY
-    delta_def_eur: List[float] = [-rev_el * delta_gdp_eur[t] for t in range(H)]
+    delta_def_eur: List[float] = [-rev_el * delta_gdp_eur[t] for t in range(T)]
 
     return MacroResult(
         delta_gdp=delta_gdp_eur,
@@ -424,6 +428,37 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
     gdp_series_map = _read_gdp_series()
     gdp_series = [gdp_series_map.get(baseline_year + i, list(gdp_series_map.values())[-1]) for i in range(horizon_years)]
     shocks_pct_gdp: Dict[str, List[float]] = {}
+    # Preload LEGO baseline/config to support piece.* targets
+    lego_bl = None
+    lego_types: Dict[str, str] = {}
+    lego_cofog_map: Dict[str, List[Tuple[str, float]]] = {}
+    try:
+        lego_bl = load_lego_baseline(baseline_year)
+    except Exception:
+        lego_bl = None
+    try:
+        lego_cfg = load_lego_config()
+        for p in lego_cfg.get("pieces", []):
+            pid = str(p.get("id"))
+            lego_types[pid] = str(p.get("type", "expenditure"))
+            cof = []
+            for mc in (p.get("mapping", {}).get("cofog") or []):
+                cof.append((str(mc.get("code")), float(mc.get("weight", 1.0))))
+            if cof:
+                lego_cofog_map[pid] = cof
+    except Exception:
+        pass
+
+    lego_amounts: Dict[str, float] = {}
+    if lego_bl:
+        for ent in lego_bl.get("pieces", []):
+            pid = str(ent.get("id"))
+            try:
+                val = float(ent.get("amount_eur"))
+            except Exception:
+                continue
+            lego_amounts[pid] = val
+
     for act in actions:
         op = (act.get("op") or "").lower()
         recurring = bool(act.get("recurring", False))
@@ -460,6 +495,55 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
                         path[i] += shock_pct
                 else:
                     path[0] += shock_pct
+
+        # piece.* targets (LEGO pieces), v0: expenditures only
+        target = str(act.get("target", ""))
+        if target.startswith("piece."):
+            pid = target.split(".", 1)[1]
+            ptype = lego_types.get(pid, "expenditure")
+            if ptype != "expenditure":
+                # Skip revenues in v0 mechanical layer
+                continue
+            base_amt = float(lego_amounts.get(pid, 0.0))
+            amt_eur = act.get("amount_eur")
+            dp = act.get("delta_pct")
+            delta = 0.0
+            if amt_eur is not None:
+                try:
+                    val = float(amt_eur)
+                except Exception:
+                    val = 0.0
+                if op == "increase":
+                    delta = val
+                elif op == "decrease":
+                    delta = -val
+                elif op == "set":
+                    delta = float(val) - base_amt
+            elif dp is not None:
+                try:
+                    pct = float(dp)
+                except Exception:
+                    pct = 0.0
+                sign = 1.0 if op != "decrease" else -1.0
+                delta = sign * (pct / 100.0) * base_amt
+            if delta != 0.0:
+                if recurring:
+                    for i in range(horizon_years):
+                        deltas_by_year[i] += delta
+                else:
+                    deltas_by_year[0] += delta
+                # Macro shocks by distributing delta across mapped COFOG categories
+                cof = lego_cofog_map.get(pid) or []
+                if cof:
+                    for c_code, w in cof:
+                        cat = str(c_code).split(".")[0]  # major COFOG (02,03,05,07,09,...)
+                        path = shocks_pct_gdp.setdefault(cat, [0.0] * horizon_years)
+                        shock_eur = delta * float(w)
+                        if recurring:
+                            for i in range(horizon_years):
+                                path[i] += 100.0 * shock_eur / gdp_series[i]
+                        else:
+                            path[0] += 100.0 * shock_eur / gdp_series[0]
 
     # Deficit path = sum of deltas (positive increases deficit)
     deficit_path = [float(x) for x in deltas_by_year]
@@ -515,4 +599,3 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
 
     acc = Accounting(deficit_path=deficit_path, debt_path=debt_path)
     return sid, acc, comp, macro
-

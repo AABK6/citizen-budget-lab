@@ -22,15 +22,16 @@
       "items": {
         "type": "object",
         "required": ["id", "target", "op"],
-        "properties": {
-          "id": { "type": "string" },
-          "target": { "type": "string" },
-          "dimension": { "type": "string", "enum": ["cp", "ae", "tax"] },
-          "op": { "type": "string" },
-          "amount_eur": { "type": "number" },
-          "delta_bps": { "type": "number" },
-          "recurring": { "type": "boolean" }
-        },
+      "properties": {
+        "id": { "type": "string" },
+        "target": { "type": "string" },
+        "dimension": { "type": "string", "enum": ["cp", "ae", "tax"] },
+        "op": { "type": "string" },
+        "amount_eur": { "type": "number" },
+        "delta_pct": { "type": "number" },
+        "delta_bps": { "type": "number" },
+        "recurring": { "type": "boolean" }
+      },
         "additionalProperties": true
       }
     },
