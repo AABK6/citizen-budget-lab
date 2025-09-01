@@ -105,6 +105,7 @@ def test_graphql_lego_queries_smoke(monkeypatch):
             "country": "FR",
             "pib_eur": 0.0,
             "depenses_total_eur": 0.0,
+            "recettes_total_eur": 123.0,
             "pieces": [],
             "meta": {"source": "test"},
         }, f)
@@ -122,9 +123,10 @@ def test_graphql_lego_queries_smoke(monkeypatch):
     assert data["legoPieces"] and isinstance(data["legoPieces"], list)
 
     data = gql("""
-      query($y:Int!){ legoBaseline(year:$y){ year scope pib depensesTotal pieces{ id type amountEur share } } }
+      query($y:Int!){ legoBaseline(year:$y){ year scope pib depensesTotal recettesTotal pieces{ id type amountEur share } } }
     """, {"y": year})
     assert data["legoBaseline"]["year"] == year
+    assert data["legoBaseline"]["recettesTotal"] == 123.0
 
     # Distance with a simple piece delta (will be 0 with empty baseline)
     dsl = base64.b64encode("""

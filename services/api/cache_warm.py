@@ -531,9 +531,10 @@ def warm_lego_baseline(year: int, country: str = "FR", scope: str = "S13") -> st
         "country": country,
         "pib_eur": pib_eur,
         "depenses_total_eur": dep_total,
+        "recettes_total_eur": recettes_total,
         "pieces": pieces_out,
         "meta": {
-            "source": "Eurostat gov_10a_exp",
+            "source": "Eurostat gov_10a_exp + gov_10a_main",
             "warning": warn,
         },
     }

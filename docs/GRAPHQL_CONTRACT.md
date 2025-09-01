@@ -86,6 +86,7 @@ type LegoBaseline {
   scope: ScopeEnum!
   pib: Float!
   depensesTotal: Float!
+  recettesTotal: Float!
   pieces: [LegoPiece!]!
 }
 

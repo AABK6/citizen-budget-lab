@@ -155,6 +155,7 @@ class LegoBaselineType:
     scope: ScopeEnum
     pib: float
     depensesTotal: float
+    recettesTotal: float
     pieces: list[LegoPieceType]
 
 
@@ -400,6 +401,7 @@ class Query:
             scope=ScopeEnum(str(bl.get("scope", scope.value))),
             pib=float(bl.get("pib_eur", 0.0)),
             depensesTotal=float(bl.get("depenses_total_eur", 0.0)),
+            recettesTotal=float(bl.get("recettes_total_eur", 0.0)),
             pieces=pieces,
         )
 
