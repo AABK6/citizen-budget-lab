@@ -1,6 +1,9 @@
 :root { --bg: #0f172a; --fg: #e2e8f0; --muted: #94a3b8; --accent: #22c55e; --card: #111827; --border: #1f2937 }
 * { box-sizing: border-box }
 html, body { margin: 0; padding: 0; background: var(--bg); color: var(--fg); font: 16px/1.5 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji" }
+.container a { color: var(--fg); text-decoration: none }
+.container a:hover { text-decoration: underline }
+.container a:visited { color: var(--fg) }
 .container { max-width: 1200px; margin: 0 auto; padding: 1rem }
 .site-header { border-bottom: 1px solid var(--border); background: #0b1224 }
 .brand { margin: 0 0 .5rem 0; font-size: 1.25rem }
@@ -24,4 +27,3 @@ th, td { padding: .5rem .75rem; border-bottom: 1px solid var(--border) }
 th { text-align: left; color: var(--muted); background: #0b1224; position: sticky; top: 0 }
 .code { background: #0b1224; padding: .75rem; border-radius: .5rem; border: 1px solid var(--border) }
 .footer { color: var(--muted); padding-top: 2rem; padding-bottom: 2rem }
-
