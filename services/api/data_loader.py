@@ -36,6 +36,7 @@ BASELINE_DEF_DEBT_CSV = os.path.join(DATA_DIR, "baseline_deficit_debt.csv")
 COFOG_MAP_JSON = os.path.join(DATA_DIR, "cofog_mapping.json")
 MACRO_IRF_JSON = os.path.join(DATA_DIR, "macro_irfs.json")
 SOURCES_JSON = os.path.join(DATA_DIR, "sources.json")
+LEGO_PIECES_JSON = os.path.join(DATA_DIR, "lego_pieces.json")
 
 
 def _read_csv(path: str) -> Iterable[Dict[str, str]]:
@@ -217,6 +218,136 @@ def list_sources() -> List[Source]:
     return out
 
 
+# --------------------------
+# LEGO pieces & baselines
+# --------------------------
+
+def _read_file_json(path: str) -> dict | list:
+    import json as _json
+
+    with open(path, "r", encoding="utf-8") as f:
+        return _json.load(f)
+
+
+def _lego_baseline_path(year: int) -> str:
+    return os.path.join(CACHE_DIR, f"lego_baseline_{year}.json")
+
+
+def load_lego_config() -> dict:
+    return _read_file_json(LEGO_PIECES_JSON)
+
+
+def load_lego_baseline(year: int) -> dict | None:
+    path = _lego_baseline_path(year)
+    if not os.path.exists(path):
+        return None
+    try:
+        return _read_file_json(path)
+    except Exception:
+        return None
+
+
+def lego_pieces_with_baseline(year: int, scope: str = "S13") -> List[dict]:
+    cfg = load_lego_config()
+    baseline = load_lego_baseline(year)
+    amounts: dict[str, float | None] = {}
+    shares: dict[str, float | None] = {}
+    if baseline and str(baseline.get("scope", "")).upper() == scope.upper():
+        for ent in baseline.get("pieces", []):
+            pid = str(ent.get("id"))
+            amounts[pid] = ent.get("amount_eur")
+            shares[pid] = ent.get("share")
+    out: List[dict] = []
+    for p in cfg.get("pieces", []):
+        pid = str(p.get("id"))
+        out.append(
+            {
+                "id": pid,
+                "label": p.get("label"),
+                "type": p.get("type"),
+                "amount_eur": amounts.get(pid),
+                "share": shares.get(pid),
+                "beneficiaries": p.get("beneficiaries") or {},
+                "examples": p.get("examples") or [],
+                "sources": p.get("sources") or [],
+            }
+        )
+    return out
+
+
+def lego_distance_from_dsl(year: int, dsl_b64: str, scope: str = "S13") -> dict:
+    """Compute a simple distance between the baseline shares and a scenario that tweaks piece.* targets.
+
+    - Decode DSL, parse actions with target: piece.<id>
+    - Apply amount_eur (increase/decrease/set) or delta_pct on expenditure pieces only (v0)
+    - Recompute shares and return L1 distance with per-piece deltas.
+    """
+    baseline = load_lego_baseline(year)
+    cfg = load_lego_config()
+    if not baseline or str(baseline.get("scope", "")).upper() != scope.upper():
+        return {"score": 0.0, "byPiece": []}
+    # Build current amounts and shares for expenditures only
+    amounts: dict[str, float] = {}
+    shares: dict[str, float] = {}
+    ptypes: dict[str, str] = {str(p.get("id")): str(p.get("type")) for p in cfg.get("pieces", [])}
+    for ent in baseline.get("pieces", []):
+        pid = str(ent.get("id"))
+        if ptypes.get(pid) != "expenditure":
+            continue
+        ae = ent.get("amount_eur")
+        if isinstance(ae, (int, float)):
+            amounts[pid] = float(ae)
+            sh = ent.get("share")
+            shares[pid] = float(sh) if isinstance(sh, (int, float)) else 0.0
+    if not amounts:
+        return {"score": 0.0, "byPiece": []}
+
+    # Decode DSL
+    data = _decode_yaml_base64(dsl_b64)
+    actions = data.get("actions") or []
+
+    def _apply(pid: str, op: str, amt_eur: float | None, delta_pct: float | None):
+        if pid not in amounts:
+            return
+        cur = amounts[pid]
+        if op == "set" and amt_eur is not None:
+            amounts[pid] = max(0.0, float(amt_eur))
+            return
+        if amt_eur is not None:
+            if op == "increase":
+                amounts[pid] = max(0.0, cur + float(amt_eur))
+            elif op == "decrease":
+                amounts[pid] = max(0.0, cur - float(amt_eur))
+        elif delta_pct is not None:
+            factor = 1.0 + float(delta_pct) / 100.0
+            amounts[pid] = max(0.0, cur * factor)
+
+    for act in actions:
+        target = str(act.get("target", ""))
+        if not target.startswith("piece."):
+            continue
+        pid = target.split(".", 1)[1]
+        op = str(act.get("op", "increase")).lower()
+        amt = act.get("amount_eur")
+        amt_eur = float(amt) if isinstance(amt, (int, float)) else None
+        dp = act.get("delta_pct")
+        delta_pct = float(dp) if isinstance(dp, (int, float)) else None
+        _apply(pid, op, amt_eur, delta_pct)
+
+    # New shares
+    total = sum(amounts.values())
+    if total <= 0:
+        return {"score": 0.0, "byPiece": []}
+    deltas: List[dict] = []
+    score = 0.0
+    for pid, old_share in shares.items():
+        new_share = amounts[pid] / total
+        d = abs(new_share - old_share)
+        deltas.append({"id": pid, "shareDelta": d})
+        score += d
+    return {"score": score, "byPiece": deltas}
+
+
 def _map_action_to_cofog(action: dict, baseline_year: int) -> List[Tuple[str, float]]:
     """
     Returns a list of (category, weight) e.g., [("09", 1.0)] or [("tax.ir", 1.0)].
@@ -384,5 +515,4 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
 
     acc = Accounting(deficit_path=deficit_path, debt_path=debt_path)
     return sid, acc, comp, macro
-
 

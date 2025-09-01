@@ -12,6 +12,9 @@ from .data_loader import (
     procurement_top_suppliers,
     run_scenario,
     list_sources,
+    lego_pieces_with_baseline,
+    load_lego_baseline,
+    lego_distance_from_dsl,
 )
 from .models import Basis
 from .clients import insee as insee_client
@@ -123,6 +126,45 @@ class FiscalPathType:
 @strawberry.input
 class RunScenarioInput:
     dsl: str  # base64-encoded YAML
+
+
+@strawberry.type
+class LegoPieceType:
+    id: str
+    label: str
+    type: str
+    amountEur: float | None
+    share: float | None
+    beneficiaries: JSON
+    examples: list[str]
+    sources: list[str]
+
+
+@strawberry.enum
+class ScopeEnum(str, enum.Enum):
+    S13 = "S13"
+    CENTRAL = "CENTRAL"
+
+
+@strawberry.type
+class LegoBaselineType:
+    year: int
+    scope: ScopeEnum
+    pib: float
+    depensesTotal: float
+    pieces: list[LegoPieceType]
+
+
+@strawberry.type
+class DistanceByPieceType:
+    id: str
+    shareDelta: float
+
+
+@strawberry.type
+class DistanceType:
+    score: float
+    byPiece: list[DistanceByPieceType]
 
 
 @strawberry.type
@@ -306,6 +348,59 @@ class Query:
             def_ratios.append(bd[0] / gy if gy else 0.0)
             debt_ratios.append(bd[1] / gy if gy else 0.0)
         return FiscalPathType(years=years, deficitRatio=def_ratios, debtRatio=debt_ratios)
+
+    @strawberry.field
+    def legoPieces(self, year: int, scope: ScopeEnum = ScopeEnum.S13) -> list[LegoPieceType]:
+        items = lego_pieces_with_baseline(year, scope.value)
+        return [
+            LegoPieceType(
+                id=i["id"],
+                label=i.get("label") or i["id"],
+                type=i.get("type") or "expenditure",
+                amountEur=i.get("amount_eur"),
+                share=i.get("share"),
+                beneficiaries=i.get("beneficiaries") or {},
+                examples=list(i.get("examples") or []),
+                sources=list(i.get("sources") or []),
+            )
+            for i in items
+        ]
+
+    @strawberry.field
+    def legoBaseline(self, year: int, scope: ScopeEnum = ScopeEnum.S13) -> LegoBaselineType:  # noqa: N802
+        bl = load_lego_baseline(year) or {}
+        # If scope mismatches, we still return what we have; clients can detect gaps
+        pieces = [
+            LegoPieceType(
+                id=str(ent.get("id")),
+                label=str(ent.get("id")),
+                type=str(ent.get("type")),
+                amountEur=(ent.get("amount_eur") if isinstance(ent.get("amount_eur"), (int, float)) else None),
+                share=(ent.get("share") if isinstance(ent.get("share"), (int, float)) else None),
+                beneficiaries={},
+                examples=[],
+                sources=[],
+            )
+            for ent in bl.get("pieces", [])
+        ]
+        return LegoBaselineType(
+            year=int(bl.get("year", year)),
+            scope=ScopeEnum(str(bl.get("scope", scope.value))),
+            pib=float(bl.get("pib_eur", 0.0)),
+            depensesTotal=float(bl.get("depenses_total_eur", 0.0)),
+            pieces=pieces,
+        )
+
+    @strawberry.field
+    def legoDistance(self, year: int, dsl: str, scope: ScopeEnum = ScopeEnum.S13) -> DistanceType:  # noqa: N802
+        res = lego_distance_from_dsl(year, dsl, scope.value)
+        return DistanceType(
+            score=float(res.get("score", 0.0)),
+            byPiece=[
+                DistanceByPieceType(id=str(e.get("id")), shareDelta=float(e.get("shareDelta", 0.0)))
+                for e in res.get("byPiece", [])
+            ],
+        )
 
 
 @strawberry.type

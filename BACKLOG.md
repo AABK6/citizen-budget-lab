@@ -49,7 +49,7 @@ Product outcomes
 Epics
 - LEGO Budget Builder — Data & Config [Data]
   - Define pieces (config): `data/lego_pieces.json` v0 (≥30 spend, ≥15 revenue) with public‑friendly labels, examples, precise COFOG/ESA mapping, implied beneficiaries, bounds/locks, revenue elasticities, sources.
-  - LEGO baseline warmer (S13): `python -m services.api.cache_warm lego --year 2026` writes `data/cache/lego_baseline_YYYY.json` with amounts/shares, totals, GDP, metadata. Consistency: sum of pieces = APU S13 totals (tolerance < 0.1%).
+  - LEGO baseline warmer (S13): `python -m services.api.cache_warm lego --year 2026` writes `data/cache/lego_baseline_YYYY.json` — v0 covers expenditures (amounts/shares per expenditure piece, total expenditures) + GDP and metadata; v0.1 adds revenue baselines. Consistency: sum of pieces = APU S13 totals (tolerance < 0.1%).
 - LEGO Budget Builder — GraphQL API [API]
   - SDL: `Scope`, `LegoPiece`, `LegoBaseline`, `Distance`; queries `legoPieces`, `legoBaseline`, `legoDistance`.
   - Resolvers & loaders: read `lego_pieces.json` and warmed baseline; graceful fallbacks.
@@ -132,6 +132,15 @@ Next Sprint (2 weeks) — Top Priorities
 
 3) i18n baseline + a11y pass [MVP] [UI]
    - DONE: EN/FR message catalog for core labels; visible focus states; axe check runs in CI (home route).
+
+4) LEGO Baseline Warmer [MVP+] [Data]
+   - TODO: Implement `cache_warm lego` (expenditures v0), write baseline JSON, add resilience and basic unit tests.
+
+5) LEGO GraphQL Contract & Resolvers [MVP+] [API]
+   - TODO: Update SDL/docs; add `legoPieces`, `legoBaseline`, `legoDistance` resolvers (reading config + baseline cache).
+
+6) DSL Extension `piece.*` [MVP+] [API]
+   - TODO: Accept piece targets in scenario DSL; translate to mechanical deltas with bounds/locks.
 
 Notes
 - Keep `docs/GRAPHQL_CONTRACT.md` as the contract; implement incrementally.

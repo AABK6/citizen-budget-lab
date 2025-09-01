@@ -63,6 +63,34 @@ type Macro {
 
 scalar JSON
 
+"""
+MVP+ (LEGO Builder) additions
+"""
+
+enum ScopeEnum { S13 CENTRAL }
+
+type LegoPiece {
+  id: ID!
+  label: String!
+  type: String! # "expenditure" | "revenue"
+  amountEur: Float
+  share: Float
+  beneficiaries: JSON!
+  examples: [String!]!
+  sources: [String!]!
+}
+
+type LegoBaseline {
+  year: Int!
+  scope: ScopeEnum!
+  pib: Float!
+  depensesTotal: Float!
+  pieces: [LegoPiece!]!
+}
+
+type DistanceByPiece { id: ID!, shareDelta: Float! }
+type Distance { score: Float!, byPiece: [DistanceByPiece!]! }
+
 type Distribution {
   decile: [DecileImpact!]!
   giniDelta: Float!
@@ -131,6 +159,11 @@ type Query {
   # V1: EU comparisons
   euCofogCompare(year: Int!, countries: [String!]!, level: Int = 1): [EUCountryCofog!]!
   euFiscalPath(country: String!, years: [Int!]!): FiscalPath!
+
+  # MVP+: LEGO Builder
+  legoPieces(year: Int!, scope: ScopeEnum = S13): [LegoPiece!]!
+  legoBaseline(year: Int!, scope: ScopeEnum = S13): LegoBaseline!
+  legoDistance(year: Int!, dsl: String!, scope: ScopeEnum = S13): Distance!
 }
 
 type Mutation {

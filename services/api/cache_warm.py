@@ -377,6 +377,145 @@ def warm_eurostat_cofog(year: int, countries: List[str]) -> str:
     return out_path
 
 
+# ------------------------------
+# LEGO baseline (expenditures v0)
+# ------------------------------
+
+def _load_lego_config() -> Dict[str, Any]:
+    path = os.path.join(DATA_DIR, "lego_pieces.json")
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _cofog_to_gf(code: str) -> List[str]:
+    """Map a COFOG code like '09.1' to Eurostat 'GF091' (and sensible fallbacks).
+
+    Returns a list of candidate codes to try in order.
+    """
+    code = str(code).strip()
+    if not code:
+        return []
+    cand: List[str] = []
+    base = code.split(".")[0]
+    sub = code.split(".")[1] if "." in code else None
+    if sub and sub != "0":
+        cand.append(f"GF{base}{sub}")  # e.g., 09.1 -> GF091
+        cand.append(f"GF{base}{sub.zfill(2)}")  # 09.10 -> GF0910 (just in case)
+    # top-level
+    cand.append(f"GF{base}")
+    # Raw as-is (if Eurostat already uses with dot)
+    cand.append(code)
+    return cand
+
+
+def _val_mio(js: Dict[str, Any], year: int, country: str, sector: str, unit: str, cofog_code: str, na_item: str) -> float:
+    """Best-effort extraction of a MIO_EUR value for given coordinates.
+    Tries several COFOG code candidates.
+    """
+    # Build base coords; allow missing dims gracefully by value_at
+    coords: Dict[str, str] = {"time": str(year)}
+    # Always try to set commonly present dims if they exist
+    dims = js.get("dimension", {}).get("id") or []
+    if "unit" in dims:
+        coords["unit"] = unit
+    if "geo" in dims:
+        coords["geo"] = country
+    if "sector" in dims:
+        coords["sector"] = sector
+    if "na_item" in dims:
+        coords["na_item"] = na_item
+    # Try COFOG candidates
+    from .clients import eurostat as eu_client
+
+    for c in _cofog_to_gf(cofog_code):
+        c2 = c
+        if "cofog99" in dims:
+            coords["cofog99"] = c2
+        v = eu.value_at(js, coords)
+        if v is not None:
+            return float(v)
+    return 0.0
+
+
+def warm_lego_baseline(year: int, country: str = "FR", scope: str = "S13") -> str:
+    """Compute a baseline by LEGO piece (expenditures v0) and write JSON snapshot.
+
+    Output: data/cache/lego_baseline_{year}.json with fields:
+      { year, scope, country, pib_eur, depenses_total_eur, pieces: [{id,type,amount_eur,share}], meta }
+    """
+    _ensure_dir(CACHE_DIR)
+    cfg = _load_lego_config()
+
+    # Fetch Eurostat expenditure dataset
+    try:
+        js = eu.fetch("gov_10a_exp", {"time": str(year), "unit": "MIO_EUR", "geo": country})
+    except Exception as e:
+        js = {}
+        warn = f"Eurostat gov_10a_exp fetch failed: {type(e).__name__}"
+    else:
+        warn = ""
+
+    # GDP series (for info/ratios)
+    try:
+        from .data_loader import _read_gdp_series  # type: ignore
+
+        gdp_map = _read_gdp_series()
+        pib_eur = float(gdp_map.get(int(year), 0.0))
+    except Exception:
+        pib_eur = 0.0
+
+    pieces_out: List[Dict[str, Any]] = []
+    dep_total = 0.0
+
+    for p in cfg.get("pieces", []):
+        pid = str(p.get("id"))
+        ptype = str(p.get("type"))
+        amt_eur: float | None = None
+        if ptype == "expenditure" and js:
+            cofogs = p.get("mapping", {}).get("cofog") or []
+            na_items = p.get("mapping", {}).get("na_item") or []
+            total_mio = 0.0
+            for mc in cofogs:
+                c_code = str(mc.get("code"))
+                c_w = float(mc.get("weight", 1.0))
+                for ni in na_items:
+                    ni_code = str(ni.get("code"))
+                    ni_w = float(ni.get("weight", 1.0))
+                    v_mio = _val_mio(js, year, country, scope, "MIO_EUR", c_code, ni_code)
+                    total_mio += c_w * ni_w * v_mio
+            amt_eur = total_mio * 1_000_000.0
+            dep_total += amt_eur
+        pieces_out.append({
+            "id": pid,
+            "type": ptype,
+            "amount_eur": amt_eur,
+            "share": None,  # filled for expenditures after total known
+        })
+
+    # Fill shares for expenditures
+    for ent in pieces_out:
+        if ent["type"] == "expenditure" and dep_total > 0:
+            ent["share"] = float(ent["amount_eur"] or 0.0) / dep_total
+
+    out: Dict[str, Any] = {
+        "year": int(year),
+        "scope": scope,
+        "country": country,
+        "pib_eur": pib_eur,
+        "depenses_total_eur": dep_total,
+        "pieces": pieces_out,
+        "meta": {
+            "source": "Eurostat gov_10a_exp",
+            "warning": warn,
+        },
+    }
+
+    out_path = os.path.join(CACHE_DIR, f"lego_baseline_{year}.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(out, f, ensure_ascii=False, indent=2)
+    return out_path
+
+
 def main(argv: Iterable[str] | None = None) -> None:
     p = argparse.ArgumentParser(description="Cache warmer for essential budget data")
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -398,6 +537,12 @@ def main(argv: Iterable[str] | None = None) -> None:
     sp_fields.add_argument("--base", default="https://data.economie.gouv.fr")
     sp_fields.add_argument("--dataset", required=True)
 
+    # LEGO baseline warmer (expenditures v0)
+    sp_lego = sub.add_parser("lego", help="Build LEGO baseline for a year (expenditures v0)")
+    sp_lego.add_argument("--year", type=int, required=True)
+    sp_lego.add_argument("--country", default="FR")
+    sp_lego.add_argument("--scope", default="S13")
+
     args = p.parse_args(list(argv) if argv is not None else None)
 
     if args.cmd == "plf":
@@ -416,6 +561,11 @@ def main(argv: Iterable[str] | None = None) -> None:
         fields = meta.get("dataset", {}).get("fields") or meta.get("fields") or []
         for f in fields:
             print(f"{f.get('name')}: {f.get('type')} — {f.get('label')}")
+        return
+
+    if args.cmd == "lego":
+        path = warm_lego_baseline(args.year, country=args.country, scope=args.scope)
+        print(f"Wrote {path}")
         return
 
 
