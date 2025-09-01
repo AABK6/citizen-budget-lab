@@ -504,6 +504,7 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
         pass
 
     lego_amounts: Dict[str, float] = {}
+    lego_elast: Dict[str, float] = {}
     if lego_bl:
         for ent in lego_bl.get("pieces", []):
             pid = str(ent.get("id"))
@@ -512,6 +513,15 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
             except Exception:
                 continue
             lego_amounts[pid] = val
+    try:
+        for p in lego_cfg.get("pieces", []):  # type: ignore[union-attr]
+            pid = str(p.get("id"))
+            el = p.get("elasticity") or {}
+            v = el.get("value")
+            if isinstance(v, (int, float)):
+                lego_elast[pid] = float(v)
+    except Exception:
+        pass
 
     for act in actions:
         op = (act.get("op") or "").lower()
@@ -555,9 +565,6 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
         if target.startswith("piece."):
             pid = target.split(".", 1)[1]
             ptype = lego_types.get(pid, "expenditure")
-            if ptype != "expenditure":
-                # Skip revenues in v0 mechanical layer
-                continue
             base_amt = float(lego_amounts.get(pid, 0.0))
             amt_eur = act.get("amount_eur")
             dp = act.get("delta_pct")
@@ -567,37 +574,52 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
                     val = float(amt_eur)
                 except Exception:
                     val = 0.0
-                if op == "increase":
-                    delta = val
-                elif op == "decrease":
-                    delta = -val
-                elif op == "set":
-                    delta = float(val) - base_amt
+                if ptype == "expenditure":
+                    if op == "increase":
+                        delta = val
+                    elif op == "decrease":
+                        delta = -val
+                    elif op == "set":
+                        delta = float(val) - base_amt
+                else:  # revenue — positive revenue reduces deficit
+                    if op == "increase":
+                        delta = -val
+                    elif op == "decrease":
+                        delta = val
+                    elif op == "set":
+                        delta = -(float(val) - base_amt)
             elif dp is not None:
                 try:
                     pct = float(dp)
                 except Exception:
                     pct = 0.0
                 sign = 1.0 if op != "decrease" else -1.0
-                delta = sign * (pct / 100.0) * base_amt
+                eff = (pct / 100.0) * base_amt
+                if ptype == "expenditure":
+                    delta = sign * eff
+                else:
+                    # Apply elasticity for revenues if provided
+                    e = lego_elast.get(pid, 1.0)
+                    delta = -sign * eff * e
             if delta != 0.0:
                 if recurring:
                     for i in range(horizon_years):
                         deltas_by_year[i] += delta
                 else:
                     deltas_by_year[0] += delta
-                # Macro shocks by distributing delta across mapped COFOG categories
-                cof = lego_cofog_map.get(pid) or []
-                if cof:
-                    for c_code, w in cof:
-                        cat = str(c_code).split(".")[0]  # major COFOG (02,03,05,07,09,...)
-                        path = shocks_pct_gdp.setdefault(cat, [0.0] * horizon_years)
-                        shock_eur = delta * float(w)
-                        if recurring:
-                            for i in range(horizon_years):
-                                path[i] += 100.0 * shock_eur / gdp_series[i]
-                        else:
-                            path[0] += 100.0 * shock_eur / gdp_series[0]
+                # Macro shocks by distributing delta across mapped COFOG categories (expenditures only)
+                if ptype == "expenditure":
+                    cof = lego_cofog_map.get(pid) or []
+                    if cof:
+                        for c_code, w in cof:
+                            cat = str(c_code).split(".")[0]  # major COFOG (02,03,05,07,09,...)
+                            path = shocks_pct_gdp.setdefault(cat, [0.0] * horizon_years)
+                            shock_eur = delta * float(w)
+                            if recurring:
+                                for i in range(horizon_years):
+                                    path[i] += 100.0 * shock_eur / gdp_series[i]
+                            else:
+                                path[0] += 100.0 * shock_eur / gdp_series[0]
 
     # Deficit path = sum of deltas (positive increases deficit)
     deficit_path = [float(x) for x in deltas_by_year]

@@ -446,14 +446,19 @@ def warm_lego_baseline(year: int, country: str = "FR", scope: str = "S13") -> st
     _ensure_dir(CACHE_DIR)
     cfg = _load_lego_config()
 
-    # Fetch Eurostat expenditure dataset
+    # Fetch Eurostat datasets (expenditures + revenues if available)
     try:
-        js = eu.fetch("gov_10a_exp", {"time": str(year), "unit": "MIO_EUR", "geo": country})
+        js_exp = eu.fetch("gov_10a_exp", {"time": str(year), "unit": "MIO_EUR", "geo": country})
     except Exception as e:
-        js = {}
+        js_exp = {}
         warn = f"Eurostat gov_10a_exp fetch failed: {type(e).__name__}"
     else:
         warn = ""
+    try:
+        js_rev = eu.fetch("gov_10a_main", {"time": str(year), "unit": "MIO_EUR", "geo": country})
+    except Exception as e:
+        js_rev = {}
+        warn = (warn + "; " if warn else "") + f"Eurostat gov_10a_main fetch failed: {type(e).__name__}"
 
     # GDP series (for info/ratios)
     try:
@@ -467,11 +472,12 @@ def warm_lego_baseline(year: int, country: str = "FR", scope: str = "S13") -> st
     pieces_out: List[Dict[str, Any]] = []
     dep_total = 0.0
 
+    recettes_total = 0.0
     for p in cfg.get("pieces", []):
         pid = str(p.get("id"))
         ptype = str(p.get("type"))
         amt_eur: float | None = None
-        if ptype == "expenditure" and js:
+        if ptype == "expenditure" and js_exp:
             cofogs = p.get("mapping", {}).get("cofog") or []
             na_items = p.get("mapping", {}).get("na_item") or []
             total_mio = 0.0
@@ -481,10 +487,32 @@ def warm_lego_baseline(year: int, country: str = "FR", scope: str = "S13") -> st
                 for ni in na_items:
                     ni_code = str(ni.get("code"))
                     ni_w = float(ni.get("weight", 1.0))
-                    v_mio = _val_mio(js, year, country, scope, "MIO_EUR", c_code, ni_code)
+                    v_mio = _val_mio(js_exp, year, country, scope, "MIO_EUR", c_code, ni_code)
                     total_mio += c_w * ni_w * v_mio
             amt_eur = total_mio * 1_000_000.0
             dep_total += amt_eur
+        elif ptype == "revenue" and js_rev:
+            esa = p.get("mapping", {}).get("esa") or []
+            total_mio = 0.0
+            for ent in esa:
+                code = str(ent.get("code"))
+                w = float(ent.get("weight", 1.0))
+                # Try direct na_item lookup
+                coords = {"time": str(year), "unit": "MIO_EUR", "geo": country}
+                # Add sector if present
+                dims = js_rev.get("dimension", {}).get("id") or []
+                if "sector" in dims:
+                    coords["sector"] = scope
+                if "na_item" in dims:
+                    coords["na_item"] = code
+                from .clients import eurostat as eu_client  # lazy
+
+                v = eu.value_at(js_rev, coords) if coords.get("na_item") else None
+                if v is None:
+                    v = 0.0
+                total_mio += w * float(v)
+            amt_eur = total_mio * 1_000_000.0
+            recettes_total += amt_eur
         pieces_out.append({
             "id": pid,
             "type": ptype,
