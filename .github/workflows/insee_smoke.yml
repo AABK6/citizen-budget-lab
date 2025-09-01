@@ -24,30 +24,21 @@ jobs:
           INSEE_CLIENT_ID: ${{ secrets.INSEE_CLIENT_ID }}
           INSEE_CLIENT_SECRET: ${{ secrets.INSEE_CLIENT_SECRET }}
         run: |
-          python - << 'PY'
-import os, httpx
-cid=os.environ['INSEE_CLIENT_ID']
-sec=os.environ['INSEE_CLIENT_SECRET']
-r=httpx.post('https://api.insee.fr/token', data={'grant_type':'client_credentials','scope':'seriesbdm.read'}, auth=(cid,sec), timeout=30)
-assert r.status_code==200, r.text
-print('BDM token OK')
-r2=httpx.post('https://api.insee.fr/token', data={'grant_type':'client_credentials','scope':'sireneV3'}, auth=(cid,sec), timeout=30)
-assert r2.status_code==200, r2.text
-print('SIRENE token OK:', r2.json().get('scope'))
-PY
+          python -c "import os,httpx;\
+cid=os.environ['INSEE_CLIENT_ID']; sec=os.environ['INSEE_CLIENT_SECRET'];\
+r=httpx.post('https://api.insee.fr/token', data={'grant_type':'client_credentials','scope':'seriesbdm.read'}, auth=(cid,sec), timeout=30);\
+assert r.status_code==200, r.text; print('BDM token OK');\
+r2=httpx.post('https://api.insee.fr/token', data={'grant_type':'client_credentials','scope':'sireneV3'}, auth=(cid,sec), timeout=30);\
+assert r2.status_code==200, r2.text; print('SIRENE token OK:', r2.json().get('scope'))"
       - name: SIRENE ping (V3.11)
         if: ${{ success() }}
         env:
           INSEE_CLIENT_ID: ${{ secrets.INSEE_CLIENT_ID }}
           INSEE_CLIENT_SECRET: ${{ secrets.INSEE_CLIENT_SECRET }}
         run: |
-          python - << 'PY'
-import os, httpx
-cid=os.environ['INSEE_CLIENT_ID']
-sec=os.environ['INSEE_CLIENT_SECRET']
-tok=httpx.post('https://api.insee.fr/token', data={'grant_type':'client_credentials','scope':'sireneV3'}, auth=(cid,sec), timeout=30).json()['access_token']
-url='https://api.insee.fr/entreprises/sirene/V3.11/siren/552100554'
-resp=httpx.get(url, headers={'Authorization': f'Bearer {tok}','Accept':'application/json'}, timeout=30)
-print('SIRENE status:', resp.status_code)
-print(resp.text[:300])
-PY
+          python -c "import os,httpx;\
+cid=os.environ['INSEE_CLIENT_ID']; sec=os.environ['INSEE_CLIENT_SECRET'];\
+tok=httpx.post('https://api.insee.fr/token', data={'grant_type':'client_credentials','scope':'sireneV3'}, auth=(cid,sec), timeout=30).json()['access_token'];\
+url='https://api.insee.fr/entreprises/sirene/V3.11/siren/552100554';\
+resp=httpx.get(url, headers={'Authorization': f'Bearer {tok}','Accept':'application/json'}, timeout=30);\
+print('SIRENE status:', resp.status_code); print(resp.text[:300])"
