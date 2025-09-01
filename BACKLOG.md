@@ -53,7 +53,7 @@ Epics
 - LEGO Budget Builder — GraphQL API [API]
   - SDL: `Scope`, `LegoPiece`, `LegoBaseline`, `Distance`; queries `legoPieces`, `legoBaseline`, `legoDistance`.
   - Resolvers & loaders: read `lego_pieces.json` and warmed baseline; graceful fallbacks.
-  - Allocation lens: `BENEFICIARY` returns households/enterprises/collective from na_item rules; tests.
+  - Allocation lens: `BENEFICIARY` returns households/enterprises/collective; implemented via LEGO baseline + beneficiary weights; tests added.
   - DSL extension: targets `piece.<id>`; `delta_pct|amount_eur`; `recurring`; readable validation.
 - LEGO Budget Builder — Calculation Engine [API]
   - Apply deltas on pieces → (COFOG×na_item | ESA revenue) vectors; update mechanical deficit/debt; enforce locks/bounds.
@@ -133,14 +133,20 @@ Next Sprint (2 weeks) — Top Priorities
 3) i18n baseline + a11y pass [MVP] [UI]
    - DONE: EN/FR message catalog for core labels; visible focus states; axe check runs in CI (home route).
 
-4) LEGO Baseline Warmer [MVP+] [Data]
-   - TODO: Implement `cache_warm lego` (expenditures v0), write baseline JSON, add resilience and basic unit tests.
+4) Build Page (skeleton) [MVP+] [UI]
+   - TODO: Palette (expenditures/revenues), sliders, DSL builder in memory, scoreboard, permalink.
 
-5) LEGO GraphQL Contract & Resolvers [MVP+] [API]
-   - TODO: Update SDL/docs; add `legoPieces`, `legoBaseline`, `legoDistance` resolvers (reading config + baseline cache).
+5) LEGO Revenue Baseline v0.1 [MVP+] [Data]
+   - TODO: Extend warmer to compute revenue baselines from ESA categories; reconcile with S13 totals.
 
-6) DSL Extension `piece.*` [MVP+] [API]
-   - TODO: Accept piece targets in scenario DSL; translate to mechanical deltas with bounds/locks.
+6) Revenue piece handling + elasticities [MVP+] [API]
+   - TODO: Support revenue `piece.*` with elasticities and bounds; adjust accounting signs; tests.
+
+7) Locks/bounds enforcement & validation [MVP+] [API]
+   - TODO: Respect `policy.locked_default` and per‑piece bounds; user‑friendly errors.
+
+8) LEGO Methodology doc [MVP+] [Docs]
+   - TODO: Write `docs/LEGO_METHOD.md` (mapping, beneficiary rules, elasticities, limitations) and link from README_DEV.
 
 Notes
 - Keep `docs/GRAPHQL_CONTRACT.md` as the contract; implement incrementally.

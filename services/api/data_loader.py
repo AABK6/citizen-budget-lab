@@ -115,6 +115,60 @@ def allocation_by_cofog(year: int, basis: Basis) -> List[MissionAllocation]:
     return items
 
 
+def allocation_by_beneficiary(year: int) -> List[MissionAllocation]:
+    """Aggregate expenditures by implied beneficiary categories using LEGO baseline.
+
+    Categories:
+    - HH: households (D.62 benefits + D.1 public wages proxy via piece config)
+    - ENT: enterprises (D.3 subsidies + P.2 intermediate purchases proxy)
+    - COL: collective (P.51g investment and residual public services)
+
+    Falls back to zeros if baseline is missing.
+    """
+    try:
+        bl = load_lego_baseline(year)  # type: ignore  # imported at runtime in schema
+        cfg = load_lego_config()  # type: ignore
+    except Exception:
+        bl, cfg = None, None
+    if not bl or not cfg:
+        return [
+            MissionAllocation(code="HH", label="Households", amount_eur=0.0, share=0.0),
+            MissionAllocation(code="ENT", label="Enterprises", amount_eur=0.0, share=0.0),
+            MissionAllocation(code="COL", label="Collective", amount_eur=0.0, share=0.0),
+        ]
+    # Map piece id -> beneficiaries weights
+    weights: Dict[str, Dict[str, float]] = {}
+    for p in cfg.get("pieces", []):
+        pid = str(p.get("id"))
+        b = p.get("beneficiaries") or {}
+        weights[pid] = {
+            "HH": float(b.get("households", 0.0)),
+            "ENT": float(b.get("enterprises", 0.0)),
+            "COL": float(b.get("collective", 0.0)),
+        }
+    totals = {"HH": 0.0, "ENT": 0.0, "COL": 0.0}
+    dep_total = 0.0
+    for ent in bl.get("pieces", []):
+        if str(ent.get("type")) != "expenditure":
+            continue
+        pid = str(ent.get("id"))
+        amt = ent.get("amount_eur")
+        if not isinstance(amt, (int, float)):
+            continue
+        dep_total += float(amt)
+        w = weights.get(pid) or {"HH": 0.0, "ENT": 0.0, "COL": 0.0}
+        for k in ("HH", "ENT", "COL"):
+            totals[k] += float(amt) * float(w.get(k, 0.0))
+    out = []
+    for code, label in [("HH", "Households"), ("ENT", "Enterprises"), ("COL", "Collective")]:
+        amt = totals[code]
+        share = (amt / dep_total) if dep_total > 0 else 0.0
+        out.append(MissionAllocation(code=code, label=label, amount_eur=amt, share=share))
+    # Sort desc by amount
+    out.sort(key=lambda x: x.amount_eur, reverse=True)
+    return out
+
+
 def procurement_top_suppliers(
     year: int,
     region: str,

@@ -9,6 +9,7 @@ from strawberry.scalars import JSON
 from .data_loader import (
     allocation_by_mission,
     allocation_by_cofog,
+    allocation_by_beneficiary,
     procurement_top_suppliers,
     run_scenario,
     list_sources,
@@ -34,6 +35,7 @@ class MissionAllocationType:
 class AllocationType:
     mission: List[MissionAllocationType]
     cofog: List[MissionAllocationType] | None = None
+    beneficiary: List[MissionAllocationType] | None = None
 
 
 @strawberry.type
@@ -105,6 +107,7 @@ class BasisEnum(str, enum.Enum):
 class LensEnum(str, enum.Enum):
     ADMIN = "ADMIN"
     COFOG = "COFOG"
+    BENEFICIARY = "BENEFICIARY"
 
 
 @strawberry.type
@@ -179,11 +182,20 @@ class Query:
                     for m in alloc.mission
                 ]
             )
-        else:
+        elif lens == LensEnum.COFOG:
             items = allocation_by_cofog(year, Basis(basis.value))
             return AllocationType(
                 mission=[],
                 cofog=[
+                    MissionAllocationType(code=i.code, label=i.label, amountEur=i.amount_eur, share=i.share)
+                    for i in items
+                ],
+            )
+        else:  # BENEFICIARY
+            items = allocation_by_beneficiary(year)
+            return AllocationType(
+                mission=[],
+                beneficiary=[
                     MissionAllocationType(code=i.code, label=i.label, amountEur=i.amount_eur, share=i.share)
                     for i in items
                 ],

@@ -14,7 +14,7 @@ schema {
 }
 
 enum BasisEnum { CP AE }
-enum LensEnum { ADMIN COFOG }
+enum LensEnum { ADMIN COFOG BENEFICIARY }
 
 type MissionAllocation {
   code: String!
@@ -26,6 +26,7 @@ type MissionAllocation {
 type Allocation {
   mission: [MissionAllocation!]!
   cofog: [MissionAllocation!]
+  beneficiary: [MissionAllocation!]
 }
 
 type Supplier {

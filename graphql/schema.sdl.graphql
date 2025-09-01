@@ -3,7 +3,7 @@
 schema { query: Query, mutation: Mutation }
 
 enum BasisEnum { CP AE }
-enum LensEnum { ADMIN COFOG }
+enum LensEnum { ADMIN COFOG BENEFICIARY }
 
 scalar JSON
 
@@ -19,7 +19,7 @@ type DistanceByPiece { id: ID!, shareDelta: Float! }
 type Distance { score: Float!, byPiece: [DistanceByPiece!]! }
 
 type MissionAllocation { code: String!, label: String!, amountEur: Float!, share: Float! }
-type Allocation { mission: [MissionAllocation!]!, cofog: [MissionAllocation!] }
+type Allocation { mission: [MissionAllocation!]!, cofog: [MissionAllocation!], beneficiary: [MissionAllocation!] }
 
 type Supplier { siren: String!, name: String! }
 type ProcurementItem { supplier: Supplier!, amountEur: Float!, cpv: String, procedureType: String, locationCode: String, sourceUrl: String }
