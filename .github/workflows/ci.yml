@@ -52,7 +52,7 @@ jobs:
 
       - name: Run axe accessibility check (home)
         working-directory: frontend
-        run: npx @axe-core/cli --exit=0 http://127.0.0.1:3000
+        run: npx @axe-core/cli --exit http://127.0.0.1:3000
 
       - name: Build API Docker image
         run: docker build -f services/api/Dockerfile -t citizen-budget-lab-api:ci .
