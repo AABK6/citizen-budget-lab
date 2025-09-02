@@ -211,7 +211,7 @@ def procurement_top_suppliers(
 ) -> List[ProcurementItem]:
     # Aggregate by supplier within region code prefix (e.g., "75")
     by_supplier: Dict[str, Dict[str, float | str]] = {}
-    for row in _read_csv(PROCUREMENT_CSV):
+    for row in _read_csv(_procurement_path(year)):
         signed = dt.date.fromisoformat(row["signed_date"]) if row["signed_date"] else None
         if not signed or signed.year != year:
             continue
@@ -804,3 +804,8 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
 
     acc = Accounting(deficit_path=deficit_path, debt_path=debt_path)
     return sid, acc, comp, macro
+def _procurement_path(year: int) -> str:
+    """Prefer normalized DECP cache if present for the given year, else sample CSV.
+    """
+    cached = os.path.join(CACHE_DIR, f"procurement_contracts_{year}.csv")
+    return cached if os.path.exists(cached) else PROCUREMENT_CSV

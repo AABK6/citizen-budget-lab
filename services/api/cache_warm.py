@@ -846,6 +846,215 @@ def main(argv: Iterable[str] | None = None) -> None:
         print(f"Wrote {path}")
         return
 
+    # DECP procurement is handled via a dedicated CLI entry (see below)
+
+
+# ------------------------------
+# DECP procurement ingestion
+# ------------------------------
+
+def warm_decp_procurement(year: int, csv_path: str | None = None, base: str | None = None, dataset: str | None = None) -> str:
+    """Ingest consolidated DECP-like data (CSV or ODS), deduplicate and roll up lots→contracts.
+
+    Writes: data/cache/procurement_contracts_{year}.csv and a sidecar meta JSON.
+
+    Input expectations (CSV): columns compatible with sample:
+      contract_id,buyer_org_id,supplier_siren,supplier_name,signed_date,amount_eur,cpv_code,procedure_type,lot_count,location_code
+    If multiple rows share the same (contract_id, signed_date), amounts are summed and lot_count aggregated.
+    """
+    _ensure_dir(CACHE_DIR)
+
+    rows: List[Dict[str, Any]] = []
+    if csv_path:
+        # Read CSV from local path
+        import csv as _csv
+
+        with open(csv_path, newline="", encoding="utf-8") as f:
+            r = _csv.DictReader(f)
+            for rec in r:
+                rows.append(rec)
+    elif base and dataset:
+        # Try ODS explore API
+        try:
+            js = ods.records(base, dataset, select=None, where=None, group_by=None, order_by=None, limit=1000)
+            for item in _ods_results(js):
+                rows.append(item.get("record") or item)
+        except Exception:
+            rows = []
+    else:
+        # Default to sample CSV
+        csv_path = os.path.join(DATA_DIR, "sample_procurement.csv")
+        import csv as _csv
+
+        with open(csv_path, newline="", encoding="utf-8") as f:
+            r = _csv.DictReader(f)
+            for rec in r:
+                rows.append(rec)
+
+    # Normalize and group by contract_id + signed_date
+    def _year_of(s: str | None) -> int | None:
+        if not s:
+            return None
+        try:
+            return int(str(s).split("-", 1)[0])
+        except Exception:
+            return None
+
+    groups: Dict[tuple, Dict[str, Any]] = {}
+    for rec in rows:
+        if not rec:
+            continue
+        y = _year_of(rec.get("signed_date") or rec.get("datePublication"))
+        if y != year:
+            continue
+        cid = str(rec.get("contract_id") or rec.get("id") or rec.get("id_marche") or rec.get("id_contract") or "").strip()
+        if not cid:
+            # Skip rows without a contract id
+            continue
+        key = (cid, rec.get("signed_date") or rec.get("datePublication") or "")
+        ent = groups.setdefault(
+            key,
+            {
+                "contract_id": cid,
+                "buyer_org_id": str(rec.get("buyer_org_id") or rec.get("acheteur_id") or ""),
+                "supplier_siren": str(rec.get("supplier_siren") or rec.get("siret") or rec.get("siren") or ""),
+                "supplier_name": str(rec.get("supplier_name") or rec.get("fournisseur") or rec.get("raisonSociale") or ""),
+                "signed_date": str(rec.get("signed_date") or rec.get("datePublication") or ""),
+                "amount_eur": 0.0,
+                "cpv_code": str(rec.get("cpv_code") or rec.get("cpv") or ""),
+                "procedure_type": str(rec.get("procedure_type") or rec.get("procedure") or ""),
+                "lot_count": 0,
+                "location_code": str(rec.get("location_code") or rec.get("codeCommune") or rec.get("code_postal") or ""),
+                "amount_quality": "OK",
+            },
+        )
+        try:
+            amt = float(rec.get("amount_eur") or rec.get("montant") or rec.get("valeur") or 0.0)
+        except Exception:
+            amt = 0.0
+        ent["amount_eur"] = float(ent["amount_eur"]) + amt
+        # Aggregate lot count if present else count rows
+        try:
+            lc = int(rec.get("lot_count") or rec.get("nombreLots") or 1)
+        except Exception:
+            lc = 1
+        ent["lot_count"] = int(ent["lot_count"]) + lc
+        if not amt or amt <= 0:
+            ent["amount_quality"] = "MISSING"
+
+    out_csv = os.path.join(CACHE_DIR, f"procurement_contracts_{year}.csv")
+    import csv as _csv
+
+    with open(out_csv, "w", newline="", encoding="utf-8") as f:
+        w = _csv.writer(f)
+        w.writerow([
+            "year",
+            "contract_id",
+            "buyer_org_id",
+            "supplier_siren",
+            "supplier_name",
+            "signed_date",
+            "amount_eur",
+            "cpv_code",
+            "procedure_type",
+            "lot_count",
+            "location_code",
+            "amount_quality",
+        ])
+        for (_, _), rec in groups.items():
+            w.writerow([
+                year,
+                rec.get("contract_id"),
+                rec.get("buyer_org_id"),
+                rec.get("supplier_siren"),
+                rec.get("supplier_name"),
+                rec.get("signed_date"),
+                float(rec.get("amount_eur") or 0.0),
+                rec.get("cpv_code"),
+                rec.get("procedure_type"),
+                int(rec.get("lot_count") or 0),
+                rec.get("location_code"),
+                rec.get("amount_quality"),
+            ])
+
+    # Sidecar metadata
+    sidecar = {
+        "extraction_ts": dt.datetime.utcnow().isoformat() + "Z",
+        "year": int(year),
+        "source": (csv_path or f"ods:{base}:{dataset}"),
+        "row_count": len(groups),
+        "note": "Deduplicated by (contract_id, signed_date); lots rolled up by summing amounts and lot_count",
+    }
+    with open(out_csv.replace(".csv", ".meta.json"), "w", encoding="utf-8") as f:
+        json.dump(sidecar, f, ensure_ascii=False, indent=2)
+
+    return out_csv
+
+
+def main(argv: Iterable[str] | None = None) -> None:
+    p = argparse.ArgumentParser(description="Cache warmer for essential budget data")
+    sub = p.add_subparsers(dest="cmd", required=True)
+
+    sp_plf = sub.add_parser("plf", help="Cache PLF/LFI mission-level credits from ODS")
+    sp_plf.add_argument("--base", default="https://data.economie.gouv.fr", help="ODS base URL")
+    sp_plf.add_argument("--dataset", required=True, help="Dataset id, e.g. plf25-depenses-2025-selon-destination")
+    sp_plf.add_argument("--year", type=int, required=True, help="Budget year (for output tagging)")
+    # Leave empty by default to enable auto-detection from dataset fields
+    sp_plf.add_argument("--cp-field", default="", help="Field name for CP amount (override autodetect)")
+    sp_plf.add_argument("--ae-field", default="", help="Field name for AE amount (override autodetect)")
+    sp_plf.add_argument("--where", dest="extra_where", default=None, help="Extra ODS where clause, e.g. typebudget='PLF'")
+
+    sp_eu = sub.add_parser("eurostat-cofog", help="Cache Eurostat COFOG shares for countries/year")
+    sp_eu.add_argument("--year", type=int, required=True)
+    sp_eu.add_argument("--countries", required=True, help="Comma-separated country codes, e.g. FR,DE,IT")
+
+    sp_fields = sub.add_parser("ods-fields", help="List fields for an ODS dataset (to help pick cp/ae/year fields)")
+    sp_fields.add_argument("--base", default="https://data.economie.gouv.fr")
+    sp_fields.add_argument("--dataset", required=True)
+
+    # LEGO baseline warmer (expenditures v0)
+    sp_lego = sub.add_parser("lego", help="Build LEGO baseline for a year (expenditures v0)")
+    sp_lego.add_argument("--year", type=int, required=True)
+    sp_lego.add_argument("--country", default="FR")
+    sp_lego.add_argument("--scope", default="S13")
+
+    # DECP procurement ingestion
+    sp_decp = sub.add_parser("decp", help="Ingest DECP procurement and write normalized cache")
+    sp_decp.add_argument("--year", type=int, required=True)
+    sp_decp.add_argument("--csv", dest="csv_path", default=None, help="Path to input CSV (consolidated)")
+    sp_decp.add_argument("--base", default=None, help="ODS base URL (optional)")
+    sp_decp.add_argument("--dataset", default=None, help="ODS dataset id (optional)")
+
+    args = p.parse_args(list(argv) if argv is not None else None)
+
+    if args.cmd == "plf":
+        path = warm_plf_state_budget(args.base, args.dataset, args.year, args.cp_field, args.ae_field, args.extra_where)
+        print(f"Wrote {path}")
+        return
+
+    if args.cmd == "eurostat-cofog":
+        countries = [c.strip() for c in args.countries.split(",") if c.strip()]
+        path = warm_eurostat_cofog(args.year, countries)
+        print(f"Wrote {path}")
+        return
+
+    if args.cmd == "ods-fields":
+        meta = ods.dataset_info(args.base, args.dataset)
+        fields = meta.get("dataset", {}).get("fields") or meta.get("fields") or []
+        for f in fields:
+            print(f"{f.get('name')}: {f.get('type')} — {f.get('label')}")
+        return
+
+    if args.cmd == "lego":
+        path = warm_lego_baseline(args.year, country=args.country, scope=args.scope)
+        print(f"Wrote {path}")
+        return
+
+    if args.cmd == "decp":
+        path = warm_decp_procurement(args.year, csv_path=args.csv_path, base=args.base, dataset=args.dataset)
+        print(f"Wrote {path}")
+        return
+
 
 if __name__ == "__main__":
     main()

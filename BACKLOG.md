@@ -251,7 +251,7 @@ Next Sprint (2 weeks) — Top Priorities
     - [x] Persist vintage (extraction timestamp, dataset id/resource id) alongside CSV or in sidecar JSON. Implemented sidecar `data/cache/state_budget_mission_YYYY.meta.json`; tested.
     - [ ] Programme/action level mapping and year-aware joins for COFOG with tests; weights sum to 1 per source code.
       - Added unit test to ensure COFOG weights sum to 1 per mission in `data/cofog_mapping.json`.
-    - [ ] Procurement ingestion from consolidated DECP, dedup by `id` + `datePublication`, lot→contract rollup, amount quality flags.
+    - [x] Procurement ingestion from consolidated DECP, dedup by `id` + `datePublication`, lot→contract rollup, amount quality flags. CLI `python -m services.api.cache_warm decp --year YYYY --csv <path>` writes `data/cache/procurement_contracts_YYYY.csv` + sidecar.
     - [x] INSEE Sirene + BDM clients with token caching and HTTP retries.
     - [x] Join SIRENE attributes (NAF/size) into procurement outputs and expose via API. Best‑effort API enrichment adds `naf`, `companySize` when available (non‑blocking).
     - [x] Macro series reader for GDP; expose BDM series via GraphQL.
