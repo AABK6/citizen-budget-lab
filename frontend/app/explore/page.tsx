@@ -19,7 +19,7 @@ type MissionRow = { code: string; label: string; amountEur: number; share: numbe
 export default function ExplorePage() {
   const { t } = useI18n()
   const [year, setYear] = useState<number>(2026)
-  const [lens, setLens] = useState<Lens>('ADMIN')
+  const [lens, setLens] = useState<Lens>('COFOG')
   const [basis, setBasis] = useState<Basis>('CP')
   const [rows, setRows] = useState<MissionRow[]>([])
   const [prevTotal, setPrevTotal] = useState<number | null>(null)
@@ -111,4 +111,3 @@ export default function ExplorePage() {
     </div>
   )
 }
-

@@ -146,6 +146,40 @@ def allocation_by_cofog(year: int, basis: Basis) -> List[MissionAllocation]:
     return items
 
 
+def allocation_by_cofog_s13(year: int) -> List[MissionAllocation]:
+    """Prefer warmed Eurostat S13 COFOG shares and scale by warmed LEGO baseline total expenditures.
+
+    Fallback to mission/programme mapping if warmed caches are not present.
+    """
+    shares_path = os.path.join(CACHE_DIR, f"eu_cofog_shares_{year}.json")
+    if os.path.exists(shares_path):
+        try:
+            import json as _json
+
+            with open(shares_path, "r", encoding="utf-8") as f:
+                js = _json.load(f)
+            fr = js.get("FR") or js.get("fr") or []
+            bl = load_lego_baseline(year)
+            total = float(bl.get("depenses_total_eur", 0.0)) if isinstance(bl, dict) else 0.0
+            items: List[MissionAllocation] = []
+            for ent in fr:
+                code = str(ent.get("code"))
+                label = str(ent.get("label") or _COFOG_LABELS.get(code, code))
+                share = float(ent.get("share") or 0.0)
+                amt = share * total if total > 0 else 0.0
+                items.append(MissionAllocation(code=code[:2], label=label, amount_eur=amt, share=share))
+            # Normalize shares to sum to 1.0 defensively
+            s = sum(i.share for i in items)
+            if s > 0:
+                items = [MissionAllocation(code=i.code, label=i.label, amount_eur=i.amount_eur, share=i.share / s) for i in items]
+            items.sort(key=lambda x: x.amount_eur, reverse=True)
+            return items
+        except Exception:
+            pass
+    # Fallback to mapping-based aggregation from sample mission CSV
+    return allocation_by_cofog(year, Basis.CP)
+
+
 def allocation_by_beneficiary(year: int) -> List[MissionAllocation]:
     """Aggregate expenditures by implied beneficiary categories using LEGO baseline.
 

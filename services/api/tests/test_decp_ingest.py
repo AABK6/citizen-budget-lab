@@ -21,16 +21,17 @@ def test_decp_warmer_rollup_and_dedup(tmp_path):
             "lot_count",
             "location_code",
         ],
-        ["PC-2024-XYZ", "MIN-TEST", "999999999", "TestCo", "2024-01-10", "100000", "12300000", "Open", "1", "75001"],
-        ["PC-2024-XYZ", "MIN-TEST", "999999999", "TestCo", "2024-01-10", "200000", "12300000", "Open", "1", "75001"],
+        ["PC-2024-XYZ", "MIN-TEST", "999999999", "TestCo", "2093-01-10", "100000", "12300000", "Open", "1", "75001"],
+        ["PC-2024-XYZ", "MIN-TEST", "999999999", "TestCo", "2093-01-10", "200000", "12300000", "Open", "1", "75001"],
         # zero-amount row should not break and should set quality flag to MISSING
-        ["PC-2024-ABC", "MIN-TEST", "888888888", "ZeroCorp", "2024-03-05", "0", "30192000", "Open", "1", "75015"],
+        ["PC-2024-ABC", "MIN-TEST", "888888888", "ZeroCorp", "2093-03-05", "0", "30192000", "Open", "1", "75015"],
     ]
     with open(in_csv, "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
         w.writerows(rows)
 
-    out = warm_decp_procurement(2024, csv_path=str(in_csv))
+    year = 2093
+    out = warm_decp_procurement(year, csv_path=str(in_csv))
     assert os.path.exists(out)
     # Aggregated file should contain one row for XYZ with amount 300000 and one for ABC with 0
     with open(out, newline="", encoding="utf-8") as f:
@@ -43,7 +44,6 @@ def test_decp_warmer_rollup_and_dedup(tmp_path):
     assert m["PC-2024-ABC"]["amount_quality"].upper() == "MISSING"
 
     # Verify API uses cached procurement for supplier aggregation
-    items = procurement_top_suppliers(2024, region="75")
+    items = procurement_top_suppliers(year, region="75")
     # Top supplier should include TestCo with 300000 in region 75
     assert any(i.supplier.siren == "999999999" and abs(i.amount_eur - 300000.0) < 1e-6 for i in items)
-

@@ -187,7 +187,12 @@ class Query:
                 ]
             )
         elif lens == LensEnum.COFOG:
-            items = allocation_by_cofog(year, Basis(basis.value))
+            # Prefer warmed Eurostat S13 COFOG shares scaled by baseline; fallback to mapping over mission CSV
+            try:
+                from .data_loader import allocation_by_cofog_s13  # type: ignore
+                items = allocation_by_cofog_s13(year)
+            except Exception:
+                items = allocation_by_cofog(year, Basis(basis.value))
             return AllocationType(
                 mission=[],
                 cofog=[

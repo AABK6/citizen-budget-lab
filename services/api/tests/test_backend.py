@@ -276,4 +276,3 @@ actions:
     assert not res3.errors
     id3 = res3.data["runScenario"]["id"]
     assert id3 != id1
-
