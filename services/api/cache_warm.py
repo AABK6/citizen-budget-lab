@@ -419,6 +419,25 @@ def _na_item_code(code: str) -> str:
     return str(code).replace(".", "").replace("-", "").upper()
 
 
+def _na_item_parents(code: str) -> List[str]:
+    """Generate fallback NA_ITEM parent codes (e.g., D211 -> D21 -> D2)."""
+    c = _na_item_code(code)
+    parents = [c]
+    # progressively strip trailing characters until length 2 (e.g., D2)
+    while len(c) > 2:
+        c = c[:-1]
+        # stop at boundary where it ends with a digit boundary (e.g., D21 -> D2)
+        parents.append(c)
+    # de-duplicate while preserving order
+    seen: set[str] = set()
+    out: List[str] = []
+    for x in parents:
+        if x not in seen:
+            out.append(x)
+            seen.add(x)
+    return out
+
+
 def _val_mio(js: Dict[str, Any], year: int, country: str, sector: str, unit: str, cofog_code: str, na_item: str) -> float:
     """Best-effort extraction of a MIO_EUR value for given coordinates.
     Tries several COFOG code candidates.
@@ -463,6 +482,7 @@ def warm_lego_baseline(year: int, country: str = "FR", scope: str = "S13") -> st
     # Prefer SDMX-XML for expenditures (more reliable)
     js_exp = None  # legacy JSON disabled in favor of XML
     warn = ""
+    # Revenues: use SDMX-XML. We keep a JSON fetch attempt only for diagnostics.
     try:
         js_rev = eu.fetch("gov_10a_main", {"time": str(year), "unit": "MIO_EUR", "geo": country})
     except Exception as e:
@@ -557,6 +577,19 @@ def warm_lego_baseline(year: int, country: str = "FR", scope: str = "S13") -> st
             share = w / w_sum
             exp_amounts[pid] = exp_amounts.get(pid, 0.0) + (total_mio * share * 1_000_000.0)
 
+    # Fill debt_interest from COFOG 01.7 total (TE), since D.41 is not exposed in gov_10a_exp
+    try:
+        key_di = f"A.MIO_EUR.{scope}.GF0107.TE.{country}"
+        di_mio = eu.sdmx_value("gov_10a_exp", key_di, time=str(year))
+        if di_mio is None:
+            di_mio = eu.sdmx_value("gov_10a_exp", key_di, time=None)
+        di_mio = float(di_mio or 0.0)
+        if di_mio > 0:
+            exp_amounts["debt_interest"] = di_mio * 1_000_000.0
+            warn_parts.append("debt_interest from COFOG 01.7 TE (D.41 not exposed in gov_10a_exp)")
+    except Exception:
+        pass
+
     # If all zeros, fallback to major-only approximation
     dep_total = sum(exp_amounts.values())
     if dep_total <= 0.0 and major_amounts:
@@ -572,6 +605,43 @@ def warm_lego_baseline(year: int, country: str = "FR", scope: str = "S13") -> st
             exp_amounts[pid] = approx
         dep_total = sum(exp_amounts.values())
 
+    # Helper: SDMX XML with fallback to last available if the requested year has no Obs
+    def _sdmx_value_fallback(flow: str, key: str, y: int) -> float:
+        v = eu.sdmx_value(flow, key, time=str(y))
+        if v is None:
+            v = eu.sdmx_value(flow, key, time=None)
+        return float(v or 0.0)
+
+    # Pre-fetch main revenue bases in MIO_EUR
+    # gov_10a_taxag exposes taxes/social contributions by ESA code
+    taxag_codes = [
+        "D211",  # VAT
+        "D214A", "D214B", "D214C",  # excises
+        "D29",  # other taxes on production (for splits)
+        "D59A",  # recurrent property taxes
+        "D51",   # taxes on income etc. (split PIT/CIT)
+        "D611", "D612", "D613",  # social contributions
+    ]
+    taxag_vals: Dict[str, float] = {}
+    for c in taxag_codes:
+        taxag_vals[c] = _sdmx_value_fallback("gov_10a_taxag", f"A.MIO_EUR.{scope}.{c}.{country}", year)
+
+    # gov_10a_main exposes sales/service revenue and totals
+    main_codes = ["P11", "P12"]
+    main_vals: Dict[str, float] = {}
+    for c in main_codes:
+        main_vals[c] = _sdmx_value_fallback("gov_10a_main", f"A.MIO_EUR.{scope}.{c}.{country}", year)
+
+    # Default splits (rough but documented):
+    VAT_STANDARD_SPLIT = 0.70  # remainder goes to reduced
+    PIT_SPLIT = 0.60           # CIT = 0.40
+    # Break D29 across sub-buckets to fill LEGO pieces; sums to 1.0
+    D29_WAGE = 0.14
+    D29_ENV = 0.10
+    D29_FINES = 0.02
+    D29_TRANSFERS = 0.24
+    D29_OTHER = max(0.0, 1.0 - (D29_WAGE + D29_ENV + D29_FINES + D29_TRANSFERS))
+
     # Build pieces_out with expenditures amounts
     for p in pieces_cfg:
         pid = str(p.get("id"))
@@ -580,26 +650,66 @@ def warm_lego_baseline(year: int, country: str = "FR", scope: str = "S13") -> st
         if ptype == "expenditure":
             amt_eur = float(exp_amounts.get(pid, 0.0))
             dep_total += 0.0  # already summed
-        elif ptype == "revenue" and js_rev:
+        elif ptype == "revenue":
+            pid = str(p.get("id"))
             esa = p.get("mapping", {}).get("esa") or []
             total_mio = 0.0
             for ent in esa:
-                code = str(ent.get("code"))
+                code_raw = str(ent.get("code"))
                 w = float(ent.get("weight", 1.0))
-                # Try direct na_item lookup
-                coords = {"time": str(year), "unit": "MIO_EUR", "geo": country}
-                # Add sector if present
-                dims = js_rev.get("dimension", {}).get("id") or []
-                if "sector" in dims:
-                    coords["sector"] = scope
-                if "na_item" in dims:
-                    coords["na_item"] = code
-                from .clients import eurostat as eu_client  # lazy
-
-                v = eu.value_at(js_rev, coords) if coords.get("na_item") else None
-                if v is None:
-                    v = 0.0
-                total_mio += w * float(v)
+                code = _na_item_code(code_raw)
+                base = code
+                ratio = 1.0
+                flow = "taxag"  # shorthand for gov_10a_taxag
+                # Map pseudo-codes and choose base/ratio
+                if code in ("P11", "P12"):
+                    flow = "main"
+                    base = code
+                elif code == "D211":
+                    base = "D211"
+                    # Split by piece id into standard/reduced
+                    if pid == "rev_vat_standard":
+                        ratio = VAT_STANDARD_SPLIT
+                    elif pid == "rev_vat_reduced":
+                        ratio = 1.0 - VAT_STANDARD_SPLIT
+                elif code.startswith("D51_"):
+                    base = "D51"
+                    if code.endswith("PIT"):
+                        ratio = PIT_SPLIT
+                    elif code.endswith("CIT"):
+                        ratio = 1.0 - PIT_SPLIT
+                elif code.startswith("D29_"):
+                    base = "D29"
+                    if code.endswith("WAGE_TAX"):
+                        ratio = D29_WAGE
+                    elif code.endswith("ENV"):
+                        ratio = D29_ENV
+                    elif code.endswith("FINES"):
+                        ratio = D29_FINES
+                    elif code.endswith("TRANS"):
+                        ratio = D29_TRANSFERS
+                elif code == "D29":
+                    base = "D29"
+                    # Assign only the residual share to the generic D29 piece
+                    ratio = D29_OTHER
+                elif code == "D59_PROP":
+                    base = "D59A"
+                elif code == "D59_TRANS":
+                    base = "D29"
+                    ratio = D29_TRANSFERS
+                elif code == "D611_CSG":
+                    # CSG/CRDS are not isolated in gov_10a_taxag; skip to avoid double count
+                    base = "__NONE__"
+                    ratio = 0.0
+                # Pull value from the right cache
+                if base == "__NONE__":
+                    val_mio = 0.0
+                else:
+                    if flow == "main":
+                        val_mio = float(main_vals.get(base, 0.0))
+                    else:
+                        val_mio = float(taxag_vals.get(base, 0.0))
+                total_mio += w * ratio * val_mio
             amt_eur = total_mio * 1_000_000.0
             recettes_total += amt_eur
         pieces_out.append({
@@ -637,7 +747,7 @@ def warm_lego_baseline(year: int, country: str = "FR", scope: str = "S13") -> st
         "recettes_total_eur": recettes_total,
         "pieces": pieces_out,
         "meta": {
-            "source": "Eurostat SDMX 2.1 (dissemination) gov_10a_exp + gov_10a_main",
+            "source": "Eurostat SDMX 2.1 (dissemination): gov_10a_exp (exp) + gov_10a_taxag (taxes/contrib) + gov_10a_main (sales/totals)",
             "warning": ("; ".join([w for w in ([warn] + warn_parts) if w]) if (warn or warn_parts) else ""),
         },
     }
