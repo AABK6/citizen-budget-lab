@@ -434,6 +434,96 @@ def warm_eurostat_cofog(year: int, countries: List[str]) -> str:
 
 
 # ------------------------------
+# Eurostat COFOG subfunction shares (GFxx.y) cache
+# ------------------------------
+
+def warm_eurostat_cofog_sub(year: int, countries: List[str]) -> str:
+    """Fetch COFOG subfunction values and compute shares relative to total expenditures.
+
+    Writes data/cache/eu_cofog_subshares_{year}.json with structure:
+      { "FR": { "07": [{"code":"07.1","label":"...","share":0.025}, ...], ... }, ... }
+    """
+    _ensure_dir(CACHE_DIR)
+    out: Dict[str, Any] = {}
+    try:
+        js = eu.fetch("gov_10a_exp", {"time": str(year), "unit": "MIO_EUR", "sector": "S13"})
+        dims, _, idx_maps, labels = eu._dim_maps(js)  # type: ignore[attr-defined]
+        cof_map = idx_maps.get("cofog99", {})
+        geo_map = idx_maps.get("geo", {})
+        majors = [f"{i:02d}" for i in range(1, 11)]
+        for c in countries:
+            # Compute grand total across top-level GFxx for this country
+            grand_total = 0.0
+            for m in majors:
+                v = eu.value_at(js, {"unit": "MIO_EUR", "sector": "S13", "na_item": "TE", "time": str(year), "geo": c, "cofog99": f"GF{m}"})
+                if v is not None:
+                    grand_total += float(v)
+            per_major: Dict[str, List[Dict[str, Any]]] = {}
+            for m in majors:
+                vals: List[tuple[str, str, float]] = []
+                for code in cof_map.keys():
+                    if not code.startswith(f"GF{m}"):
+                        continue
+                    if code == f"GF{m}":
+                        continue
+                    v = eu.value_at(js, {"unit": "MIO_EUR", "sector": "S13", "na_item": "TE", "time": str(year), "geo": c, "cofog99": code})
+                    if v is None:
+                        continue
+                    lab = labels.get("cofog99", {}).get(code, code)
+                    vals.append((code, lab, float(v)))
+                if vals and grand_total > 0:
+                    arr = []
+                    for code, lab, v in sorted(vals, key=lambda x: x[2], reverse=True):
+                        share = v / grand_total
+                        canon = f"{m}.{code.replace('GF','')[2:]}" if len(code) >= 5 else m
+                        arr.append({"code": canon, "label": lab, "share": share})
+                    per_major[m] = arr
+            if per_major:
+                out[c] = per_major
+    except Exception as e_json:
+        out["__warning__"] = (
+            "Eurostat JSON fetch failed for subfunctions; attempting SDMX fallback. "
+            f"Error: {type(e_json).__name__}"
+        )
+
+    # SDMX fallback for any missing country
+    missing = [c for c in countries if c not in out]
+    if missing:
+        try:
+            majors = [f"{i:02d}" for i in range(1, 11)]
+            for c in missing:
+                # Grand total from top-level majors
+                grand_total = 0.0
+                for m in majors:
+                    v = eu.sdmx_value("gov_10a_exp", f"A.MIO_EUR.S13.GF{m}.TE.{c}", time=str(year))
+                    if v is not None:
+                        grand_total += float(v)
+                per_major: Dict[str, List[Dict[str, Any]]] = {}
+                for m in majors:
+                    vals: List[tuple[str, float]] = []
+                    for sub in range(1, 10):
+                        code = f"GF{m}{sub}"
+                        v = eu.sdmx_value("gov_10a_exp", f"A.MIO_EUR.S13.{code}.TE.{c}", time=str(year))
+                        if v is None:
+                            continue
+                        vals.append((code, float(v)))
+                    if vals and grand_total > 0:
+                        arr = []
+                        for code, v in sorted(vals, key=lambda x: x[1], reverse=True):
+                            share = v / grand_total
+                            canon = f"{m}.{code.replace('GF','')[2:]}"
+                            arr.append({"code": canon, "label": canon, "share": share})
+                        per_major[m] = arr
+                if per_major:
+                    out[c] = per_major
+        except Exception:
+            pass
+
+    out_path = os.path.join(CACHE_DIR, f"eu_cofog_subshares_{year}.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(out, f, ensure_ascii=False, indent=2)
+    return out_path
+# ------------------------------
 # LEGO baseline (expenditures v0)
 # ------------------------------
 
@@ -848,6 +938,22 @@ def main(argv: Iterable[str] | None = None) -> None:
     sp_eu = sub.add_parser("eurostat-cofog", help="Cache Eurostat COFOG shares for countries/year")
     sp_eu.add_argument("--year", type=int, required=True)
     sp_eu.add_argument("--countries", required=True, help="Comma-separated country codes, e.g. FR,DE,IT")
+    sp_eu_sub = sub.add_parser("eurostat-cofog-sub", help="Cache Eurostat COFOG subfunction shares for countries/year")
+    sp_eu_sub.add_argument("--year", type=int, required=True)
+    sp_eu_sub.add_argument("--countries", required=True, help="Comma-separated country codes, e.g. FR,DE,IT")
+    sp_eu_sub = sub.add_parser("eurostat-cofog-sub", help="Cache Eurostat COFOG subfunction shares for countries/year")
+    sp_eu_sub.add_argument("--year", type=int, required=True)
+    sp_eu_sub.add_argument("--countries", required=True, help="Comma-separated country codes, e.g. FR,DE,IT")
+    sp_eu_sub = sub.add_parser("eurostat-cofog-sub", help="Cache Eurostat COFOG subfunction shares for countries/year")
+    sp_eu_sub.add_argument("--year", type=int, required=True)
+    sp_eu_sub.add_argument("--countries", required=True, help="Comma-separated country codes, e.g. FR,DE,IT")
+    sp_eu_sub = sub.add_parser("eurostat-cofog-sub", help="Cache Eurostat COFOG subfunction shares for countries/year")
+    sp_eu_sub.add_argument("--year", type=int, required=True)
+    sp_eu_sub.add_argument("--countries", required=True, help="Comma-separated country codes, e.g. FR,DE,IT")
+
+    sp_eu_sub = sub.add_parser("eurostat-cofog-sub", help="Cache Eurostat COFOG subfunction shares for countries/year")
+    sp_eu_sub.add_argument("--year", type=int, required=True)
+    sp_eu_sub.add_argument("--countries", required=True, help="Comma-separated country codes, e.g. FR,DE,IT")
 
     sp_fields = sub.add_parser("ods-fields", help="List fields for an ODS dataset (to help pick cp/ae/year fields)")
     sp_fields.add_argument("--base", default="https://data.economie.gouv.fr")
@@ -872,6 +978,32 @@ def main(argv: Iterable[str] | None = None) -> None:
     if args.cmd == "eurostat-cofog":
         countries = [c.strip() for c in args.countries.split(",") if c.strip()]
         path = warm_eurostat_cofog(args.year, countries)
+        print(f"Wrote {path}")
+        return
+    if args.cmd == "eurostat-cofog-sub":
+        countries = [c.strip() for c in args.countries.split(",") if c.strip()]
+        path = warm_eurostat_cofog_sub(args.year, countries)
+        print(f"Wrote {path}")
+        return
+    if args.cmd == "eurostat-cofog-sub":
+        countries = [c.strip() for c in args.countries.split(",") if c.strip()]
+        path = warm_eurostat_cofog_sub(args.year, countries)
+        print(f"Wrote {path}")
+        return
+    if args.cmd == "eurostat-cofog-sub":
+        countries = [c.strip() for c in args.countries.split(",") if c.strip()]
+        path = warm_eurostat_cofog_sub(args.year, countries)
+        print(f"Wrote {path}")
+        return
+    if args.cmd == "eurostat-cofog-sub":
+        countries = [c.strip() for c in args.countries.split(",") if c.strip()]
+        path = warm_eurostat_cofog_sub(args.year, countries)
+        print(f"Wrote {path}")
+        return
+
+    if args.cmd == "eurostat-cofog-sub":
+        countries = [c.strip() for c in args.countries.split(",") if c.strip()]
+        path = warm_eurostat_cofog_sub(args.year, countries)
         print(f"Wrote {path}")
         return
 

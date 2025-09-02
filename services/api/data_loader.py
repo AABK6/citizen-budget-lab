@@ -245,6 +245,25 @@ def allocation_by_cofog_subfunctions(year: int, country: str, major: str) -> Lis
         except Exception:
             total = 0.0
     out: List[MissionAllocation] = []
+    # Prefer warmed cache if present
+    try:
+        cache_path = os.path.join(CACHE_DIR, f"eu_cofog_subshares_{year}.json")
+        if os.path.exists(cache_path):
+            import json as _json
+            with open(cache_path, "r", encoding="utf-8") as f:
+                js = _json.load(f)
+            arr = (js.get(country.upper()) or js.get(country) or {}).get(major)
+            if isinstance(arr, list) and total > 0:
+                for ent in arr:
+                    code = str(ent.get("code"))
+                    label = str(ent.get("label") or code)
+                    share = float(ent.get("share") or 0.0)
+                    out.append(MissionAllocation(code=code, label=label, amount_eur=share * total, share=share))
+                if out:
+                    out.sort(key=lambda x: x.amount_eur, reverse=True)
+                    return out
+    except Exception:
+        pass
     try:
         from .clients import eurostat as eu
 
