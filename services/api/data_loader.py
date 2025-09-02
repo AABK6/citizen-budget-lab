@@ -229,6 +229,77 @@ def allocation_by_cofog_s13(year: int) -> List[MissionAllocation]:
     return allocation_by_cofog(year, Basis.CP)
 
 
+def allocation_by_cofog_subfunctions(year: int, country: str, major: str) -> List[MissionAllocation]:
+    """Return COFOG subfunction breakdown for a given major code (e.g., '07') for S13.
+
+    Uses Eurostat REST JSON with SDMX-XML fallback. Amounts are scaled using the warmed LEGO baseline total expenditures.
+    Shares are relative to total expenditures (not only the major), for consistency with top-level view.
+    """
+    # Normalize major (e.g., '07' or '7' -> '07')
+    major = str(major).zfill(2)
+    total = 0.0
+    bl = load_lego_baseline(year)
+    if isinstance(bl, dict):
+        try:
+            total = float(bl.get("depenses_total_eur", 0.0))
+        except Exception:
+            total = 0.0
+    out: List[MissionAllocation] = []
+    try:
+        from .clients import eurostat as eu
+
+        js = eu.fetch("gov_10a_exp", {"time": str(year), "unit": "MIO_EUR", "sector": "S13", "geo": country})
+        dims, _, idx_maps, labels = eu._dim_maps(js)  # type: ignore[attr-defined]
+        cof_map = idx_maps.get("cofog99", {})
+        # Gather subcodes for this major (GF07x) excluding the top-level GF07
+        vals: List[tuple[str, str, float]] = []
+        total_mio = 0.0
+        for code in cof_map.keys():
+            if not code.startswith(f"GF{major}"):
+                continue
+            if code == f"GF{major}":
+                continue
+            v = eu.value_at(js, {**{"unit": "MIO_EUR", "geo": country, "time": str(year)}, **{"cofog99": code, "sector": "S13", "na_item": "TE"}})
+            if v is None:
+                continue
+            total_mio += float(v)
+            lab = labels.get("cofog99", {}).get(code, code)
+            vals.append((code, lab, float(v)))
+        if vals and total_mio > 0:
+            for code, lab, v in sorted(vals, key=lambda x: x[2], reverse=True):
+                share = (v / total_mio) * (total_mio / total) if total > 0 else 0.0  # share over total expenditures
+                amt = share * total if total > 0 else 0.0
+                # Canonicalize code to e.g., '07.3' from 'GF073'
+                canon = f"{major}.{code.replace('GF','')[2:]}" if len(code) >= 5 else major
+                out.append(MissionAllocation(code=canon, label=lab, amount_eur=amt, share=share))
+            return out
+    except Exception:
+        pass
+    # SDMX fallback: fetch each GF{major}{sub}
+    try:
+        from .clients import eurostat as eu
+
+        # Try a list of subcodes 1..9
+        vals: List[tuple[str, str, float]] = []
+        total_mio = 0.0
+        for sub in range(1, 10):
+            code = f"GF{major}{sub}"
+            v = eu.sdmx_value("gov_10a_exp", f"A.MIO_EUR.S13.{code}.TE.{country}", time=str(year))
+            if v is None:
+                continue
+            total_mio += v
+            vals.append((code, f"{major}.{sub}", v))
+        if vals and total_mio > 0:
+            for code, lab, v in sorted(vals, key=lambda x: x[2], reverse=True):
+                share = (v / total_mio) * (total_mio / total) if total > 0 else 0.0
+                amt = share * total if total > 0 else 0.0
+                canon = f"{major}.{code.replace('GF','')[2:]}" if len(code) >= 5 else major
+                out.append(MissionAllocation(code=canon, label=lab, amount_eur=amt, share=share))
+    except Exception:
+        pass
+    return out
+
+
 def allocation_by_beneficiary(year: int) -> List[MissionAllocation]:
     """Aggregate expenditures by implied beneficiary categories using LEGO baseline.
 

@@ -221,6 +221,16 @@ class Query:
         ]
 
     @strawberry.field
+    def cofogSubfunctions(self, year: int, country: str = "FR", major: str = "07") -> list[MissionAllocationType]:  # noqa: N802
+        from .data_loader import allocation_by_cofog_subfunctions as _by_sub  # type: ignore
+
+        items = _by_sub(year, country, major)
+        return [
+            MissionAllocationType(code=i.code, label=i.label, amountEur=i.amount_eur, share=i.share)
+            for i in items
+        ]
+
+    @strawberry.field
     def procurement(
         self,
         year: int,

@@ -93,6 +93,7 @@ export default function ExplorePage() {
         <YearPicker value={year} onChange={setYear} label={t('label.year')} />
         <Select label={t('explore.basis')} value={basis} onChange={v => setBasis(v as Basis)} options={[{ label: t('basis.cp'), value: 'CP' }, { label: t('basis.ae'), value: 'AE' }]} />
         <Select label={t('explore.lens')} value={lens} onChange={v => setLens(v as Lens)} options={[{ label: t('lens.admin'), value: 'ADMIN' }, { label: t('lens.cofog'), value: 'COFOG' }]} />
+        <span title="ADMIN: central budget missions/programmes (État). COFOG: functional classification across S13 (consolidated)." aria-label="Lens info">ⓘ</span>
         <Select label={t('explore.chart')} value={chartType} onChange={v => setChartType(v as any)} options={[
           { label: t('chart.sunburst'), value: 'sunburst' },
           { label: t('chart.treemap'), value: 'treemap' },
@@ -131,15 +132,30 @@ export default function ExplorePage() {
                   setSelectedCode(code)
                 } catch {}
               } else {
-                setSelectedCode(code || null)
-                setDrillRows(null)
+                // COFOG: try subfunctions for major code; fallback to filter by code
+                const major = (code || '').padStart(2, '0').slice(0,2)
+                try {
+                  const q = "query($y:Int!,$c:String!,$m:String!){ cofogSubfunctions(year:$y,country:$c,major:$m){ code label amountEur share } }"
+                  const data = await gqlRequest(q, { y: year, c: 'FR', m: major })
+                  const subs = data.cofogSubfunctions as MissionRow[]
+                  if (subs && subs.length) {
+                    setDrillRows(subs)
+                    setSelectedCode(major)
+                  } else {
+                    setSelectedCode(code || null)
+                    setDrillRows(null)
+                  }
+                } catch {
+                  setSelectedCode(code || null)
+                  setDrillRows(null)
+                }
               }
             }}
           />
-          {lens === 'ADMIN' && drillRows && (
+          {drillRows && (
             <div className="row gap">
-              <button onClick={() => { setDrillRows(null); setSelectedCode(null) }}>Back to missions</button>
-              <span>Programmes in mission {selectedCode}</span>
+              <button onClick={() => { setDrillRows(null); setSelectedCode(null) }}>Back</button>
+              <span>{lens === 'ADMIN' ? `Programmes in mission ${selectedCode}` : `COFOG subfunctions of ${selectedCode}`}</span>
             </div>
           )}
           {drillRows

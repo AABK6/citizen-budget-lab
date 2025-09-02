@@ -244,7 +244,7 @@ Next Sprint (2 weeks) — Top Priorities
    - DONE: Grouping by domain, search, beneficiary filter; locked badges & expert mode; expanded scoreboard (baseline totals, total deltas, distance); results drawer (deficit/debt chart + top changes).
 
 5) Explore/Procurement polish [MVP] [UI]
-   - DONE: StatCards & SourceLink stars on Explore and Procurement pages; procurement summary cards (total, suppliers, median) and map popups show details with source link; Explore includes 100% stacked shares chart option.
+   - DONE: StatCards & SourceLink stars on Explore and Procurement pages; procurement summary cards (total, suppliers, median) and map popups show details with source link; Explore includes 100% stacked shares chart option; ADMIN toggle to exclude RD with tooltip; Click-to-drill: ADMIN→programme (live ODS via sidecar), COFOG→subfunctions where available; lens info tooltip.
   - Acceptance Criteria (AC):
     - [x] ODS client fetches mission-level credits and writes `state_budget_mission_{year}.csv` with CP/AE sums.
     - [x] Warmer retries and falls back to client-side aggregation when server-side `group_by` fails.
@@ -255,7 +255,7 @@ Next Sprint (2 weeks) — Top Priorities
     - [x] INSEE Sirene + BDM clients with token caching and HTTP retries.
     - [x] Join SIRENE attributes (NAF/size) into procurement outputs and expose via API. Best‑effort API enrichment adds `naf`, `companySize` when available (non‑blocking).
     - [x] Macro series reader for GDP; expose BDM series via GraphQL.
-    - [ ] Add deflators/employment series and provenance entries.
+    - [x] Add deflators/employment series and provenance entries. CLI warmer `python -m services.api.cache_warm macro-insee --config data/macro_series_config.json` writes `data/cache/macro_series_FR.json` + sidecar; GraphQL `macroSeries(country)` returns warmed JSON. Tests added.
     - [x] Source registry loads from `data/sources.json` and is exposed via GraphQL `sources()`.
 
 6) Locks/bounds enforcement & validation [MVP+] [API]
