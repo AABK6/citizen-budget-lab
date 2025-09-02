@@ -6,25 +6,37 @@ This note documents how the LEGO “pieces” for expenditures and revenues are 
 
 Datasets & Scope
 
-- Expenditures: Eurostat SDMX‑JSON `gov_10a_exp` (General Government, S13), filtered to `unit = MIO_EUR`, `time = YYYY`, `geo = FR`. We aggregate by COFOG (functional classification) and ESA transaction type (na_item) using official dimensions exposed by Eurostat.
-- Revenues: Eurostat SDMX‑JSON `gov_10a_main` (revenue aggregates by ESA na_item) with the same filters when available.
+- Expenditures: Eurostat SDMX 2.1 XML (dissemination) `GOV_10A_EXP` for General Government (S13). We aggregate by COFOG (functional classification) and ESA transaction type (NA_ITEM) using series keys:
+  - `A.MIO_EUR.S13.GF{MAJOR}.{NA_ITEM}.{geo}` (e.g., GF07.D632.FR for citycare in‑kind transfers; GF10.D62.FR for social benefits).
+- Revenues: Eurostat SDMX 2.1 XML with two flows:
+  - Taxes & social contributions: `GOV_10A_TAXAG` via `A.MIO_EUR.S13.{NA_ITEM}.{geo}` (e.g., D211 VAT; D51 income taxes; D29 other production taxes; D59A recurrent property taxes; D611/D612/D613 contributions).
+  - Sales & fees: `GOV_10A_MAIN` via `A.MIO_EUR.S13.{P11|P12}.{geo}`.
+- Interest: ESA D.41 is not exposed in these flows for our usage; we proxy from COFOG 01.7 (Public debt transactions) total using `GOV_10A_EXP` series `A.MIO_EUR.S13.GF0107.TE.{geo}`.
 - GDP: Local series (`data/gdp_series.csv`) used for informational ratios and macro kernel scaling.
 - Scope: S13 consolidated (central + local + social security) as the baseline for public‑facing comparisons. A “CENTRAL” view (État/LFI) is planned as a separate toggle.
 
-Expenditure Mapping (COFOG × na_item)
+Expenditure Mapping (COFOG × NA_ITEM)
 
 - Each expenditure LEGO piece in `data/lego_pieces.json` has a mapping:
-  - `mapping.cofog`: list of COFOG codes with weights that sum to 1.0 (e.g., 09.1 for primary education).
-  - `mapping.na_item`: list of ESA transaction categories with weights (e.g., D.1 wages, P.2 intermediate consumption, P.51g investment, D.62 social benefits).
-- The warmer computes the piece amount as:
-  - amount(piece) = Σ_{cofog} Σ_{na_item} weight(cofog) × weight(na_item) × value(geo, time, unit, sector=S13, cofog99, na_item).
+  - `mapping.cofog`: list of COFOG codes with weights (e.g., 09.1 for primary education).
+  - `mapping.na_item`: list of ESA transaction categories with weights (e.g., D.1 wages, P.2 intermediate consumption, P.51g investment, D.62 social benefits, D.632 social transfers in kind).
+- Computation (bucket distribution):
+  - We collect all buckets (COFOG major × NA_ITEM) used by pieces, fetch each bucket once from `GOV_10A_EXP` via SDMX XML, then distribute the bucket’s total to pieces by normalized mapping weights (cofog weight × na_item weight). We sum across buckets per piece.
 - Shares are computed across all expenditure pieces to aid visualization and distance‑to‑budget metrics.
 
-Revenue Mapping (ESA na_item)
+Revenue Mapping (ESA NA_ITEM)
 
-- Each revenue LEGO piece maps to ESA na_item codes in `mapping.esa` (e.g., D.211 for VAT, D.51_pit/D.51_cit split for PIT/CIT per config).
-- The warmer reads `gov_10a_main` and sums values for the specified na_item codes (with weights when necessary) to produce `amount_eur` per revenue piece.
-- `recettes_total_eur` in the baseline snapshot is the sum of these amounts. Shares are not computed in v0.1 but can be added similarly to expenditures later.
+- Each revenue LEGO piece maps to ESA NA_ITEM codes in `mapping.esa` (e.g., D.211 for VAT, D.51_pit/D.51_cit split for PIT/CIT).
+- We read SDMX XML:
+  - `GOV_10A_TAXAG` for taxes and social contributions (D.211, D.51, D.29, D.59A, D.611/D.612/D.613, …).
+  - `GOV_10A_MAIN` for sales/fees P.11/P.12.
+- Splits applied in v0.1 (documented constants):
+  - VAT D.211: 70% standard vs 30% reduced.
+  - Income taxes D.51: 60% PIT vs 40% CIT.
+  - Other production taxes D.29: 14% wage tax, 10% environment, 2% fines, 24% transfer taxes, remainder to generic D.29.
+  - Property taxes D.59_prop maps to D.59A.
+- Some series (e.g., D.4 public income, D.7 transfers received) are left at 0 until the proper flow/mapping is added to avoid double counting.
+- `recettes_total_eur` is the sum of revenue piece amounts. Shares are not computed yet (can be added similar to expenditures).
 
 Beneficiary Categories
 
@@ -48,18 +60,27 @@ Locks & Bounds
 
 Limitations & Caveats
 
-- Aggregation alignment: COFOG×na_item values in Eurostat reflect a functional view that does not map line‑by‑line to national nomenclatures (missions/programmes). This is by design for comparability; drill‑down to national lines remains possible in parallel UI.
-- Data availability: `gov_10a_main` (revenues) may not expose every breakdown by na_item for all years/countries identically; the warmer is robust and annotates warnings in the snapshot.
+- Aggregation alignment: COFOG×NA_ITEM reflects a functional view that does not map line‑by‑line to national nomenclatures.
+- Data availability & proxies:
+  - Some NA_ITEM codes (e.g., D.41) are not exposed in the flows we use; `debt_interest` is proxied from COFOG 01.7 TE.
+  - Some revenue lines (e.g., D.4, D.7) may require additional flows and are currently left at 0.
+  - For series with no Obs in the requested year, we fall back to the last available observation.
 - Elasticities: v0.1 uses simple constants for educational purposes. Future iterations can load ranges and show uncertainty bands.
 
 Reproducibility
 
 1) Define/adjust LEGO pieces and mappings in `data/lego_pieces.json`.
-2) Warm the baseline snapshot for a given year:
+2) Warm the baseline snapshot for a given year (Makefile helpers):
 
-   python -m services.api.cache_warm lego --year 2026
+   make warm-all YEAR=2026 COUNTRIES=FR,DE,IT
 
-3) Inspect outputs under `data/cache/lego_baseline_2026.json` including `depenses_total_eur`, `recettes_total_eur`, and per‑piece amounts.
+   or just the LEGO baseline:
+
+   make warm-eurostat YEAR=2026
+
+   (Under the hood: SDMX XML calls to `GOV_10A_EXP`, `GOV_10A_TAXAG`, and `GOV_10A_MAIN`. Env: `EUROSTAT_SDMX_BASE` and optional `EUROSTAT_COOKIE`.)
+
+3) Inspect outputs under `data/cache/lego_baseline_2026.json` including `depenses_total_eur`, `recettes_total_eur`, and per‑piece amounts; see `meta.warning` for any fallbacks/proxies.
 4) Query via GraphQL:
 
    query { legoBaseline(year: 2026) { year scope pib depensesTotal recettesTotal pieces { id type amountEur } } }
@@ -67,4 +88,3 @@ Reproducibility
 Versioning
 
 - This document and the config are versioned in git; any change to mappings or elasticities should bump a minor version in `data/lego_pieces.json.version` and be noted in the changelog.
-

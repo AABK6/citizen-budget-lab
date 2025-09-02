@@ -14,6 +14,9 @@ Optional
 
 - Eurostat REST cookie:
   - `EUROSTAT_COOKIE` — some Eurostat endpoints may require a cookie; copy from a browser session if you encounter 404/403 and set it here for the cache warmer and resolvers.
+- Eurostat SDMX base (XML):
+  - `EUROSTAT_SDMX_BASE` — override the dissemination SDMX base if needed (default `https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1`).
+  - `EUROSTAT_LANG` — language segment for legacy JSON (default `en`), not used by XML.
 - HTTP cache configuration (defaults work out of the box):
   - `HTTP_CACHE_ENABLED`, `HTTP_CACHE_DIR`, `HTTP_CACHE_TTL_*`
 
@@ -40,4 +43,3 @@ Notes
 
 - Access tokens are short‑lived; the code requests tokens on demand using client credentials. Do not store access tokens in `.env`.
 - `.env` and `.env.*` files are git‑ignored in this repo.
-

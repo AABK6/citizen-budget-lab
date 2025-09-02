@@ -195,7 +195,7 @@ Give the app reliable, up‑to‑date, and well‑documented pipes into French a
 ## J) Authentication & rate limits (operational)
 
 * **INSEE (Sirene & BDM)**: OAuth2 client‑credentials; typical quotas (per‑minute + daily). Build token cache and graceful backoff; parallelize within limits.
-* **Eurostat / ODS portals (data.economie, OFGL, DREES, CAF)**: public, no key; still implement retries & caching.
+* **Eurostat / ODS portals (data.economie, OFGL, DREES, CAF)**: public, no key. Eurostat SDMX‑JSON can be gated in some edges (set `EUROSTAT_COOKIE` if needed); prefer the dissemination SDMX XML data endpoint for reliability. Still implement retries & caching.
 * **BOAMP**: public; consider caps; cache aggressively.
 
 ---
@@ -241,8 +241,41 @@ Give the app reliable, up‑to‑date, and well‑documented pipes into French a
   GET https://api.insee.fr/series/BDM/V1/data/{DATASET}/{FILTERS}?firstNObservations=1
   Authorization: Bearer {token}
   ```
-* **Eurostat – COFOG (gov\_10a\_exp)**
-  Use SDMX‑JSON with dataset code and filters (country=FR, unit=PC\_GDP or MIO\_EUR, sector=S13).
+* **Eurostat — SDMX XML examples**
+
+  - Expenditure bucket (COFOG × NA_ITEM)
+
+  ```
+  GET https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/GOV_10A_EXP/A.MIO_EUR.S13.GF07.D632.FR?time=2026
+  Accept: application/xml
+  ```
+
+  - VAT (taxes)
+
+  ```
+  GET https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/GOV_10A_TAXAG/A.MIO_EUR.S13.D211.FR?time=2026
+  Accept: application/xml
+  ```
+
+  - Sales/fees (P.11)
+
+  ```
+  GET https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/GOV_10A_MAIN/A.MIO_EUR.S13.P11.FR?time=2026
+  Accept: application/xml
+  ```
+
+  - Interest proxy (COFOG 01.7 total)
+
+  ```
+  GET https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/GOV_10A_EXP/A.MIO_EUR.S13.GF0107.TE.FR?time=2026
+  Accept: application/xml
+  ```
+
+* **Eurostat — LEGO baseline flow map (reference)**
+
+  - Expenditures: `GOV_10A_EXP` → `A.MIO_EUR.S13.GF{MAJOR}.{NA_ITEM}.FR`
+  - Revenues: `GOV_10A_TAXAG` → `A.MIO_EUR.S13.{NA_ITEM}.FR` and `GOV_10A_MAIN` → `A.MIO_EUR.S13.{P11|P12}.FR`
+  - Known caveats: `D.41` not exposed for ESA mapping here; use COFOG 01.7 TE proxy. Citycare uses `D.632`. Some `D.4`/`D.7` series may need other flows.
 
 ---
 
@@ -257,7 +290,8 @@ Give the app reliable, up‑to‑date, and well‑documented pipes into French a
 
 ## O) Next technical steps
 
-1. Stand up a data layer with typed clients for ODS, CKAN, SDMX (INSEE, Eurostat), Sirene, GEO/BAN.
+1. Extend typed clients (ODS, Eurostat SDMX XML) with local caching, constraints parsing, and rate‑limit aware retries.
 2. Build an **ETL ingestion catalogue** with per‑dataset schedulers, schema validators, and versioned snapshots.
-3. Implement **join rules** (Org/Geo/Time) + a **COFOG mapping layer** (document assumptions).
+3. Implement **join rules** (Org/Geo/Time) + a **COFOG mapping layer** (document assumptions) — ongoing.
 4. Add **QA dashboards** (coverage, missing amounts, duplicates) before exposing to users.
+5. Parameterize revenue splits (VAT standard/reduced; PIT/CIT; D.29 sub‑splits) in config and document them.

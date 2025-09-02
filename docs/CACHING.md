@@ -33,6 +33,16 @@ Warmers (explicit prefetch)
 
      Output: `data/cache/eu_cofog_shares_2026.json` with shares by COFOG code.
 
+  3) LEGO baseline (Eurostat SDMX XML):
+
+     make warm-eurostat YEAR=2026
+
+     or end-to-end with summary and EU shares:
+
+     make warm-all YEAR=2026 COUNTRIES=FR,DE,IT
+
+     Output: `data/cache/lego_baseline_2026.json` with totals and per-piece amounts; `meta.warning` documents any fallbacks/proxies (e.g., debt interest from COFOG 01.7).
+
 Integration options
 
 - Use these snapshots directly in the API by pointing readers to `data/cache/` when files exist, or keep them as warm materialized views while continuing to rely on the HTTP cache for ad-hoc queries.
@@ -43,4 +53,3 @@ Tips
 - ODS dataset ids vary by vintage. Keep a small map of `year → dataset id/fields` in deploy configs and pass via CLI flags.
 - For larger warmers (DECP procurement), scope by year/region and aggregate server-side to keep outputs compact.
 - Always record vintage and query parameters in filenames and/or sidecar JSON to ensure reproducibility.
-

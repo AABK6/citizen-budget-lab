@@ -170,7 +170,7 @@ Makefile helpers
 
 Notes
 - The LEGO warmer uses Eurostat SDMX 2.1 (XML) for expenditures via `EUROSTAT_SDMX_BASE`, which is generally reliable without cookies.
-- Revenues still use JSON (`gov_10a_main`) and may need `EUROSTAT_COOKIE` depending on your edge; if unavailable, `recettes_total_eur` remains 0 but the app continues to work.
+- Revenues use SDMX XML (`GOV_10A_TAXAG` for taxes/contributions; `GOV_10A_MAIN` for P.11/P.12 sales/fees). Some ESA lines (e.g., D.4 public income, D.7 transfers received) may require additional flows and are currently left at 0 to avoid double counting. Interest (D.41) is proxied from COFOG 01.7 total (GF0107 TE) until a dedicated ESA series is wired.
 
 Caching behavior
 
