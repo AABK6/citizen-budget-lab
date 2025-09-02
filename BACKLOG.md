@@ -50,6 +50,33 @@ Epics
 - LEGO Budget Builder — Data & Config [Data]
   - Define pieces (config): `data/lego_pieces.json` v0 (≥30 spend, ≥15 revenue) with public‑friendly labels, examples, precise COFOG/ESA mapping, implied beneficiaries, bounds/locks, revenue elasticities, sources.
   - LEGO baseline warmer (S13): `python -m services.api.cache_warm lego --year 2026` writes `data/cache/lego_baseline_YYYY.json` — v0 covers expenditures (amounts/shares per expenditure piece, total expenditures) + GDP and metadata; v0.1 adds revenue baselines. Consistency: sum of pieces = APU S13 totals (tolerance < 0.1%).
+  - DONE (2025‑09‑02): SDMX migration + baseline improvements
+    - SDMX client [Tech][Data]
+      - Added `services/api/clients/eurostat.py::sdmx_value(flow, key, time)` to fetch SDMX 2.1 XML from Eurostat’s dissemination API and parse Obs values.
+      - New settings: `EUROSTAT_SDMX_BASE` (default `https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1`), reuses `EUROSTAT_COOKIE` when needed.
+      - Helper fallback: for series with no Obs in target year, fall back to last available Obs for robust baselining.
+    - Expenditures warmer [Data]
+      - Implemented two‑pass bucket allocation by (COFOG major × NA_ITEM): collect buckets used in `lego_pieces.json`, fetch each bucket once via SDMX (`gov_10a_exp` A.MIO_EUR.S13.GF{major}.{NA_ITEM}.{geo}?time=YYYY), then distribute by normalized per‑piece weights (cofog weight × na_item weight).
+      - Social splits: normalized GF10/D62 weights across relevant pieces so they divide the major bucket instead of each taking the full amount.
+      - Health citycare: switched to `D.632` for social transfers in kind (kept a small `D.62` share) to capture realistic magnitudes.
+      - Debt interest: filled `debt_interest` from COFOG 01.7 total (GF0107, TE) via SDMX XML since `D.41` is not exposed in `gov_10a_exp`/`gov_10a_main`. Warns in snapshot meta.
+      - Fallback: if all SDMX calls resolve to zero, approximate from local COFOG‑major totals as before.
+    - Revenues warmer [Data]
+      - Migrated to SDMX XML using `gov_10a_taxag` for taxes/social contributions and `gov_10a_main` for sales/service revenue (P.11/P.12) and totals.
+      - Implemented mapping/splits in code for pseudo‑codes used by pieces:
+        - VAT `D.211`: split 70% standard vs 30% reduced across `rev_vat_standard`/`rev_vat_reduced`.
+        - Income taxes `D.51`: split 60% PIT / 40% CIT.
+        - Other production taxes `D.29`: 14% wage tax, 10% environment, 2% fines, 24% transfer taxes, remainder to generic `rev_prod_taxes`.
+        - Property taxes `D.59_prop` maps to `D.59A`.
+        - Social contributions from `gov_10a_taxag`: `D.611` (employees), `D.612` (employers), `D.613` (self‑employed).
+      - Left `rev_csg_crds`, `rev_public_income (D.4)`, and `rev_transfers_in (D.7)` at 0 until a dedicated flow/mapping is added to avoid double counting.
+      - Warning handling: preserve JSON fetch warning but amounts now come from SDMX XML.
+    - Makefile & tooling [Ops][Docs]
+      - Makefile targets: `warm-eurostat`, `warm-plf`, `summary`, `warm-all`. Tool `tools/warm_summary.py` prints totals and top 5 pieces.
+      - README_DEV updated with usage examples and env settings.
+    - Outputs [Data]
+      - `data/cache/lego_baseline_2026.json` now has non‑zero revenues and realistic health/social magnitudes; includes `meta.warning` detailing any fallbacks and interest proxy.
+      - `data/cache/eu_cofog_shares_YYYY.json` still warmed (JSON fallback noted when Eurostat JSON is gated).
 - LEGO Budget Builder — GraphQL API [API]
   - SDL: `Scope`, `LegoPiece`, `LegoBaseline`, `Distance`; queries `legoPieces`, `legoBaseline`, `legoDistance`.
   - Resolvers & loaders: read `lego_pieces.json` and warmed baseline; graceful fallbacks.
@@ -66,6 +93,14 @@ Epics
   - Accessibility & i18n: full FR/EN, keyboard, contrast; “show the table”.
 - LEGO Budget Builder — Documentation [Docs]
   - `docs/LEGO_METHOD.md`: sources, mapping, beneficiary rules, elasticities (v0), limitations, versioning; audit tables.
+  - UPDATED: Reflect SDMX XML usage (expenditures via `gov_10a_exp`, taxes via `gov_10a_taxag`, sales via `gov_10a_main`), health `D.632`, social splits normalization, and interest proxy from COFOG 01.7.
+
+Follow‑ups / TODO (post‑migration)
+- Parameterize revenue splits (VAT standard/reduced; PIT/CIT; D.29 sub‑splits) in `lego_pieces.json` or a dedicated config block instead of code constants.
+- Add SDMX caching layer for XML calls to speed up warms for multiple years/countries.
+- Identify and wire flows for `D.4` (public income) and `D.7` (transfers received) to populate `rev_public_income` and `rev_transfers_in` precisely.
+- Investigate a pure `D.41` series in a complementary Eurostat flow and switch `debt_interest` to ESA‑only basis when available.
+- Add basic unit/integrity checks: ensure piece sums match S13 totals within tolerance; assert weights sum to 1 per bucket.
 
 Milestone: V1
 
