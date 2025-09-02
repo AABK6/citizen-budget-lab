@@ -28,6 +28,64 @@ def fetch(dataset: str, params: Dict[str, Any]) -> Dict[str, Any]:
     return resp.json()
 
 
+def sdmx_value(flow: str, key: str, *, time: str | None = None) -> Optional[float]:
+    """Fetch a single SDMX 2.1 series and return the value for a given time (or last).
+
+    Uses the dissemination SDMX 2.1 base and requests XML for reliability.
+    flow: dataset id (e.g., 'gov_10a_exp')
+    key: SDMX key in correct dimension order (e.g., 'A.MIO_EUR.S13.GF09.TE.FR')
+    time: optional year string (YYYY). If provided, returns the matching Obs; else last Obs.
+    """
+    s = get_settings()
+    base = s.eurostat_sdmx_base.rstrip("/")
+    url = f"{base}/data/{flow}/{key}"
+    headers = {"Accept": "application/xml"}
+    cookie = s.eurostat_cookie
+    if cookie:
+        headers["Cookie"] = cookie
+    params: Dict[str, Any] = {}
+    if time:
+        params["time"] = time
+    try:
+        resp = hc.get(url, headers=headers, params=params)
+        text = resp.text  # type: ignore[attr-defined]
+    except Exception:
+        return None
+    # Parse SDMX-XML GenericData and extract Obs values
+    try:
+        import xml.etree.ElementTree as ET
+
+        ns = {
+            "m": "http://www.sdmx.org/resources/sdmxml/schemas/v2_1/message",
+            "g": "http://www.sdmx.org/resources/sdmxml/schemas/v2_1/data/generic",
+        }
+        root = ET.fromstring(text)
+        # Iterate observations
+        vals: list[tuple[str, float]] = []
+        for obs in root.findall(".//g:Obs", ns):
+            od = obs.find("g:ObsDimension", ns)
+            ov = obs.find("g:ObsValue", ns)
+            if od is None or ov is None:
+                continue
+            t = od.get("value") or ""
+            try:
+                v = float(ov.get("value") or 0.0)
+            except Exception:
+                continue
+            vals.append((t, v))
+        if not vals:
+            return None
+        if time:
+            for t, v in vals:
+                if t == time:
+                    return v
+        # fallback: return last by time sort
+        vals.sort(key=lambda x: x[0])
+        return vals[-1][1]
+    except Exception:
+        return None
+
+
 def _dim_maps(js: Dict[str, Any]) -> tuple[List[str], List[int], Dict[str, Dict[str, int]], Dict[str, Dict[str, str]]]:
     dims: List[str] = js["dimension"]["id"]
     sizes: List[int] = js["size"]

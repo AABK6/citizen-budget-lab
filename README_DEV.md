@@ -150,6 +150,28 @@ Warm essential datasets (optional but recommended)
 
 - Outputs go to `data/cache/`. The API will automatically use `state_budget_mission_{year}.csv` when present for allocation queries; otherwise, it falls back to `data/sample_state_budget.csv`.
 
+Makefile helpers
+
+- Warm and summarize in one go (YEAR and COUNTRIES overridable):
+
+  make warm-all YEAR=2026 COUNTRIES=FR,DE,IT
+
+- Only Eurostat warmers (LEGO baseline + COFOG shares):
+
+  make warm-eurostat YEAR=2026 COUNTRIES=FR,DE,IT
+
+- Optional ODS snapshot (set DATASET):
+
+  make warm-plf YEAR=2025 DATASET=plf25-depenses-2025-selon-destination
+
+- Print summary for a warmed year:
+
+  make summary YEAR=2026
+
+Notes
+- The LEGO warmer uses Eurostat SDMX 2.1 (XML) for expenditures via `EUROSTAT_SDMX_BASE`, which is generally reliable without cookies.
+- Revenues still use JSON (`gov_10a_main`) and may need `EUROSTAT_COOKIE` depending on your edge; if unavailable, `recettes_total_eur` remains 0 but the app continues to work.
+
 Caching behavior
 
 - All GET requests through the internal HTTP client are cached to disk as JSON by URL+params.

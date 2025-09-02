@@ -414,6 +414,11 @@ def _cofog_to_gf(code: str) -> List[str]:
     return cand
 
 
+def _na_item_code(code: str) -> str:
+    """Normalize NA_ITEM codes to SDMX (remove dots/hyphens, uppercase)."""
+    return str(code).replace(".", "").replace("-", "").upper()
+
+
 def _val_mio(js: Dict[str, Any], year: int, country: str, sector: str, unit: str, cofog_code: str, na_item: str) -> float:
     """Best-effort extraction of a MIO_EUR value for given coordinates.
     Tries several COFOG code candidates.
@@ -452,19 +457,17 @@ def warm_lego_baseline(year: int, country: str = "FR", scope: str = "S13") -> st
     _ensure_dir(CACHE_DIR)
     cfg = _load_lego_config()
 
-    # Fetch Eurostat datasets (expenditures + revenues if available)
-    try:
-        js_exp = eu.fetch("gov_10a_exp", {"time": str(year), "unit": "MIO_EUR", "geo": country})
-    except Exception as e:
-        js_exp = {}
-        warn = f"Eurostat gov_10a_exp fetch failed: {type(e).__name__}"
-    else:
-        warn = ""
+    # Prepare warning aggregator
+    warn_parts: List[str] = []
+
+    # Prefer SDMX-XML for expenditures (more reliable)
+    js_exp = None  # legacy JSON disabled in favor of XML
+    warn = ""
     try:
         js_rev = eu.fetch("gov_10a_main", {"time": str(year), "unit": "MIO_EUR", "geo": country})
     except Exception as e:
         js_rev = {}
-        warn = (warn + "; " if warn else "") + f"Eurostat gov_10a_main fetch failed: {type(e).__name__}"
+        warn_parts.append(f"gov_10a_main JSON failed: {type(e).__name__}")
 
     # GDP series (for info/ratios)
     try:
@@ -479,23 +482,61 @@ def warm_lego_baseline(year: int, country: str = "FR", scope: str = "S13") -> st
     dep_total = 0.0
 
     recettes_total = 0.0
+
+    # Detect whether Eurostat expenditure payload looks usable (SDMX shape)
+    exp_sdmx = bool(js_exp and isinstance(js_exp.get("dimension"), dict) and js_exp.get("dimension", {}).get("id"))
+
+    # Optional fallback: if no SDMX, derive major COFOG amounts from local mapping (sample/PLF) for the requested year
+    major_amounts: Dict[str, float] = {}
+    if not exp_sdmx:
+        try:
+            from .data_loader import allocation_by_cofog  # type: ignore
+            from .models import Basis  # type: ignore
+
+            items = allocation_by_cofog(year, Basis("CP"))
+            # items have codes like '09' with amount_eur
+            major_amounts = {str(i.code): float(i.amount_eur) for i in items}
+        except Exception:
+            major_amounts = {}
+
     for p in cfg.get("pieces", []):
         pid = str(p.get("id"))
         ptype = str(p.get("type"))
         amt_eur: float | None = None
-        if ptype == "expenditure" and js_exp:
+        if ptype == "expenditure":
             cofogs = p.get("mapping", {}).get("cofog") or []
             na_items = p.get("mapping", {}).get("na_item") or []
             total_mio = 0.0
+            # Use SDMX XML per combination (freq A)
+            ok = False
             for mc in cofogs:
                 c_code = str(mc.get("code"))
                 c_w = float(mc.get("weight", 1.0))
+                # SDMX endpoint supports COFOG at 2-digit level (GF09), not sublevels
+                major = str(c_code).split(".")[0]
+                gf = f"GF{major}" if major else None
+                if not gf:
+                    continue
                 for ni in na_items:
-                    ni_code = str(ni.get("code"))
+                    ni_code = _na_item_code(str(ni.get("code")))
                     ni_w = float(ni.get("weight", 1.0))
-                    v_mio = _val_mio(js_exp, year, country, scope, "MIO_EUR", c_code, ni_code)
-                    total_mio += c_w * ni_w * v_mio
-            amt_eur = total_mio * 1_000_000.0
+                    key = f"A.MIO_EUR.S13.{gf}.{ni_code}.{country}"
+                    val = eu.sdmx_value("gov_10a_exp", key, time=str(year)) or 0.0
+                    if val:
+                        ok = True
+                    total_mio += c_w * ni_w * (val)
+            if ok:
+                amt_eur = total_mio * 1_000_000.0
+            elif major_amounts:
+                # Fallback: approximate piece amounts using major (2-digit) COFOG totals and piece cofog weights
+                approx = 0.0
+                for mc in cofogs:
+                    major = str(mc.get("code")).split(".")[0]
+                    w = float(mc.get("weight", 1.0))
+                    approx += w * float(major_amounts.get(major, 0.0))
+                amt_eur = approx
+            if amt_eur is None:
+                amt_eur = 0.0
             dep_total += amt_eur
         elif ptype == "revenue" and js_rev:
             esa = p.get("mapping", {}).get("esa") or []
@@ -526,6 +567,20 @@ def warm_lego_baseline(year: int, country: str = "FR", scope: str = "S13") -> st
             "share": None,  # filled for expenditures after total known
         })
 
+    # If fallback path failed to set amounts, try a last-resort approximation using major COFOG totals
+    if dep_total == 0.0 and major_amounts:
+        for ent, p in zip(pieces_out, cfg.get("pieces", [])):
+            if ent.get("type") != "expenditure":
+                continue
+            cofogs = (p.get("mapping", {}).get("cofog") or [])
+            approx = 0.0
+            for mc in cofogs:
+                major = str(mc.get("code", "")).split(".")[0]
+                w = float(mc.get("weight", 1.0))
+                approx += w * float(major_amounts.get(major, 0.0))
+            ent["amount_eur"] = approx
+            dep_total += approx
+
     # Fill shares for expenditures
     for ent in pieces_out:
         if ent["type"] == "expenditure" and dep_total > 0:
@@ -540,8 +595,8 @@ def warm_lego_baseline(year: int, country: str = "FR", scope: str = "S13") -> st
         "recettes_total_eur": recettes_total,
         "pieces": pieces_out,
         "meta": {
-            "source": "Eurostat gov_10a_exp + gov_10a_main",
-            "warning": warn,
+            "source": "Eurostat SDMX 2.1 (dissemination) gov_10a_exp + gov_10a_main",
+            "warning": ("; ".join([w for w in ([warn] + warn_parts) if w]) if (warn or warn_parts) else ""),
         },
     }
 

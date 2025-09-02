@@ -20,6 +20,11 @@ class Settings:
         "EUROSTAT_BASE",
         "https://ec.europa.eu/eurostat/wdds/rest/data/v2.1/json",
     )
+    # SDMX (dissemination) base for XML access (preferred for reliability)
+    eurostat_sdmx_base: str = os.getenv(
+        "EUROSTAT_SDMX_BASE",
+        "https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1",
+    )
     eurostat_lang: str = os.getenv("EUROSTAT_LANG", "en")
     eurostat_cookie: str | None = os.getenv("EUROSTAT_COOKIE")
 
