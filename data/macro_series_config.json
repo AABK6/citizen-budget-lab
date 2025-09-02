@@ -1,0 +1,8 @@
+{
+  "country": "FR",
+  "items": [
+    { "id": "deflator_gdp", "dataset": "CNA-2014-PIB", "series": ["PIB-VALUE"] },
+    { "id": "employment_total", "dataset": "EST-EMP", "series": ["EMP-TOTAL"] }
+  ]
+}
+

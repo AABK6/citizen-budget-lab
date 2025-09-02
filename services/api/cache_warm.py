@@ -859,6 +859,9 @@ def main(argv: Iterable[str] | None = None) -> None:
     sp_lego.add_argument("--country", default="FR")
     sp_lego.add_argument("--scope", default="S13")
 
+    sp_macro = sub.add_parser("macro-insee", help="Warm selected INSEE BDM macro series from a config JSON")
+    sp_macro.add_argument("--config", required=True, help="Path to macro series config JSON")
+
     args = p.parse_args(list(argv) if argv is not None else None)
 
     if args.cmd == "plf":
@@ -1092,6 +1095,63 @@ def main(argv: Iterable[str] | None = None) -> None:
         path = warm_decp_procurement(args.year, csv_path=args.csv_path, base=args.base, dataset=args.dataset)
         print(f"Wrote {path}")
         return
+
+    if args.cmd == "macro-insee":
+        path = warm_macro_insee(args.config)
+        print(f"Wrote {path}")
+        return
+
+
+# ------------------------------
+# INSEE macro series warmer (deflators, employment)
+# ------------------------------
+
+def warm_macro_insee(config_path: str) -> str:
+    """Warm selected INSEE BDM series based on a simple config JSON.
+
+    Config format:
+    {
+      "country": "FR",
+      "items": [
+        {"id": "deflator_gdp", "dataset": "CNA-2014-PIB", "series": ["PIB-VALUE"]},
+        {"id": "employment_total", "dataset": "EMP", "series": ["EMP-POP"]}
+      ]
+    }
+    """
+    _ensure_dir(CACHE_DIR)
+    import json as _json
+    from .clients import insee as insee_client
+
+    with open(config_path, "r", encoding="utf-8") as f:
+        cfg = _json.load(f)
+    country = cfg.get("country", "FR")
+    items = cfg.get("items") or []
+    out: dict = {"country": country, "items": []}
+    provenance: list[dict] = []
+    for it in items:
+        ds = str(it.get("dataset"))
+        sids = [str(x) for x in (it.get("series") or [])]
+        rid = str(it.get("id") or ds)
+        try:
+            js = insee_client.bdm_series(ds, sids)
+        except Exception:
+            js = {"error": True}
+        out["items"].append({"id": rid, "dataset": ds, "series": sids, "data": js})
+        provenance.append({"id": rid, "dataset": ds, "series": sids})
+    out_path = os.path.join(CACHE_DIR, f"macro_series_{country}.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        _json.dump(out, f, ensure_ascii=False, indent=2)
+    # Sidecar
+    sidecar = {
+        "extraction_ts": dt.datetime.utcnow().isoformat() + "Z",
+        "country": country,
+        "items": provenance,
+        "config": os.path.abspath(config_path),
+    }
+    with open(out_path.replace(".json", ".meta.json"), "w", encoding="utf-8") as f:
+        _json.dump(sidecar, f, ensure_ascii=False, indent=2)
+    return out_path
+
 
 
 if __name__ == "__main__":

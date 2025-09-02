@@ -438,6 +438,22 @@ class Query:
             ],
         )
 
+    @strawberry.field
+    def macroSeries(self, country: str = "FR") -> JSON:  # noqa: N802
+        """Return warmed macro series from INSEE BDM if available."""
+        import os
+        import json
+        from .data_loader import DATA_DIR  # type: ignore
+
+        path = os.path.join(DATA_DIR, "cache", f"macro_series_{country}.json")
+        if not os.path.exists(path):
+            return {}
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            return {}
+
 
 @strawberry.type
 class Mutation:
