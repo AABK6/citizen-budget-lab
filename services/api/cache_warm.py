@@ -612,6 +612,30 @@ def warm_lego_baseline(year: int, country: str = "FR", scope: str = "S13") -> st
             v = eu.sdmx_value(flow, key, time=None)
         return float(v or 0.0)
 
+    # Load configurable revenue splits (with sane defaults)
+    def _load_revenue_splits() -> Dict[str, Any]:
+        try:
+            path = os.path.join(DATA_DIR, "revenue_splits.json")
+            if os.path.exists(path):
+                with open(path, "r", encoding="utf-8") as f:
+                    return json.load(f)
+        except Exception:
+            pass
+        # Defaults match initial documented assumptions
+        return {
+            "vat": {"standard": 0.70, "reduced": 0.30},
+            "income_tax": {"pit": 0.60, "cit": 0.40},
+            "d29": {"wage_tax": 0.14, "env": 0.10, "fines": 0.02, "transfers": 0.24},
+        }
+
+    splits_cfg = _load_revenue_splits()
+    VAT_STANDARD_SPLIT = float(splits_cfg.get("vat", {}).get("standard", 0.70))
+    PIT_SPLIT = float(splits_cfg.get("income_tax", {}).get("pit", 0.60))
+    D29_WAGE = float(splits_cfg.get("d29", {}).get("wage_tax", 0.14))
+    D29_ENV = float(splits_cfg.get("d29", {}).get("env", 0.10))
+    D29_FINES = float(splits_cfg.get("d29", {}).get("fines", 0.02))
+    D29_TRANSFERS = float(splits_cfg.get("d29", {}).get("transfers", 0.24))
+
     # Pre-fetch main revenue bases in MIO_EUR
     # gov_10a_taxag exposes taxes/social contributions by ESA code
     taxag_codes = [

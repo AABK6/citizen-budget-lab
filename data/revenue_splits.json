@@ -1,0 +1,16 @@
+{
+  "vat": {
+    "standard": 0.7,
+    "reduced": 0.3
+  },
+  "income_tax": {
+    "pit": 0.6,
+    "cit": 0.4
+  },
+  "d29": {
+    "wage_tax": 0.14,
+    "env": 0.1,
+    "fines": 0.02,
+    "transfers": 0.24
+  }
+}

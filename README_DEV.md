@@ -121,6 +121,11 @@ Official API wiring
     - `HTTP_CACHE_TTL_GEO` — seconds (default 604800)
   - Compliance parameters:
     - `NET_EXP_REFERENCE_RATE` — annual allowed growth for net primary expenditure (default 0.015 = 1.5%)
+  - Eurostat (SDMX / JSON):
+    - `EUROSTAT_SDMX_BASE` — dissemination SDMX XML base (default `https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1`)
+    - `EUROSTAT_BASE` — legacy SDMX‑JSON base (default `https://ec.europa.eu/eurostat/wdds/rest/data/v2.1/json`)
+    - `EUROSTAT_LANG` — language segment for JSON (default `en`)
+    - `EUROSTAT_COOKIE` — optional cookie if JSON endpoints are gated on your edge
 - Endpoints exposed via GraphQL:
   - `sirene(siren: String!)`: INSEE SIRENE v3 lookup.
   - `inseeSeries(dataset: String!, series: [String!]!, sinceYear: Int)`: INSEE BDM.
@@ -170,7 +175,7 @@ Makefile helpers
 
 Notes
 - The LEGO warmer uses Eurostat SDMX 2.1 (XML) for expenditures via `EUROSTAT_SDMX_BASE`, which is generally reliable without cookies.
-- Revenues use SDMX XML (`GOV_10A_TAXAG` for taxes/contributions; `GOV_10A_MAIN` for P.11/P.12 sales/fees). Some ESA lines (e.g., D.4 public income, D.7 transfers received) may require additional flows and are currently left at 0 to avoid double counting. Interest (D.41) is proxied from COFOG 01.7 total (GF0107 TE) until a dedicated ESA series is wired.
+- Revenues use SDMX XML (`GOV_10A_TAXAG` for taxes/contributions; `GOV_10A_MAIN` for P.11/P.12 sales/fees). Some ESA lines (e.g., D.4 public income, D.7 transfers received) may require additional flows and are currently left at 0 to avoid double counting. Interest (D.41) is proxied from COFOG 01.7 total (GF0107 TE) until a dedicated ESA series is wired. See `docs/LEGO_METHOD.md` (Known Limitations).
 
 Caching behavior
 

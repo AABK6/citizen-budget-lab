@@ -15,6 +15,8 @@ Datasets & Scope
 - GDP: Local series (`data/gdp_series.csv`) used for informational ratios and macro kernel scaling.
 - Scope: S13 consolidated (central + local + social security) as the baseline for public‑facing comparisons. A “CENTRAL” view (État/LFI) is planned as a separate toggle.
 
+See also: `api-points.md` (Eurostat — SDMX XML) for concrete flow and key examples.
+
 Expenditure Mapping (COFOG × NA_ITEM)
 
 - Each expenditure LEGO piece in `data/lego_pieces.json` has a mapping:
@@ -30,10 +32,10 @@ Revenue Mapping (ESA NA_ITEM)
 - We read SDMX XML:
   - `GOV_10A_TAXAG` for taxes and social contributions (D.211, D.51, D.29, D.59A, D.611/D.612/D.613, …).
   - `GOV_10A_MAIN` for sales/fees P.11/P.12.
-- Splits applied in v0.1 (documented constants):
-  - VAT D.211: 70% standard vs 30% reduced.
-  - Income taxes D.51: 60% PIT vs 40% CIT.
-  - Other production taxes D.29: 14% wage tax, 10% environment, 2% fines, 24% transfer taxes, remainder to generic D.29.
+- Splits applied in v0.1 (configurable via `data/revenue_splits.json`):
+  - VAT D.211: standard vs reduced shares.
+  - Income taxes D.51: PIT vs CIT shares.
+  - Other production taxes D.29: wage tax, environment, fines, transfer taxes, remainder to generic D.29.
   - Property taxes D.59_prop maps to D.59A.
 - Some series (e.g., D.4 public income, D.7 transfers received) are left at 0 until the proper flow/mapping is added to avoid double counting.
 - `recettes_total_eur` is the sum of revenue piece amounts. Shares are not computed yet (can be added similar to expenditures).
@@ -61,10 +63,10 @@ Locks & Bounds
 Limitations & Caveats
 
 - Aggregation alignment: COFOG×NA_ITEM reflects a functional view that does not map line‑by‑line to national nomenclatures.
-- Data availability & proxies:
-  - Some NA_ITEM codes (e.g., D.41) are not exposed in the flows we use; `debt_interest` is proxied from COFOG 01.7 TE.
-  - Some revenue lines (e.g., D.4, D.7) may require additional flows and are currently left at 0.
-  - For series with no Obs in the requested year, we fall back to the last available observation.
+- Known Limitations:
+  - Interest (D.41) not exposed in the above flows for our usage; we proxy from COFOG 01.7 TE (`GOV_10A_EXP`).
+  - Public income (D.4) and transfers received (D.7) may require additional flows; currently left at 0 to avoid double counting.
+  - If `time=YYYY` has no Obs for a series, we fall back to the last available observation.
 - Elasticities: v0.1 uses simple constants for educational purposes. Future iterations can load ranges and show uncertainty bands.
 
 Reproducibility
@@ -84,6 +86,12 @@ Reproducibility
 4) Query via GraphQL:
 
    query { legoBaseline(year: 2026) { year scope pib depensesTotal recettesTotal pieces { id type amountEur } } }
+
+Consistency & Validation
+
+- We target piece sums to match S13 totals within a small tolerance; the summary tool reports both values.
+- Mapping weights are expected to sum to 1 per (COFOG major × NA_ITEM) bucket across pieces that reference it.
+- Revenue splits are sourced from `data/revenue_splits.json` and can be audited alongside the baseline snapshot.
 
 Versioning
 

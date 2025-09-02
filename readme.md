@@ -105,6 +105,18 @@ Result (scenario_id, metric, timeseries_json, assumptions_ref)
 Source (id, dataset_name, url, license, refresh_cadence, vintage, checksum)
 ```
 
+---
+
+## 8) Docs Index
+
+- BACKLOG: `BACKLOG.md`
+- Developer Notes: `README_DEV.md`
+- LEGO Methodology: `docs/LEGO_METHOD.md`
+- API Points (Eurostat, ODS, INSEE, etc.): `api-points.md`
+- Caching & Warmers: `docs/CACHING.md`
+- Secrets & Env Vars: `docs/SECRETS.md`
+- GraphQL Contract: `docs/GRAPHQL_CONTRACT.md`
+
 **Key relationships**: Organization→BudgetLine (1‑N); BudgetLine→Cofog via Mapping (N‑N weighted); ProcurementContract→Supplier via SIREN; LocalAccount→Organization (APUL); Scenario→Result (1‑N).
 
 ---

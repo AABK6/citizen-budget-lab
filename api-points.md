@@ -275,7 +275,7 @@ Give the app reliable, up‑to‑date, and well‑documented pipes into French a
 
   - Expenditures: `GOV_10A_EXP` → `A.MIO_EUR.S13.GF{MAJOR}.{NA_ITEM}.FR`
   - Revenues: `GOV_10A_TAXAG` → `A.MIO_EUR.S13.{NA_ITEM}.FR` and `GOV_10A_MAIN` → `A.MIO_EUR.S13.{P11|P12}.FR`
-  - Known caveats: `D.41` not exposed for ESA mapping here; use COFOG 01.7 TE proxy. Citycare uses `D.632`. Some `D.4`/`D.7` series may need other flows.
+  - Known caveats: `D.41` not exposed for ESA mapping here; use COFOG 01.7 TE proxy. Citycare uses `D.632`. Some `D.4`/`D.7` series may need other flows. See `docs/LEGO_METHOD.md` (Known Limitations).
 
 ---
 
