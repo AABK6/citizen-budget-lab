@@ -32,13 +32,13 @@ Product outcomes
 Epics
 - Data Ingestion & Provenance [Data]
   - Central budget via ODS (PLF/LFI/PLR): incremental pulls, dedupe, per‑year vintage; mission/program/action; AE/CP/execution when available.
-    - Current: mission‑level snapshot warmer implemented (`cache_warm.py: warm_plf_state_budget`) with server‑side/group‑by and local fallback; minimal dedupe/vintage.
+    - Current: mission‑level snapshot warmer implemented (`cache_warm.py: warm_plf_state_budget`) with server‑side/group‑by and local fallback; sidecar provenance written. 2024 (dataset `plf-2024-depenses-2024-selon-nomenclatures-destination-et-nature`) and 2025 warmed; improved field heuristics select human‑readable mission labels.
   - COFOG mapping (programme/action, year‑aware): weights sum to 1.0; schema+tests; fallback for unknowns.
     - DONE: programme‑level precedence and year‑aware overrides implemented in `allocation_by_cofog` with support for `programme_to_cofog` and `programme_to_cofog_years` in `data/cofog_mapping.json`. Tests cover precedence and year overrides.
   - Procurement (DECP) pipeline: ingest consolidated; dedup id+publication; lot→contract; amount quality flags.
-    - Current: sample CSV aggregator (`data/sample_procurement.csv` + `procurement_top_suppliers`); full ingestion/dedupe/flags pending.
+    - DONE: CLI warmer (`cache_warm.py: decp`) ingests CSV/ODS, deduplicates and rolls up lots→contracts, flags amount quality, writes cache + sidecar. API prefers warmed cache in `procurement_top_suppliers`.
   - SIRENE join: normalize SIREN/SIRET; NAF/size; cache + rate limiting.
-    - Current: INSEE clients (`clients/insee.py`) in place; join/enrichment of procurement pending.
+    - Current: INSEE clients (`clients/insee.py`) in place; best‑effort API enrichment adds `naf`/`companySize` to procurement; full warehouse join pending.
   - Macro series (INSEE BDM): GDP/deflators/employment; provenance.
     - Current: INSEE BDM client implemented; GDP used from local CSV; deflators/employment pending.
   - Source registry: `Source(id, dataset, url, license, cadence, vintage, checksum)`.
@@ -53,9 +53,9 @@ Epics
     - [ ] CI job runs `dbt build` and unit tests.
 - GraphQL API (Explorer & Procurement) [API]
   - `allocation(year, basis, lens)` from warehouse; P95 < 1.5s.
-    - Current: implemented (`schema.Query.allocation`); performance targets to validate.
+    - Current: implemented (`schema.Query.allocation`); COFOG uses warmed Eurostat S13 shares with SDMX fallback, scaled by S13 baseline; performance targets to validate.
   - `procurement(year, region)` with filters; export fields.
-    - Current: implemented with cpv/procedure/amount filters; CSV sample backing.
+    - Current: implemented with cpv/procedure/amount filters; reads normalized DECP cache when available.
   - `sources()` lists datasets w/ vintages/links.
     - Current: implemented, reads `data/sources.json`.
 - Scenario DSL & Engine (Mechanical) [API]

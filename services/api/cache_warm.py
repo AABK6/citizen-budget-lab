@@ -85,6 +85,11 @@ def _guess_fields(meta: Dict[str, Any]) -> Dict[str, str]:
             for tok in ["mission"]:
                 if tok in lx or tok in nx:
                     score += 1
+            # Prefer descriptive label columns over type/classification helpers
+            if name.lower() in ("mission", "libelle_mission"):
+                score += 2
+            if name.lower().startswith("type_") or "type" in nx:
+                score -= 1
         return score
 
     def pick(target: str, numeric: bool | None = None) -> str | None:
