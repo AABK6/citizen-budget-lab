@@ -4,6 +4,10 @@ Overview
 
 This note documents how the LEGO “pieces” for expenditures and revenues are mapped to official aggregates, how beneficiary categories are derived, and how simple elasticities are used for revenue simulations in v0.1. It is intentionally transparent and conservative; parameters are versioned and easy to audit.
 
+From MVP+ onward, the LEGO layer powers two synchronized lenses:
+- Masses (Budget Playground): big functional/admin blocks with Budget Dials and pending state.
+- Named Reforms (Policy Workshop): hierarchical families → levers that compose and attribute onto masses.
+
 Datasets & Scope
 
 - Expenditures: Eurostat SDMX 2.1 XML (dissemination) `GOV_10A_EXP` for General Government (S13). We aggregate by COFOG (functional classification) and ESA transaction type (NA_ITEM) using series keys:
@@ -46,8 +50,22 @@ Beneficiary Categories
   - `households` (e.g., D.62 social benefits, D.1 public wages as household income),
   - `enterprises` (e.g., D.3 subsidies, P.2 purchases),
   - `collective` (e.g., P.51g public investment and residual public services).
-- The beneficiary lens aggregates expenditure pieces using these weights to derive three categories (Households, Enterprises, Collective). This is a simplified attribution documented here to remain transparent.
+ - The beneficiary lens aggregates expenditure pieces using these weights to derive three categories (Households, Enterprises, Collective). This is a simplified attribution documented here to remain transparent.
  - Implementation: weights live under `beneficiaries: { households: x, enterprises: y, collective: z }` in `lego_pieces.json` and are normalized to 1.0 per piece. For pieces lacking explicit weights, a default heuristic can map ESA items to beneficiaries (e.g., D.62→households, D.3/P.2→enterprises, P.51g→collective). The final lens is a simple weighted sum across pieces.
+
+Policy Levers → Mass Attribution (V1)
+
+- Each Policy Lever is defined as a small composition over LEGO mappings with optional behavioral parameters:
+  - `family`: high‑level grouping (PENSIONS, TAXES, HEALTH, DEFENSE, STAFFING, SUBSIDIES, CLIMATE, SOCIAL_SECURITY, PROCUREMENT, OPERATIONS, OTHER).
+  - `params_schema`: schema for UI inputs (e.g., { rate_bps: [min,max,step], base_coverage: enum, recycling: enum }).
+  - `mapping`: same shape as pieces (COFOG × NA_ITEM and/or ESA NA_ITEM) with weights or rules to derive a delta from params.
+  - `feasibility`: tags `{ law: bool, admin_lag_months: int, notes: string }` surfaced in the UI.
+  - `conflicts_with`: list of lever ids to guard double counting.
+- Applying a lever produces a `PolicyEffect` with:
+  - `delta_eur`: accounting impact at horizon.
+  - `mass_attribution`: how the delta paints across masses (for ribbons on the Lens Switch).
+  - `incidence` (optional): distributional placeholders (e.g., sectors/regions; deciles if OpenFisca wired).
+  - `risk_notes`: uncertainty/implementation caveats.
 
 Revenue Elasticities (v0.1)
 
@@ -63,6 +81,22 @@ Locks & Bounds
  - Schema (example keys):
    - `policy`: { `locked_default`: boolean, `bounds_pct`: { `min`: number, `max`: number }, `bounds_amount_eur`?: { `min`: number, `max`: number } }
    - UI enforces these bounds and returns descriptive validation errors from the API when exceeded.
+ - UI reflection: locks/bounds appear as badges on the Shelf and disable/limit the **BudgetDial** range.
+
+Conflict & Overlap Checks (guardrails)
+
+- Objective: avoid double counting when two levers modify the same base (e.g., remove a subsidy and also tax the same base change).
+- Mechanism:
+  - Declare `conflicts_with` at the lever level; the API validates sets on `runScenario` and emits descriptive errors/warnings.
+  - The client shows a `ConflictNudge` linking to conflicting controls; users can override only when the engine supports explicit offsetting logic.
+
+Uncertainty Bands & Assumption Chips
+
+- Keep elasticities conservative; attach bands to lever families (e.g., procurement cancellations → risk notes; pensions indexation → fan bounds). Display assumption chips near each impact: “Multiplier 0.3–0.8”, “Compliance −0.1–0.3pp”.
+
+From Mass Goals to Policy Mixes
+
+- The Policy Workshop computes progress to a mass target by summing `specified_delta_eur` from applied levers mapped to that mass. The global **Resolution Meter** reports `overall_pct = sum(specified)/sum(target)` across masses, while the UI keeps unresolved masses visibly striped.
 
 Distance‑to‑budget Metric
 
@@ -105,7 +139,9 @@ Consistency & Validation
 - We target piece sums to match S13 totals within a small tolerance; the summary tool reports both values.
 - Mapping weights are expected to sum to 1 per (COFOG major × NA_ITEM) bucket across pieces that reference it.
 - Revenue splits are sourced from `data/revenue_splits.json` and can be audited alongside the baseline snapshot.
+ - Lever attribution: sum of `mass_attribution` across masses equals the lever’s `delta_eur` (within tolerance); conflicts are rejected unless explicitly offset.
 
 Versioning
 
 - This document and the config are versioned in git; any change to mappings or elasticities should bump a minor version in `data/lego_pieces.json.version` and be noted in the changelog.
+ - Add a `policy_catalog.version` and include it in share‑card permalinks to ensure reproducibility; invalidate OG caches when this changes.

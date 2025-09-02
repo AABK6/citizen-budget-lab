@@ -57,6 +57,7 @@ Example queries
       macro { deltaGDP deltaEmployment deltaDeficit assumptions }
       distanceScore
       shareSummary { title deficit debtDeltaPct highlight }
+      resolution { overallPct byMass { massId targetDeltaEur specifiedDeltaEur } }
     }
   }
 
@@ -89,6 +90,14 @@ Encode the YAML (macOS/Linux):
 - Share card DTO (for OG image):
 
   query { shareCard(scenarioId: "<scenario-id>") { title deficit debtDeltaPct highlight } }
+
+- Policy catalog (for Reform Library):
+
+  query { policyLevers(family: PENSIONS, search: "age") { id family label description paramsSchema feasibility conflictsWith sources } }
+
+- Scenario Compare (ribbons + waterfall deltas JSON):
+
+  query { scenarioCompare(a: "<scenario-a>", b: "<scenario-b>") }
 
 Use the `scenarioId` from `runScenario` to resolve `shareCard` and feed your frontend OG route (e.g., `/api/og?scenarioId=...`).
 
@@ -123,7 +132,8 @@ Notes
 TwinBars & Canvas fixtures (frontend)
 
 - Create a small local fixture scenario showing a shrinking deficit gap to validate `TwinBars` animations and `DeficitGapGauge` rendering.
-- Seed via a hardcoded DSL in the app or by calling `runScenario` on load in dev mode; ensure chips above the bars reflect scheduled year changes.
+- Add a pending mass target (e.g., Defense −€6B) to validate pending stripes and a Δ chip; attach 1–2 mock levers (e.g., “Reduce vessel orders”, “Headcount −1%”) that cover 60–100% to exercise `ResolutionMeter` and `ProgressToTarget`.
+- Seed via a hardcoded DSL in the app or by calling `runScenario` on load in dev mode; ensure chips above the bars reflect scheduled year changes. Use `policyLevers` to populate the Workshop and `scenarioCompare` to test duplicate & remix.
 - Preview social image locally by hitting your OG image route (e.g., `http://localhost:3000/api/og?scenarioId=...`).
 
 Official API wiring
@@ -147,7 +157,11 @@ Official API wiring
     - `EUROSTAT_SDMX_BASE` — dissemination SDMX XML base (default `https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1`)
     - `EUROSTAT_BASE` — legacy SDMX‑JSON base (default `https://ec.europa.eu/eurostat/wdds/rest/data/v2.1/json`)
     - `EUROSTAT_LANG` — language segment for JSON (default `en`)
-    - `EUROSTAT_COOKIE` — optional cookie if JSON endpoints are gated on your edge
+  - `EUROSTAT_COOKIE` — optional cookie if JSON endpoints are gated on your edge
+  - OpenFisca (optional):
+    - `OPENFISCA_URL`, `OPENFISCA_TOKEN` (see `docs/SECRETS.md`)
+  - Share card rendering (optional):
+    - `OG_RENDER_BASE` for serverless/Next image rendering
 - Endpoints exposed via GraphQL:
   - `sirene(siren: String!)`: INSEE SIRENE v3 lookup.
   - `inseeSeries(dataset: String!, series: [String!]!, sinceYear: Int)`: INSEE BDM.

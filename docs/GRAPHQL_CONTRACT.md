@@ -14,7 +14,7 @@ schema {
 }
 
 enum BasisEnum { CP AE }
-enum LensEnum { ADMIN COFOG BENEFICIARY }
+enum LensEnum { ADMIN COFOG BENEFICIARY REFORM_FAMILY REFORM_NAMED }
 
 type MissionAllocation {
   code: String!
@@ -115,6 +115,33 @@ type Source {
   vintage: String!
 }
 
+"""
+V1: Policy catalog, effects, and resolution
+"""
+
+enum PolicyFamily { PENSIONS TAXES HEALTH DEFENSE STAFFING SUBSIDIES CLIMATE SOCIAL_SECURITY PROCUREMENT OPERATIONS OTHER }
+
+type PolicyLever {
+  id: ID!
+  family: PolicyFamily!
+  label: String!
+  description: String
+  paramsSchema: JSON!          # UI builds sliders/inputs
+  feasibility: JSON!           # { law: Boolean, adminLagMonths: Int, notes: String }
+  conflictsWith: [ID!]!        # prevent double-count
+  sources: [String!]!
+}
+
+type PolicyEffect {
+  deltaEur: Float!
+  massAttribution: JSON!       # how it paints across masses
+  incidence: JSON              # distributional placeholder
+  riskNotes: [String!]
+}
+
+type MassTarget { massId: String!, targetDeltaEur: Float!, specifiedDeltaEur: Float! }
+type Resolution { overallPct: Float!, byMass: [MassTarget!]! }
+
 input RunScenarioInput {
   dsl: String! # base64-encoded YAML
 }
@@ -128,6 +155,7 @@ type RunScenarioPayload {
   distribution: Distribution # V1
   distanceScore: Float # optional aggregate from legoDistance
   shareSummary: ShareSummary # compact DTO for OG image
+  resolution: Resolution      # specified % overall and by mass
 }
 
 type ShareSummary {
@@ -177,6 +205,12 @@ type Query {
   legoPieces(year: Int!, scope: ScopeEnum = S13): [LegoPiece!]!
   legoBaseline(year: Int!, scope: ScopeEnum = S13): LegoBaseline!
   legoDistance(year: Int!, dsl: String!, scope: ScopeEnum = S13): Distance!
+
+  # V1: Policy Workshop
+  policyLevers(family: PolicyFamily, search: String): [PolicyLever!]!
+
+  # Compare & Remix
+  scenarioCompare(a: ID!, b: ID!): JSON!     # ribbons + waterfall deltas
 
   # Share card resolver (render-ready, no secrets)
   shareCard(scenarioId: ID!): ShareSummary!

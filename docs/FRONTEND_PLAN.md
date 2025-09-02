@@ -2,7 +2,7 @@ Frontend Plan — Citizen Budget Lab
 
 Scope
 
-- Implement the full UX described in readme.md: Explore €1 (admin/COFOG), Procurement map, What‑if scenario builder, Compare EU, Sources; plus V1 “My household” and Classroom mode.
+- Implement the fused Playground ↔ Workshop UX: Explore €1 (ADMIN/COFOG), Procurement map, Budget Playground with Budget Dials, Policy Workshop with Reform Families/Levers, Compare & Remix, Challenges, Sources; plus V1 “My household” and Classroom mode.
 
 Tech Stack
 
@@ -17,10 +17,10 @@ Tech Stack
 
 Routing & Pages
 
-- `/` Home: navigation + quick explainer; 30‑sec Aha tour (drag a piece → watch the gap change → see who’s affected → share/remix); carousel with weekly Challenges and trending public scenarios.
+- `/` Home: navigation + 10‑sec onboarding (two equal CTAs: Start with Budget · Start with Policy) and a quick explainer; carousel with weekly Challenges and trending public scenarios.
 - `/explore` Explore €1: lens toggle (ADMIN/COFOG), basis (CP/AE), year slider, sunburst/treemap, outcomes panel, export, source links.
 - `/procurement` Who gets paid?: map + table, filters (sector/size/geo), competition flags, export.
-- `/what-if` Scenario Builder: target pickers, sliders/inputs, offsets UI, DSL drawer, results cards (Accounting, EU lights, Macro, Distribution placeholder), share.
+- `/what-if` Budget Playground & Policy Workshop: three‑panel command center (Left = LEGO Shelf & Reform Library, Center = Twin‑Bars Canvas with Budget Dials and Δ chips, Right = Consequences & Workshop). Scenario drawer remains available for DSL view.
 - `/compare-eu` Compare EU: country selector, COFOG shares, deficit/debt ratios (Eurostat-backed), export.
 - `/sources` Sources: dataset registry with license/vintage/cadence links and search.
 - V1: `/my-household` OpenFisca view (static synthetic grid first, optional local input).
@@ -35,21 +35,25 @@ Components (selected)
 
 - Explore: `Sunburst`, `Treemap`, `LensToggle`, `YearSlider`, `BasisToggle`, `OutcomePanel`, `ExportButton`.
 - Procurement: `ProcurementMap`, `SupplierTable`, `FiltersPanel`, `ExportButton`.
-- What‑if (three‑panel command center):
-  - Left: `PiecesPanel` (tabs: Spending/Revenues, search with synonyms, filters incl. beneficiary lens, lock/bounds badges).
-  - Center: `TwinBars`, `CanvasStack` (stacked pieces), `DeficitGapGauge` (animated gap, %GDP badge), `ScenarioTimelineChips`.
-  - Right: `ConsequenceTabs` (Accounting & `RuleLights`, `DebtPathChart`, `MacroFan`, `DistributionChart`), `ShareCardButton`.
-  - Keep existing editors and utilities, nested under panels: `TargetPicker`/`TaxParamEditor`/`AmountSlider`/`OffsetsEditor`/`DslDrawer`.
+- Playground & Workshop (three‑panel command center):
+  - Left (Shelf): `PiecesPanel` (tabs: Spending/Revenues; search with synonyms; beneficiary lens filter; lock/bounds badges), `ReformLibrary` (cards grouped by family), `PresetChips`.
+  - Center (Canvas): `TwinBars`, `CanvasStack` (stacked masses), `BudgetDial` (overlay on a mass), `DeltaChip` (per mass and global surplus/room), `ResolutionMeter` (HUD), `DeficitGapGauge` (animated gap, %GDP badge), `LensSwitch` (Mass/Family/Named), `ScenarioTimelineChips`.
+  - Right (Consequences & Workshop): `ConsequenceTabs` (Accounting + `RuleLights`, `DebtPathChart`, `MacroFan`, `DistributionChart`), `PolicyDashboard` (families → levers), `ProgressToTarget`, `PathCompareTray`, `FeasibilityTags`, `ConflictNudge` (double‑count guard), `ShareCardButton`.
+  - Editors/utilities: `TargetPicker`, `TaxParamEditor`, `AmountSlider`, `OffsetsEditor`, `DslDrawer`.
 - Shared: `Layout`, `LangSwitcher`, `SourceLink`, `ErrorBoundary`, `Loading`, `GlobalControls` (FR/EN, color‑blind, Show table, Share/Remix, Assumptions), `BudgetHUD` (bottom: balance €/ %GDP, debt sparkline with fan, EU lights, real/nominal, year, undo/redo, reset).
 
 Scenario UX Details
 
-- Targets: searchable dropdowns for mission/program/action; tax parameters grouped (IR brackets, thresholds).
+- Onboarding: single panel, 10 seconds; two equal CTAs (Start with Budget · Start with Policy). Micro note: “You can switch anytime; both views are synced.”
+- Targets: mass selection lifts with a **BudgetDial** (dial + slider + numeric input). Pending stripes appear on unresolved masses; Δ chips collect under Spending/Revenue.
+- Workshop: hierarchical families → levers; **ProgressToTarget** shows € specified vs target; presets (fast savings, protect readiness, cut projects) fill mixes.
+- Lens: **LensSwitch** recolors stacks to Reform Families or Named Reforms; ribbons show cross‑mass painting.
 - Offsets: rule selection (share across pools, exclude list), cap levels; visual summary.
-- Validation: inline messages mapped from API schema errors.
-- Share: serialize scenario id to URL; resolve from server on load.
-- Challenge Mode: preset DSLs with success conditions (e.g., balance within X% GDP and equity above threshold); scoreboard UI hooks.
-- Classroom collections: link a set of presets to a “Room” (teacher view later), with lock/freeze affordances.
+- Validation: inline messages mapped from API schema errors; `ConflictNudge` highlights overlaps/double counting and links to affected controls.
+- Share: serialize scenario id to URL; resolve from server on load; stamped **Share Card** includes methods/version and “Specified X%” watermark if partial.
+- Compare & Remix: side‑by‑side twin bars + Δ waterfall; “Duplicate & Edit” unlocks levers; lineage tag persists.
+- Challenge Mode: preset DSLs with success conditions (e.g., “Resolution ≥80%” and balance target); scoreboard UI hooks.
+- Classroom: teacher opens a Room; students join; live leaderboard (Balance, Equity, Compliance, Resolution); auto‑debrief slides.
 
 Accessibility & i18n
 
@@ -71,8 +75,11 @@ Micro‑interactions & states
 
 - Loading: skeletons for bars/treemap and tables; values snap in when ready.
 - Optimistic edits: slider drags update twin bars immediately with precise settle‑back.
+- Pending state: diagonal animated stripes on unresolved masses; stripe speed slows as specification increases.
+- Mix sliders: when splitting a target across paths, sliders snap to nice ratios (50/30/20) but accept exact numbers.
 - Empty states: coaching card on new scenario; neutral message + nearest available year when data missing.
-- Toasts: short, neutral confirmations (e.g., “Added Hospitals & ER to Spending”).
+- Toasts: short, neutral confirmations (e.g., “You set a save of €6B. Choose how to get there.”) with click‑through to the Workshop.
+- Micro‑celebrations: meet target → subtle confetti; disabled in a11y mode.
 
 Timeline & Dependencies
 
@@ -207,6 +214,10 @@ Acceptance Criteria
 - Breadcrumb visible and correct on Explore, Procurement, Compare EU, Sources
 - Source star appears alongside key labels and opens source link in new tab with tooltip
 - Explore table shows YoY column with correct deltas; StatsCards render totals and YoY with correct number formatting
+- Playground: mass dial sets a target; Δ chip appears; mass gets pending stripes; **ResolutionMeter** updates overall %.
+- Workshop: at least two levers specify part of a mass goal; **ProgressToTarget** updates; **ConflictNudge** appears on overlaps.
+- LensSwitch: toggling Mass/Family/Named preserves totals and highlights ribbons across masses.
+- ShareCard: exported image shows methods/version and “Specified X%” watermark when partial.
 - Linkified codes navigate to corresponding entity pages
 - Colors and typography match the defined tokens and sizes; passes basic a11y contrast checks
 

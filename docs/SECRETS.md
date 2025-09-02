@@ -20,6 +20,13 @@ Optional
 - HTTP cache configuration (defaults work out of the box):
   - `HTTP_CACHE_ENABLED`, `HTTP_CACHE_DIR`, `HTTP_CACHE_TTL_*`
 
+- OpenFisca (distributional, optional V1):
+  - `OPENFISCA_URL` — base URL of your OpenFisca‑France instance (e.g., `http://localhost:2000`). If unset, the Distribution tab stays hidden.
+  - `OPENFISCA_TOKEN` — optional auth token if your instance is protected.
+
+- Share card rendering (optional):
+  - `OG_RENDER_BASE` — base URL for a serverless/Next route that renders Share Cards (SVG/PNG). If unset, the client can still use a plain HTML preview and copy permalinks.
+
 Local setup
 
 1) Copy `.env.example` to `.env` and fill in values:

@@ -24,6 +24,37 @@ Roadmap Overview
 - V1 (12–20 weeks): Distributional (OpenFisca), EU compare, classroom mode.
 - V2 (20–32 weeks): Macro priors + uncertainty, local finance module + constraints.
 
+New Epics — Playground ↔ Workshop (MVP+ → V1)
+
+- Budget Dials & Pending State [UI]
+  - AC:
+    - Changing a mass via a dial sets a target and applies a striped “Pending” skin on the mass.
+    - A Δ chip appears under the relevant bar (e.g., “Defense −€6B (Unspecified)”).
+    - Global HUD shows a Resolution Meter “Specified X%”. Partial shares watermark Share Cards.
+- Policy Workshop (families → levers) [UI][API]
+  - AC:
+    - Reform Library lists `policyLevers(family, search)` with feasibility and conflicts.
+    - Scoped view shows a **Progress‑to‑Target** bar (e.g., “€3.9B/€6B specified”) and presets.
+    - `runScenario` returns `resolution` with `overallPct` and `byMass` entries.
+    - Conflict/overlap guard raises `ConflictNudge` in UI and API validation errors on conflicting levers.
+- Lens Switch [UI]
+  - AC:
+    - Toggle By Mass ⇄ By Reform Family ⇄ By Named Reform recolors without breaking totals.
+    - Hovering a reform ribbon highlights where it paints across multiple masses.
+- Compare & Remix [UI][API]
+  - AC:
+    - Load a published plan (locked levers, “as proposed” badge) and show side‑by‑side twin bars + Δ waterfall.
+    - `scenarioCompare(a,b)` returns ribbons/waterfall deltas JSON.
+    - Duplicate & Edit forks a scenario preserving lineage; share card shows lineage tag.
+- Share Cards [UI][Ops]
+  - AC:
+    - OG renderer outputs stamped image (title, mini twin‑bars, top reforms, deficit/debt, EU lights, Specified X% watermark when partial) with methods/version.
+    - Cache invalidates on methods/version or `policy_catalog.version` changes.
+- Challenges & Classroom [UI]
+  - AC:
+    - Challenges enforce `Resolution ≥80%` before submit; share card includes a challenge badge.
+    - Classroom: Room with live leaderboard (Balance, Equity, Compliance, Resolution) and auto‑debrief slides.
+
 Milestone: MVP
 
 Product outcomes

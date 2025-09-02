@@ -108,6 +108,12 @@ Give the app reliable, up‑to‑date, and well‑documented pipes into French a
 * **Base**: `https://data.caf.fr/api/explore/v2.1/...`
 * **Use**: counts/amounts by benefit and territory; complements DREES. (Beware privacy thresholds & aggregation levels.)
 
+Reform inputs (for Policy Workshop)
+
+- Pensions (CNAV/DREES): base aggregates for age path scenarios (flows and balances), indexation rules/series, special regimes convergence. Use for calibrating levers like “Age +3m/yr to 64”, “Indexation CPI‑0.3”. Vintage‑sensitive; version assumptions.
+- Health staffing (ONDAM + PAP/RAP): counts and targets for nurses/doctors, pay grid references (e.g., “grille indiciaire”), and coverage indicators to tag feasibility/lag (not auto‑costing in MVP).
+- Social benefits (CNAF/DREES): base series to support toggles on minima sociaux/allocations; use as metadata for feasibility, not as automatic fiscal deltas in MVP.
+
 ---
 
 ## E) Macro‑fiscal time series for scenarios
@@ -276,6 +282,16 @@ Give the app reliable, up‑to‑date, and well‑documented pipes into French a
   - Expenditures: `GOV_10A_EXP` → `A.MIO_EUR.S13.GF{MAJOR}.{NA_ITEM}.FR`
   - Revenues: `GOV_10A_TAXAG` → `A.MIO_EUR.S13.{NA_ITEM}.FR` and `GOV_10A_MAIN` → `A.MIO_EUR.S13.{P11|P12}.FR`
   - Known caveats: `D.41` not exposed for ESA mapping here; use COFOG 01.7 TE proxy. Citycare uses `D.632`. Some `D.4`/`D.7` series may need other flows. See `docs/LEGO_METHOD.md` (Known Limitations).
+
+---
+
+Reform inputs — Environment / Carbon
+
+- Excise bases and rates (DGFiP/Eurostat): baseline for carbon tax levels (CO2e/t) and excise families (TICPE/TICGN/etc.). Use to parameterize a Carbon Tax lever (rate, base coverage) and recycling paths (dividend vs. labor tax cut). For distributional notes, join to household fuel shares when available.
+
+Reform inputs — Staffing (teachers/nurses/cops)
+
+- PAP/RAP performance indicators and ministerial HR series for FTE counts, salary grids, and coverage ratios. Use to tag feasibility (Law/Admin/Lag) and indicative lags for hiring/redeployments. MVP does not auto‑cost; amounts are lever‑driven with sources attached.
 
 ---
 

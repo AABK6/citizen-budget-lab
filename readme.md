@@ -8,11 +8,11 @@
 
 **Problem.** Public debate on budgets is polarized and opaque. Citizens rarely see who spends what, for what outcomes, and what trade‑offs reforms imply.
 
-**Solution.** Citizen Budget Lab is a web app that aggregates open French public‑finance data (État, Sécu, collectivités), procurement flows, and outcomes; lets users **reallocate budget lines** and **tweak taxes/transfers**; and instantly shows **accounting**, **distributional (microsim)**, and **macro (growth/jobs/deficit/debt)** impacts—with uncertainty and rule‑checks.
+**Solution.** Citizen Budget Lab is a web app that aggregates open French public‑finance data (État, Sécu, collectivités), procurement flows, and outcomes; lets users start either from the **Budget Playground** (turn dials on big masses) or the **Policy Workshop** (configure named reforms) with both views kept in sync; and instantly shows **accounting**, **distributional (microsim)**, and **macro (growth/jobs/deficit/debt)** impacts—with uncertainty and rule‑checks. A **Resolution Meter** makes unspecified changes visible until explained by concrete policies.
 
 **Impact.** Improve understanding and trust by making trade‑offs tangible and sourced. Enable better media coverage and civic education; give policymakers a neutral, auditable sandbox.
 
-**MVP focus.** A fast, delightful explorer of spending (missions/programmes ↔ COFOG), a procurement map (who is paid), simple deficit/debt arithmetic, EU rule indicators, and shareable explainer views. V1 adds OpenFisca distributional analysis; V2 adds a lightweight macro kernel with uncertainty bands.
+**MVP focus.** A fast, delightful explorer of spending (missions/programmes ↔ COFOG), a procurement map (who is paid), simple deficit/debt arithmetic, EU rule indicators, and shareable explainer views. MVP+ introduces the Budget Playground with dials and pending state; V1 adds the Policy Workshop, Lens Switch, and Compare & Remix; V2 adds a lightweight macro kernel with uncertainty bands.
 
 ---
 
@@ -49,8 +49,23 @@ Success for all: **clarity + trust + shareability.**
 
 1. **Where does each euro go?** By mission/program/action and by COFOG function; over time; vs. EU average.
 2. **Who gets paid?** Procurement recipients by sector, size, location; competition flags.
-3. **What if I change X?** Immediate: accounting impact (deficit/debt), EU rule lights. Then: distributional effects (households) and macro effects (growth/jobs) with uncertainty.
+3. **What if I change X?** Two synchronized ways:
+   - Top‑down: turn the **Budget Dial** on a mass (e.g., Defense −10%) and see a pending delta chip and stripes until you specify “how” in policies.
+   - Bottom‑up: pick a **Named Reform** (e.g., Carbon tax +€15B; Pension age path) and watch it “paint” across masses. Immediate: accounting impact (deficit/debt), EU rule lights. Then: distributional (households) and macro bands with uncertainty.
 4. **How does my household look?** (V1+) Optional OpenFisca “me & my taxes” view; all local on device if feasible.
+
+---
+
+## 4.1) Interaction Model — Playground ↔ Workshop
+
+- Playground center: **Twin stacked bars** (Spending vs Revenues) with an animated **gap** for the deficit/surplus (with %GDP badge). Big **mass blocks** compose the stacks.
+- Budget Dials: tapping a mass lifts it and reveals a **dial + slider** overlay with numeric entry. Adjustments create a striped **Pending** skin and a **Δ chip** (“Defense −€6B (Unspecified)”).
+- Policy Workshop: a hierarchical dashboard of **Reform Families → Levers** (e.g., Pensions: age, indexation; Taxes: VAT, carbon; Defense: procurement/personnel/operations) with a **Progress‑to‑Target** bar and **Feasibility tags** (Law/Admin/Lag). A **Path Compare** tray contrasts alternative mixes with distribution/EU lights/feasibility.
+- Resolution Meter: HUD indicator “**Specified X%**” (overall and by mass) reflecting how much of mass goals are explained by named reforms.
+- Lens Switch: toggle **By Mass ⇄ By Reform Family ⇄ By Named Reform**; ribbons show how a reform lands across multiple masses.
+- Share & Permalink: every state exports a stamped **Share Card** (methods/version; partials show “Specified X%”).
+- Compare & Remix: load a published plan, see side‑by‑side **twin bars + Δ waterfall**, then **Duplicate & Edit** to craft a counter‑proposal; lineage remains on the share card.
+- Challenges & Classroom: weekly **challenges** (e.g., “Find €20B for green without raising VAT”) with **Resolution ≥80%** to submit; **Classroom Rooms** with live leaderboard (Balance, Equity, Compliance, Resolution) and auto‑debrief slides.
 
 ---
 
@@ -62,11 +77,16 @@ Success for all: **clarity + trust + shareability.**
 * Features: “€1 explorer”; procurement map; compare across years; rule lights; share/export.
 * Tech: Data pipelines + lakehouse; GraphQL read API; static arithmetic service; web client.
 
+### MVP+ (4–8 weeks post‑MVP)
+
+* Add Budget Playground (Twin Bars + Budget Dials) with pending stripes, Δ chips, and a global Resolution Meter (partial share watermark).
+* Beneficiary lens for masses; permalink/share card service.
+
 ### V1 (12–20 weeks post‑MVP)
 
 * Add OpenFisca for tax/benefit scenarios & distributional charts (deciles, household types, regions).
 * Add broader COFOG lens and EU peer comparisons (Eurostat series).
-* Classroom mode: guided scenarios, printable handouts.
+* Policy Workshop (families/levers), Lens Switch, Compare & Remix view; Classroom mode: guided scenarios, printable handouts; Challenges loop.
 
 ### V2 (20–32 weeks post‑V1)
 

@@ -43,6 +43,14 @@ Warmers (explicit prefetch)
 
      Output: `data/cache/lego_baseline_2026.json` with totals and per-piece amounts; `meta.warning` documents any fallbacks/proxies (e.g., debt interest from COFOG 01.7).
 
+  4) Policy catalog (lever definitions):
+
+     python -m services.api.cache_warm policy-catalog \
+       --out data/cache/policy_levers.json \
+       --version 2025-09-01
+
+     Output: `data/cache/policy_levers.json` with `{ version, levers: [...] }` used to power the Reform Library and feasibility/conflict tags. Include a version stamp for cache invalidation.
+
 Integration options
 
 - Use these snapshots directly in the API by pointing readers to `data/cache/` when files exist, or keep them as warm materialized views while continuing to rely on the HTTP cache for ad-hoc queries.
@@ -53,4 +61,9 @@ Tips
 - ODS dataset ids vary by vintage. Keep a small map of `year → dataset id/fields` in deploy configs and pass via CLI flags.
 - For larger warmers (DECP procurement), scope by year/region and aggregate server-side to keep outputs compact.
 - Always record vintage and query parameters in filenames and/or sidecar JSON to ensure reproducibility.
-- Social/OG images: cache rendered share‑card HTML/SVG→PNG outputs for popular scenarios by `scenarioId` (e.g., in a CDN or a small disk cache) to avoid cold starts on previews and social crawlers. Invalidate on method/version changes.
+
+Share card cache
+
+- Purpose: accelerate OG/social previews and embeds for popular scenarios.
+- Strategy: cache rendered Share Card images (SVG/PNG) keyed by `scenarioId` and method/policy versions.
+- Invalidation: on any of (i) methods/version bump, (ii) `policy_catalog.version` change, or (iii) scenario mutation. Keep a small TTL for long‑tail scenarios.

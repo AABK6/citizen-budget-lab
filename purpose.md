@@ -21,19 +21,29 @@ What It Is (Product in One Page)
 
 - Explore €1: navigate spending by administrative lens (missions/programmes) and functional lens (COFOG); always with totals, shares, trends, and sources.
 - Who gets paid?: procurement recipients (firms/NGOs), geography, sectors; transparency on amounts and data quality flags.
-- Build your budget (MVP+): LEGO‑style “pieces” for expenditures and revenues with plain labels (e.g., “Teachers & schools”, “Hospitals & ER”, “VAT standard rate”), mapped rigorously to COFOG/ESA. Users assemble a budget from scratch or adjust the current one and see balance, debt path, and EU rule indicators.
+- Budget Playground ↔ Policy Workshop (MVP+/V1): two synchronized ways to build a plan.
+  - Top‑Down “What”: use Budget Dials on big mass blocks (Education, Pensions, Health, Defense, Revenues) in the Playground. Twin stacked bars (Spending vs Revenues) sit center stage; the gap equals deficit/surplus.
+  - Bottom‑Up “How”: specify concrete levers in the Policy Workshop (e.g., Carbon tax rate/base/recycling; Pensions age/indexation; Defense procurement/personnel/operations). A progress bar shows how much of a mass goal is specified.
+  - Resolution Meter: HUD indicator “Specified 0–100%” quantifying how much of mass goals are explained by policies. Unspecified remains visible (pending stripes on masses; watermark on share cards).
+  - Lens Switch: above the charts toggle By Mass ⇄ By Reform Family ⇄ By Named Reform to see the same scenario through three lenses.
+  - Permalink & Share Card: every state has a shareable permalink and a stamped image card with methods/version and “Specified X%” if partially resolved.
 - Distributional (V1): OpenFisca‑powered impacts by deciles/households/regions for tax/benefit changes.
 - Macro (lite): reduced‑form impulse responses (IRFs) to show plausible bands for GDP/jobs/deficit changes; ranges and assumptions are explicit.
 - Compare EU (V1): COFOG shares and fiscal ratios vs peers.
 
-Interaction model on Build: the UI reads left→right as Choices → Creation → Consequences. Left is the LEGO Shelf (spending/revenue tabs, search/filters). Center is the Building Canvas with twin vertical bars—Total Revenues vs Total Spending—where the animated gap equals the deficit/surplus (also shown as %GDP). Right is the Consequence Dashboard with Accounting (balance and debt path), EU rule “lights”, and optional Macro/Distribution panels. Any edit updates all panels instantly.
+Interaction model on Build: the UI reads left→right as Choices → Creation → Consequences and supports both top‑down and bottom‑up entry points.
+- Choices: LEGO Shelf and Reform Library (spending/revenue tabs; search with synonyms; filters; locks/bounds badges; feasibility hints).
+- Creation: Budget Playground with Twin Bars, mass stacks, and tactile Budget Dials; Policy Workshop with hierarchical families → levers, presets, progress‑to‑target, and a Path‑Compare tray for alternative mixes.
+- Consequences: Accounting (balance and debt path), EU rule “lights”, Distributional, and Macro bands; always stamped with method chips and uncertainty ranges.
+- HUD: Resolution Meter (Specified %), year selector, real/nominal toggle, undo/redo.
+- Dual lenses: Lens Switch recolors stacks into Reform Families or Named Reforms while preserving totals; ribbons can “paint” across multiple masses to show cross‑effects.
 
 Design Principles
 
 - Neutral & transparent: show sources on every chart; display ranges/uncertainty and assumptions; document limitations.
 - Credible but simple: start with mechanical accounting; add distributional/macro in layers; prefer explainable rules to opaque black boxes.
 - Inclusive & accessible: plain language, FR/EN, keyboard‑friendly, color‑blind palettes; always “show the table”.
-- Artifact‑first sharing: every state has a permalink plus a source‑stamped image card suitable for social/newsroom embeds; links include a methods/version hash to preserve context.
+- Artifact‑first sharing: every state has a permalink plus a source‑stamped image card suitable for social/newsroom embeds; links include a methods/version hash to preserve context. Cards include a “Specified X%” watermark when unresolved.
 
 What It Is Not (Non‑Goals)
 
@@ -51,8 +61,8 @@ How It Works (Architecture)
 Roadmap (High‑Level)
 
 - MVP: Explorer, Procurement, mechanical scenarios, EU lights, macro‑lite.
-- MVP+: LEGO Budget Builder (public‑facing pieces), beneficiary lens, permalinks.
-- V1: Distributional (OpenFisca), EU comparisons, Classroom mode incl. “Challenge Mode” (predefined tasks with auto‑assessment and shareable scorecards).
+- MVP+: Budget Playground with Budget Dials and pending state; beneficiary lens; permalinks & share cards.
+- V1: Policy Workshop (families/levers), Lens Switch, Compare & Remix, Distributional (OpenFisca), EU comparisons, Classroom mode and weekly Challenges (Resolution ≥80% to submit).
 - V2: Macro priors & uncertainty fans, Local finance module with constraints.
 
 Trust & Governance
