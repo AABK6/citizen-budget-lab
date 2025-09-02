@@ -258,7 +258,7 @@ Next Sprint (2 weeks) — Top Priorities
     - [x] Source registry loads from `data/sources.json` and is exposed via GraphQL `sources()`.
 
 6) Locks/bounds enforcement & validation [MVP+] [API]
-   - TODO: Respect `policy.locked_default` and per‑piece bounds; user‑friendly errors.
+   - DONE: Enforce `policy.locked_default`; reject unknown piece targets; enforce optional per‑piece bounds (`bounds_pct`, `bounds_amount_eur`) with descriptive errors. Tests in `services/api/tests/test_guardrails.py`.
 
 7) LEGO Methodology doc [MVP+] [Docs]
    - DONE: `docs/LEGO_METHOD.md` (mapping, beneficiary rules, elasticities, limitations). Linked from README_DEV.

@@ -507,6 +507,7 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
 
     lego_amounts: Dict[str, float] = {}
     lego_elast: Dict[str, float] = {}
+    lego_policy: Dict[str, dict] = {}
     if lego_bl:
         for ent in lego_bl.get("pieces", []):
             pid = str(ent.get("id"))
@@ -522,6 +523,9 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
             v = el.get("value")
             if isinstance(v, (int, float)):
                 lego_elast[pid] = float(v)
+            pol = p.get("policy") or {}
+            if pol:
+                lego_policy[pid] = pol
     except Exception:
         pass
 
@@ -566,11 +570,69 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
         target = str(act.get("target", ""))
         if target.startswith("piece."):
             pid = target.split(".", 1)[1]
+            # Guardrails: unknown piece id
+            if pid not in lego_types:
+                raise ValueError(f"Unknown LEGO piece id: '{pid}'")
             ptype = lego_types.get(pid, "expenditure")
+            pol = lego_policy.get(pid) or {}
+            # Guardrails: locked_default
+            if bool(pol.get("locked_default", False)):
+                raise ValueError(f"Piece '{pid}' is locked by default and cannot be modified")
             base_amt = float(lego_amounts.get(pid, 0.0))
             amt_eur = act.get("amount_eur")
             dp = act.get("delta_pct")
             delta = 0.0
+            # Bounds enforcement helpers
+            def _enforce_bounds_amount_change(change: float) -> None:
+                bounds_pct = pol.get("bounds_pct") or {}
+                bounds_amt = pol.get("bounds_amount_eur") or {}
+                # Percent bounds relative to base
+                if isinstance(bounds_pct, dict) and base_amt > 0:
+                    try:
+                        bmin = float(bounds_pct.get("min")) if bounds_pct.get("min") is not None else None
+                        bmax = float(bounds_pct.get("max")) if bounds_pct.get("max") is not None else None
+                    except Exception:
+                        bmin = bmax = None
+                    if bmax is not None and change > base_amt * (bmax / 100.0) + 1e-9:
+                        raise ValueError(
+                            f"Piece '{pid}' change exceeds +{bmax:.2f}% bound (requested {change:.2f} EUR)"
+                        )
+                    if bmin is not None and change < base_amt * (bmin / 100.0) - 1e-9:
+                        raise ValueError(
+                            f"Piece '{pid}' change exceeds {bmin:.2f}% lower bound (requested {change:.2f} EUR)"
+                        )
+                # Absolute amount bounds on the new value
+                if isinstance(bounds_amt, dict):
+                    try:
+                        amin = float(bounds_amt.get("min")) if bounds_amt.get("min") is not None else None
+                        amax = float(bounds_amt.get("max")) if bounds_amt.get("max") is not None else None
+                    except Exception:
+                        amin = amax = None
+                    new_val = base_amt + change
+                    if amin is not None and new_val < amin - 1e-9:
+                        raise ValueError(
+                            f"Piece '{pid}' result {new_val:.2f} EUR below min bound {amin:.2f} EUR"
+                        )
+                    if amax is not None and new_val > amax + 1e-9:
+                        raise ValueError(
+                            f"Piece '{pid}' result {new_val:.2f} EUR above max bound {amax:.2f} EUR"
+                        )
+            def _enforce_bounds_pct(pct: float) -> None:
+                bounds_pct = pol.get("bounds_pct") or {}
+                if isinstance(bounds_pct, dict):
+                    try:
+                        bmin = float(bounds_pct.get("min")) if bounds_pct.get("min") is not None else None
+                        bmax = float(bounds_pct.get("max")) if bounds_pct.get("max") is not None else None
+                    except Exception:
+                        bmin = bmax = None
+                    if bmin is not None and pct < bmin - 1e-9:
+                        raise ValueError(
+                            f"Piece '{pid}' percent change {pct:.2f}% below min {bmin:.2f}%"
+                        )
+                    if bmax is not None and pct > bmax + 1e-9:
+                        raise ValueError(
+                            f"Piece '{pid}' percent change {pct:.2f}% above max {bmax:.2f}%"
+                        )
             if amt_eur is not None:
                 try:
                     val = float(amt_eur)
@@ -578,24 +640,35 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
                     val = 0.0
                 if ptype == "expenditure":
                     if op == "increase":
+                        _enforce_bounds_amount_change(val)
                         delta = val
                     elif op == "decrease":
+                        _enforce_bounds_amount_change(-val)
                         delta = -val
                     elif op == "set":
-                        delta = float(val) - base_amt
+                        new_val = float(val)
+                        change = new_val - base_amt
+                        _enforce_bounds_amount_change(change)
+                        delta = change
                 else:  # revenue — positive revenue reduces deficit
                     if op == "increase":
+                        _enforce_bounds_amount_change(val)
                         delta = -val
                     elif op == "decrease":
+                        _enforce_bounds_amount_change(-val)
                         delta = val
                     elif op == "set":
-                        delta = -(float(val) - base_amt)
+                        new_val = float(val)
+                        change = new_val - base_amt
+                        _enforce_bounds_amount_change(change)
+                        delta = -change
             elif dp is not None:
                 try:
                     pct = float(dp)
                 except Exception:
                     pct = 0.0
                 sign = 1.0 if op != "decrease" else -1.0
+                _enforce_bounds_pct(pct * (1.0 if op != "decrease" else -1.0))
                 eff = (pct / 100.0) * base_amt
                 if ptype == "expenditure":
                     delta = sign * eff
