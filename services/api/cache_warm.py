@@ -360,6 +360,10 @@ def warm_plf_state_budget(
         "where": extra_where or (f"{year_col}={year}" if year_col else None),
         "method": "server_or_client_aggregate",
         "row_count": len(rows),
+        "cp_field": cp_col,
+        "ae_field": ae_col,
+        "mission_code_field": code_col,
+        "mission_label_field": label_col,
     }
     with open(out_csv.replace('.csv', '.meta.json'), 'w', encoding='utf-8') as f:
         json.dump(sidecar, f, ensure_ascii=False, indent=2)

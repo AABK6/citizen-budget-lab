@@ -211,6 +211,16 @@ class Query:
             )
 
     @strawberry.field
+    def allocationProgramme(self, year: int, basis: BasisEnum = BasisEnum.CP, missionCode: str = "") -> list[MissionAllocationType]:  # noqa: N802
+        from .data_loader import allocation_by_programme as _by_prog  # type: ignore
+
+        items = _by_prog(year, Basis(basis.value), missionCode)
+        return [
+            MissionAllocationType(code=i.code, label=i.label, amountEur=i.amount_eur, share=i.share)
+            for i in items
+        ]
+
+    @strawberry.field
     def procurement(
         self,
         year: int,

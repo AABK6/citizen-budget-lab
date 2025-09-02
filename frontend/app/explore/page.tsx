@@ -23,9 +23,25 @@ export default function ExplorePage() {
   const [basis, setBasis] = useState<Basis>('CP')
   const [rows, setRows] = useState<MissionRow[]>([])
   const [prevTotal, setPrevTotal] = useState<number | null>(null)
+  const [excludeRD, setExcludeRD] = useState<boolean>(true)
+  const [selectedCode, setSelectedCode] = useState<string | null>(null)
+  const [drillRows, setDrillRows] = useState<MissionRow[] | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [chartType, setChartType] = useState<'sunburst' | 'treemap' | 'stacked'>('sunburst')
+  const displayRows = useMemo(() => {
+    let sr: MissionRow[] = rows
+    if (lens === 'ADMIN' && excludeRD) sr = sr.filter(r => r.code !== 'RD' && !/remboursements/i.test(r.label))
+    if (lens === 'COFOG' && selectedCode) sr = sr.filter(r => r.code === selectedCode)
+    return sr
+  }, [rows, lens, excludeRD, selectedCode])
+  const totalDisplayed = useMemo(() => displayRows.reduce((s, r) => s + (r.amountEur || 0), 0), [displayRows])
+  const yoyText = useMemo(() => {
+    if (!prevTotal) return t('stats.na')
+    const pct = ((totalDisplayed - prevTotal) / prevTotal) * 100
+    const sign = pct >= 0 ? '+' : ''
+    return `${sign}${pct.toFixed(2)}%`
+  }, [totalDisplayed, prevTotal, t])
 
   const columns = useMemo(() => [
     { key: 'code', label: 'Code' },
@@ -82,6 +98,12 @@ export default function ExplorePage() {
           { label: t('chart.treemap'), value: 'treemap' },
           { label: t('chart.stacked'), value: 'stacked' },
         ]} />
+        {lens === 'ADMIN' && (
+          <label className="field" title="Tax refunds/reliefs (VAT refunds, property-tax reliefs, credits). Reduces net revenue; not a functional outlay.">
+            <span>Exclude RD</span>
+            <input type="checkbox" checked={excludeRD} onChange={e => setExcludeRD(e.target.checked)} />
+          </label>
+        )}
       </div>
       {loading && <p>{t('loading')}</p>}
       {error && <p className="error">{error}</p>}
@@ -90,24 +112,41 @@ export default function ExplorePage() {
           {/* Stat cards: Total, YoY, Source */}
           <StatCards
             items={[
-              { label: t('stats.total'), value: rows.reduce((s, r) => s + (r.amountEur || 0), 0).toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' €' },
-              (prevTotal ? {
-                label: t('stats.yoy'),
-                value: (() => { const cur = rows.reduce((s, r) => s + (r.amountEur || 0), 0); const pct = prevTotal ? ((cur - prevTotal) / prevTotal) * 100 : 0; const sign = pct >= 0 ? '+' : ''; return `${sign}${pct.toFixed(2)}%`; })()
-              } : { label: t('stats.yoy'), value: t('stats.na') }),
+              { label: t('stats.total'), value: totalDisplayed.toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' €' },
+              { label: t('stats.yoy'), value: yoyText },
             ]}
           />
           <div style={{ marginTop: '.5rem' }}>
             <SourceLink ids={[ 'state_budget_sample' ]} />
           </div>
-          <AllocationChart rows={rows} kind={chartType} />
-          <DataTable columns={columns} rows={rows} />
+          <AllocationChart
+            rows={displayRows}
+            kind={chartType}
+            onSliceClick={async (code) => {
+              if (lens === 'ADMIN') {
+                try {
+                  const q = "query($y:Int!,$b:BasisEnum!,$m:String!){ allocationProgramme(year:$y,basis:$b,missionCode:$m){ code label amountEur share } }"
+                  const data = await gqlRequest(q, { y: year, b: basis, m: code })
+                  setDrillRows(data.allocationProgramme)
+                  setSelectedCode(code)
+                } catch {}
+              } else {
+                setSelectedCode(code || null)
+                setDrillRows(null)
+              }
+            }}
+          />
+          {lens === 'ADMIN' && drillRows && (
+            <div className="row gap">
+              <button onClick={() => { setDrillRows(null); setSelectedCode(null) }}>Back to missions</button>
+              <span>Programmes in mission {selectedCode}</span>
+            </div>
+          )}
+          {drillRows
+            ? <DataTable columns={columns} rows={drillRows} />
+            : <DataTable columns={columns} rows={displayRows} />}
         </>
       )}
-      <details>
-        <summary>Show GraphQL</summary>
-        <pre className="code">allocation(year: {year}, basis: {basis}, lens: {lens})</pre>
-      </details>
     </div>
   )
 }

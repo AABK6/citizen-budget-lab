@@ -1,7 +1,7 @@
 "use client"
 
+import React, { useMemo } from 'react'
 import dynamic from 'next/dynamic'
-import { useMemo } from 'react'
 
 const ReactECharts = dynamic(() => import('echarts-for-react'), { ssr: false }) as any
 
@@ -9,9 +9,10 @@ type Row = { code: string; label: string; amountEur: number; share: number }
 type Props = {
   rows: Row[]
   kind: 'sunburst' | 'treemap' | 'stacked'
+  onSliceClick?: (code: string, label: string) => void
 }
 
-export function AllocationChart({ rows, kind }: Props) {
+export function AllocationChart({ rows, kind, onSliceClick }: Props) {
   const data = useMemo(() => rows.map(r => ({
     name: `${r.code} ${r.label}`,
     value: Math.max(0, r.amountEur || 0),
@@ -79,9 +80,16 @@ export function AllocationChart({ rows, kind }: Props) {
     return common
   }, [data, kind])
 
+  const onEvents = React.useMemo(() => ({
+    click: (p: any) => {
+      const v = p?.data || {}
+      if (onSliceClick) onSliceClick(v.code || '', v.label || p?.name || '')
+    }
+  }), [onSliceClick])
+
   return (
     <div className="card">
-      <ReactECharts option={option} style={{ height: 360 }} notMerge={true} lazyUpdate={true} />
+      <ReactECharts option={option} style={{ height: 360 }} notMerge={true} lazyUpdate={true} onEvents={onEvents} />
     </div>
   )
 }

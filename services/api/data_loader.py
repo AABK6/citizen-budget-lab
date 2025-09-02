@@ -69,6 +69,55 @@ def allocation_by_mission(year: int, basis: Basis) -> Allocation:
     return Allocation(mission=missions)
 
 
+def allocation_by_programme(year: int, basis: Basis, mission_code: str) -> List[MissionAllocation]:
+    """Return programme-level aggregation for a given mission using ODS live query if sidecar is available.
+
+    Falls back to empty list if no sidecar/dataset info is present.
+    """
+    # Read sidecar for dataset/fields
+    sidecar_path = os.path.join(CACHE_DIR, f"state_budget_mission_{year}.meta.json")
+    if not os.path.exists(sidecar_path):
+        return []
+    try:
+        meta = _read_file_json(sidecar_path)  # type: ignore[assignment]
+    except Exception:
+        return []
+    base = meta.get("base") or "https://data.economie.gouv.fr"
+    dataset = meta.get("dataset")
+    code_field = meta.get("mission_code_field") or "code_mission"
+    prog_field = "programme"
+    prog_label_field = "libelle_programme"
+    cp_field = meta.get("cp_field") or "cp_plf"
+    ae_field = meta.get("ae_field") or "ae_plf"
+    if not dataset:
+        return []
+    select = f"{prog_field},{prog_label_field},sum({cp_field}) as cp_eur,sum({ae_field}) as ae_eur"
+    where = f"{code_field}='{mission_code}'"
+    extra = meta.get("where")
+    if extra:
+        where = f"({where}) AND ({extra})"
+    group_by = f"{prog_field},{prog_label_field}"
+    try:
+        from .clients import ods as ods_client
+
+        js = ods_client.records(base, dataset, select=select, where=where, group_by=group_by, order_by=prog_field, limit=1000)
+        rows = js.get("results") or js.get("records") or js.get("data") or []
+    except Exception:
+        rows = []
+    total = 0.0
+    items: List[MissionAllocation] = []
+    for r in rows:
+        code = str(r.get(prog_field) or r.get("programme") or "")
+        label = str(r.get(prog_label_field) or r.get("libelle_programme") or code)
+        val = float(r.get("cp_eur") or 0.0) if basis == Basis.CP else float(r.get("ae_eur") or 0.0)
+        total += val
+        items.append(MissionAllocation(code=code, label=label, amount_eur=val, share=0.0))
+    if total > 0:
+        items = [MissionAllocation(code=i.code, label=i.label, amount_eur=i.amount_eur, share=i.amount_eur / total) for i in items]
+    items.sort(key=lambda x: x.amount_eur, reverse=True)
+    return items
+
+
 _COFOG_LABELS = {
     "01": "General public services",
     "02": "Defense",
