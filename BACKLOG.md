@@ -34,7 +34,7 @@ Epics
   - Central budget via ODS (PLF/LFI/PLR): incremental pulls, dedupe, per‑year vintage; mission/program/action; AE/CP/execution when available.
     - Current: mission‑level snapshot warmer implemented (`cache_warm.py: warm_plf_state_budget`) with server‑side/group‑by and local fallback; minimal dedupe/vintage.
   - COFOG mapping (programme/action, year‑aware): weights sum to 1.0; schema+tests; fallback for unknowns.
-    - Current: mission→COFOG mapping via `data/cofog_mapping.json` and `allocation_by_cofog`; programme/action and year‑awareness + tests pending.
+    - DONE: programme‑level precedence and year‑aware overrides implemented in `allocation_by_cofog` with support for `programme_to_cofog` and `programme_to_cofog_years` in `data/cofog_mapping.json`. Tests cover precedence and year overrides.
   - Procurement (DECP) pipeline: ingest consolidated; dedup id+publication; lot→contract; amount quality flags.
     - Current: sample CSV aggregator (`data/sample_procurement.csv` + `procurement_top_suppliers`); full ingestion/dedupe/flags pending.
   - SIRENE join: normalize SIREN/SIRET; NAF/size; cache + rate limiting.
