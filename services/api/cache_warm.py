@@ -373,19 +373,48 @@ def warm_eurostat_cofog(year: int, countries: List[str]) -> str:
         js = eu.fetch("gov_10a_exp", {"time": str(year), "unit": "MIO_EUR", "sector": "S13"})
         for c in countries:
             shares = eu.cofog_shares(js, year=year, geo=c)
-            out[c] = [{"code": code, "label": label, "share": share} for code, label, share in shares]
-    except Exception as e:
-        # Provide helpful guidance and fallback to local FR mapping if available via allocation_by_cofog
+            if shares:
+                out[c] = [{"code": code, "label": label, "share": share} for code, label, share in shares]
+    except Exception as e_json:
         out["__warning__"] = (
             "Eurostat fetch failed. Ensure EUROSTAT_BASE is reachable and EUROSTAT_COOKIE is set if required. "
-            f"Error: {type(e).__name__}"
+            f"Error: {type(e_json).__name__}"
         )
+
+    # If JSON path yielded nothing for some or all countries, try SDMX-XML per-category fallback
+    missing = [c for c in countries if c not in out or not out.get(c)]
+    if missing:
+        try:
+            from .data_loader import _COFOG_LABELS  # type: ignore
+            majors = [f"{i:02d}" for i in range(1, 11)]
+            for c in missing:
+                vals: list[tuple[str, str, float]] = []
+                total = 0.0
+                for m in majors:
+                    key = f"A.MIO_EUR.S13.GF{m}.TE.{c}"
+                    v = eu.sdmx_value("gov_10a_exp", key, time=str(year))
+                    if v is None:
+                        continue
+                    total += v
+                    label = _COFOG_LABELS.get(m, m)
+                    vals.append((m, label, v))
+                if total > 0 and vals:
+                    vals.sort(key=lambda x: x[2], reverse=True)
+                    out[c] = [
+                        {"code": code, "label": label, "share": (v / total)} for code, label, v in vals
+                    ]
+        except Exception:
+            pass
+
+    # Final fallback to local mapping
+    missing2 = [c for c in countries if c not in out or not out.get(c)]
+    if missing2:
         try:
             from .data_loader import allocation_by_cofog
             from .models import Basis
 
             items = allocation_by_cofog(year, Basis.CP)
-            for c in countries:
+            for c in missing2:
                 out[c] = [{"code": i.code, "label": i.label, "share": i.share} for i in items]
         except Exception:
             pass
