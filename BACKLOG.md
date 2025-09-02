@@ -133,20 +133,30 @@ Next Sprint (2 weeks) — Top Priorities
 3) i18n baseline + a11y pass [MVP] [UI]
    - DONE: EN/FR message catalog for core labels; visible focus states; axe check runs in CI (home route).
 
-4) Build Page (skeleton) [MVP+] [UI]
-   - DONE: Palette (expenditures/revenues), sliders (±% per piece), DSL builder in memory, scoreboard (deficitPath/EU lights), permalink via URL hash; Nav entry added.
+4) Build Page (polish phase 1) [MVP+] [UI]
+   - DONE: Grouping by domain, search, beneficiary filter; locked badges & expert mode; expanded scoreboard (baseline totals, total deltas, distance); results drawer (deficit/debt chart + top changes).
 
-5) LEGO Revenue Baseline v0.1 [MVP+] [Data]
-   - TODO: Extend warmer to compute revenue baselines from ESA categories; reconcile with S13 totals.
+5) Explore/Procurement polish [MVP] [UI]
+   - TODO: StatCards & source stars; stacked shares; procurement summary cards & map tooltips.
 
-6) Revenue piece handling + elasticities [MVP+] [API]
-   - TODO: Support revenue `piece.*` with elasticities and bounds; adjust accounting signs; tests.
-
-7) Locks/bounds enforcement & validation [MVP+] [API]
+6) Locks/bounds enforcement & validation [MVP+] [API]
    - TODO: Respect `policy.locked_default` and per‑piece bounds; user‑friendly errors.
 
-8) LEGO Methodology doc [MVP+] [Docs]
-   - TODO: Write `docs/LEGO_METHOD.md` (mapping, beneficiary rules, elasticities, limitations) and link from README_DEV.
+7) LEGO Methodology doc [MVP+] [Docs]
+   - DONE: `docs/LEGO_METHOD.md` (mapping, beneficiary rules, elasticities, limitations). Link from README_DEV pending.
+
+Future Phases (UI & Trust)
+
+- Phase 2 — Explore & Procurement polish [MVP]
+  - StatCards on Explore; stacked shares; refined tooltips; beneficiary lens polish.
+  - Procurement: summary cards, better filters, map popups; privacy footnote.
+
+- Phase 3 — Trust & Sharing [MVP+]
+  - Source star component across UI; inline methodology links; EU lights explanations.
+  - Saved scenarios list & permalinks; OG images for Build scenarios (title + key stats).
+
+- Phase 4 — A11y & Performance [MVP]
+  - Skeletons and empty states; increase hit areas; aria‑live for Run results; code‑split charts.
 
 Notes
 - Keep `docs/GRAPHQL_CONTRACT.md` as the contract; implement incrementally.

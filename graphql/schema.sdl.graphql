@@ -13,7 +13,7 @@ MVP+ (LEGO Builder) additions
 
 enum ScopeEnum { S13 CENTRAL }
 
-type LegoPiece { id: ID!, label: String!, type: String!, amountEur: Float, share: Float, beneficiaries: JSON!, examples: [String!]!, sources: [String!]! }
+type LegoPiece { id: ID!, label: String!, type: String!, amountEur: Float, share: Float, beneficiaries: JSON!, examples: [String!]!, sources: [String!]!, locked: Boolean! }
 type LegoBaseline { year: Int!, scope: ScopeEnum!, pib: Float!, depensesTotal: Float!, recettesTotal: Float!, pieces: [LegoPiece!]! }
 type DistanceByPiece { id: ID!, shareDelta: Float! }
 type Distance { score: Float!, byPiece: [DistanceByPiece!]! }

@@ -141,6 +141,7 @@ class LegoPieceType:
     beneficiaries: JSON
     examples: list[str]
     sources: list[str]
+    locked: bool
 
 
 @strawberry.enum
@@ -375,6 +376,7 @@ class Query:
                 beneficiaries=i.get("beneficiaries") or {},
                 examples=list(i.get("examples") or []),
                 sources=list(i.get("sources") or []),
+                locked=bool(i.get("locked", False)),
             )
             for i in items
         ]

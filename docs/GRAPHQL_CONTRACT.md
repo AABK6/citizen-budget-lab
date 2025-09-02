@@ -79,6 +79,7 @@ type LegoPiece {
   beneficiaries: JSON!
   examples: [String!]!
   sources: [String!]!
+  locked: Boolean!
 }
 
 type LegoBaseline {

@@ -314,6 +314,7 @@ def lego_pieces_with_baseline(year: int, scope: str = "S13") -> List[dict]:
     out: List[dict] = []
     for p in cfg.get("pieces", []):
         pid = str(p.get("id"))
+        pol = p.get("policy") or {}
         out.append(
             {
                 "id": pid,
@@ -324,6 +325,7 @@ def lego_pieces_with_baseline(year: int, scope: str = "S13") -> List[dict]:
                 "beneficiaries": p.get("beneficiaries") or {},
                 "examples": p.get("examples") or [],
                 "sources": p.get("sources") or [],
+                "locked": bool(pol.get("locked_default", False)),
             }
         )
     return out
