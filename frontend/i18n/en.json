@@ -20,6 +20,7 @@
   "lens.cofog": "COFOG",
   "chart.sunburst": "Sunburst",
   "chart.treemap": "Treemap",
+  "chart.stacked": "Stacked shares",
 
   "loading": "Loading…",
   "error.generic": "Failed to load",

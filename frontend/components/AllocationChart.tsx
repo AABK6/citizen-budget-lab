@@ -8,7 +8,7 @@ const ReactECharts = dynamic(() => import('echarts-for-react'), { ssr: false }) 
 type Row = { code: string; label: string; amountEur: number; share: number }
 type Props = {
   rows: Row[]
-  kind: 'sunburst' | 'treemap'
+  kind: 'sunburst' | 'treemap' | 'stacked'
 }
 
 export function AllocationChart({ rows, kind }: Props) {
@@ -42,7 +42,7 @@ export function AllocationChart({ rows, kind }: Props) {
         emphasis: { focus: 'ancestor' },
         label: { show: false }
       }]
-    } else {
+    } else if (kind === 'treemap') {
       common.series = [{
         type: 'treemap',
         data,
@@ -50,6 +50,31 @@ export function AllocationChart({ rows, kind }: Props) {
         breadcrumb: { show: false },
         label: { show: false }
       }]
+    } else {
+      // 100% stacked bar: one category with segments representing shares
+      const yName = 'Composition'
+      const series = rows.map(r => ({
+        name: `${r.code} ${r.label}`,
+        type: 'bar',
+        stack: 'shares',
+        data: [Math.max(0, r.share || 0)],
+        emphasis: { focus: 'series' },
+      }))
+      return {
+        tooltip: {
+          trigger: 'item',
+          formatter: (p: any) => {
+            const i = p.seriesName || ''
+            const share = (p.data * 100).toFixed(2) + '%'
+            return `<b>${i}</b><br/>Share: ${share}`
+          }
+        },
+        legend: { show: false },
+        grid: { left: 20, right: 20, top: 10, bottom: 30, containLabel: true },
+        xAxis: { type: 'value', max: 1, axisLabel: { formatter: (v: number) => (v * 100) + '%' } },
+        yAxis: { type: 'category', data: [yName] },
+        series,
+      }
     }
     return common
   }, [data, kind])
@@ -60,4 +85,3 @@ export function AllocationChart({ rows, kind }: Props) {
     </div>
   )
 }
-

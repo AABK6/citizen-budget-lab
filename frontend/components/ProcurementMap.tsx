@@ -17,6 +17,7 @@ type Row = {
   procedureType?: string | null
   locationCode?: string | null
   sourceUrl?: string | null
+  naf?: string | null
 }
 
 type GeoInfo = { lat: number; lon: number; nom: string }
@@ -67,6 +68,7 @@ export function ProcurementMap({ rows, region }: { rows: Row[]; region?: string 
                   {code && <div>{g.nom} ({code})</div>}
                   {r.cpv && <div>CPV: {r.cpv}</div>}
                   {r.procedureType && <div>Procedure: {r.procedureType}</div>}
+                  {r.naf && <div>NAF: {r.naf}</div>}
                   {(r as any).sourceUrl && <div><a href={(r as any).sourceUrl} target="_blank" rel="noreferrer">Source</a></div>}
                 </div>
               </Popup>

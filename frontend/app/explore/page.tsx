@@ -25,7 +25,7 @@ export default function ExplorePage() {
   const [prevTotal, setPrevTotal] = useState<number | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [chartType, setChartType] = useState<'sunburst' | 'treemap'>('sunburst')
+  const [chartType, setChartType] = useState<'sunburst' | 'treemap' | 'stacked'>('sunburst')
 
   const columns = useMemo(() => [
     { key: 'code', label: 'Code' },
@@ -77,7 +77,11 @@ export default function ExplorePage() {
         <YearPicker value={year} onChange={setYear} label={t('label.year')} />
         <Select label={t('explore.basis')} value={basis} onChange={v => setBasis(v as Basis)} options={[{ label: t('basis.cp'), value: 'CP' }, { label: t('basis.ae'), value: 'AE' }]} />
         <Select label={t('explore.lens')} value={lens} onChange={v => setLens(v as Lens)} options={[{ label: t('lens.admin'), value: 'ADMIN' }, { label: t('lens.cofog'), value: 'COFOG' }]} />
-        <Select label={t('explore.chart')} value={chartType} onChange={v => setChartType(v as any)} options={[{ label: t('chart.sunburst'), value: 'sunburst' }, { label: t('chart.treemap'), value: 'treemap' }]} />
+        <Select label={t('explore.chart')} value={chartType} onChange={v => setChartType(v as any)} options={[
+          { label: t('chart.sunburst'), value: 'sunburst' },
+          { label: t('chart.treemap'), value: 'treemap' },
+          { label: t('chart.stacked'), value: 'stacked' },
+        ]} />
       </div>
       {loading && <p>{t('loading')}</p>}
       {error && <p className="error">{error}</p>}
@@ -107,5 +111,4 @@ export default function ExplorePage() {
     </div>
   )
 }
-
 

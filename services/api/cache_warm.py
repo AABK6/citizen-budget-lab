@@ -17,6 +17,7 @@ Usage examples:
 """
 
 import argparse
+import datetime as dt
 import csv
 import json
 import os
@@ -345,7 +346,18 @@ def warm_plf_state_budget(
             cp = float(rec.get("cp_eur") or rec.get(cp_col) or 0)
             ae = float(rec.get("ae_eur") or rec.get(ae_col) or 0)
             w.writerow([year, code, label, "", "", cp, ae])
-
+    # Sidecar provenance metadata
+    sidecar = {
+        "extraction_ts": dt.datetime.utcnow().isoformat() + "Z",
+        "base": base,
+        "dataset": dataset,
+        "year": int(year),
+        "where": extra_where or (f"{year_col}={year}" if year_col else None),
+        "method": "server_or_client_aggregate",
+        "row_count": len(rows),
+    }
+    with open(out_csv.replace('.csv', '.meta.json'), 'w', encoding='utf-8') as f:
+        json.dump(sidecar, f, ensure_ascii=False, indent=2)
     return out_csv
 
 

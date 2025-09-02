@@ -60,6 +60,7 @@ export default function ProcurementPage() {
             procedureType
             locationCode
             sourceUrl
+            naf
           }
         }
       `

@@ -86,22 +86,53 @@ _COFOG_LABELS = {
 def allocation_by_cofog(year: int, basis: Basis) -> List[MissionAllocation]:
     cfg = _load_json(COFOG_MAP_JSON)
     mission_map = cfg.get("mission_to_cofog", {})
-    # Aggregate mission values
-    mission_amounts: Dict[str, float] = {}
+    prog_map = cfg.get("programme_to_cofog", {})
+    prog_year_map = cfg.get("programme_to_cofog_years", {})
+
+    def _prog_mapping_for_year(pcode: str) -> List[Dict[str, float]]:
+        entry = prog_year_map.get(pcode)
+        if not entry:
+            return []
+        # Accept { default: [...], by_year: { "2026": [...] } }
+        by_year = entry.get("by_year") or entry.get("byYear") or {}
+        if str(year) in by_year:
+            return list(by_year[str(year)])
+        default = entry.get("default") or []
+        return list(default)
+
     total = 0.0
-    for row in _read_csv(_state_budget_path(year)):
-        if int(row["year"]) != year:
-            continue
-        val = float(row["cp_eur"]) if basis == Basis.CP else float(row["ae_eur"])
-        mission_amounts[row["mission_code"]] = mission_amounts.get(row["mission_code"], 0.0) + val
-        total += val
     by_cofog: Dict[str, float] = defaultdict(float)
-    for m_code, amt in mission_amounts.items():
-        mapping = mission_map.get(m_code, [])
+    for row in _read_csv(_state_budget_path(year)):
+        try:
+            if int(row["year"]) != year:
+                continue
+        except Exception:
+            continue
+        try:
+            val = float(row["cp_eur"]) if basis == Basis.CP else float(row["ae_eur"])
+        except Exception:
+            val = 0.0
+        total += val
+        m_code = str(row.get("mission_code") or "")
+        p_code = str(row.get("programme_code") or "")
+        mapping = []
+        # 1) Year-aware programme mapping
+        mapping = _prog_mapping_for_year(p_code)
+        # 2) Programme mapping (static)
+        if not mapping:
+            mapping = prog_map.get(p_code, [])
+        # 3) Fallback to mission mapping
+        if not mapping:
+            mapping = mission_map.get(m_code, [])
         if not mapping:
             continue
         for d in mapping:
-            by_cofog[str(d["code"])[:2]] += amt * float(d["weight"])
+            code = str(d.get("code"))
+            major = code.split(".")[0] if code else ""
+            major = major[:2]
+            w = float(d.get("weight", 1.0))
+            by_cofog[major] += val * w
+
     items: List[MissionAllocation] = []
     for code, amount in sorted(by_cofog.items(), key=lambda x: x[1], reverse=True):
         items.append(
@@ -216,6 +247,27 @@ def procurement_top_suppliers(
             ent["procedure_type"] = row.get("procedure_type")
         if not ent.get("location_code") and row.get("location_code"):
             ent["location_code"] = row.get("location_code")
+    # Optional enrichment from INSEE SIRENE (best-effort)
+    naf_map: Dict[str, str] = {}
+    size_map: Dict[str, str] = {}
+    try:
+        from .clients import insee as insee_client
+        for siren in list(by_supplier.keys())[: top_n]:
+            try:
+                js = insee_client.sirene_by_siren(siren)
+                # SIRENE shapes may vary; try common paths
+                ul = js.get("uniteLegale") or js.get("unite_legale") or {}
+                naf = ul.get("activitePrincipaleUniteLegale") or ul.get("activite_principale") or ""
+                size = ul.get("trancheEffectifsUniteLegale") or ul.get("tranche_effectifs") or ""
+                if naf:
+                    naf_map[siren] = str(naf)
+                if size:
+                    size_map[siren] = str(size)
+            except Exception:
+                continue
+    except Exception:
+        pass
+
     items: List[ProcurementItem] = []
     for siren, ent in sorted(by_supplier.items(), key=lambda x: x[1]["amount"], reverse=True)[:top_n]:
         items.append(
@@ -226,6 +278,8 @@ def procurement_top_suppliers(
                 procedure_type=str(ent.get("procedure_type") or ""),
                 location_code=str(ent.get("location_code") or ""),
                 source_url=str(ent.get("source_url") or ""),
+                naf=naf_map.get(siren),
+                company_size=size_map.get(siren),
             )
         )
     return items

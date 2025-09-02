@@ -37,6 +37,8 @@ class ProcurementItem:
     procedure_type: Optional[str]
     location_code: Optional[str] = None
     source_url: Optional[str] = None
+    naf: Optional[str] = None
+    company_size: Optional[str] = None
 
 
 @dataclass

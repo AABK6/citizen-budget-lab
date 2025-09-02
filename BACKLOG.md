@@ -244,16 +244,16 @@ Next Sprint (2 weeks) — Top Priorities
    - DONE: Grouping by domain, search, beneficiary filter; locked badges & expert mode; expanded scoreboard (baseline totals, total deltas, distance); results drawer (deficit/debt chart + top changes).
 
 5) Explore/Procurement polish [MVP] [UI]
-   - TODO: stacked shares.
-   - DONE: StatCards & SourceLink stars on Explore and Procurement pages; procurement summary cards (total, suppliers, median) and map popups show details with source link.
+   - DONE: StatCards & SourceLink stars on Explore and Procurement pages; procurement summary cards (total, suppliers, median) and map popups show details with source link; Explore includes 100% stacked shares chart option.
   - Acceptance Criteria (AC):
     - [x] ODS client fetches mission-level credits and writes `state_budget_mission_{year}.csv` with CP/AE sums.
     - [x] Warmer retries and falls back to client-side aggregation when server-side `group_by` fails.
-    - [ ] Persist vintage (extraction timestamp, dataset id/resource id) alongside CSV or in sidecar JSON.
+    - [x] Persist vintage (extraction timestamp, dataset id/resource id) alongside CSV or in sidecar JSON. Implemented sidecar `data/cache/state_budget_mission_YYYY.meta.json`; tested.
     - [ ] Programme/action level mapping and year-aware joins for COFOG with tests; weights sum to 1 per source code.
+      - Added unit test to ensure COFOG weights sum to 1 per mission in `data/cofog_mapping.json`.
     - [ ] Procurement ingestion from consolidated DECP, dedup by `id` + `datePublication`, lot→contract rollup, amount quality flags.
     - [x] INSEE Sirene + BDM clients with token caching and HTTP retries.
-    - [ ] Join SIRENE attributes (NAF/size) into procurement outputs and expose via API.
+    - [x] Join SIRENE attributes (NAF/size) into procurement outputs and expose via API. Best‑effort API enrichment adds `naf`, `companySize` when available (non‑blocking).
     - [x] Macro series reader for GDP; expose BDM series via GraphQL.
     - [ ] Add deflators/employment series and provenance entries.
     - [x] Source registry loads from `data/sources.json` and is exposed via GraphQL `sources()`.

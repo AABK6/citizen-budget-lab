@@ -52,6 +52,8 @@ class ProcurementItemType:
     procedureType: Optional[str]
     locationCode: Optional[str]
     sourceUrl: Optional[str]
+    naf: Optional[str]
+    companySize: Optional[str]
 
 
 @strawberry.type
@@ -229,6 +231,8 @@ class Query:
                 procedureType=i.procedure_type,
                 locationCode=getattr(i, "location_code", None),
                 sourceUrl=getattr(i, "source_url", None),
+                naf=getattr(i, "naf", None),
+                companySize=getattr(i, "company_size", None),
             )
             for i in items
         ]
