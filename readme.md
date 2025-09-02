@@ -293,6 +293,8 @@ metadata:
 
 All checks are **explainable** (hover for formula and inputs) and **non‑authoritative** (we present best‑effort indicators, not legal determinations).
 
+Hover micro‑explainers: every rule light exposes a “Why/How computed” tooltip showing the exact formula, inputs used (by year), and links to Methods. These act as trust cues and learning aids.
+
 ---
 
 ## 12) UX & feature design
@@ -300,6 +302,8 @@ All checks are **explainable** (hover for formula and inputs) and **non‑author
 **Navigation**
 
 * Top tabs: **Explore €1** • **Who gets paid?** • **What‑if?** • **My household** (V1) • **Compare EU** • **Sources**
+
+Persistent Budget HUD (bottom): balance (€/ %GDP), debt path sparkline (fan on when uncertainty is enabled), EU lights, real/nominal toggle, year selector, undo/redo, reset.
 
 **Explore €1**
 
@@ -309,12 +313,15 @@ All checks are **explainable** (hover for formula and inputs) and **non‑author
 **Who gets paid?**
 
 * Map + tables of suppliers by SIREN; filters (sector, size, geography); top counterparties for your department; competition flags; export table with source link.
+* Caveat banner for provisional/partial data (info tooltip explains risks).
 
 **What‑if? (Scenario builder)**
 
-* Left: sliders/selectors for lines and taxes; right: results **cards**: Accounting, EU rules (lights), Macro (fan charts), Distribution (deciles/households), Procurement ripple (optional).
-* **Sources & assumptions drawer** lists data vintage and model priors; one‑click copy of DSL JSON.
-* **Share**: permalinked scenario; export PNG/SVG/PDF; classroom pack (worksheet + teacher notes).
+* Left: LEGO Shelf — search with synonyms, filters, and Spending/Revenue tabs; functional (COFOG) ⇄ administrative (missions/programmes) lens.
+* Center: Building Canvas with twin bars — Total Revenues vs Total Spending; the animated gap is the deficit/surplus (also as %GDP). Drag pieces onto the canvas; edit via sliders/inputs (simple mode) or advanced editors (tax rates/brackets/base; spending coverage/price/volume). Chips above the bars show scheduled changes by year.
+* Right: Consequence Dashboard — Accounting (big balance readout, debt path mini‑chart), EU rule lights (tooltips with formulas), Distribution (deciles/households), Macro (lite) with uncertainty bands. A Share bar sits at the bottom: Share card, Permalink, Export PNG/SVG, Embed.
+* **Sources & assumptions drawer** lists data vintage, mappings, and model priors; one‑click copy of DSL JSON.
+* **Share**: permalinks use deterministic scenario IDs (stable hash). Social card schema includes: `title`, mini twin‑bars, `deficit` (€/ %GDP), `debtDeltaPct`, one `highlight` fact, and source/methods badge. Exports include PNG/SVG and an embed with “Remix this”.
 
 **Accessibility & trust**
 
@@ -356,10 +363,11 @@ All checks are **explainable** (hover for formula and inputs) and **non‑author
 
 ## 16) KPIs & evaluation
 
-* **Reach & engagement:** MAUs, time on task, scenarios created/shared, replay rate.
+* **Reach & engagement:** MAUs, time on task, scenarios created, replay rate.
 * **Understanding/trust:** pre/post short quizzes in classroom mode; user survey: “I understand public spending better” (Likert ≥ 4/5).
 * **Media uptake:** citations/embeds in major outlets; dataset downloads.
 * **Robustness:** % queries with sourced data; data freshness SLA; audit issues resolved.
+* **Virality:** % of scenarios that get shared; challenge completion rate.
 
 ---
 

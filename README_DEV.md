@@ -48,7 +48,17 @@ Example queries
 
 - Run a scenario (encode the YAML as base64):
 
-  mutation { runScenario(input: { dsl: "<base64>" }) { id accounting { deficitPath debtPath } compliance { eu3pct eu60pct netExpenditure localBalance } macro { deltaGDP deltaEmployment deltaDeficit assumptions } } }
+  mutation {
+    runScenario(input: { dsl: "<base64>" }) {
+      id
+      scenarioId
+      accounting { deficitPath debtPath }
+      compliance { eu3pct eu60pct netExpenditure localBalance }
+      macro { deltaGDP deltaEmployment deltaDeficit assumptions }
+      distanceScore
+      shareSummary { title deficit debtDeltaPct highlight }
+    }
+  }
 
 Encode the YAML (macOS/Linux):
 
@@ -75,6 +85,12 @@ Encode the YAML (macOS/Linux):
 
   mutation { saveScenario(id: "<scenario-id>", title: "My scenario", description: "demo") }
   mutation { deleteScenario(id: "<scenario-id>") }
+
+- Share card DTO (for OG image):
+
+  query { shareCard(scenarioId: "<scenario-id>") { title deficit debtDeltaPct highlight } }
+
+Use the `scenarioId` from `runScenario` to resolve `shareCard` and feed your frontend OG route (e.g., `/api/og?scenarioId=...`).
 
 - List data sources (provenance registry placeholder):
 
@@ -103,6 +119,12 @@ Notes
 - The JSON Schema is a starting point for validating the DSL payload.
 - Macro outputs now include ΔGDP/Δemployment/Δdeficit using a simple IRF convolution with COFOG mapping and default elasticities.
  - See `docs/GRAPHQL_CONTRACT.md` for the full GraphQL contract targeted by MVP/V1/V2. Implement resolvers incrementally.
+
+TwinBars & Canvas fixtures (frontend)
+
+- Create a small local fixture scenario showing a shrinking deficit gap to validate `TwinBars` animations and `DeficitGapGauge` rendering.
+- Seed via a hardcoded DSL in the app or by calling `runScenario` on load in dev mode; ensure chips above the bars reflect scheduled year changes.
+- Preview social image locally by hitting your OG image route (e.g., `http://localhost:3000/api/og?scenarioId=...`).
 
 Official API wiring
 

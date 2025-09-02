@@ -53,3 +53,4 @@ Tips
 - ODS dataset ids vary by vintage. Keep a small map of `year → dataset id/fields` in deploy configs and pass via CLI flags.
 - For larger warmers (DECP procurement), scope by year/region and aggregate server-side to keep outputs compact.
 - Always record vintage and query parameters in filenames and/or sidecar JSON to ensure reproducibility.
+- Social/OG images: cache rendered share‑card HTML/SVG→PNG outputs for popular scenarios by `scenarioId` (e.g., in a CDN or a small disk cache) to avoid cold starts on previews and social crawlers. Invalidate on method/version changes.

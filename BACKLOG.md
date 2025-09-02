@@ -151,9 +151,9 @@ Epics
   - Static v0 elasticities for revenue (VAT/PIT/CIT/excises/CSG/contributions) with guardrails + docs.
   - Distance‑to‑budget metric (L1 share delta + cosine similarity) exposed via `legoDistance`.
 - LEGO Budget Builder — Front‑end [UI]
-  - “Build” page: two columns (Expenditures/Revenues), cards (what it funds / who pays, current share, source), search & beneficiary filters, sliders ±% and EUR input; reset.
+  - Build page (three‑panel): Left LEGO Shelf (Spending/Revenues tabs, search/filters, lock/bounds badges) → Center Canvas with `TwinBars` and animated Deficit Gap → Right Consequence Dashboard (Accounting, EU Rule Lights, Debt path, Macro fan, Distribution).
   - Scoreboard & comparator: balance, debt, EU lights, distance; stacked bars “Your budget vs current”; scale tooltips.
-  - Modes & sharing: “From scratch” and “From current”; permalinks (DSL hash) and image export with sources.
+  - Modes & sharing: “From scratch” and “From current”; permalinks (deterministic IDs); share‑card image generator + OG tags; Challenge presets; deterministic IDs wired to OG image.
   - Accessibility & i18n: full FR/EN, keyboard, contrast; “show the table”.
 - LEGO Budget Builder — Documentation [Docs]
   - `docs/LEGO_METHOD.md`: sources, mapping, beneficiary rules, elasticities (v0), limitations, versioning; audit tables.
@@ -180,6 +180,10 @@ Epics
   - Host OpenFisca + wrapper; translate DSL to parameters; GraphQL outputs (deciles/households/regions); UI charts.
 - EU Comparisons [API][UI]
   - Eurostat COFOG & deficit/debt comparisons; Front‑end Compare EU page (selector, charts, export, sourcing notes).
+  - Acceptance Criteria (AC):
+    - [ ] EU COFOG shares are warmed (`data/cache/eu_cofog_shares_YYYY.json`) and consumed by the UI for fast renders.
+    - [ ] Compare EU charts expose “show table” with exact slice and a source chip.
+    - [ ] Pin 1–2 countries and carry the selection across app views.
 - Classroom Mode [UI]
   - Guided scenarios, teacher/student modes, printable handouts.
 
@@ -297,7 +301,7 @@ Appendix — Newcomer Guide
     - [x] Revenues: `GOV_10A_TAXAG` (taxes/contrib) + `GOV_10A_MAIN` (P.11/P.12) loaded; splits applied from `data/revenue_splits.json`.
     - [x] Interest: proxied from COFOG 01.7 TE; warning recorded in baseline meta.
     - [x] Summary tool prints totals and top 5 pieces; Makefile targets present.
-    - [ ] EU COFOG shares warmed and used in UI (when integrated).
+    
   - Product brief: `readme.md` (concept, scope, data contracts)
   - Backlog: `BACKLOG.md` (this file)
   - Purpose: `purpose.md` (why/what/how)

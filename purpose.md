@@ -26,11 +26,14 @@ What It Is (Product in One Page)
 - Macro (lite): reduced‑form impulse responses (IRFs) to show plausible bands for GDP/jobs/deficit changes; ranges and assumptions are explicit.
 - Compare EU (V1): COFOG shares and fiscal ratios vs peers.
 
+Interaction model on Build: the UI reads left→right as Choices → Creation → Consequences. Left is the LEGO Shelf (spending/revenue tabs, search/filters). Center is the Building Canvas with twin vertical bars—Total Revenues vs Total Spending—where the animated gap equals the deficit/surplus (also shown as %GDP). Right is the Consequence Dashboard with Accounting (balance and debt path), EU rule “lights”, and optional Macro/Distribution panels. Any edit updates all panels instantly.
+
 Design Principles
 
 - Neutral & transparent: show sources on every chart; display ranges/uncertainty and assumptions; document limitations.
 - Credible but simple: start with mechanical accounting; add distributional/macro in layers; prefer explainable rules to opaque black boxes.
 - Inclusive & accessible: plain language, FR/EN, keyboard‑friendly, color‑blind palettes; always “show the table”.
+- Artifact‑first sharing: every state has a permalink plus a source‑stamped image card suitable for social/newsroom embeds; links include a methods/version hash to preserve context.
 
 What It Is Not (Non‑Goals)
 
@@ -49,7 +52,7 @@ Roadmap (High‑Level)
 
 - MVP: Explorer, Procurement, mechanical scenarios, EU lights, macro‑lite.
 - MVP+: LEGO Budget Builder (public‑facing pieces), beneficiary lens, permalinks.
-- V1: Distributional (OpenFisca), EU comparisons, Classroom mode.
+- V1: Distributional (OpenFisca), EU comparisons, Classroom mode incl. “Challenge Mode” (predefined tasks with auto‑assessment and shareable scorecards).
 - V2: Macro priors & uncertainty fans, Local finance module with constraints.
 
 Trust & Governance
@@ -61,4 +64,3 @@ Where To Start
 
 - Read readme.md for the product brief and contracts; BACKLOG.md for the delivery plan; README_DEV.md for developer instructions.
 - Launch locally: API (FastAPI + GraphQL) and front‑end (Next.js) with docker compose or dev servers.
-

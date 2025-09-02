@@ -121,10 +121,20 @@ input RunScenarioInput {
 
 type RunScenarioPayload {
   id: ID!
+  scenarioId: ID! # stable deterministic hash of canonicalized DSL
   accounting: Accounting!
   compliance: Compliance!
   macro: Macro!
   distribution: Distribution # V1
+  distanceScore: Float # optional aggregate from legoDistance
+  shareSummary: ShareSummary # compact DTO for OG image
+}
+
+type ShareSummary {
+  title: String!
+  deficit: Float! # EUR (current) or %GDP depending on context
+  debtDeltaPct: Float
+  highlight: String
 }
 
 type EUCountryCofog {
@@ -167,6 +177,9 @@ type Query {
   legoPieces(year: Int!, scope: ScopeEnum = S13): [LegoPiece!]!
   legoBaseline(year: Int!, scope: ScopeEnum = S13): LegoBaseline!
   legoDistance(year: Int!, dsl: String!, scope: ScopeEnum = S13): Distance!
+
+  # Share card resolver (render-ready, no secrets)
+  shareCard(scenarioId: ID!): ShareSummary!
 }
 
 type Mutation {

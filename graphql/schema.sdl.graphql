@@ -34,7 +34,8 @@ type Distribution { decile: [DecileImpact!]!, giniDelta: Float!, povertyRateDelt
 type Source { id: ID!, datasetName: String!, url: String!, license: String!, refreshCadence: String!, vintage: String! }
 
 input RunScenarioInput { dsl: String! }
-type RunScenarioPayload { id: ID!, accounting: Accounting!, compliance: Compliance!, macro: Macro!, distribution: Distribution }
+type ShareSummary { title: String!, deficit: Float!, debtDeltaPct: Float, highlight: String }
+type RunScenarioPayload { id: ID!, scenarioId: ID!, accounting: Accounting!, compliance: Compliance!, macro: Macro!, distribution: Distribution, distanceScore: Float, shareSummary: ShareSummary }
 
 type EUCountryCofog { country: String!, code: String!, label: String!, amountEur: Float!, share: Float! }
 type FiscalPath { years: [Int!]!, deficitRatio: [Float!]!, debtRatio: [Float!]! }
@@ -54,6 +55,7 @@ type Query {
   legoPieces(year: Int!, scope: ScopeEnum = S13): [LegoPiece!]!
   legoBaseline(year: Int!, scope: ScopeEnum = S13): LegoBaseline!
   legoDistance(year: Int!, dsl: String!, scope: ScopeEnum = S13): Distance!
+  shareCard(scenarioId: ID!): ShareSummary!
 }
 
 type Mutation {

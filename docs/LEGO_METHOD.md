@@ -47,6 +47,7 @@ Beneficiary Categories
   - `enterprises` (e.g., D.3 subsidies, P.2 purchases),
   - `collective` (e.g., P.51g public investment and residual public services).
 - The beneficiary lens aggregates expenditure pieces using these weights to derive three categories (Households, Enterprises, Collective). This is a simplified attribution documented here to remain transparent.
+ - Implementation: weights live under `beneficiaries: { households: x, enterprises: y, collective: z }` in `lego_pieces.json` and are normalized to 1.0 per piece. For pieces lacking explicit weights, a default heuristic can map ESA items to beneficiaries (e.g., D.62→households, D.3/P.2→enterprises, P.51g→collective). The final lens is a simple weighted sum across pieces.
 
 Revenue Elasticities (v0.1)
 
@@ -59,6 +60,18 @@ Locks & Bounds
 
 - Some pieces may be locked by default (e.g., `debt_interest`) via `policy.locked_default: true` in the config to avoid unrealistic toggles for general users.
 - Optional per‑piece bounds can be introduced (e.g., maximum ±% change for a “simple mode”).
+ - Schema (example keys):
+   - `policy`: { `locked_default`: boolean, `bounds_pct`: { `min`: number, `max`: number }, `bounds_amount_eur`?: { `min`: number, `max`: number } }
+   - UI enforces these bounds and returns descriptive validation errors from the API when exceeded.
+
+Distance‑to‑budget Metric
+
+- Purpose: provide a single “distance” score between a user’s composition and the baseline to guide exploration and comparison.
+- Definition (v0): combine an L1 share delta and a cosine similarity term over the expenditure share vector s (by piece) vs baseline b.
+  - L1 term: `L1 = sum_i |s_i - b_i|`
+  - Cosine term: `cos = 1 - (s·b)/(|s||b|)`
+  - Score: `score = 0.5 * L1 + 0.5 * cos` (weights configurable). Exposed via `legoDistance.score` and returned as `distanceScore` in `runScenario`.
+  - Notes: use shares over total expenditures for comparability; revenue‑only changes do not affect this score.
 
 Limitations & Caveats
 

@@ -17,7 +17,7 @@ Tech Stack
 
 Routing & Pages
 
-- `/` Home: navigation + quick explainer.
+- `/` Home: navigation + quick explainer; 30‑sec Aha tour (drag a piece → watch the gap change → see who’s affected → share/remix); carousel with weekly Challenges and trending public scenarios.
 - `/explore` Explore €1: lens toggle (ADMIN/COFOG), basis (CP/AE), year slider, sunburst/treemap, outcomes panel, export, source links.
 - `/procurement` Who gets paid?: map + table, filters (sector/size/geo), competition flags, export.
 - `/what-if` Scenario Builder: target pickers, sliders/inputs, offsets UI, DSL drawer, results cards (Accounting, EU lights, Macro, Distribution placeholder), share.
@@ -35,8 +35,12 @@ Components (selected)
 
 - Explore: `Sunburst`, `Treemap`, `LensToggle`, `YearSlider`, `BasisToggle`, `OutcomePanel`, `ExportButton`.
 - Procurement: `ProcurementMap`, `SupplierTable`, `FiltersPanel`, `ExportButton`.
-- What‑if: `TargetPicker`, `TaxParamEditor`, `AmountSlider`, `OffsetsEditor`, `DslDrawer`, `ResultsCards` (AccountingChart, RuleLights, MacroChart, DistributionChart), `ShareLink`.
-- Shared: `Layout`, `LangSwitcher`, `SourceLink`, `ErrorBoundary`, `Loading`.
+- What‑if (three‑panel command center):
+  - Left: `PiecesPanel` (tabs: Spending/Revenues, search with synonyms, filters incl. beneficiary lens, lock/bounds badges).
+  - Center: `TwinBars`, `CanvasStack` (stacked pieces), `DeficitGapGauge` (animated gap, %GDP badge), `ScenarioTimelineChips`.
+  - Right: `ConsequenceTabs` (Accounting & `RuleLights`, `DebtPathChart`, `MacroFan`, `DistributionChart`), `ShareCardButton`.
+  - Keep existing editors and utilities, nested under panels: `TargetPicker`/`TaxParamEditor`/`AmountSlider`/`OffsetsEditor`/`DslDrawer`.
+- Shared: `Layout`, `LangSwitcher`, `SourceLink`, `ErrorBoundary`, `Loading`, `GlobalControls` (FR/EN, color‑blind, Show table, Share/Remix, Assumptions), `BudgetHUD` (bottom: balance €/ %GDP, debt sparkline with fan, EU lights, real/nominal, year, undo/redo, reset).
 
 Scenario UX Details
 
@@ -44,6 +48,8 @@ Scenario UX Details
 - Offsets: rule selection (share across pools, exclude list), cap levels; visual summary.
 - Validation: inline messages mapped from API schema errors.
 - Share: serialize scenario id to URL; resolve from server on load.
+- Challenge Mode: preset DSLs with success conditions (e.g., balance within X% GDP and equity above threshold); scoreboard UI hooks.
+- Classroom collections: link a set of presets to a “Room” (teacher view later), with lock/freeze affordances.
 
 Accessibility & i18n
 
@@ -60,6 +66,13 @@ Testing
 - Unit: components render + simple interactions.
 - e2e: core flows (run scenario, switch lenses, filters on procurement).
 - a11y: axe checks; CI fails on critical issues.
+
+Micro‑interactions & states
+
+- Loading: skeletons for bars/treemap and tables; values snap in when ready.
+- Optimistic edits: slider drags update twin bars immediately with precise settle‑back.
+- Empty states: coaching card on new scenario; neutral message + nearest available year when data missing.
+- Toasts: short, neutral confirmations (e.g., “Added Hospitals & ER to Spending”).
 
 Timeline & Dependencies
 
@@ -84,6 +97,7 @@ Visual System
   - Accents: --accent-admin: #6d28d9 (purple-700); --accent-cofog: #2563eb (blue-600)
   - States: --ok: #16a34a; --warn: #f59e0b; --error: #dc2626
   - Background cards: --card-bg: #ffffff; muted: #f9fafb
+  - RuleLights uses the `--ok`/`--warn`/`--error` tokens consistently across the app.
 - Typography (system stack, no runtime webfonts):
   - Headings: 700 weight; H1 28/36, H2 22/30, H3 18/26
   - Body: 16/24; small: 13/18; monospace for code chips
@@ -133,6 +147,7 @@ Explore €1 — Detailed UX
   - Fetch allocation twice: `year` and `year-1`; merge client-side for YoY; keep error/loading states as-is
 - Accessibility
   - All controls keyboard reachable, visible focus, 4.5:1 contrast on text
+ - Action: Remix this slice in Builder (pre‑selects the slice on the canvas)
 
 Procurement — Detailed UX
 
@@ -146,6 +161,9 @@ Procurement — Detailed UX
   - “Export CSV” button; footnote explains thresholds for privacy if any
 - Map (V1+)
   - Mini map panel using MapLibre; marker clustering by supplier location
+  - Clicking a region filters the table; show a small bar of top‑5 local recipients
+- Action
+  - Add this programme to Builder (seeds the canvas with the selected slice)
 
 Compare EU — Detailed UX
 
