@@ -6,6 +6,8 @@ import { Select } from '@/components/Select'
 import { YearPicker } from '@/components/YearPicker'
 import { DataTable } from '@/components/Table'
 import { AllocationChart } from '@/components/AllocationChart'
+import { StatCards } from '@/components/StatCards'
+import { SourceLink } from '@/components/SourceLink'
 import { downloadCSV } from '@/lib/csv'
 import { useI18n } from '@/lib/i18n'
 
@@ -20,6 +22,7 @@ export default function ExplorePage() {
   const [lens, setLens] = useState<Lens>('ADMIN')
   const [basis, setBasis] = useState<Basis>('CP')
   const [rows, setRows] = useState<MissionRow[]>([])
+  const [prevTotal, setPrevTotal] = useState<number | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [chartType, setChartType] = useState<'sunburst' | 'treemap'>('sunburst')
@@ -48,6 +51,15 @@ export default function ExplorePage() {
         const data = await gqlRequest(query, { year, basis, lens })
         const list: MissionRow[] = lens === 'ADMIN' ? data.allocation.mission : (data.allocation.cofog || [])
         if (!cancelled) setRows(list)
+        // Fetch year-1 for YoY
+        try {
+          const dataPrev = await gqlRequest(query, { year: year - 1, basis, lens })
+          const listPrev: MissionRow[] = lens === 'ADMIN' ? dataPrev.allocation.mission : (dataPrev.allocation.cofog || [])
+          const totalPrev = listPrev.reduce((s, r) => s + (r.amountEur || 0), 0)
+          if (!cancelled) setPrevTotal(totalPrev)
+        } catch {
+          if (!cancelled) setPrevTotal(null)
+        }
       } catch (e: any) {
         if (!cancelled) setError(e?.message || t('error.generic'))
       } finally {
@@ -71,6 +83,19 @@ export default function ExplorePage() {
       {error && <p className="error">{error}</p>}
       {!loading && !error && (
         <>
+          {/* Stat cards: Total, YoY, Source */}
+          <StatCards
+            items={[
+              { label: t('stats.total'), value: rows.reduce((s, r) => s + (r.amountEur || 0), 0).toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' €' },
+              (prevTotal ? {
+                label: t('stats.yoy'),
+                value: (() => { const cur = rows.reduce((s, r) => s + (r.amountEur || 0), 0); const pct = prevTotal ? ((cur - prevTotal) / prevTotal) * 100 : 0; const sign = pct >= 0 ? '+' : ''; return `${sign}${pct.toFixed(2)}%`; })()
+              } : { label: t('stats.yoy'), value: t('stats.na') }),
+            ]}
+          />
+          <div style={{ marginTop: '.5rem' }}>
+            <SourceLink ids={[ 'state_budget_sample' ]} />
+          </div>
           <AllocationChart rows={rows} kind={chartType} />
           <DataTable columns={columns} rows={rows} />
         </>
@@ -82,6 +107,5 @@ export default function ExplorePage() {
     </div>
   )
 }
-
 
 

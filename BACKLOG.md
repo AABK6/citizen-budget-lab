@@ -244,7 +244,8 @@ Next Sprint (2 weeks) — Top Priorities
    - DONE: Grouping by domain, search, beneficiary filter; locked badges & expert mode; expanded scoreboard (baseline totals, total deltas, distance); results drawer (deficit/debt chart + top changes).
 
 5) Explore/Procurement polish [MVP] [UI]
-   - TODO: StatCards & source stars; stacked shares; procurement summary cards & map tooltips.
+   - TODO: stacked shares.
+   - DONE: StatCards & SourceLink stars on Explore and Procurement pages; procurement summary cards (total, suppliers, median) and map popups show details with source link.
   - Acceptance Criteria (AC):
     - [x] ODS client fetches mission-level credits and writes `state_budget_mission_{year}.csv` with CP/AE sums.
     - [x] Warmer retries and falls back to client-side aggregation when server-side `group_by` fails.

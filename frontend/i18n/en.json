@@ -22,5 +22,8 @@
   "chart.treemap": "Treemap",
 
   "loading": "Loading…",
-  "error.generic": "Failed to load"
+  "error.generic": "Failed to load",
+  "stats.total": "Total",
+  "stats.yoy": "YoY",
+  "stats.na": "n/a"
 }

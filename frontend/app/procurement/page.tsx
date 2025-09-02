@@ -8,6 +8,8 @@ import { DataTable } from '@/components/Table'
 import dynamic from 'next/dynamic'
 const ProcurementMap = dynamic(() => import('@/components/ProcurementMap').then(m => m.ProcurementMap), { ssr: false }) as any
 import { downloadCSV } from '@/lib/csv'
+import { StatCards } from '@/components/StatCards'
+import { SourceLink } from '@/components/SourceLink'
 
 type Row = {
   supplier: { siren: string; name: string }
@@ -34,6 +36,7 @@ export default function ProcurementPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [view, setView] = useState<'table' | 'map'>('table')
+  const [stats, setStats] = useState<{ total: number; suppliers: number; median: number }>({ total: 0, suppliers: 0, median: 0 })
 
   const columns = useMemo(() => [
     { key: 'supplier.name', label: 'Supplier' },
@@ -66,7 +69,14 @@ export default function ProcurementPage() {
         cpv: cpvPrefix || null,
         min: typeof minAmount === 'number' ? minAmount : null
       })
-      setRows(data.procurement)
+      const arr: Row[] = data.procurement
+      setRows(arr)
+      // Compute stats
+      const total = arr.reduce((s, r) => s + (r.amountEur || 0), 0)
+      const uniq = new Set(arr.map(r => r.supplier?.siren)).size
+      const amounts = arr.map(r => r.amountEur || 0).sort((a, b) => a - b)
+      const median = amounts.length ? (amounts.length % 2 ? amounts[(amounts.length - 1) / 2] : (amounts[amounts.length / 2 - 1] + amounts[amounts.length / 2]) / 2) : 0
+      setStats({ total, suppliers: uniq, median })
     } catch (e: any) {
       setError(e?.message || 'Failed to load')
     } finally {
@@ -81,6 +91,14 @@ export default function ProcurementPage() {
   return (
     <div className="stack">
       <h2>Who gets paid? (Procurement)</h2>
+      <StatCards items={[
+        { label: 'Total', value: stats.total.toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' €' },
+        { label: 'Suppliers', value: String(stats.suppliers) },
+        { label: 'Median', value: stats.median.toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' €' },
+      ]} />
+      <div style={{ marginTop: '.5rem' }}>
+        <SourceLink ids={[ 'procurement_sample' ]} />
+      </div>
       <div className="row gap">
         <YearPicker value={year} onChange={setYear} />
         <Select label="Department" value={region} options={DEPARTMENTS} onChange={setRegion} />

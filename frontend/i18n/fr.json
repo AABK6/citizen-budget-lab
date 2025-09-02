@@ -22,5 +22,8 @@
   "chart.treemap": "Treemap",
 
   "loading": "Chargement…",
-  "error.generic": "Échec du chargement"
+  "error.generic": "Échec du chargement",
+  "stats.total": "Total",
+  "stats.yoy": "YoY",
+  "stats.na": "n/d"
 }
