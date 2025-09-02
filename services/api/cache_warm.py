@@ -499,45 +499,87 @@ def warm_lego_baseline(year: int, country: str = "FR", scope: str = "S13") -> st
         except Exception:
             major_amounts = {}
 
-    for p in cfg.get("pieces", []):
+    # ------------------------------
+    # Expenditures via bucket allocation (major COFOG x NA_ITEM)
+    # ------------------------------
+    pieces_cfg = cfg.get("pieces", [])
+    # Collect buckets that appear in config
+    majors: set[str] = set()
+    na_set: set[str] = set()
+    for p in pieces_cfg:
+        if str(p.get("type")) != "expenditure":
+            continue
+        for mc in (p.get("mapping", {}).get("cofog") or []):
+            m = str(mc.get("code", "")).split(".")[0]
+            if m:
+                majors.add(m)
+        for ni in (p.get("mapping", {}).get("na_item") or []):
+            na_set.add(_na_item_code(str(ni.get("code", ""))))
+    # Fetch bucket totals once (MIO_EUR)
+    bucket_totals: Dict[tuple[str, str], float] = {}
+    for m in majors:
+        gf = f"GF{m}"
+        for na in na_set:
+            key = f"A.MIO_EUR.S13.{gf}.{na}.{country}"
+            val = eu.sdmx_value("gov_10a_exp", key, time=str(year)) or 0.0
+            bucket_totals[(m, na)] = float(val)
+
+    # Compute piece weights per bucket and allocate
+    exp_amounts: Dict[str, float] = {str(p.get("id")): 0.0 for p in pieces_cfg if str(p.get("type")) == "expenditure"}
+    for (m, na), total_mio in bucket_totals.items():
+        if total_mio <= 0.0:
+            continue
+        # Collect weights across pieces for this bucket
+        weights: Dict[str, float] = {}
+        w_sum = 0.0
+        for p in pieces_cfg:
+            if str(p.get("type")) != "expenditure":
+                continue
+            pid = str(p.get("id"))
+            cofogs = (p.get("mapping", {}).get("cofog") or [])
+            nas = (p.get("mapping", {}).get("na_item") or [])
+            w_cof = 0.0
+            for mc in cofogs:
+                if str(mc.get("code", "")).split(".")[0] == m:
+                    w_cof += float(mc.get("weight", 1.0))
+            w_na = 0.0
+            for ni in nas:
+                if _na_item_code(str(ni.get("code", ""))) == na:
+                    w_na += float(ni.get("weight", 1.0))
+            w = w_cof * w_na
+            if w > 0.0:
+                weights[pid] = w
+                w_sum += w
+        if w_sum <= 0.0:
+            continue
+        # Allocate MIO_EUR total to pieces by normalized weights
+        for pid, w in weights.items():
+            share = w / w_sum
+            exp_amounts[pid] = exp_amounts.get(pid, 0.0) + (total_mio * share * 1_000_000.0)
+
+    # If all zeros, fallback to major-only approximation
+    dep_total = sum(exp_amounts.values())
+    if dep_total <= 0.0 and major_amounts:
+        for p in pieces_cfg:
+            if str(p.get("type")) != "expenditure":
+                continue
+            pid = str(p.get("id"))
+            approx = 0.0
+            for mc in (p.get("mapping", {}).get("cofog") or []):
+                major = str(mc.get("code", "")).split(".")[0]
+                w = float(mc.get("weight", 1.0))
+                approx += w * float(major_amounts.get(major, 0.0))
+            exp_amounts[pid] = approx
+        dep_total = sum(exp_amounts.values())
+
+    # Build pieces_out with expenditures amounts
+    for p in pieces_cfg:
         pid = str(p.get("id"))
         ptype = str(p.get("type"))
         amt_eur: float | None = None
         if ptype == "expenditure":
-            cofogs = p.get("mapping", {}).get("cofog") or []
-            na_items = p.get("mapping", {}).get("na_item") or []
-            total_mio = 0.0
-            # Use SDMX XML per combination (freq A)
-            ok = False
-            for mc in cofogs:
-                c_code = str(mc.get("code"))
-                c_w = float(mc.get("weight", 1.0))
-                # SDMX endpoint supports COFOG at 2-digit level (GF09), not sublevels
-                major = str(c_code).split(".")[0]
-                gf = f"GF{major}" if major else None
-                if not gf:
-                    continue
-                for ni in na_items:
-                    ni_code = _na_item_code(str(ni.get("code")))
-                    ni_w = float(ni.get("weight", 1.0))
-                    key = f"A.MIO_EUR.S13.{gf}.{ni_code}.{country}"
-                    val = eu.sdmx_value("gov_10a_exp", key, time=str(year)) or 0.0
-                    if val:
-                        ok = True
-                    total_mio += c_w * ni_w * (val)
-            if ok:
-                amt_eur = total_mio * 1_000_000.0
-            elif major_amounts:
-                # Fallback: approximate piece amounts using major (2-digit) COFOG totals and piece cofog weights
-                approx = 0.0
-                for mc in cofogs:
-                    major = str(mc.get("code")).split(".")[0]
-                    w = float(mc.get("weight", 1.0))
-                    approx += w * float(major_amounts.get(major, 0.0))
-                amt_eur = approx
-            if amt_eur is None:
-                amt_eur = 0.0
-            dep_total += amt_eur
+            amt_eur = float(exp_amounts.get(pid, 0.0))
+            dep_total += 0.0  # already summed
         elif ptype == "revenue" and js_rev:
             esa = p.get("mapping", {}).get("esa") or []
             total_mio = 0.0
