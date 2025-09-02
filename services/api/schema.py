@@ -395,6 +395,7 @@ class Query:
                 beneficiaries={},
                 examples=[],
                 sources=[],
+                locked=False,
             )
             for ent in bl.get("pieces", [])
         ]

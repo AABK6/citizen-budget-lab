@@ -266,68 +266,74 @@ def warm_plf_state_budget(
         # If nothing matched and we had extra conditions, retry ignoring them (keep year filter only)
         if not rows and conds:
             agg = {}
-            for rec in ods.iterate_records(
-                base,
-                dataset,
-                select=sel_cols,
-                where=None if tried_without_where else where,
-                order_by=None,
-                page_size=1000,
-                max_pages=200,
-            ):
-                if year_col:
-                    try:
-                        yv = rec.get(year_col)
-                        if yv is None:
+            try:
+                for rec in ods.iterate_records(
+                    base,
+                    dataset,
+                    select=sel_cols,
+                    where=None if tried_without_where else where,
+                    order_by=None,
+                    page_size=1000,
+                    max_pages=200,
+                ):
+                    if year_col:
+                        try:
+                            yv = rec.get(year_col)
+                            if yv is None:
+                                continue
+                            if int(float(yv)) != int(year):
+                                continue
+                        except Exception:
                             continue
-                        if int(float(yv)) != int(year):
-                            continue
-                    except Exception:
-                        continue
-                code = str(rec.get(code_col) or "")
-                label = str(rec.get(label_col) or rec.get(code_col) or "")
-                cpv = float(rec.get(cp_col) or 0)
-                aev = float(rec.get(ae_col) or 0)
-                ent = agg.setdefault(code, {"code": code, "label": label, "cp_eur": 0.0, "ae_eur": 0.0})
-                ent["cp_eur"] = float(ent["cp_eur"]) + cpv
-                ent["ae_eur"] = float(ent["ae_eur"]) + aev
+                    code = str(rec.get(code_col) or "")
+                    label = str(rec.get(label_col) or rec.get(code_col) or "")
+                    cpv = float(rec.get(cp_col) or 0)
+                    aev = float(rec.get(ae_col) or 0)
+                    ent = agg.setdefault(code, {"code": code, "label": label, "cp_eur": 0.0, "ae_eur": 0.0})
+                    ent["cp_eur"] = float(ent["cp_eur"]) + cpv
+                    ent["ae_eur"] = float(ent["ae_eur"]) + aev
+            except Exception:
+                pass
             rows = list(agg.values())
 
         # Final safety: if API keeps rejecting even without filters, fetch raw rows (no select/order) and aggregate locally
         if not rows:
             agg = {}
-            for rec in ods.iterate_records(
-                base,
-                dataset,
-                select=None,
-                where=None,
-                order_by=None,
-                page_size=1000,
-                max_pages=200,
-            ):
-                # Basic guards: skip rows missing required fields
-                if year_col:
-                    try:
-                        yv = rec.get(year_col)
-                        if yv is None or int(float(yv)) != int(year):
+            try:
+                for rec in ods.iterate_records(
+                    base,
+                    dataset,
+                    select=None,
+                    where=None,
+                    order_by=None,
+                    page_size=1000,
+                    max_pages=200,
+                ):
+                    # Basic guards: skip rows missing required fields
+                    if year_col:
+                        try:
+                            yv = rec.get(year_col)
+                            if yv is None or int(float(yv)) != int(year):
+                                continue
+                        except Exception:
                             continue
+                    code = str(rec.get(code_col) or rec.get("code_mission") or rec.get("mission") or "")
+                    label = str(rec.get(label_col) or rec.get("libelle_mission") or rec.get("mission") or code)
+                    try:
+                        cpv = float(rec.get(cp_col) or rec.get("credit_de_paiement") or 0)
                     except Exception:
+                        cpv = 0.0
+                    try:
+                        aev = float(rec.get(ae_col) or rec.get("autorisation_engagement") or 0)
+                    except Exception:
+                        aev = 0.0
+                    if not code:
                         continue
-                code = str(rec.get(code_col) or rec.get("code_mission") or rec.get("mission") or "")
-                label = str(rec.get(label_col) or rec.get("libelle_mission") or rec.get("mission") or code)
-                try:
-                    cpv = float(rec.get(cp_col) or rec.get("credit_de_paiement") or 0)
-                except Exception:
-                    cpv = 0.0
-                try:
-                    aev = float(rec.get(ae_col) or rec.get("autorisation_engagement") or 0)
-                except Exception:
-                    aev = 0.0
-                if not code:
-                    continue
-                ent = agg.setdefault(code, {"code": code, "label": label, "cp_eur": 0.0, "ae_eur": 0.0})
-                ent["cp_eur"] = float(ent["cp_eur"]) + cpv
-                ent["ae_eur"] = float(ent["ae_eur"]) + aev
+                    ent = agg.setdefault(code, {"code": code, "label": label, "cp_eur": 0.0, "ae_eur": 0.0})
+                    ent["cp_eur"] = float(ent["cp_eur"]) + cpv
+                    ent["ae_eur"] = float(ent["ae_eur"]) + aev
+            except Exception:
+                pass
             rows = list(agg.values())
 
     with open(out_csv, "w", newline="", encoding="utf-8") as f:
