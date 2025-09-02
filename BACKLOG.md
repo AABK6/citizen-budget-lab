@@ -33,8 +33,9 @@ Epics
 - Data Ingestion & Provenance [Data]
   - Central budget via ODS (PLF/LFI/PLR): incremental pulls, dedupe, per‑year vintage; mission/program/action; AE/CP/execution when available.
     - Current: mission‑level snapshot warmer implemented (`cache_warm.py: warm_plf_state_budget`) with server‑side/group‑by and local fallback; sidecar provenance written. 2024 (dataset `plf-2024-depenses-2024-selon-nomenclatures-destination-et-nature`) and 2025 warmed; improved field heuristics select human‑readable mission labels.
-  - COFOG mapping (programme/action, year‑aware): weights sum to 1.0; schema+tests; fallback for unknowns.
+- COFOG mapping (programme/action, year‑aware): weights sum to 1.0; schema+tests; fallback for unknowns.
     - DONE: programme‑level precedence and year‑aware overrides implemented in `allocation_by_cofog` with support for `programme_to_cofog` and `programme_to_cofog_years` in `data/cofog_mapping.json`. Tests cover precedence and year overrides.
+    - Tech: COFOG subfunctions caching — warmer writes `data/cache/eu_cofog_subshares_YYYY.json`; GraphQL `cofogSubfunctions(year,country,major)` prefers warmed cache and falls back to Eurostat JSON/SDMX live fetch. Note: Eurostat gating may require `EUROSTAT_COOKIE` to populate JSON; SDMX fallback is used when possible.
   - Procurement (DECP) pipeline: ingest consolidated; dedup id+publication; lot→contract; amount quality flags.
     - DONE: CLI warmer (`cache_warm.py: decp`) ingests CSV/ODS, deduplicates and rolls up lots→contracts, flags amount quality, writes cache + sidecar. API prefers warmed cache in `procurement_top_suppliers`.
   - SIRENE join: normalize SIREN/SIRET; NAF/size; cache + rate limiting.
@@ -256,6 +257,7 @@ Next Sprint (2 weeks) — Top Priorities
     - [x] Join SIRENE attributes (NAF/size) into procurement outputs and expose via API. Best‑effort API enrichment adds `naf`, `companySize` when available (non‑blocking).
     - [x] Macro series reader for GDP; expose BDM series via GraphQL.
     - [x] Add deflators/employment series and provenance entries. CLI warmer `python -m services.api.cache_warm macro-insee --config data/macro_series_config.json` writes `data/cache/macro_series_FR.json` + sidecar; GraphQL `macroSeries(country)` returns warmed JSON. Tests added.
+    - [ ] Performance: procurement p95 — consider disabling SIRENE enrichment for bench or pre‑warming company lookups; update docs with measured p95 (tools/bench_api.py).
     - [x] Source registry loads from `data/sources.json` and is exposed via GraphQL `sources()`.
 
 6) Locks/bounds enforcement & validation [MVP+] [API]

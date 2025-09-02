@@ -950,6 +950,9 @@ def main(argv: Iterable[str] | None = None) -> None:
     sp_eu_sub = sub.add_parser("eurostat-cofog-sub", help="Cache Eurostat COFOG subfunction shares for countries/year")
     sp_eu_sub.add_argument("--year", type=int, required=True)
     sp_eu_sub.add_argument("--countries", required=True, help="Comma-separated country codes, e.g. FR,DE,IT")
+    sp_eu_sub = sub.add_parser("eurostat-cofog-sub", help="Cache Eurostat COFOG subfunction shares for countries/year")
+    sp_eu_sub.add_argument("--year", type=int, required=True)
+    sp_eu_sub.add_argument("--countries", required=True, help="Comma-separated country codes, e.g. FR,DE,IT")
 
     sp_eu_sub = sub.add_parser("eurostat-cofog-sub", help="Cache Eurostat COFOG subfunction shares for countries/year")
     sp_eu_sub.add_argument("--year", type=int, required=True)
@@ -978,6 +981,11 @@ def main(argv: Iterable[str] | None = None) -> None:
     if args.cmd == "eurostat-cofog":
         countries = [c.strip() for c in args.countries.split(",") if c.strip()]
         path = warm_eurostat_cofog(args.year, countries)
+        print(f"Wrote {path}")
+        return
+    if args.cmd == "eurostat-cofog-sub":
+        countries = [c.strip() for c in args.countries.split(",") if c.strip()]
+        path = warm_eurostat_cofog_sub(args.year, countries)
         print(f"Wrote {path}")
         return
     if args.cmd == "eurostat-cofog-sub":
