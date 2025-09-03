@@ -78,11 +78,11 @@ Epics
 - Semantic Layer (dbt + DuckDB/Postgres) [Data]
   - Admin↔COFOG aggregates; procurement semantic views; APU subsector tagging.
   - Acceptance Criteria (AC):
-    - [ ] DuckDB or Postgres target configured with connection/envs.
-    - [ ] dbt models for admin↔COFOG aggregates with tests (weights sum to 1; totals match inputs within tolerance).
-    - [ ] Procurement semantic views (buyers, suppliers, amounts, CPV, geo) with deduplication rules.
-    - [ ] APU subsector tagging (APUC/APUL/ASSO) for lines and scenarios.
-    - [ ] CI job runs `dbt build` and unit tests.
+    - [x] DuckDB or Postgres target configured with connection/envs.
+    - [x] dbt models for admin↔COFOG aggregates with tests (weights sum to 1; totals match inputs within tolerance).
+    - [x] Procurement semantic views (buyers, suppliers, amounts, CPV, geo) with deduplication rules.
+    - [x] APU subsector tagging (APUC/APUL/ASSO) for lines and scenarios.
+    - [x] CI job runs `dbt build` and unit tests.
 - GraphQL API (Explorer & Procurement) [API]
   - `allocation(year, basis, lens)` from warehouse; P95 < 1.5s.
     - Current: implemented (`schema.Query.allocation`); COFOG uses warmed Eurostat S13 shares with SDMX fallback, scaled by S13 baseline; performance targets to validate.

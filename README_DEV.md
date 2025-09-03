@@ -247,6 +247,14 @@ CI
 
 - `/.github/workflows/ci.yml` builds and tests the backend (pytest), builds the frontend, and builds both Docker images on push/PR.
 
+Semantic layer (dbt)
+
+- See `docs/WAREHOUSE.md` for the dbt project under `warehouse/`.
+- Quickstart:
+  - `make dbt-install` (installs dbt + adapters in your venv)
+  - `make dbt-seed` (generate mapping seeds)
+  - `make dbt-build` (builds DuckDB at `data/warehouse.duckdb`)
+
 Docker Compose (run both)
 
 - Start both services (API on 8000, frontend on 3000):

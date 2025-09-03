@@ -33,3 +33,30 @@ summary:
 
 warm-all: warm-eurostat summary
 	@echo "==> Done"
+
+# -----------------
+# dbt / Semantic layer
+# -----------------
+
+DBT := dbt
+DBT_PROFILES_DIR := warehouse
+
+.PHONY: dbt-install dbt-seed dbt-build dbt-clean dbt-test
+
+dbt-install:
+	python -m pip install --upgrade pip
+	pip install dbt-core dbt-duckdb dbt-postgres dbt-utils
+
+dbt-seed:
+	python tools/build_seeds.py
+	DBT_PROFILES_DIR=$(DBT_PROFILES_DIR) $(DBT) seed --project-dir warehouse
+
+dbt-build:
+	DBT_PROFILES_DIR=$(DBT_PROFILES_DIR) $(DBT) deps --project-dir warehouse || true
+	DBT_PROFILES_DIR=$(DBT_PROFILES_DIR) $(DBT) build --project-dir warehouse
+
+dbt-test:
+	DBT_PROFILES_DIR=$(DBT_PROFILES_DIR) $(DBT) test --project-dir warehouse
+
+dbt-clean:
+	DBT_PROFILES_DIR=$(DBT_PROFILES_DIR) $(DBT) clean --project-dir warehouse

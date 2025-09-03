@@ -1,0 +1,32 @@
+name: citizen_budget_lab
+version: 1.0.0
+config-version: 2
+
+profile: cbl
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+
+models:
+  citizen_budget_lab:
+    +materialized: view
+    staging:
+      +schema: staging
+    dim:
+      +schema: dim
+    fact:
+      +schema: fact
+    vw:
+      +schema: vw
+
+seeds:
+  citizen_budget_lab:
+    +schema: seeds
+
+vars:
+  state_budget_glob: "data/cache/state_budget_mission_*.csv"
+  state_budget_sample: "data/sample_state_budget.csv"
+  procurement_glob: "data/cache/procurement_contracts_*.csv"
+  procurement_sample: "data/sample_procurement.csv"

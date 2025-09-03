@@ -24,6 +24,23 @@ jobs:
       - name: Run backend tests
         run: pytest -q
 
+      - name: Install dbt (DuckDB/Postgres)
+        run: |
+          python -m pip install --upgrade pip
+          pip install dbt-core dbt-duckdb dbt-postgres dbt-utils
+
+      - name: Build semantic layer (dbt)
+        env:
+          DBT_PROFILES_DIR: warehouse
+        run: |
+          python tools/build_seeds.py
+          dbt deps --project-dir warehouse || true
+          dbt build --project-dir warehouse
+      - name: Test semantic layer (dbt)
+        env:
+          DBT_PROFILES_DIR: warehouse
+        run: dbt test --project-dir warehouse
+
       - name: Set up Node
         uses: actions/setup-node@v4
         with:

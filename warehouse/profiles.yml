@@ -1,0 +1,16 @@
+cbl:
+  target: duckdb
+  outputs:
+    duckdb:
+      type: duckdb
+      path: data/warehouse.duckdb
+      threads: 4
+    postgres:
+      type: postgres
+      host: "{{ env_var('DBT_PG_HOST', 'localhost') }}"
+      user: "{{ env_var('DBT_PG_USER', 'postgres') }}"
+      password: "{{ env_var('DBT_PG_PASSWORD', '') }}"
+      port: "{{ env_var('DBT_PG_PORT', '5432') }}"
+      dbname: "{{ env_var('DBT_PG_DB', 'citizen_budget_lab') }}"
+      schema: "{{ env_var('DBT_PG_SCHEMA', 'public') }}"
+      threads: 4
