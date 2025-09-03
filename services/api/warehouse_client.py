@@ -29,6 +29,44 @@ def warehouse_available() -> bool:
     return bool(s.pg_dsn)
 
 
+def warehouse_status() -> dict:
+    """Return status info about the warehouse and required relations."""
+    s = get_settings()
+    info = {
+        "enabled": bool(s.warehouse_enabled),
+        "type": s.warehouse_type,
+        "available": False,
+        "ready": False,
+        "missing": [],
+    }
+    if not s.warehouse_enabled:
+        return info
+    try:
+        con = _connect_duckdb() if s.warehouse_type == "duckdb" else None
+    except Exception:
+        return info
+    info["available"] = True
+    required = [
+        "stg_state_budget_lines",
+        "fct_admin_by_mission",
+        "fct_admin_by_cofog",
+        "vw_procurement_contracts",
+    ]
+    try:
+        have = set(
+            r[0]
+            for r in con.execute(
+                "select table_name from information_schema.tables"
+            ).fetchall()
+        )
+        missing = [t for t in required if t not in have]
+        info["missing"] = missing
+        info["ready"] = len(missing) == 0
+        return info
+    except Exception:
+        return info
+
+
 def _connect_duckdb():  # noqa: ANN001
     import duckdb  # type: ignore
 
@@ -39,6 +77,34 @@ def _connect_duckdb():  # noqa: ANN001
     except Exception:
         con = duckdb.connect(path)
     return con
+
+
+def table_counts(tables: list[str]) -> dict[str, int]:
+    """Return row counts for requested tables/views if available.
+
+    Silently skips missing relations.
+    """
+    out: dict[str, int] = {}
+    s = get_settings()
+    if not s.warehouse_enabled:
+        return out
+    try:
+        con = _connect_duckdb() if s.warehouse_type == "duckdb" else None
+    except Exception:
+        return out
+    try:
+        have = set(r[0] for r in con.execute("select table_name from information_schema.tables").fetchall())
+        for t in tables:
+            if t not in have:
+                continue
+            try:
+                cnt = con.execute(f"select count(*) from {t}").fetchone()[0]
+                out[t] = int(cnt)
+            except Exception:
+                continue
+    except Exception:
+        return out
+    return out
 
 
 def allocation_by_mission(year: int, basis: Basis) -> List[MissionAllocation]:
@@ -161,3 +227,31 @@ def procurement_top_suppliers(
         )
     return out
 
+
+def programmes_for_mission(year: int, basis: Basis, mission_code: str) -> List[MissionAllocation]:
+    """Aggregate by programme for a mission from staging lines."""
+    if not warehouse_available():
+        return []
+    try:
+        con = _connect_duckdb()
+    except Exception:
+        return []
+    metric = "cp_eur" if basis == Basis.CP else "ae_eur"
+    sql = f"""
+        select programme_code, any_value(programme_label) as label, sum({metric}) as amount
+        from stg_state_budget_lines
+        where year = ? and mission_code = ?
+        group by programme_code
+        order by amount desc
+    """
+    try:
+        rows = con.execute(sql, [year, mission_code]).fetchall()
+    except Exception:
+        return []
+    total = sum(float(r[2] or 0.0) for r in rows)
+    out: List[MissionAllocation] = []
+    for code, label, amount in rows:
+        amt = float(amount or 0.0)
+        share = (amt / total) if total else 0.0
+        out.append(MissionAllocation(code=str(code), label=str(label), amount_eur=amt, share=share))
+    return out

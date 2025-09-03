@@ -77,6 +77,7 @@ Epics
     - Current: `list_sources()` reads `data/sources.json` and exposed via GraphQL `sources()`.
 - Semantic Layer (dbt + DuckDB/Postgres) [Data]
   - Admin↔COFOG aggregates; procurement semantic views; APU subsector tagging.
+  - Current: dbt project implemented (`warehouse/`) with DuckDB default target and optional Postgres; staging (`stg_*`), dims (`dim_*`), facts (`fct_*`) and views (`vw_*`) created; CI builds and tests.
   - Acceptance Criteria (AC):
     - [x] DuckDB or Postgres target configured with connection/envs.
     - [x] dbt models for admin↔COFOG aggregates with tests (weights sum to 1; totals match inputs within tolerance).
@@ -85,9 +86,9 @@ Epics
     - [x] CI job runs `dbt build` and unit tests.
 - GraphQL API (Explorer & Procurement) [API]
   - `allocation(year, basis, lens)` from warehouse; P95 < 1.5s.
-    - Current: implemented (`schema.Query.allocation`); COFOG uses warmed Eurostat S13 shares with SDMX fallback, scaled by S13 baseline; performance targets to validate.
+    - Current: implemented (`schema.Query.allocation`); ADMIN lens and procurement prefer warehouse/dbt views when available; COFOG lens uses warmed Eurostat S13 shares (scaled by baseline) with SDMX fallback; performance targets to validate.
   - `procurement(year, region)` with filters; export fields.
-    - Current: implemented with cpv/procedure/amount filters; reads normalized DECP cache when available.
+    - Current: implemented with cpv/procedure/amount filters; warehouse/dbt path preferred, falls back to normalized DECP cache when needed.
   - `sources()` lists datasets w/ vintages/links.
     - Current: implemented, reads `data/sources.json`.
 - Scenario DSL & Engine (Mechanical) [API]

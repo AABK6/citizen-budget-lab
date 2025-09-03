@@ -37,8 +37,9 @@ class Settings:
     # Warehouse / dbt
     warehouse_enabled: bool = os.getenv("WAREHOUSE_ENABLED", "1") not in ("0", "false", "False")
     warehouse_type: str = os.getenv("WAREHOUSE_TYPE", "duckdb")  # duckdb|postgres
-    duckdb_path: str = os.getenv("WAREHOUSE_DUCKDB_PATH", os.path.join(os.path.dirname(os.path.dirname(__file__)), "..", "data", "warehouse.duckdb"))
+    duckdb_path: str = os.getenv("WAREHOUSE_DUCKDB_PATH", os.path.join("data", "warehouse.duckdb"))
     pg_dsn: str | None = os.getenv("WAREHOUSE_PG_DSN")
+    warehouse_cofog_override: bool = os.getenv("WAREHOUSE_COFOG_OVERRIDE", "0") in ("1", "true", "True")
 
 
 def get_settings() -> Settings:

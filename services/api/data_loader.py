@@ -79,11 +79,19 @@ def allocation_by_mission(year: int, basis: Basis) -> Allocation:
 
 
 def allocation_by_programme(year: int, basis: Basis, mission_code: str) -> List[MissionAllocation]:
-    """Return programme-level aggregation for a given mission using ODS live query if sidecar is available.
+    """Return programme-level aggregation for a given mission.
 
-    Falls back to empty list if no sidecar/dataset info is present.
+    Prefer the warehouse (dbt) when available; otherwise, try ODS sidecar if present.
     """
-    # Read sidecar for dataset/fields
+    # Warehouse path
+    try:
+        if wh.warehouse_available():
+            progs = wh.programmes_for_mission(year, basis, mission_code)
+            if progs:
+                return progs
+    except Exception:
+        pass
+    # ODS fallback via sidecar if available
     sidecar_path = os.path.join(CACHE_DIR, f"state_budget_mission_{year}.meta.json")
     if not os.path.exists(sidecar_path):
         return []

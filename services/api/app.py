@@ -30,7 +30,45 @@ def create_app() -> FastAPI:
 
     @app.get("/health")
     def health():
-        return {"status": "healthy"}
+        # Include warehouse readiness info without failing the overall health
+        try:
+            from .warehouse_client import warehouse_status  # lazy import to avoid duckdb import at app import time
+            wh = warehouse_status()
+        except Exception:  # pragma: no cover
+            wh = {"enabled": False, "available": False, "ready": False, "missing": []}
+        return {"status": "healthy", "warehouse": wh}
+
+    @app.get("/health/full")
+    def health_full():
+        # Warehouse status + row counts + dbt version if available
+        try:
+            from .warehouse_client import warehouse_status, table_counts  # lazy import
+            wh = warehouse_status()
+            counts = table_counts([
+                "stg_state_budget_lines",
+                "fct_admin_by_mission",
+                "fct_admin_by_cofog",
+                "vw_procurement_contracts",
+                "fct_procurement_suppliers",
+            ])
+        except Exception:  # pragma: no cover
+            wh = {"enabled": False, "available": False, "ready": False, "missing": []}
+            counts = {}
+
+        dbt_ver = None
+        try:  # Prefer Python package
+            import dbt
+
+            dbt_ver = getattr(dbt, "__version__", None)
+        except Exception:
+            dbt_ver = None
+
+        return {
+            "status": "healthy",
+            "warehouse": wh,
+            "rows": counts,
+            "dbt": {"version": dbt_ver},
+        }
 
     return app
 

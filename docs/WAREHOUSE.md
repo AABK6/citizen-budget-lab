@@ -35,6 +35,12 @@ API wiring
   - Admin allocation: `allocation(year, basis, lens: ADMIN)` uses `fct_admin_by_mission`.
   - Procurement: `procurement(year, region, ...)` aggregates over `vw_procurement_contracts`.
   - COFOG (S13) continues to use warmed Eurostat shares (baseline-scaled) as designed.
+  - Optional override: set `WAREHOUSE_COFOG_OVERRIDE=1` to force COFOG lens to use `fct_admin_by_cofog` (admin-mapped) instead of Eurostat S13; useful for offline/dev.
+  - Programme drill-down: `allocationProgramme` prefers the warehouse (group by programme) and falls back to ODS sidecar otherwise.
+
+Health
+
+- `/health` includes a `warehouse` section with `enabled`, `available`, `ready`, and `missing` relations. Overall `status` remains `healthy` (non-breaking for tests/ops).
 
 Profiles
 

@@ -31,6 +31,10 @@ Data Contracts & Codegen
 - Place documents in `graphql/queries/` and `graphql/mutations/`; generate TS hooks via `graphql/codegen.yml`.
 - Adopt generated hooks in the UI after API stabilizes; keep `graphqlFetch` for initial wiring.
 
+API behavior with dbt semantic layer
+
+- When the dbt semantic layer (DuckDB/Postgres) is present, the API prefers dbt views for ADMIN allocation and Procurement. If not present, it falls back to warmed CSV caches/samples. COFOG S13 still uses warmed Eurostat shares scaled by the warmed baseline.
+
 Components (selected)
 
 - Explore: `Sunburst`, `Treemap`, `LensToggle`, `YearSlider`, `BasisToggle`, `OutcomePanel`, `ExportButton`.

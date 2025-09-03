@@ -187,12 +187,18 @@ class Query:
                 ]
             )
         elif lens == LensEnum.COFOG:
-            # Prefer warmed Eurostat S13 COFOG shares scaled by baseline; fallback to mapping over mission CSV
-            try:
-                from .data_loader import allocation_by_cofog_s13  # type: ignore
-                items = allocation_by_cofog_s13(year)
-            except Exception:
+            # Prefer warmed Eurostat S13 COFOG shares scaled by baseline; fallback to mapping over mission CSV.
+            # Allow override to prefer warehouse/dbt mapping via env.
+            from .settings import get_settings  # lazy import
+            settings = get_settings()
+            if settings.warehouse_cofog_override:
                 items = allocation_by_cofog(year, Basis(basis.value))
+            else:
+                try:
+                    from .data_loader import allocation_by_cofog_s13  # type: ignore
+                    items = allocation_by_cofog_s13(year)
+                except Exception:
+                    items = allocation_by_cofog(year, Basis(basis.value))
             return AllocationType(
                 mission=[],
                 cofog=[
