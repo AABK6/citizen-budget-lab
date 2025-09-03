@@ -13,7 +13,8 @@
         "macro_kernel": { "type": "string" },
         "horizon_years": { "type": "integer", "minimum": 1, "maximum": 10 },
         "compliance_checks": { "type": "array", "items": { "type": "string" } },
-        "price_index": { "type": "string" }
+        "price_index": { "type": "string" },
+        "apu_subsector": { "type": "string", "enum": ["APUC", "APUL", "ASSO"] }
       },
       "additionalProperties": true
     },
@@ -37,7 +38,18 @@
     },
     "offsets": {
       "type": "array",
-      "items": { "type": "object" }
+      "items": {
+        "type": "object",
+        "required": ["id", "pool", "amount_eur"],
+        "properties": {
+          "id": { "type": "string" },
+          "pool": { "type": "string", "enum": ["spending", "revenue"] },
+          "amount_eur": { "type": "number" },
+          "recurring": { "type": "boolean" },
+          "exclude": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": false
+      }
     },
     "metadata": {
       "type": "object",

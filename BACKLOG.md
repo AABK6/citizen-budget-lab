@@ -97,8 +97,8 @@ Epics
     - [x] JSON Schema validated in resolver; descriptive errors.
     - [x] Deterministic scenario id from canonicalized DSL (tests).
     - [x] AE/CP arithmetic applied consistently; recurring flag supported.
-    - [ ] Guardrails: reject unknown targets; enforce locked/bounds (from piece policy) with user-friendly messages.
-    - [ ] Offsets support with pool rules and exclusions.
+    - [x] Guardrails: reject unknown targets; enforce locked/bounds (from piece policy) with user-friendly messages.
+    - [x] Offsets support with pool rules (spending/revenue) and exclusions (schema support; v0 applies pool-level offsets mechanically).
     - Current: schema + resolver implemented (`schemas/scenario.schema.json`, `schema.Mutation.runScenario`); guardrails/basic validation present; offsets/advanced guards TBD.
 - Compliance Checks [API]
   - EU 3%/60% flags; Net expenditure rule (simplified, env reference rate).
@@ -106,7 +106,7 @@ Epics
     - [x] EU 3%: deficit ratio check vs GDP per year.
     - [x] EU 60%: debt ratio info/above flags.
     - [x] Net expenditure rule with env reference rate; year-over-year growth assessed.
-    - [ ] Local balance (équilibre réel) for APUL scenarios; require offsets or reject violations.
+    - [x] Local balance (équilibre réel) for APUL scenarios; require offsets or flag violations (simple per-year net delta ≈ 0 rule).
 - Macro Kernel (Lite) [API]
   - IRF store + convolution (ΔGDP/Δemployment/Δdeficit); apply stabilizers.
   - Current: implemented (`data/macro_irfs.json` + `_macro_kernel`), wired into `run_scenario`.

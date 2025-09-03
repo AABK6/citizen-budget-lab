@@ -126,6 +126,15 @@ Notes
 - Data and calculations are placeholders for demo/testing. Replace with real warehouse and services per the main README.
 - Compliance flags implement a minimal, illustrative logic only.
 - The JSON Schema is a starting point for validating the DSL payload.
+ - DSL additions:
+   - `offsets`: pool-level offsets to balance scenarios without specifying per-piece changes (v0). Example:
+     offsets:
+       - id: off1
+         pool: spending   # or revenue
+         amount_eur: 1000000000
+         recurring: true
+         exclude: ["debt_interest"]
+   - `assumptions.apu_subsector`: set to `APUL` to enable local-balance checks (per-year net delta ≈ 0 ⇒ ok, else breach).
 - Macro outputs now include ΔGDP/Δemployment/Δdeficit using a simple IRF convolution with COFOG mapping and default elasticities.
  - See `docs/GRAPHQL_CONTRACT.md` for the full GraphQL contract targeted by MVP/V1/V2. Implement resolvers incrementally.
 

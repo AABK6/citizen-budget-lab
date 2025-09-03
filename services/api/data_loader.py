@@ -629,6 +629,7 @@ def lego_distance_from_dsl(year: int, dsl_b64: str, scope: str = "S13") -> dict:
     # Decode DSL
     data = _decode_yaml_base64(dsl_b64)
     actions = data.get("actions") or []
+    offsets = data.get("offsets") or []
 
     def _apply(pid: str, op: str, amt_eur: float | None, delta_pct: float | None):
         if pid not in amounts:
@@ -745,6 +746,7 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
     horizon_years = int((data.get("assumptions") or {}).get("horizon_years", 5))
     baseline_year = int(data.get("baseline_year", 2026))
     actions = data.get("actions") or []
+    offsets = data.get("offsets") or []
 
     # Simple mechanical layer: sum CP deltas by year; recurring applies each year
     deltas_by_year = [0.0 for _ in range(horizon_years)]
@@ -801,10 +803,12 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
         op = (act.get("op") or "").lower()
         recurring = bool(act.get("recurring", False))
         dim = (act.get("dimension") or "cp").lower()
+        target = str(act.get("target", ""))
         if dim not in ("cp", "ae", "tax"):
             continue
         amount = 0.0
-        if "amount_eur" in act and dim in ("cp", "ae"):
+        # Generic administrative actions (exclude piece.* which are handled below)
+        if "amount_eur" in act and dim in ("cp", "ae") and not target.startswith("piece."):
             amount = float(act["amount_eur"]) * (1 if op == "increase" else -1 if op == "decrease" else 0)
             if amount != 0.0:
                 if recurring:
@@ -835,7 +839,7 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
                     path[0] += shock_pct
 
         # piece.* targets (LEGO pieces), v0: expenditures only
-        target = str(act.get("target", ""))
+        # piece.* handling
         if target.startswith("piece."):
             pid = target.split(".", 1)[1]
             # Guardrails: unknown piece id
@@ -964,6 +968,24 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
                             else:
                                 path[0] += 100.0 * shock_eur / gdp_series[0]
 
+    # Apply offsets (pool-level v0)
+    for off in offsets:
+        try:
+            pool = str(off.get("pool", "")).lower()
+            amt = float(off.get("amount_eur") or 0.0)
+            recurring = bool(off.get("recurring", False))
+        except Exception:
+            continue
+        if not amt or pool not in ("spending", "revenue"):
+            continue
+        # For both pools, a positive amount means reducing the deficit (spending cuts or revenue increases)
+        delta = -amt
+        if recurring:
+            for i in range(horizon_years):
+                deltas_by_year[i] += delta
+        else:
+            deltas_by_year[0] += delta
+
     # Deficit path = sum of deltas (positive increases deficit)
     deficit_path = [float(x) for x in deltas_by_year]
     debt_path: List[float] = []
@@ -1009,11 +1031,19 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
         debt_ratio.append((total_debt / gdp_series[i]))
     eu60 = ["above" if r > 0.60 else "info" for r in debt_ratio]
 
+    # Local balance (APUL): simple rule — net delta must be ~0 per year
+    apu = str((data.get("assumptions") or {}).get("apu_subsector") or "").upper()
+    lb: List[str]
+    if apu == "APUL":
+        lb = ["ok" if abs(d) <= 1e-6 else "breach" for d in deltas_by_year]
+    else:
+        lb = ["n/a" for _ in range(horizon_years)]
+
     comp = Compliance(
         eu3pct=eu3,
         eu60pct=eu60,
         net_expenditure=net_exp_status,
-        local_balance=["n/a" for _ in range(horizon_years)],
+        local_balance=lb,
     )
 
     acc = Accounting(deficit_path=deficit_path, debt_path=debt_path)
