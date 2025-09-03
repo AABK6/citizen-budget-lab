@@ -25,6 +25,7 @@ from .models import (
 )
 from .validation import validate_scenario
 from .settings import get_settings
+from . import warehouse_client as wh
 
 
 DATA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data"))
@@ -53,6 +54,14 @@ def _state_budget_path(year: int) -> str:
 
 
 def allocation_by_mission(year: int, basis: Basis) -> Allocation:
+    # Prefer warehouse (dbt) if available
+    try:
+        if wh.warehouse_available():
+            items = wh.allocation_by_mission(year, basis)
+            if items:
+                return Allocation(mission=items)
+    except Exception:
+        pass
     total = 0.0
     agg: Dict[Tuple[str, str], float] = defaultdict(float)
     for row in _read_csv(_state_budget_path(year)):
@@ -133,6 +142,14 @@ _COFOG_LABELS = {
 
 
 def allocation_by_cofog(year: int, basis: Basis) -> List[MissionAllocation]:
+    # Try warehouse aggregate first
+    try:
+        if wh.warehouse_available():
+            items = wh.allocation_by_cofog(year, basis)
+            if items:
+                return items
+    except Exception:
+        pass
     cfg = _load_json(COFOG_MAP_JSON)
     mission_map = cfg.get("mission_to_cofog", {})
     prog_map = cfg.get("programme_to_cofog", {})
@@ -382,6 +399,22 @@ def procurement_top_suppliers(
     min_amount_eur: float | None = None,
     max_amount_eur: float | None = None,
 ) -> List[ProcurementItem]:
+    # Prefer warehouse semantic layer if available
+    try:
+        if wh.warehouse_available():
+            items = wh.procurement_top_suppliers(
+                year,
+                region,
+                cpv_prefix=cpv_prefix,
+                procedure_type=procedure_type,
+                min_amount_eur=min_amount_eur,
+                max_amount_eur=max_amount_eur,
+                top_n=top_n,
+            )
+            if items:
+                return items
+    except Exception:
+        pass
     # Aggregate by supplier within region code prefix (e.g., "75")
     by_supplier: Dict[str, Dict[str, float | str]] = {}
     for row in _read_csv(_procurement_path(year)):

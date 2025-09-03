@@ -254,6 +254,7 @@ Semantic layer (dbt)
   - `make dbt-install` (installs dbt + adapters in your venv)
   - `make dbt-seed` (generate mapping seeds)
   - `make dbt-build` (builds DuckDB at `data/warehouse.duckdb`)
+  - API will prefer the warehouse if `WAREHOUSE_ENABLED=1` (default) and the DuckDB file exists. To disable, set `WAREHOUSE_ENABLED=0`.
 
 Docker Compose (run both)
 

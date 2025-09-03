@@ -34,6 +34,12 @@ class Settings:
     # Compliance parameters
     net_exp_reference_rate: float = float(os.getenv("NET_EXP_REFERENCE_RATE", "0.015"))
 
+    # Warehouse / dbt
+    warehouse_enabled: bool = os.getenv("WAREHOUSE_ENABLED", "1") not in ("0", "false", "False")
+    warehouse_type: str = os.getenv("WAREHOUSE_TYPE", "duckdb")  # duckdb|postgres
+    duckdb_path: str = os.getenv("WAREHOUSE_DUCKDB_PATH", os.path.join(os.path.dirname(os.path.dirname(__file__)), "..", "data", "warehouse.duckdb"))
+    pg_dsn: str | None = os.getenv("WAREHOUSE_PG_DSN")
+
 
 def get_settings() -> Settings:
     # Load .env once at first import

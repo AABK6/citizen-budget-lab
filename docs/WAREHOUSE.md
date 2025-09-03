@@ -29,6 +29,13 @@ Setup
 
   make dbt-test
 
+API wiring
+
+- The FastAPI/GraphQL layer prefers dbt models when `WAREHOUSE_ENABLED=1` and the DuckDB file exists:
+  - Admin allocation: `allocation(year, basis, lens: ADMIN)` uses `fct_admin_by_mission`.
+  - Procurement: `procurement(year, region, ...)` aggregates over `vw_procurement_contracts`.
+  - COFOG (S13) continues to use warmed Eurostat shares (baseline-scaled) as designed.
+
 Profiles
 
 - DuckDB (default) path: `data/warehouse.duckdb`.
@@ -44,4 +51,3 @@ Notes
 
 - The mapping seed is generated from `data/cofog_mapping.json` by `tools/build_seeds.py`.
 - Programme/action mappings and year-aware overrides will be included automatically if present in JSON (defaults used for `programme_to_cofog_years`).
-
