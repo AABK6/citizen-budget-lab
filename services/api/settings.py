@@ -41,6 +41,10 @@ class Settings:
     pg_dsn: str | None = os.getenv("WAREHOUSE_PG_DSN")
     warehouse_cofog_override: bool = os.getenv("WAREHOUSE_COFOG_OVERRIDE", "0") in ("1", "true", "True")
 
+    # Logging / Error reporting
+    log_level: str = os.getenv("LOG_LEVEL", "INFO")
+    sentry_dsn: str | None = os.getenv("SENTRY_DSN")
+
 
 def get_settings() -> Settings:
     # Load .env once at first import

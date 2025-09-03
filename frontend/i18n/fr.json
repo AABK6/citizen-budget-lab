@@ -27,4 +27,28 @@
   "stats.total": "Total",
   "stats.yoy": "YoY",
   "stats.na": "n/d"
+  ,
+  "whatif.title": "Et si… — Constructeur de scénario",
+  "whatif.dsl": "DSL du scénario (YAML)",
+  "whatif.run": "Lancer le scénario",
+  "whatif.running": "Exécution…",
+  "whatif.results": "Résultats",
+  "whatif.accounting": "Comptabilité",
+  "whatif.compliance": "Règles",
+  "whatif.macro": "Macro",
+  "whatif.raw": "Brut",
+
+  "proc.title": "Qui est payé ? (Marchés)",
+  "proc.supplier": "Fournisseur",
+  "proc.procedure": "Procédure",
+  "proc.amount": "Montant (EUR)",
+  "proc.source": "Source",
+  "proc.department": "Département",
+  "proc.cpv": "Préfixe CPV",
+  "proc.min": "Montant min (EUR)",
+  "proc.apply": "Appliquer",
+  "proc.view": "Vue",
+  "proc.table": "Table",
+  "proc.map": "Carte",
+  "proc.export": "Exporter CSV"
 }

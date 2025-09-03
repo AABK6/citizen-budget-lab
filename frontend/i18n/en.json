@@ -27,4 +27,28 @@
   "stats.total": "Total",
   "stats.yoy": "YoY",
   "stats.na": "n/a"
+  ,
+  "whatif.title": "What‑if — Scenario Builder",
+  "whatif.dsl": "Scenario DSL (YAML)",
+  "whatif.run": "Run Scenario",
+  "whatif.running": "Running…",
+  "whatif.results": "Results",
+  "whatif.accounting": "Accounting",
+  "whatif.compliance": "Compliance",
+  "whatif.macro": "Macro",
+  "whatif.raw": "Raw payload",
+
+  "proc.title": "Who gets paid? (Procurement)",
+  "proc.supplier": "Supplier",
+  "proc.procedure": "Procedure",
+  "proc.amount": "Amount (EUR)",
+  "proc.source": "Source",
+  "proc.department": "Department",
+  "proc.cpv": "CPV prefix",
+  "proc.min": "Min amount (EUR)",
+  "proc.apply": "Apply",
+  "proc.view": "View",
+  "proc.table": "Table",
+  "proc.map": "Map",
+  "proc.export": "Export CSV"
 }

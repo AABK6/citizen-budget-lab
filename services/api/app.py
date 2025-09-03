@@ -1,4 +1,6 @@
-from fastapi import FastAPI
+import logging
+import time
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from strawberry.fastapi import GraphQLRouter
 
@@ -20,6 +22,31 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    # Logging setup
+    logging.basicConfig(level=getattr(logging, (settings.log_level or 'INFO').upper(), logging.INFO))
+    logger = logging.getLogger("cbl-api")
+
+    # Sentry (optional)
+    if settings.sentry_dsn:
+        try:
+            import sentry_sdk
+
+            sentry_sdk.init(dsn=settings.sentry_dsn, traces_sample_rate=0.0)
+            logger.info("Sentry initialized")
+        except Exception as e:  # pragma: no cover
+            logger.warning("Sentry init failed: %s", e)
+
+    # Request logging middleware
+    @app.middleware("http")
+    async def _log_requests(request: Request, call_next):  # noqa: ANN001
+        start = time.perf_counter()
+        try:
+            response = await call_next(request)
+            return response
+        finally:
+            dur_ms = (time.perf_counter() - start) * 1000.0
+            logger.info("%s %s -> %s in %.1fms", request.method, request.url.path, getattr(request, 'state', {}), dur_ms)
 
     graphql_app = GraphQLRouter(schema)
     app.include_router(graphql_app, prefix="/graphql")

@@ -118,18 +118,18 @@ Epics
   - Shell & nav; Explore ADMIN/COFOG; outcome panel; Procurement map/table; What‑if builder + results cards; Sources page; a11y+i18n; performance; tests.
     - Current: minimal scaffold present; core charts and pages partially implemented; see status snapshot.
   - Acceptance Criteria (AC):
-    - [ ] Explore €1: ADMIN and COFOG lenses with table; stacked shares; source links.
-    - [ ] Procurement table & map with filters; source links; CSV export.
-    - [ ] What‑if builder minimal UI with scoring panel; EU lights.
-    - [ ] A11y (keyboard, contrast) and i18n FR/EN; basic tests.
+    - [x] Explore €1: ADMIN and COFOG lenses with table; stacked shares; source links.
+    - [x] Procurement table & map with filters; source links; CSV export.
+    - [x] What‑if builder minimal UI with scoring panel; EU lights.
+    - [x] A11y (keyboard, contrast) and i18n FR/EN; basic tests (axe on key pages).
 - Quality, Ops, Security [Ops][QA]
   - Tests & QA; caching & rate limiting; observability; Docker & CI.
     - Current: pytest suite in place; HTTP caching + retries (`http_client.py`); Dockerfiles & CI workflows present; observability pending.
   - Acceptance Criteria (AC):
     - [x] HTTP cache with TTLs per domain; retries exponential backoff.
     - [x] CI runs tests and builds Docker images.
-    - [ ] Basic logging/metrics; error reporting.
-    - [ ] Test coverage threshold documented.
+    - [x] Basic logging/metrics; error reporting (Sentry optional).
+    - [x] Test coverage threshold documented.
 
 Milestone: MVP+
 

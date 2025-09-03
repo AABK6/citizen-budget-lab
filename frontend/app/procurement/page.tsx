@@ -10,6 +10,7 @@ const ProcurementMap = dynamic(() => import('@/components/ProcurementMap').then(
 import { downloadCSV } from '@/lib/csv'
 import { StatCards } from '@/components/StatCards'
 import { SourceLink } from '@/components/SourceLink'
+import { useI18n } from '@/lib/i18n'
 
 type Row = {
   supplier: { siren: string; name: string }
@@ -28,6 +29,7 @@ const DEPARTMENTS = [
 ]
 
 export default function ProcurementPage() {
+  const { t } = useI18n()
   const [year, setYear] = useState(2024)
   const [region, setRegion] = useState('75')
   const [cpvPrefix, setCpvPrefix] = useState('')
@@ -39,13 +41,13 @@ export default function ProcurementPage() {
   const [stats, setStats] = useState<{ total: number; suppliers: number; median: number }>({ total: 0, suppliers: 0, median: 0 })
 
   const columns = useMemo(() => [
-    { key: 'supplier.name', label: 'Supplier' },
+    { key: 'supplier.name', label: t('proc.supplier') || 'Supplier' },
     { key: 'supplier.siren', label: 'SIREN' },
     { key: 'cpv', label: 'CPV' },
-    { key: 'procedureType', label: 'Procedure' },
-    { key: 'amountEur', label: 'Amount (EUR)', format: (v: number) => v.toLocaleString(undefined, { maximumFractionDigits: 0 }) },
-    { key: 'sourceUrl', label: 'Source', render: (v: string) => v ? <a href={v} target="_blank" rel="noreferrer">Open</a> : '' }
-  ], [])
+    { key: 'procedureType', label: t('proc.procedure') || 'Procedure' },
+    { key: 'amountEur', label: t('proc.amount') || 'Amount (EUR)', format: (v: number) => v.toLocaleString(undefined, { maximumFractionDigits: 0 }) },
+    { key: 'sourceUrl', label: t('proc.source') || 'Source', render: (v: string) => v ? <a href={v} target="_blank" rel="noreferrer">Open</a> : '' }
+  ], [t])
 
   async function load() {
     setLoading(true)
@@ -91,7 +93,7 @@ export default function ProcurementPage() {
 
   return (
     <div className="stack">
-      <h2>Who gets paid? (Procurement)</h2>
+      <h2>{t('proc.title') || 'Who gets paid? (Procurement)'}</h2>
       <StatCards items={[
         { label: 'Total', value: stats.total.toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' €' },
         { label: 'Suppliers', value: String(stats.suppliers) },
@@ -102,24 +104,24 @@ export default function ProcurementPage() {
       </div>
       <div className="row gap">
         <YearPicker value={year} onChange={setYear} />
-        <Select label="Department" value={region} options={DEPARTMENTS} onChange={setRegion} />
+        <Select label={t('proc.department') || 'Department'} value={region} options={DEPARTMENTS} onChange={setRegion} />
         <label className="field">
-          <span>CPV prefix</span>
+          <span>{t('proc.cpv') || 'CPV prefix'}</span>
           <input value={cpvPrefix} onChange={e => setCpvPrefix(e.target.value)} placeholder="e.g. 30" />
         </label>
         <label className="field">
-          <span>Min amount (EUR)</span>
+          <span>{t('proc.min') || 'Min amount (EUR)'}</span>
           <input type="number" value={minAmount} onChange={e => setMinAmount(e.target.value === '' ? '' : Number(e.target.value))} />
         </label>
-        <button onClick={load}>Apply</button>
-        <Select label="View" value={view} onChange={v => setView(v as any)} options={[{ label: 'Table', value: 'table' }, { label: 'Map', value: 'map' }]} />
+        <button onClick={load}>{t('proc.apply') || 'Apply'}</button>
+        <Select label={t('proc.view') || 'View'} value={view} onChange={v => setView(v as any)} options={[{ label: t('proc.table') || 'Table', value: 'table' }, { label: t('proc.map') || 'Map', value: 'map' }]} />
         <button onClick={() => downloadCSV(`procurement_${region}_${year}.csv`, [
-          { key: 'supplier.name', label: 'Supplier' },
+          { key: 'supplier.name', label: t('proc.supplier') || 'Supplier' },
           { key: 'supplier.siren', label: 'SIREN' },
           { key: 'cpv', label: 'CPV' },
-          { key: 'procedureType', label: 'Procedure' },
-          { key: 'amountEur', label: 'Amount (EUR)' },
-        ], rows as any)}>Export CSV</button>
+          { key: 'procedureType', label: t('proc.procedure') || 'Procedure' },
+          { key: 'amountEur', label: t('proc.amount') || 'Amount (EUR)' },
+        ], rows as any)}>{t('proc.export') || 'Export CSV'}</button>
       </div>
       {loading && <p>Loading…</p>}
       {error && <p className="error">{error}</p>}

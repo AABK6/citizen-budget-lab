@@ -255,6 +255,7 @@ Docker
 CI
 
 - `/.github/workflows/ci.yml` builds and tests the backend (pytest), builds the frontend, and builds both Docker images on push/PR.
+ - CI also runs accessibility checks (axe) on `/`, `/explore`, `/procurement`, and `/what-if` after starting the frontend.
 
 Semantic layer (dbt)
 
@@ -264,6 +265,22 @@ Semantic layer (dbt)
   - `make dbt-seed` (generate mapping seeds)
   - `make dbt-build` (builds DuckDB at `data/warehouse.duckdb`)
   - API will prefer the warehouse if `WAREHOUSE_ENABLED=1` (default) and the DuckDB file exists. To disable, set `WAREHOUSE_ENABLED=0`.
+
+Ops / Logging / Error reporting
+
+- Backend logs:
+  - Configure via `LOG_LEVEL` (default `INFO`). Each HTTP request logs method, path, and duration.
+  - Optional Sentry: set `SENTRY_DSN` to enable error capture (no traces by default).
+
+Frontend MVP (Explore, Procurement, What‑if)
+
+- Explore: ADMIN/COFOG lenses with table, stacked/sunburst/treemap, source links, YoY cards.
+- Procurement: table & map view with filters, source links, CSV export.
+- What‑if: DSL editor, Run button, scoreboard (Δ Deficit Y0, Δ Debt Yend), EU rule lights, and line chart for deficit/debt path.
+
+Coverage
+
+- For now we document a target of 60–70% unit test coverage on backend logic (excluding network clients) and use axe for basic frontend a11y checks. Tighten as features stabilize.
 
 Docker Compose (run both)
 
