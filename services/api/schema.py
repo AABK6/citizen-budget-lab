@@ -84,6 +84,7 @@ class RunScenarioPayload:
     accounting: AccountingType
     compliance: ComplianceType
     macro: "MacroType"
+    resolution: "ResolutionType | None" = None
 
 
 @strawberry.type
@@ -172,6 +173,46 @@ class DistanceByPieceType:
 class DistanceType:
     score: float
     byPiece: list[DistanceByPieceType]
+
+
+@strawberry.type
+class MassTargetType:
+    massId: str
+    targetDeltaEur: float
+    specifiedDeltaEur: float
+
+
+@strawberry.type
+class ResolutionType:
+    overallPct: float
+    byMass: list[MassTargetType]
+
+
+@strawberry.enum
+class PolicyFamilyEnum(str, enum.Enum):
+    PENSIONS = "PENSIONS"
+    TAXES = "TAXES"
+    HEALTH = "HEALTH"
+    DEFENSE = "DEFENSE"
+    STAFFING = "STAFFING"
+    SUBSIDIES = "SUBSIDIES"
+    CLIMATE = "CLIMATE"
+    SOCIAL_SECURITY = "SOCIAL_SECURITY"
+    PROCUREMENT = "PROCUREMENT"
+    OPERATIONS = "OPERATIONS"
+    OTHER = "OTHER"
+
+
+@strawberry.type
+class PolicyLeverType:
+    id: str
+    family: PolicyFamilyEnum
+    label: str
+    description: str | None
+    paramsSchema: JSON
+    feasibility: JSON
+    conflictsWith: list[str]
+    sources: list[str]
 
 
 @strawberry.type
@@ -454,6 +495,29 @@ class Query:
             ],
         )
 
+    # V1: Policy Workshop catalog (stub)
+    @strawberry.field
+    def policyLevers(self, family: "PolicyFamilyEnum | None" = None, search: str | None = None) -> list["PolicyLeverType"]:  # noqa: N802
+        from . import policy_catalog as pol
+
+        fam = family.value if family else None
+        items = pol.list_policy_levers(fam, search)
+        out: list[PolicyLeverType] = []
+        for it in items:
+            out.append(
+                PolicyLeverType(
+                    id=str(it.get("id")),
+                    family=PolicyFamilyEnum(str(it.get("family", "OTHER"))),
+                    label=str(it.get("label")),
+                    description=str(it.get("description") or ""),
+                    paramsSchema=it.get("params_schema") or {},
+                    feasibility=it.get("feasibility") or {},
+                    conflictsWith=[str(x) for x in (it.get("conflicts_with") or [])],
+                    sources=[str(x) for x in (it.get("sources") or [])],
+                )
+            )
+        return out
+
     @strawberry.field
     def macroSeries(self, country: str = "FR") -> JSON:  # noqa: N802
         """Return warmed macro series from INSEE BDM if available."""
@@ -475,7 +539,7 @@ class Query:
 class Mutation:
     @strawberry.mutation
     def runScenario(self, input: RunScenarioInput) -> RunScenarioPayload:  # noqa: N802
-        sid, acc, comp, macro = run_scenario(input.dsl)
+        sid, acc, comp, macro, reso = run_scenario(input.dsl)
         return RunScenarioPayload(
             id=sid,
             accounting=AccountingType(deficitPath=acc.deficit_path, debtPath=acc.debt_path),
@@ -490,6 +554,17 @@ class Mutation:
                 deltaEmployment=macro.delta_employment,
                 deltaDeficit=macro.delta_deficit,
                 assumptions={k: v for k, v in macro.assumptions.items()},
+            ),
+            resolution=ResolutionType(
+                overallPct=float(reso.get("overallPct", 0.0)),
+                byMass=[
+                    MassTargetType(
+                        massId=str(e.get("massId")),
+                        targetDeltaEur=float(e.get("targetDeltaEur", 0.0)),
+                        specifiedDeltaEur=float(e.get("specifiedDeltaEur", 0.0)),
+                    )
+                    for e in reso.get("byMass", [])
+                ],
             ),
         )
 

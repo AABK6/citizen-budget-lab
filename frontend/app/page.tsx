@@ -10,6 +10,7 @@ export default function Home() {
       <h2 className="fr-h2">{t('home.welcome')}</h2>
       <p>{t('home.pick_section')}</p>
       <ul className="fr-links-group">
+        <li><Link className="fr-link" href="/build">Build</Link></li>
         <li><Link className="fr-link" href="/explore">{t('nav.explore')}</Link></li>
         <li><Link className="fr-link" href="/procurement">{t('nav.procurement')}</Link></li>
         <li><Link className="fr-link" href="/what-if">{t('nav.whatif')}</Link></li>

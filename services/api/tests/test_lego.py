@@ -143,3 +143,43 @@ actions:
       query($y:Int!,$dsl:String!){ legoDistance(year:$y, dsl:$dsl){ score byPiece{ id shareDelta } } }
     """, {"y": year, "dsl": dsl})
     assert "score" in data["legoDistance"]
+
+
+def test_lego_queries_absent_snapshot(monkeypatch):
+    """When the snapshot is absent, legoBaseline should fallback gracefully and legoPieces should still return config ids.
+    """
+    from services.api.app import create_app
+    from fastapi.testclient import TestClient
+
+    app = create_app()
+    client = TestClient(app)
+
+    year = 2094  # synthetic year; ensure we point to a non-existent temp path
+    # Redirect baseline path to a unique temp file that does not exist
+    import tempfile
+    import os
+    from services.api import data_loader
+    tmp_dir = tempfile.mkdtemp()
+    monkeypatch.setattr(data_loader, "_lego_baseline_path", lambda y: os.path.join(tmp_dir, f"lego_baseline_{y}.json"))
+
+    def gql(q: str, variables: Dict[str, Any] | None = None) -> Dict[str, Any]:
+        r = client.post("/graphql", json={"query": q, "variables": variables or {}})
+        assert r.status_code == 200
+        js = r.json()
+        assert "errors" not in js, js.get("errors")
+        return js["data"]
+
+    data = gql("""
+      query($y:Int!){ legoBaseline(year:$y){ year scope pib depensesTotal recettesTotal pieces{ id } } }
+    """, {"y": year})
+    assert data["legoBaseline"]["year"] == year
+    # No snapshot -> totals 0 and empty pieces
+    assert data["legoBaseline"]["depensesTotal"] == 0.0
+    assert data["legoBaseline"]["pieces"] == []
+
+    data2 = gql("""
+      query($y:Int!){ legoPieces(year:$y){ id type amountEur share } }
+    """, {"y": year})
+    # legoPieces should still return config-driven ids
+    assert isinstance(data2["legoPieces"], list)
+    assert any(isinstance(ent.get("id"), str) for ent in data2["legoPieces"])

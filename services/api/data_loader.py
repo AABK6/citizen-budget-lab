@@ -792,7 +792,7 @@ def _macro_kernel(horizon: int, shocks_pct_gdp: Dict[str, List[float]], gdp_seri
 
 
 
-def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult]:
+def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult, dict]:
     data = _decode_yaml_base64(dsl_b64)
     validate_scenario(data)
     # Deterministic scenario ID from canonicalized DSL
@@ -810,6 +810,9 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
     gdp_series_map = _read_gdp_series()
     gdp_series = [gdp_series_map.get(baseline_year + i, list(gdp_series_map.values())[-1]) for i in range(horizon_years)]
     shocks_pct_gdp: Dict[str, List[float]] = {}
+    # Resolution accumulators (MVP+): target by mass (from mission.*), specified by mass (from piece.*)
+    resolution_target_by_mass: Dict[str, float] = {}
+    resolution_specified_by_mass: Dict[str, float] = {}
     # Preload LEGO baseline/config to support piece.* targets
     lego_bl = None
     lego_types: Dict[str, str] = {}
@@ -855,6 +858,23 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
     except Exception:
         pass
 
+    # Optional lever conflict validation (using policy catalog stub)
+    levers_by_id_map: Dict[str, dict] | None = None
+    try:
+        from . import policy_catalog as _pol
+
+        levers_by_id_map = _pol.levers_by_id()
+    except Exception:
+        levers_by_id_map = None
+    if levers_by_id_map:
+        applied_ids = {str(a.get("id")) for a in actions if str(a.get("id")) in levers_by_id_map}
+        for lid in applied_ids:
+            conflicts = set(levers_by_id_map[lid].get("conflicts_with") or [])
+            clash = conflicts & (applied_ids - {lid})
+            if clash:
+                other = sorted(list(clash))[0]
+                raise ValueError(f"Conflicting levers applied: '{lid}' conflicts with '{other}'")
+
     for act in actions:
         op = (act.get("op") or "").lower()
         recurring = bool(act.get("recurring", False))
@@ -881,6 +901,13 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
                             path[i] += 100.0 * shock_eur / gdp_series[i]
                     else:
                         path[0] += 100.0 * shock_eur / gdp_series[0]
+                # Resolution: attribute mission.* targets to mass majors
+                try:
+                    for cat, w in _map_action_to_cofog(act, baseline_year):
+                        major = str(cat).split(".")[0][:2]
+                        resolution_target_by_mass[major] = resolution_target_by_mass.get(major, 0.0) + amount * float(w)
+                except Exception:
+                    pass
         # Basic tax op handling: rate change approximated as revenue change proxy (stub)
         if dim == "tax" and "delta_bps" in act:
             for cat, w in _map_action_to_cofog(act, baseline_year):
@@ -1023,6 +1050,12 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
                                     path[i] += 100.0 * shock_eur / gdp_series[i]
                             else:
                                 path[0] += 100.0 * shock_eur / gdp_series[0]
+                            # Resolution: attribute specified deltas by mass major
+                            try:
+                                major = str(c_code).split(".")[0][:2]
+                                resolution_specified_by_mass[major] = resolution_specified_by_mass.get(major, 0.0) + delta * float(w)
+                            except Exception:
+                                pass
 
     # Apply offsets (pool-level v0)
     for off in offsets:
@@ -1103,7 +1136,26 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
     )
 
     acc = Accounting(deficit_path=deficit_path, debt_path=debt_path)
-    return sid, acc, comp, macro
+
+    # Build resolution payload (overallPct + byMass)
+    by_mass: List[dict] = []
+    mass_ids = set(list(resolution_target_by_mass.keys()) + list(resolution_specified_by_mass.keys()))
+    total_target_abs = 0.0
+    total_spec_abs = 0.0
+    for mid in sorted(mass_ids):
+        t = float(resolution_target_by_mass.get(mid, 0.0))
+        s = float(resolution_specified_by_mass.get(mid, 0.0))
+        by_mass.append({
+            "massId": mid,
+            "targetDeltaEur": t,
+            "specifiedDeltaEur": s,
+        })
+        total_target_abs += abs(t)
+        total_spec_abs += abs(s)
+    overall = (total_spec_abs / total_target_abs) if total_target_abs > 0 else 0.0
+    resolution = {"overallPct": overall, "byMass": by_mass}
+
+    return sid, acc, comp, macro, resolution
 def _procurement_path(year: int) -> str:
     """Prefer normalized DECP cache if present for the given year, else sample CSV.
     """

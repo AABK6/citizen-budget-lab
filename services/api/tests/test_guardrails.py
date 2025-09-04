@@ -99,3 +99,29 @@ actions:
     assert res.errors, "Expected error for bounds violation"
     assert any("percent" in str(e).lower() or "bound" in str(e).lower() for e in res.errors)
 
+
+def test_runscenario_conflicting_levers_rejected():
+    # Two known conflicting stub levers from policy_catalog
+    sdl = """
+version: 0.1
+baseline_year: 2026
+assumptions: { horizon_years: 1 }
+actions:
+  - id: def_procurements_trim
+    target: mission.defense
+    op: increase
+    amount_eur: 0
+  - id: def_fleet_delay
+    target: mission.defense
+    op: increase
+    amount_eur: 0
+"""
+    q = """
+      mutation Run($dsl: String!) {
+        runScenario(input: { dsl: $dsl }) { id }
+      }
+    """
+    res = _exec_gql(q, {"dsl": _b64(sdl)})
+    assert res.errors, "Expected error for conflicting levers"
+    assert any("conflicting" in str(e).lower() for e in res.errors)
+
