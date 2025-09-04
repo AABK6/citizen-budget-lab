@@ -80,8 +80,8 @@ class MacroType:
 
 @strawberry.type
 class RunScenarioPayload:
-    id: str
-    scenarioId: str
+    id: strawberry.ID
+    scenarioId: strawberry.ID
     accounting: AccountingType
     compliance: ComplianceType
     macro: "MacroType"
@@ -544,7 +544,7 @@ class Query:
         return out
 
     @strawberry.field
-    def shareCard(self, scenarioId: str) -> "ShareSummaryType":  # noqa: N802
+    def shareCard(self, scenarioId: strawberry.ID) -> "ShareSummaryType":  # noqa: N802
         """Return a compact summary for OG images/permalinks.
 
         If DSL is stored in-memory for this scenario id, recompute a minimal summary.
@@ -632,8 +632,8 @@ class Mutation:
         except Exception:
             pass
         return RunScenarioPayload(
-            id=sid,
-            scenarioId=sid,
+            id=strawberry.ID(sid),
+            scenarioId=strawberry.ID(sid),
             accounting=AccountingType(deficitPath=acc.deficit_path, debtPath=acc.debt_path),
             compliance=ComplianceType(
                 eu3pct=comp.eu3pct,
@@ -662,14 +662,14 @@ class Mutation:
 
     # In-memory scenario metadata store
     @strawberry.mutation
-    def saveScenario(self, id: str, title: Optional[str] = None, description: Optional[str] = None) -> bool:  # noqa: N802
+    def saveScenario(self, id: strawberry.ID, title: Optional[str] = None, description: Optional[str] = None) -> bool:  # noqa: N802
         from .store import scenario_store
 
         scenario_store[id] = {"title": title or "", "description": description or ""}
         return True
 
     @strawberry.mutation
-    def deleteScenario(self, id: str) -> bool:  # noqa: N802
+    def deleteScenario(self, id: strawberry.ID) -> bool:  # noqa: N802
         from .store import scenario_store
 
         if id in scenario_store:

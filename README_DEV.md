@@ -25,7 +25,17 @@ Run locally
 
 Frontend
 
-- The full frontend scope is tracked in `BACKLOG.md` and `docs/FRONTEND_PLAN.md`. No scaffold is included here to avoid duplication.
+- A minimal Next.js frontend scaffold is included under `frontend/` with the following pages:
+  - `/build` — Budget Playground & Policy Workshop (piece dials, targets, scoreboard, levers)
+  - `/explore` — Explore €1 (COFOG/Admin)
+  - `/procurement` — Who gets paid?
+  - `/what-if` — Scenario Builder (raw DSL)
+  - `/compare-eu`, `/sources`
+  Start it with:
+
+    cd frontend && npm ci && npm run build && npm run start
+
+  The frontend calls the API via `/api/graphql` which is proxied in `next.config.js` to `http://localhost:8000/graphql` by default.
 
 Example queries
 

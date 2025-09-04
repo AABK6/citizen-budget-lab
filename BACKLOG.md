@@ -189,13 +189,41 @@ Epics
   - Scoreboard & comparator: balance, debt, EU lights, distance; stacked bars “Your budget vs current”; scale tooltips.
   - Modes & sharing: “From scratch” and “From current”; permalinks (deterministic IDs); share‑card image generator + OG tags; Challenge presets; deterministic IDs wired to OG image.
   - Status: [~]
-    - New `/build` page with three panels: Pieces shelf, Baseline canvas (simple shares), and Scoreboard (deficit, debt, EU lights). Distance wired.
-    - Per‑piece dials: Target Δ% (role: target) and Change Δ% (action); locked pieces disabled.
-    - Per‑mass dials for COFOG majors: Target Δ€ and Change Δ€.
-    - Resolution Meter wired; striped “Pending” overlay; Δ chips for Target/Specified/Unresolved; permalinks via `?dsl=<base64>`.
-    - Reform Library: lists levers by family/search; adds lever targets (role: target) with Conflict Nudge banner client‑side; server also validates.
-    - Share Card: stub SVG route `/api/og?scenarioId=…` ready to replace with renderer.
-    - Remaining: richer lever parameter forms; presets; final OG renderer; A11y polish.
+    - [x] `/build` page initial scaffold with Piece dials + Scoreboard
+    - [x] Permalinks via `?dsl=<base64>`; server resolution wired; Distance wired
+    - [ ] Mass dials (Target Δ€, Change Δ€) with per‑mass progress
+    - [ ] Global Resolution meter (HUD) and striped “Pending” overlay on TwinBars
+    - [ ] Workshop: lever cards, dynamic params from schema; apply as Target/Change; conflict nudge
+    - [ ] Robust DSL restore (parse YAML; rehydrate Piece/Mass/Levers)
+    - [ ] A11y polish + Axe checks in CI for `/build`; i18n for all labels
+    - [ ] Save scenario (title/description); OG preview link; Compare & Remix entrypoint
+
+Build Page — Detailed Tasks [UI][API]
+
+- A) Scaffold & Data Wiring
+  - [x] Create `/build` page and wire GraphQL for `legoPieces`, `legoBaseline`, `policyLevers`, `legoDistance`
+  - [x] Serialize DSL; `runScenario` + Scoreboard (Deficit/EU lights/Resolution/Distance)
+  - [ ] Robust DSL restore (yaml → state): piece targets/changes, mass targets/changes, lever ids
+
+- B) Workshop & Resolution
+  - [ ] Render lever params from `paramsSchema` (min/max/step)
+  - [ ] Heuristics to derive Δ€ from params (pct, cut_pct, delay_months)
+  - [ ] Apply lever as Target/Change to selected mass; show conflict nudge on server error
+  - [ ] Per‑mass progress bars; striped pending overlay in Canvas TwinBars
+  - [ ] Global Resolution meter in HUD
+
+- C) Consequences & HUD
+  - [ ] Debt sparkline and Macro fan chart (lazy)
+  - [ ] Budget HUD: balance, EU lights, resolution, undo/redo, reset
+
+- D) A11y, i18n, Perf
+  - [ ] Full keyboard flows and ARIA for tabs/progress/alerts
+  - [ ] FR/EN for all Build labels; Axe CI check for `/build`
+  - [ ] Lazy‑load heavy charts; verify P95 budgets
+
+- E) Share & Compare
+  - [ ] Save scenario (title/description); OG preview link
+  - [ ] Compare & Remix entrypoint (link to future view)
   - Accessibility & i18n: full FR/EN, keyboard, contrast; “show the table”.
 - LEGO Budget Builder — Documentation [Docs]
   - `docs/LEGO_METHOD.md`: sources, mapping, beneficiary rules, elasticities (v0), limitations, versioning; audit tables.

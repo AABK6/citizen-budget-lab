@@ -9,7 +9,11 @@ services/api/clients/__pycache__
 *.py[cod]
 *.egg-info/
 dist/
+# Build outputs (top-level)
 build/
+
+# Allow Next.js route at `frontend/app/build` (not a build artifact)
+!frontend/app/build/
 .pytest_cache/
 
 # Local data caches

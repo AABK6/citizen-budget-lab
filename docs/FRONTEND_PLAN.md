@@ -20,7 +20,7 @@ Routing & Pages
 - `/` Home: navigation + 10‑sec onboarding (two equal CTAs: Start with Budget · Start with Policy) and a quick explainer; carousel with weekly Challenges and trending public scenarios.
 - `/explore` Explore €1: lens toggle (ADMIN/COFOG), basis (CP/AE), year slider, sunburst/treemap, outcomes panel, export, source links.
 - `/procurement` Who gets paid?: map + table, filters (sector/size/geo), competition flags, export.
-- `/what-if` Budget Playground & Policy Workshop: three‑panel command center (Left = LEGO Shelf & Reform Library, Center = Twin‑Bars Canvas with Budget Dials and Δ chips, Right = Consequences & Workshop). Scenario drawer remains available for DSL view.
+- `/build` Budget Playground & Policy Workshop: three‑panel command center (Left = LEGO Shelf & Reform Library, Center = Twin‑Bars Canvas with Budget Dials and Δ chips, Right = Consequences & Workshop). Scenario drawer remains available for DSL view. See detailed spec in `docs/BUILD_PAGE_SPEC.md`.
 - `/compare-eu` Compare EU: country selector, COFOG shares, deficit/debt ratios (Eurostat-backed), export.
 - `/sources` Sources: dataset registry with license/vintage/cadence links and search.
 - V1: `/my-household` OpenFisca view (static synthetic grid first, optional local input).
@@ -198,7 +198,47 @@ Entity Pages (New) — Missions/Programmes/COFOGs
   - Header with code, label, breadcrumb; StatsCards (current allocation, YoY); children table (e.g., programme children of mission)
   - Related tags (COFOG, Budget Vert where applicable); Source links
 
-Implementation Plan (Phased)
+Implementation Plan — Build Page (Polished)
+
+- Phase A (Scaffold & Data Wiring)
+  - Add `/build` page with Mass and Piece tabs; wire GraphQL for `legoPieces`, `legoBaseline`, `policyLevers`.
+  - Serialize DSL (mass + piece + lever IDs); runScenario; display Resolution/Scoreboard.
+  - Permalink sync (`?dsl=<base64>`) and robust restore using YAML parser.
+
+- Phase B (Workshop & Resolution)
+  - Dynamic lever parameter forms from `paramsSchema`; heuristics to derive Δ€.
+  - Apply lever as Target or Change on selected Mass; conflict nudge on runScenario errors.
+  - Global Resolution meter and per‑mass progress; striped pending overlay on TwinBars.
+
+- Phase C (HUD & Consequences)
+  - Budget HUD (balance, EU lights, debt sparkline, resolution, timeline, undo/redo).
+  - Macro fan chart and Debt path chart; lazy‑load heavy charts.
+
+- Phase D (UX Polish & A11y)
+  - Keyboard flows for tabs, sliders, lever forms; ARIA for progress and alerts.
+  - i18n labels; Axe checks in CI for `/build`.
+
+- Phase E (Share & Compare)
+  - Save scenario (title/description); OG image preview hook; Compare & Remix entrypoint.
+
+Milestone AC tie‑in: See `docs/BUILD_PAGE_SPEC.md` for detailed ACs.
+
+Playground Design Options (for future iteration)
+
+- Option A — LEGO Desk (blocks on a table)
+  - Metaphor: colored blocks represent current masses; you snap blocks out/in to decrease/increase relative to the baseline (not from scratch).
+  - Interaction: drag left/right to shrink/grow; pending stripes animate; levers as tool cards dragged onto masses.
+  - Why it fits: we operate on the current baseline; the “desk” is your existing budget, and blocks reflect deltas around it.
+
+- Option B — Coin Sandbox (tokens and jars)
+  - Metaphor: drop 10M€/100M€ “coins” into labeled jars (masses) or remove them; ring shows target vs specified.
+  - Playful on mobile; long‑press opens lever suggestions; great for challenges/remix.
+
+- Option C — Story Cards (targets and reforms as cards)
+  - Metaphor: play target cards (Δ€) and reform cards (with params) into lanes; timeline snaps for recurring vs one‑off.
+  - Extremely narrative; screenshot‑friendly for social sharing.
+
+Note: We start with Option D (Workshop + Meter) to ship quickly. Options A/B/C are candidates for the “Playground” surface, later gated behind a simple toggle and fed by the same scenario DSL/state.
 
 - Phase 1 (1 week)
   - Add UI components: Breadcrumb, SourceLink, StatsCard, YoYBadge, Tag
