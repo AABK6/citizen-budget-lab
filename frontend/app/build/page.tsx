@@ -61,6 +61,7 @@ export default function BuildPage() {
   const [conflictNudge, setConflictNudge] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<'masses' | 'pieces'>('masses')
   const [saveTitle, setSaveTitle] = useState<string>('')
+  const [showDsl, setShowDsl] = useState<boolean>(false)
   const [wfItems, setWfItems] = useState<Array<{ id: string; label?: string; deltaEur: number }>>([])
   const [ribbons, setRibbons] = useState<Array<{ pieceId: string; massId: string; amountEur: number }>>([])
   const [ribbonLabels, setRibbonLabels] = useState<{ piece: Record<string,string>, mass: Record<string,string> }>({ piece: {}, mass: {} })
@@ -300,14 +301,62 @@ export default function BuildPage() {
         onRun={runScenario}
         running={running}
         onReset={()=>{ setDeltas({}); setTargets({}); setMassTargets({}); setMassChanges({}); setSelectedLevers([]); setResult(null); }}
+        onToggleDsl={()=> setShowDsl(s => !s)}
         t={t}
       />
       <h2 className="fr-h2">{t('build.title') || 'Build — Workshop'}</h2>
       <div className="fr-grid-row fr-grid-row--gutters">
-        <div className="fr-col-12 fr-col-md-8">
+        {/* Left Shelf */}
+        <div className="fr-col-12 fr-col-md-3">
           <div className="fr-card fr-card--no-arrow">
             <div className="fr-card__body">
-              <div className="fr-card__title">Pieces — Dials</div>
+              <div className="fr-card__title">Shelf</div>
+              <div className="fr-card__desc">
+                {intents.length>0 && (
+                  <div style={{ margin: '.25rem 0 .5rem' }}>
+                    <span className="fr-text--sm" style={{ marginRight: '.5rem' }}>{t('build.popular_intents') || 'Popular intents:'}</span>
+                    {intents.map((it)=> (
+                      <button key={it.id} className="fr-tag fr-tag--sm" style={{ margin: '0 .25rem .25rem 0' }} onClick={()=>{
+                        const m = (it.massId||'').padStart(2,'0').slice(0,2)
+                        const amt = Number(it.seed?.amount_eur||0)
+                        if (m && isFinite(amt) && amt !== 0) setMassTargets(prev => ({ ...prev, [m]: (prev[m]||0) + amt }))
+                      }}>{it.emoji ? `${it.emoji} `: ''}{it.label}</button>
+                    ))}
+                  </div>
+                )}
+                <div className="fr-tabs">
+                  <ul className="fr-tabs__list" role="tablist">
+                    <li role="presentation">
+                      <button id="tab-masses" className={activeTab==='masses' ? 'fr-tabs__tab fr-tabs__tab--selected' : 'fr-tabs__tab'} tabIndex={0} aria-selected={activeTab==='masses'} aria-controls="panel-masses" role="tab" onClick={()=> setActiveTab('masses')}>{t('build.mass_dials') || 'Mass dials'}</button>
+                    </li>
+                    <li role="presentation">
+                      <button id="tab-pieces" className={activeTab==='pieces' ? 'fr-tabs__tab fr-tabs__tab--selected' : 'fr-tabs__tab'} tabIndex={0} aria-selected={activeTab==='pieces'} aria-controls="panel-pieces" role="tab" onClick={()=> setActiveTab('pieces')}>{t('build.piece_dials') || 'Piece dials'}</button>
+                    </li>
+                  </ul>
+                  <div id="panel-masses" className={activeTab==='masses' ? 'fr-tabs__panel fr-tabs__panel--selected' : 'fr-tabs__panel'} role="tabpanel" aria-labelledby="tab-masses">
+                    <MassList masses={massList} labels={massUiLabel} baseAmounts={massBaseAmounts} targets={massTargets} changes={massChanges} onTarget={(m,v)=> setMassTargets({ ...massTargets, [m]: v })} onChangeAmt={(m,v)=> setMassChanges({ ...massChanges, [m]: v })} resolution={result?.resolutionByMass} onExplain={(m)=> setExplainMass(m)} />
+                  </div>
+                  <div id="panel-pieces" className={activeTab==='pieces' ? 'fr-tabs__panel fr-tabs__panel--selected' : 'fr-tabs__panel'} role="tabpanel" aria-labelledby="tab-pieces">
+                    <div className="fr-grid-row fr-grid-row--gutters">
+                      <div className="fr-col-12">
+                        <h4 className="fr-h4">{t('build.expenditures') || 'Expenditures'}</h4>
+                        <PieceList pieces={exp} deltas={deltas} targets={targets} onDelta={updateDelta} onTarget={updateTarget} t={t} />
+                        <h4 className="fr-h4" style={{ marginTop: '.75rem' }}>{t('build.revenues') || 'Revenues'}</h4>
+                        <PieceList pieces={rev} deltas={deltas} targets={targets} onDelta={updateDelta} onTarget={updateTarget} t={t} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Center Canvas */}
+        <div className="fr-col-12 fr-col-md-6">
+          <div className="fr-card fr-card--no-arrow">
+            <div className="fr-card__body">
+              <div className="fr-card__title">Canvas</div>
               <div className="fr-card__desc">
                 <div className="fr-grid-row fr-grid-row--gutters" style={{ marginBottom: '.5rem' }}>
                   <div className="fr-col-6">
@@ -316,44 +365,80 @@ export default function BuildPage() {
                   </div>
                   <div className="fr-col-6" />
                 </div>
-                {loading && <p>{t('loading') || 'Loading…'}</p>}
-                {error && <p className="fr-error-text">{t('error.generic') || error}</p>}
-                {!loading && !error && (
-                  <div className="fr-tabs">
-                    {intents.length>0 && (
-                      <div style={{ margin: '.5rem 0' }}>
-                        <span className="fr-text--sm" style={{ marginRight: '.5rem' }}>{t('build.popular_intents') || 'Popular intents:'}</span>
-                        {intents.map((it)=> (
-                          <button key={it.id} className="fr-tag fr-tag--sm" style={{ marginRight: '.5rem' }} onClick={()=>{
-                            const m = (it.massId||'').padStart(2,'0').slice(0,2)
-                            const amt = Number(it.seed?.amount_eur||0)
-                            if (m && isFinite(amt) && amt !== 0) setMassTargets(prev => ({ ...prev, [m]: (prev[m]||0) + amt }))
-                          }}>{it.emoji ? `${it.emoji} `: ''}{it.label}</button>
-                        ))}
+                {result?.masses && <TwinBars masses={result.masses} labels={massList.reduce((acc, m)=> (acc[m]=massUiLabel(m), acc), {} as Record<string,string>)} resolution={result.resolutionByMass} />}
+                {wfItems?.length>0 && <WaterfallDelta items={wfItems} title="Δ by Mass (Waterfall)" />}
+                {ribbons?.length>0 && <SankeyRibbons ribbons={ribbons} pieceLabels={ribbonLabels.piece} massLabels={ribbonLabels.mass} />}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Panel: Workshop | Consequences */}
+        <div className="fr-col-12 fr-col-md-3">
+          <div className="fr-card fr-card--no-arrow">
+            <div className="fr-card__body">
+              <div className="fr-card__title">Right Panel</div>
+              <div className="fr-card__desc">
+                <div className="fr-tabs">
+                  <ul className="fr-tabs__list" role="tablist">
+                    <li role="presentation"><button id="tab-work" className={'fr-tabs__tab fr-tabs__tab--selected'} aria-selected={true} aria-controls="panel-work" role="tab">Workshop</button></li>
+                    <li role="presentation"><button id="tab-cons" className={'fr-tabs__tab'} aria-selected={false} aria-controls="panel-cons" role="tab" disabled>Consequences</button></li>
+                  </ul>
+                  <div id="panel-work" className={'fr-tabs__panel fr-tabs__panel--selected'} role="tabpanel" aria-labelledby="tab-work">
+                    <p className="fr-text--sm">Select levers and adjust parameters. Apply as Target or Change on a mass.</p>
+                    <LeverWorkshop levers={levers} masses={massList} labels={COFOG_LABELS} baseAmounts={massBaseAmounts} onApply={(mass, amount, asTarget)=>{
+                      if (asTarget) setMassTargets({ ...massTargets, [mass]: (massTargets[mass]||0) + amount })
+                      else setMassChanges({ ...massChanges, [mass]: (massChanges[mass]||0) + amount })
+                    }} onToggle={toggleLever} selected={selectedLevers} />
+                  </div>
+                  <div id="panel-cons" className={'fr-tabs__panel'} role="tabpanel" aria-labelledby="tab-cons">
+                    <dl className="fr-description-list">
+                      <div className="fr-description-list__row">
+                        <dt className="fr-description-list__term">{t('build.delta_exp') || 'ΔExpenditures (est.)'}</dt>
+                        <dd className="fr-description-list__definition">{estimateDeltaExp(exp, deltas).toLocaleString(undefined, { maximumFractionDigits: 0 })} €</dd>
                       </div>
-                    )}
-                    <ul className="fr-tabs__list" role="tablist">
-                      <li role="presentation">
-                        <button id="tab-masses" className={activeTab==='masses' ? 'fr-tabs__tab fr-tabs__tab--selected' : 'fr-tabs__tab'} tabIndex={0} aria-selected={activeTab==='masses'} aria-controls="panel-masses" role="tab" onClick={()=> setActiveTab('masses')}>{t('build.mass_dials') || 'Mass dials'}</button>
-                      </li>
-                      <li role="presentation">
-                        <button id="tab-pieces" className={activeTab==='pieces' ? 'fr-tabs__tab fr-tabs__tab--selected' : 'fr-tabs__tab'} tabIndex={0} aria-selected={activeTab==='pieces'} aria-controls="panel-pieces" role="tab" onClick={()=> setActiveTab('pieces')}>{t('build.piece_dials') || 'Piece dials'}</button>
-                      </li>
-                    </ul>
-                    <div id="panel-masses" className={activeTab==='masses' ? 'fr-tabs__panel fr-tabs__panel--selected' : 'fr-tabs__panel'} role="tabpanel" aria-labelledby="tab-masses">
-                      <MassList masses={massList} labels={massUiLabel} baseAmounts={massBaseAmounts} targets={massTargets} changes={massChanges} onTarget={(m,v)=> setMassTargets({ ...massTargets, [m]: v })} onChangeAmt={(m,v)=> setMassChanges({ ...massChanges, [m]: v })} resolution={result?.resolutionByMass} onExplain={(m)=> setExplainMass(m)} />
+                      <div className="fr-description-list__row">
+                        <dt className="fr-description-list__term">{t('build.delta_rev') || 'ΔRevenues (est.)'}</dt>
+                        <dd className="fr-description-list__definition">{estimateDeltaRev(rev, deltas).toLocaleString(undefined, { maximumFractionDigits: 0 })} €</dd>
+                      </div>
+                      {result && (
+                        <>
+                          <div className="fr-description-list__row">
+                            <dt className="fr-description-list__term">{t('score.deficit_y0') || 'Deficit (y0)'}</dt>
+                            <dd className="fr-description-list__definition">{result.deficitY0.toLocaleString(undefined, { maximumFractionDigits: 0 })} €</dd>
+                          </div>
+                          <div className="fr-description-list__row">
+                            <dt className="fr-description-list__term">EU 3%</dt>
+                            <dd className="fr-description-list__definition">{result.eu3}</dd>
+                          </div>
+                          <div className="fr-description-list__row">
+                            <dt className="fr-description-list__term">EU 60%</dt>
+                            <dd className="fr-description-list__definition">{result.eu60}</dd>
+                          </div>
+                          <div className="fr-description-list__row">
+                            <dt className="fr-description-list__term">{t('build.resolution') || 'Resolution'}</dt>
+                            <dd className="fr-description-list__definition">{(100 * result.resolutionPct).toFixed(1)}%</dd>
+                          </div>
+                        </>
+                      )}
+                    </dl>
+                    {conflictNudge && <p className="fr-alert fr-alert--warning" role="alert">{conflictNudge}</p>}
+                  </div>
+                </div>
+                {result?.id && (
+                  <div className="stack" style={{ gap: '.5rem', marginTop: '.75rem' }}>
+                    <div className="fr-input-group">
+                      <label className="fr-label" htmlFor="save_title">{t('scenario.save_title') || 'Scenario title'}</label>
+                      <input id="save_title" className="fr-input" value={saveTitle} onChange={e=> setSaveTitle(e.target.value)} placeholder="My plan" />
                     </div>
-                    <div id="panel-pieces" className={activeTab==='pieces' ? 'fr-tabs__panel fr-tabs__panel--selected' : 'fr-tabs__panel'} role="tabpanel" aria-labelledby="tab-pieces">
-                      <div className="fr-grid-row fr-grid-row--gutters">
-                        <div className="fr-col-12 fr-col-md-6">
-                          <h4 className="fr-h4">{t('build.expenditures') || 'Expenditures'}</h4>
-                          <PieceList pieces={exp} deltas={deltas} targets={targets} onDelta={updateDelta} onTarget={updateTarget} t={t} />
-                        </div>
-                        <div className="fr-col-12 fr-col-md-6">
-                          <h4 className="fr-h4">{t('build.revenues') || 'Revenues'}</h4>
-                          <PieceList pieces={rev} deltas={deltas} targets={targets} onDelta={updateDelta} onTarget={updateTarget} t={t} />
-                        </div>
-                      </div>
+                    <div className="fr-btns-group fr-btns-group--inline">
+                      <button className="fr-btn fr-btn--secondary" onClick={async()=>{
+                        try {
+                          const q = `mutation($id:ID!,$title:String){ saveScenario(id:$id, title:$title) }`
+                          await gqlRequest(q, { id: result.id, title: saveTitle || 'My plan' })
+                        } catch {}
+                      }}>{t('scenario.save') || 'Save'}</button>
+                      <a className="fr-link" href={`/api/og?scenarioId=${result.id}`} target="_blank" rel="noopener noreferrer">OG preview</a>
                     </div>
                   </div>
                 )}
@@ -361,106 +446,23 @@ export default function BuildPage() {
             </div>
           </div>
         </div>
-
-        <div className="fr-col-12 fr-col-md-4">
-          <div className="fr-card fr-card--no-arrow" style={{ marginBottom: '1rem' }}>
-            <div className="fr-card__body">
-              <div className="fr-card__title">{t('build.scoreboard') || 'Scoreboard'}</div>
-              <div className="fr-card__desc">
-                <dl className="fr-description-list">
-                  <div className="fr-description-list__row">
-                    <dt className="fr-description-list__term">{t('build.delta_exp') || 'ΔExpenditures (est.)'}</dt>
-                    <dd className="fr-description-list__definition">{estimateDeltaExp(exp, deltas).toLocaleString(undefined, { maximumFractionDigits: 0 })} €</dd>
-                  </div>
-                  <div className="fr-description-list__row">
-                    <dt className="fr-description-list__term">{t('build.delta_rev') || 'ΔRevenues (est.)'}</dt>
-                    <dd className="fr-description-list__definition">{estimateDeltaRev(rev, deltas).toLocaleString(undefined, { maximumFractionDigits: 0 })} €</dd>
-                  </div>
-                  {result && (
-                    <>
-                      <div className="fr-description-list__row">
-                        <dt className="fr-description-list__term">{t('score.deficit_y0') || 'Deficit (y0)'}</dt>
-                        <dd className="fr-description-list__definition">{result.deficitY0.toLocaleString(undefined, { maximumFractionDigits: 0 })} €</dd>
-                      </div>
-                      <div className="fr-description-list__row">
-                        <dt className="fr-description-list__term">EU 3%</dt>
-                        <dd className="fr-description-list__definition">{result.eu3}</dd>
-                      </div>
-                      <div className="fr-description-list__row">
-                        <dt className="fr-description-list__term">EU 60%</dt>
-                        <dd className="fr-description-list__definition">{result.eu60}</dd>
-                      </div>
-                      <div className="fr-description-list__row">
-                        <dt className="fr-description-list__term">{t('build.resolution') || 'Resolution'}</dt>
-                        <dd className="fr-description-list__definition">{(100 * result.resolutionPct).toFixed(1)}%</dd>
-                      </div>
-                      <div className="fr-description-list__row">
-                        <dt className="fr-description-list__term" aria-label={t('build.resolution_meter') || 'Resolution meter'}>&nbsp;</dt>
-                        <dd className="fr-description-list__definition" style={{width:'100%'}}><div className="fr-progress" aria-label="Resolution"><div className="fr-progress__track"><div className="fr-progress__bar" style={{ width: `${Math.min(100, 100*result.resolutionPct)}%` }} aria-hidden="true"></div></div></div></dd>
-                      </div>
-                      {result.distanceScore !== undefined && (
-                        <div className="fr-description-list__row">
-                          <dt className="fr-description-list__term">{t('build.distance') || 'Distance'}</dt>
-                          <dd className="fr-description-list__definition">{(100 * (1 - result.distanceScore)).toFixed(1)}%</dd>
-                        </div>
-                      )}
-                    </>
-                  )}
-                </dl>
-                <div className="fr-btns-group fr-btns-group--inline">
-                  <button className="fr-btn" onClick={runScenario} disabled={running}>{t('buttons.run') || 'Run'}</button>
-                  <button className="fr-btn fr-btn--secondary" onClick={() => { setDeltas({}); setTargets({}); setMassTargets({}); setMassChanges({}); setSelectedLevers([]); setResult(null); }}>{t('buttons.reset') || 'Reset'}</button>
-                </div>
-                {conflictNudge && <p className="fr-alert fr-alert--warning" role="alert">{conflictNudge}</p>}
-              </div>
-            </div>
-          </div>
-
-          <div className="fr-card fr-card--no-arrow" style={{ marginBottom: '1rem' }}>
-            <div className="fr-card__body">
-              <div className="fr-card__title">Policy Workshop</div>
-              <div className="fr-card__desc">
-                <p className="fr-text--sm">Select levers and adjust parameters. Apply as Target or Change on a mass.</p>
-                <LeverWorkshop levers={levers} masses={massList} labels={COFOG_LABELS} baseAmounts={massBaseAmounts} onApply={(mass, amount, asTarget)=>{
-                  if (asTarget) setMassTargets({ ...massTargets, [mass]: (massTargets[mass]||0) + amount })
-                  else setMassChanges({ ...massChanges, [mass]: (massChanges[mass]||0) + amount })
-                }} onToggle={toggleLever} selected={selectedLevers} />
-              </div>
-            </div>
-          </div>
-
+      </div>
+      {/* DSL Drawer */}
+      {showDsl && (
+        <div style={{ position:'fixed', right: '1rem', bottom: '1rem', width: '380px', maxHeight: '60vh', overflow:'auto', border: '1px solid var(--border-default-grey)', background: 'var(--background-default-grey)', zIndex: 200, borderRadius: 6 }}>
           <div className="fr-card fr-card--no-arrow">
             <div className="fr-card__body">
-              <div className="fr-card__title">Scenario DSL</div>
+              <div className="fr-card__title" style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                <span>Scenario DSL</span>
+                <button className="fr-btn fr-btn--sm fr-btn--secondary" onClick={()=> setShowDsl(false)}>×</button>
+              </div>
               <div className="fr-card__desc">
-                <pre style={{ whiteSpace: 'pre-wrap' }}><code>{dsl}</code></pre>
+                <pre style={{ whiteSpace: 'pre-wrap', fontSize: '12px' }}><code>{dsl}</code></pre>
               </div>
             </div>
           </div>
-
-          {result?.id && (
-          <div className="fr-card fr-card--no-arrow" style={{ marginTop: '1rem' }}>
-            <div className="fr-card__body">
-              <div className="fr-card__title">{t('scenario.save_title') || 'Scenario title'}</div>
-              <div className="fr-card__desc">
-                <div className="fr-input-group">
-                  <input id="save_title" className="fr-input" value={saveTitle} onChange={e=> setSaveTitle(e.target.value)} placeholder="My plan" />
-                </div>
-                <div className="fr-btns-group fr-btns-group--inline" style={{ marginTop: '.25rem' }}>
-                  <button className="fr-btn fr-btn--secondary" onClick={async()=>{
-                    try {
-                      const q = `mutation($id:ID!,$title:String){ saveScenario(id:$id, title:$title) }`
-                      await gqlRequest(q, { id: result.id, title: saveTitle || 'My plan' })
-                    } catch {}
-                  }}>{t('scenario.save') || 'Save'}</button>
-                  <a className="fr-link" href={`/api/og?scenarioId=${result.id}`} target="_blank" rel="noopener noreferrer">OG preview</a>
-                </div>
-              </div>
-            </div>
-          </div>
-          )}
         </div>
-      </div>
+      )}
       {result?.masses && <TwinBars masses={result.masses} labels={massList.reduce((acc, m)=> (acc[m]=massUiLabel(m), acc), {} as Record<string,string>)} resolution={result.resolutionByMass} />}
       {wfItems?.length>0 && <WaterfallDelta items={wfItems} title="Δ by Mass (Waterfall)" />}
       {ribbons?.length>0 && <SankeyRibbons ribbons={ribbons} pieceLabels={ribbonLabels.piece} massLabels={ribbonLabels.mass} />}
@@ -573,7 +575,7 @@ function defaultTargetForFamily(fam: string): string {
   }
 }
 
-function BuildHud({ estExp, estRev, result, onRun, running, onReset, t }: { estExp: number, estRev: number, result: any, onRun: ()=>void, running: boolean, onReset: ()=>void, t: (k: string)=>string }) {
+function BuildHud({ estExp, estRev, result, onRun, running, onReset, onToggleDsl, t }: { estExp: number, estRev: number, result: any, onRun: ()=>void, running: boolean, onReset: ()=>void, onToggleDsl: ()=>void, t: (k: string)=>string }) {
   const netEst = (estExp + estRev) || 0
   const eu3 = result?.eu3 || 'info'
   const eu60 = result?.eu60 || 'info'
@@ -612,6 +614,7 @@ function BuildHud({ estExp, estRev, result, onRun, running, onReset, t }: { estE
           <div className="fr-btns-group fr-btns-group--inline fr-btns-group--right">
             <button className="fr-btn fr-btn--secondary" onClick={onReset}>{t('buttons.reset') || 'Reset'}</button>
             <button className="fr-btn" onClick={onRun} disabled={running}>{t('buttons.run') || 'Run'}</button>
+            <button className="fr-btn fr-btn--secondary" onClick={onToggleDsl}>{'</>'} DSL</button>
           </div>
         </div>
       </div>
@@ -883,8 +886,8 @@ function ExplainPanel({ massId, label, baseAmount, targetAmount, specifiedAmount
     return ()=>{ cancelled = true }
   }, [massId])
   return (
-    <div role="dialog" aria-modal="true" className="fr-modal__body" style={{ position: 'fixed', left: 0, right: 0, bottom: 0, top: 0, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
-      <div className="fr-card fr-card--no-arrow" style={{ maxWidth: '720px', width: '90%', maxHeight: '80vh', overflow: 'auto' }}>
+    <div role="dialog" aria-modal="true" className="fr-modal__body" style={{ position: 'fixed', left: 0, right: 0, bottom: 0, top: 0, background: 'rgba(0,0,0,0.2)', display: 'flex', alignItems: 'stretch', justifyContent: 'flex-end', zIndex: 300 }}>
+      <div className="fr-card fr-card--no-arrow" style={{ width: '420px', maxWidth: '90vw', height: '100%', overflow: 'auto', boxShadow: 'rgba(0,0,0,0.2) 0 0 10px' }}>
         <div className="fr-card__body">
           <div className="fr-card__title">{t('build.explain') || 'Explain'} {massId} — {label}</div>
           <div className="fr-card__desc">
