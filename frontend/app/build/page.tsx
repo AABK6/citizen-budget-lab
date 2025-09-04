@@ -455,6 +455,8 @@ export default function BuildPage() {
           pieces={pieces}
           dslB64={dslB64}
           t={t}
+          selectedLevers={selectedLevers}
+          onToggleLever={toggleLever}
           onClose={()=> setExplainMass(null)}
           onApply={async(plan)=>{
             try {
@@ -782,7 +784,7 @@ function TwinBars({ masses, labels, resolution }: { masses: Record<string, { bas
   )
 }
 
-function ExplainPanel({ massId, label, baseAmount, targetAmount, specifiedAmount, pieces, dslB64, t, onClose, onApply }: {
+function ExplainPanel({ massId, label, baseAmount, targetAmount, specifiedAmount, pieces, dslB64, t, selectedLevers, onToggleLever, onClose, onApply }: {
   massId: string
   label: string
   baseAmount: number
@@ -791,6 +793,8 @@ function ExplainPanel({ massId, label, baseAmount, targetAmount, specifiedAmount
   pieces: Piece[]
   dslB64: string
   t: (k: string)=>string
+  selectedLevers: string[]
+  onToggleLever: (id: string)=>void
   onClose: ()=>void
   onApply: (plan: Array<{ pieceId: string; amountEur: number }>)=>void
 }) {
@@ -810,6 +814,32 @@ function ExplainPanel({ massId, label, baseAmount, targetAmount, specifiedAmount
   const adjust = (id: string, v: number) => {
     setSplits(prev => ({ ...prev, [id]: v }))
   }
+  // Presets
+  function applyEven() {
+    const n = Math.max(1, massPieces.length)
+    const per = (Math.abs(remaining) / n) * sign
+    const next: Record<string, number> = {}
+    for (const p of massPieces) next[p.id] = per
+    setSplits(next)
+  }
+  function applyProportional() {
+    const totBase = massPieces.reduce((s,p)=> s + Number(p.amountEur||0), 0)
+    if (!totBase) return applyEven()
+    const next: Record<string, number> = {}
+    for (const p of massPieces) {
+      const w = Number(p.amountEur||0) / totBase
+      next[p.id] = Math.abs(remaining) * w * sign
+    }
+    setSplits(next)
+  }
+  function applyFocusLargest() {
+    if (!massPieces.length) return
+    const largest = [...massPieces].sort((a,b)=> (Number(b.amountEur||0)-Number(a.amountEur||0)))[0]
+    const next: Record<string, number> = {}
+    for (const p of massPieces) next[p.id] = 0
+    next[largest.id] = remaining
+    setSplits(next)
+  }
   const clampPlan = () => {
     const plan: Array<{pieceId: string; amountEur: number}> = []
     for (const p of massPieces) {
@@ -819,6 +849,20 @@ function ExplainPanel({ massId, label, baseAmount, targetAmount, specifiedAmount
     }
     return plan
   }
+  // Suggest levers for this mass
+  const [suggested, setSuggested] = useState<Array<{ id: string; label: string; shortLabel?: string }>>([])
+  useEffect(() => {
+    let cancelled = false
+    async function load() {
+      try {
+        const q = `query($m:String!){ suggestLevers(massId:$m){ id label shortLabel } }`
+        const data = await gqlRequest(q, { m: massId })
+        if (!cancelled) setSuggested(data?.suggestLevers||[])
+      } catch {}
+    }
+    load()
+    return ()=>{ cancelled = true }
+  }, [massId])
   return (
     <div role="dialog" aria-modal="true" className="fr-modal__body" style={{ position: 'fixed', left: 0, right: 0, bottom: 0, top: 0, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
       <div className="fr-card fr-card--no-arrow" style={{ maxWidth: '720px', width: '90%', maxHeight: '80vh', overflow: 'auto' }}>
@@ -831,6 +875,12 @@ function ExplainPanel({ massId, label, baseAmount, targetAmount, specifiedAmount
             ) : (
               <>
                 <p className="fr-text--sm">{t('build.distribute_hint') || 'Distribute the remaining amount across key pieces. Sliders are sum‑constrained on apply.'}</p>
+                <div style={{ marginBottom: '.5rem' }}>
+                  <span className="fr-text--sm" style={{ marginRight: '.5rem' }}>{t('build.presets') || 'Presets'}:</span>
+                  <button className="fr-tag fr-tag--sm" onClick={applyEven}>{t('build.preset_even') || 'Even'}</button>
+                  <button className="fr-tag fr-tag--sm" style={{ marginLeft: '.5rem' }} onClick={applyProportional}>{t('build.preset_proportional') || 'Proportional'}</button>
+                  <button className="fr-tag fr-tag--sm" style={{ marginLeft: '.5rem' }} onClick={applyFocusLargest}>{t('build.preset_focus') || 'Focus largest'}</button>
+                </div>
                 <div className="stack" style={{ gap: '.5rem' }}>
                   {massPieces.map(p => (
                     <div key={p.id} className="fr-input-group">
@@ -849,6 +899,18 @@ function ExplainPanel({ massId, label, baseAmount, targetAmount, specifiedAmount
                   ))}
                 </div>
               </>
+            )}
+            {suggested.length>0 && (
+              <div style={{ marginTop: '.75rem' }}>
+                <div className="fr-text--sm" style={{ marginBottom: '.25rem' }}>{t('build.suggestions') || 'Suggestions'}</div>
+                <div className="fr-tags-group">
+                  {suggested.map(s => (
+                    <button key={s.id} className={"fr-tag" + (selectedLevers.includes(s.id)? ' fr-tag--dismiss':'')} onClick={()=> onToggleLever(s.id)} title={s.shortLabel || s.label}>
+                      {s.shortLabel || s.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
             )}
             <div className="fr-btns-group fr-btns-group--inline" style={{ marginTop: '.5rem' }}>
               <button className="fr-btn fr-btn--secondary" onClick={onClose}>{t('buttons.close') || 'Close'}</button>
