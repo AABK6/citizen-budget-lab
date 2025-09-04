@@ -188,6 +188,11 @@ Epics
   - Build page (three‑panel): Left LEGO Shelf (Spending/Revenues tabs, search/filters, lock/bounds badges) → Center Canvas with `TwinBars` and animated Deficit Gap → Right Consequence Dashboard (Accounting, EU Rule Lights, Debt path, Macro fan, Distribution).
   - Scoreboard & comparator: balance, debt, EU lights, distance; stacked bars “Your budget vs current”; scale tooltips.
   - Modes & sharing: “From scratch” and “From current”; permalinks (deterministic IDs); share‑card image generator + OG tags; Challenge presets; deterministic IDs wired to OG image.
+  - Status: [~]
+    - New `/build` page with three panels: Pieces shelf, Baseline canvas (simple shares), and Scoreboard (deficit, debt, EU lights). Distance wired.
+    - Per‑piece dials: Target Δ% (role: target) and Change Δ% (action) replace “Pending”; locked pieces disabled.
+    - Resolution Meter wired to backend; permalinks via `?dsl=<base64>` supported.
+    - Remaining: striped bar skin + Δ chips; lever UI and presets; OG image route.
   - Accessibility & i18n: full FR/EN, keyboard, contrast; “show the table”.
 - LEGO Budget Builder — Documentation [Docs]
   - `docs/LEGO_METHOD.md`: sources, mapping, beneficiary rules, elasticities (v0), limitations, versioning; audit tables.

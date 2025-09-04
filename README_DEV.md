@@ -51,12 +51,9 @@ Example queries
   mutation {
     runScenario(input: { dsl: "<base64>" }) {
       id
-      scenarioId
       accounting { deficitPath debtPath }
       compliance { eu3pct eu60pct netExpenditure localBalance }
       macro { deltaGDP deltaEmployment deltaDeficit assumptions }
-      distanceScore
-      shareSummary { title deficit debtDeltaPct highlight }
       resolution { overallPct byMass { massId targetDeltaEur specifiedDeltaEur } }
     }
   }

@@ -880,6 +880,7 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
         recurring = bool(act.get("recurring", False))
         dim = (act.get("dimension") or "cp").lower()
         target = str(act.get("target", ""))
+        role = str(act.get("role", "")).lower()  # optional extension: 'target' marks mass target only
         if dim not in ("cp", "ae", "tax"):
             continue
         amount = 0.0
@@ -887,27 +888,37 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
         if "amount_eur" in act and dim in ("cp", "ae") and not target.startswith("piece."):
             amount = float(act["amount_eur"]) * (1 if op == "increase" else -1 if op == "decrease" else 0)
             if amount != 0.0:
-                if recurring:
-                    for i in range(horizon_years):
-                        deltas_by_year[i] += amount
+                # If action is a target-only marker, do NOT change deltas; only attribute to resolution targets
+                if role == "target":
+                    try:
+                        for cat, w in _map_action_to_cofog(act, baseline_year):
+                            major = str(cat).split(".")[0][:2]
+                            resolution_target_by_mass[major] = resolution_target_by_mass.get(major, 0.0) + amount * float(w)
+                    except Exception:
+                        pass
                 else:
-                    deltas_by_year[0] += amount
-                # Map to macro categories for shocks (% GDP)
-                for cat, w in _map_action_to_cofog(act, baseline_year):
-                    path = shocks_pct_gdp.setdefault(cat, [0.0] * horizon_years)
-                    shock_eur = amount * float(w)
                     if recurring:
                         for i in range(horizon_years):
-                            path[i] += 100.0 * shock_eur / gdp_series[i]
+                            deltas_by_year[i] += amount
                     else:
-                        path[0] += 100.0 * shock_eur / gdp_series[0]
-                # Resolution: attribute mission.* targets to mass majors
-                try:
+                        deltas_by_year[0] += amount
+                    # Map to macro categories for shocks (% GDP)
                     for cat, w in _map_action_to_cofog(act, baseline_year):
-                        major = str(cat).split(".")[0][:2]
-                        resolution_target_by_mass[major] = resolution_target_by_mass.get(major, 0.0) + amount * float(w)
-                except Exception:
-                    pass
+                        path = shocks_pct_gdp.setdefault(cat, [0.0] * horizon_years)
+                        shock_eur = amount * float(w)
+                        if recurring:
+                            for i in range(horizon_years):
+                                path[i] += 100.0 * shock_eur / gdp_series[i]
+                        else:
+                            path[0] += 100.0 * shock_eur / gdp_series[0]
+                    # Also attribute these admin changes to targets for progress bars (acts like setting both target and change)
+                    try:
+                        for cat, w in _map_action_to_cofog(act, baseline_year):
+                            major = str(cat).split(".")[0][:2]
+                            resolution_target_by_mass[major] = resolution_target_by_mass.get(major, 0.0) + amount * float(w)
+                            resolution_specified_by_mass[major] = resolution_specified_by_mass.get(major, 0.0) + amount * float(w)
+                    except Exception:
+                        pass
         # Basic tax op handling: rate change approximated as revenue change proxy (stub)
         if dim == "tax" and "delta_bps" in act:
             for cat, w in _map_action_to_cofog(act, baseline_year):
@@ -993,44 +1004,62 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
                     val = float(amt_eur)
                 except Exception:
                     val = 0.0
-                if ptype == "expenditure":
-                    if op == "increase":
-                        _enforce_bounds_amount_change(val)
-                        delta = val
-                    elif op == "decrease":
-                        _enforce_bounds_amount_change(-val)
-                        delta = -val
-                    elif op == "set":
-                        new_val = float(val)
-                        change = new_val - base_amt
-                        _enforce_bounds_amount_change(change)
-                        delta = change
-                else:  # revenue — positive revenue reduces deficit
-                    if op == "increase":
-                        _enforce_bounds_amount_change(val)
-                        delta = -val
-                    elif op == "decrease":
-                        _enforce_bounds_amount_change(-val)
-                        delta = val
-                    elif op == "set":
-                        new_val = float(val)
-                        change = new_val - base_amt
-                        _enforce_bounds_amount_change(change)
-                        delta = -change
+                if role == "target":
+                    # Treat as pure target: attribute to resolution target by mass, do not change deltas
+                    cof = lego_cofog_map.get(pid) or []
+                    if cof:
+                        for c_code, w in cof:
+                            major = str(c_code).split(".")[0][:2]
+                            resolution_target_by_mass[major] = resolution_target_by_mass.get(major, 0.0) + float(val) * (1.0 if ptype == "expenditure" else -1.0) * float(w)
+                else:
+                    if ptype == "expenditure":
+                        if op == "increase":
+                            _enforce_bounds_amount_change(val)
+                            delta = val
+                        elif op == "decrease":
+                            _enforce_bounds_amount_change(-val)
+                            delta = -val
+                        elif op == "set":
+                            new_val = float(val)
+                            change = new_val - base_amt
+                            _enforce_bounds_amount_change(change)
+                            delta = change
+                    else:  # revenue - positive revenue reduces deficit
+                        if op == "increase":
+                            _enforce_bounds_amount_change(val)
+                            delta = -val
+                        elif op == "decrease":
+                            _enforce_bounds_amount_change(-val)
+                            delta = val
+                        elif op == "set":
+                            new_val = float(val)
+                            change = new_val - base_amt
+                            _enforce_bounds_amount_change(change)
+                            delta = -change
             elif dp is not None:
                 try:
                     pct = float(dp)
                 except Exception:
                     pct = 0.0
                 sign = 1.0 if op != "decrease" else -1.0
-                _enforce_bounds_pct(pct * (1.0 if op != "decrease" else -1.0))
-                eff = (pct / 100.0) * base_amt
-                if ptype == "expenditure":
-                    delta = sign * eff
+                if role == "target":
+                    # Attribute target mass amounts by mapping; use expenditure positive convention
+                    cof = lego_cofog_map.get(pid) or []
+                    eff = (pct / 100.0) * base_amt
+                    eff_sign = sign * (1.0 if ptype == "expenditure" else -1.0)
+                    if cof:
+                        for c_code, w in cof:
+                            major = str(c_code).split(".")[0][:2]
+                            resolution_target_by_mass[major] = resolution_target_by_mass.get(major, 0.0) + eff_sign * eff * float(w)
                 else:
-                    # Apply elasticity for revenues if provided
-                    e = lego_elast.get(pid, 1.0)
-                    delta = -sign * eff * e
+                    _enforce_bounds_pct(pct * (1.0 if op != "decrease" else -1.0))
+                    eff = (pct / 100.0) * base_amt
+                    if ptype == "expenditure":
+                        delta = sign * eff
+                    else:
+                        # Apply elasticity for revenues if provided
+                        e = lego_elast.get(pid, 1.0)
+                        delta = -sign * eff * e
             if delta != 0.0:
                 if recurring:
                     for i in range(horizon_years):
