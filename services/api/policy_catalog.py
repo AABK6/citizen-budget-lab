@@ -14,6 +14,9 @@ _LEVER_CATALOG: List[dict] = [
         "feasibility": {"law": False, "adminLagMonths": 6, "notes": "Contractual negotiations required."},
         "conflicts_with": ["def_fleet_delay"],
         "sources": ["LPM", "Cour des comptes"],
+        "short_label": "Trim procurement",
+        "popularity": 0.6,
+        "mass_mapping": {"02": 0.9}
     },
     {
         "id": "def_fleet_delay",
@@ -24,6 +27,9 @@ _LEVER_CATALOG: List[dict] = [
         "feasibility": {"law": False, "adminLagMonths": 3, "notes": "Operational risk; avoid double-count with procurement cuts."},
         "conflicts_with": ["def_procurements_trim"],
         "sources": ["LPM"],
+        "short_label": "Delay deliveries",
+        "popularity": 0.5,
+        "mass_mapping": {"02": 0.7}
     },
     {
         "id": "staffing_headcount_minus1pct",
@@ -34,6 +40,9 @@ _LEVER_CATALOG: List[dict] = [
         "feasibility": {"law": False, "adminLagMonths": 12, "notes": "Natural attrition path."},
         "conflicts_with": [],
         "sources": ["PAP", "RAP"],
+        "short_label": "-1% headcount",
+        "popularity": 0.7,
+        "mass_mapping": {"01": 0.5, "09": 0.3, "07": 0.2}
     },
     {
         "id": "pen_age_plus3m_per_year",
@@ -44,6 +53,9 @@ _LEVER_CATALOG: List[dict] = [
         "feasibility": {"law": True, "adminLagMonths": 18, "notes": "Requires legislation."},
         "conflicts_with": [],
         "sources": ["DREES"],
+        "short_label": "Age +3m/y",
+        "popularity": 0.8,
+        "mass_mapping": {"10": 0.8}
     },
 ]
 
@@ -66,3 +78,21 @@ def list_policy_levers(family: Optional[str] = None, search: Optional[str] = Non
 def levers_by_id() -> Dict[str, dict]:
     return {str(x.get("id")): x for x in _LEVER_CATALOG}
 
+
+def suggest_levers_for_mass(mass_id: str, limit: int = 5) -> List[dict]:
+    """Return levers ranked by relevance to the given COFOG major.
+
+    Ranking = mass_mapping weight × popularity (fallback popularity=0.5 when absent).
+    """
+    mid = str(mass_id).zfill(2)[:2]
+    scored: List[tuple[float, dict]] = []
+    for it in _LEVER_CATALOG:
+        mm = it.get("mass_mapping") or {}
+        w = float(mm.get(mid, 0.0))
+        if w <= 0:
+            continue
+        pop = float(it.get("popularity", 0.5))
+        score = w * (0.5 + 0.5 * pop)
+        scored.append((score, it))
+    scored.sort(key=lambda x: x[0], reverse=True)
+    return [it for _, it in scored[:limit]]

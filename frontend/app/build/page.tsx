@@ -42,6 +42,9 @@ export default function BuildPage() {
   const [levers, setLevers] = useState<Lever[]>([])
   const [selectedLevers, setSelectedLevers] = useState<string[]>([])
   const [running, setRunning] = useState<boolean>(false)
+  const [massLabels, setMassLabels] = useState<Record<string, { displayLabel: string; description?: string }>>({})
+  const [intents, setIntents] = useState<Array<{ id: string; label: string; emoji?: string; massId: string; seed: any }>>([])
+  const [explainMass, setExplainMass] = useState<string | null>(null)
   const [result, setResult] = useState<{
     id?: string
     deficitY0: number
@@ -81,6 +84,8 @@ export default function BuildPage() {
             legoPieces(year:$y){ id label type amountEur share cofogMajors locked }
             legoBaseline(year:$y){ depensesTotal recettesTotal }
             policyLevers { id family label paramsSchema }
+            massLabels { id displayLabel description }
+            popularIntents(limit: 6){ id label emoji massId seed }
           }
         `
         const data = await gqlRequest(q, { y: year })
@@ -88,6 +93,10 @@ export default function BuildPage() {
         setPieces(data.legoPieces)
         setBaseline(data.legoBaseline)
         setLevers(data.policyLevers)
+        const ml: Record<string,{displayLabel:string;description?:string}> = {}
+        for (const m of (data.massLabels||[])) ml[m.id] = { displayLabel: m.displayLabel, description: m.description }
+        setMassLabels(ml)
+        setIntents(data.popularIntents||[])
         // Keep existing deltas/targets if same ids, else prune
         setDeltas(d => Object.fromEntries(Object.entries(d).filter(([k]) => data.legoPieces.some((p: Piece) => p.id === k))))
         setTargets(t => Object.fromEntries(Object.entries(t).filter(([k]) => data.legoPieces.some((p: Piece) => p.id === k))))
@@ -263,6 +272,7 @@ export default function BuildPage() {
   const rev = pieces.filter(p => p.type === 'revenue')
   const massList = Object.keys(COFOG_LABELS)
   const massBaseAmounts = useMemo(() => computeMassBase(pieces), [pieces])
+  const massUiLabel = (m: string) => massLabels[m]?.displayLabel || COFOG_LABELS[m] || m
 
   return (
     <div className="stack" style={{ gap: '1.25rem' }}>
@@ -293,6 +303,18 @@ export default function BuildPage() {
                 {error && <p className="fr-error-text">{t('error.generic') || error}</p>}
                 {!loading && !error && (
                   <div className="fr-tabs">
+                    {intents.length>0 && (
+                      <div style={{ margin: '.5rem 0' }}>
+                        <span className="fr-text--sm" style={{ marginRight: '.5rem' }}>{t('build.popular_intents') || 'Popular intents:'}</span>
+                        {intents.map((it)=> (
+                          <button key={it.id} className="fr-tag fr-tag--sm" style={{ marginRight: '.5rem' }} onClick={()=>{
+                            const m = (it.massId||'').padStart(2,'0').slice(0,2)
+                            const amt = Number(it.seed?.amount_eur||0)
+                            if (m && isFinite(amt) && amt !== 0) setMassTargets(prev => ({ ...prev, [m]: (prev[m]||0) + amt }))
+                          }}>{it.emoji ? `${it.emoji} `: ''}{it.label}</button>
+                        ))}
+                      </div>
+                    )}
                     <ul className="fr-tabs__list" role="tablist">
                       <li role="presentation">
                         <button id="tab-masses" className={activeTab==='masses' ? 'fr-tabs__tab fr-tabs__tab--selected' : 'fr-tabs__tab'} tabIndex={0} aria-selected={activeTab==='masses'} aria-controls="panel-masses" role="tab" onClick={()=> setActiveTab('masses')}>{t('build.mass_dials') || 'Mass dials'}</button>
@@ -302,7 +324,7 @@ export default function BuildPage() {
                       </li>
                     </ul>
                     <div id="panel-masses" className={activeTab==='masses' ? 'fr-tabs__panel fr-tabs__panel--selected' : 'fr-tabs__panel'} role="tabpanel" aria-labelledby="tab-masses">
-                      <MassList masses={massList} labels={COFOG_LABELS} baseAmounts={massBaseAmounts} targets={massTargets} changes={massChanges} onTarget={(m,v)=> setMassTargets({ ...massTargets, [m]: v })} onChangeAmt={(m,v)=> setMassChanges({ ...massChanges, [m]: v })} resolution={result?.resolutionByMass} />
+                      <MassList masses={massList} labels={massUiLabel} baseAmounts={massBaseAmounts} targets={massTargets} changes={massChanges} onTarget={(m,v)=> setMassTargets({ ...massTargets, [m]: v })} onChangeAmt={(m,v)=> setMassChanges({ ...massChanges, [m]: v })} resolution={result?.resolutionByMass} onExplain={(m)=> setExplainMass(m)} />
                     </div>
                     <div id="panel-pieces" className={activeTab==='pieces' ? 'fr-tabs__panel fr-tabs__panel--selected' : 'fr-tabs__panel'} role="tabpanel" aria-labelledby="tab-pieces">
                       <div className="fr-grid-row fr-grid-row--gutters">
@@ -422,7 +444,30 @@ export default function BuildPage() {
           )}
         </div>
       </div>
-      {result?.masses && <TwinBars masses={result.masses} labels={COFOG_LABELS} resolution={result.resolutionByMass} />}
+      {result?.masses && <TwinBars masses={result.masses} labels={massList.reduce((acc, m)=> (acc[m]=massUiLabel(m), acc), {} as Record<string,string>)} resolution={result.resolutionByMass} />}
+      {explainMass && (
+        <ExplainPanel
+          massId={explainMass}
+          label={massUiLabel(explainMass)}
+          baseAmount={massBaseAmounts[explainMass]||0}
+          targetAmount={massTargets[explainMass]||0}
+          specifiedAmount={(result?.resolutionByMass||[]).find(e=> e.massId===explainMass)?.specifiedDeltaEur || 0}
+          pieces={pieces}
+          onClose={()=> setExplainMass(null)}
+          onApply={(plan)=>{
+            const newD = { ...deltas }
+            for (const { pieceId, amountEur } of plan) {
+              const p = pieces.find(pp=> pp.id===pieceId)
+              const base = Number(p?.amountEur||0)
+              if (!base) continue
+              const pct = (amountEur / base) * 100
+              newD[pieceId] = (newD[pieceId]||0) + pct
+            }
+            setDeltas(newD)
+            setExplainMass(null)
+          }}
+        />
+      )}
     </div>
   )
 }
@@ -548,15 +593,16 @@ function computeMassBase(pieces: Piece[]): Record<string, number> {
   return by
 }
 
-function MassList({ masses, labels, baseAmounts, targets, changes, onTarget, onChangeAmt, resolution }: {
+function MassList({ masses, labels, baseAmounts, targets, changes, onTarget, onChangeAmt, resolution, onExplain }: {
   masses: string[]
-  labels: Record<string,string>
+  labels: Record<string,string> | ((m: string)=>string)
   baseAmounts: Record<string, number>
   targets: Record<string, number>
   changes: Record<string, number>
   onTarget: (m: string, v: number) => void
   onChangeAmt: (m: string, v: number) => void
   resolution?: { massId: string; targetDeltaEur: number; specifiedDeltaEur: number }[]
+  onExplain?: (m: string)=>void
 }) {
   const resBy: Record<string, { t: number; s: number }> = {}
   for (const e of (resolution||[])) resBy[e.massId] = { t: e.targetDeltaEur, s: e.specifiedDeltaEur }
@@ -566,7 +612,7 @@ function MassList({ masses, labels, baseAmounts, targets, changes, onTarget, onC
         <div key={m} className="fr-input-group" style={{ padding: '.25rem .5rem', border: '1px solid var(--border-default-grey)', borderRadius: '6px' }}>
           <div className="fr-grid-row fr-grid-row--gutters" style={{ alignItems: 'center' }}>
             <div className="fr-col-12 fr-col-sm-4">
-              <strong>{m}</strong> — {labels[m] || 'Mass'}<br/>
+              <strong>{m}</strong> — {typeof labels === 'function' ? labels(m) : (labels[m] || 'Mass')}<br/>
               <span className="fr-text--xs">Base: {(baseAmounts[m]||0).toLocaleString(undefined,{maximumFractionDigits:0})} €</span>
             </div>
             <div className="fr-col-12 fr-col-sm-4">
@@ -577,6 +623,9 @@ function MassList({ masses, labels, baseAmounts, targets, changes, onTarget, onC
               <label className="fr-label" htmlFor={`mc_${m}`}>Change Δ€</label>
               <input id={`mc_${m}`} className="fr-input" type="number" value={changes[m] || 0} onChange={e=> onChangeAmt(m, Number(e.target.value))} />
             </div>
+          </div>
+          <div className="fr-btns-group fr-btns-group--inline" style={{ marginTop: '.25rem' }}>
+            <button className="fr-btn fr-btn--secondary fr-btn--sm" onClick={()=> onExplain && onExplain(m)}>Explain this</button>
           </div>
           {resBy[m] && (
             <div className="fr-progress" style={{marginTop:'.25rem'}} aria-label="Resolution">
@@ -709,6 +758,83 @@ function TwinBars({ masses, labels, resolution }: { masses: Record<string, { bas
             </div>
           )
         })}
+      </div>
+    </div>
+  )
+}
+
+function ExplainPanel({ massId, label, baseAmount, targetAmount, specifiedAmount, pieces, onClose, onApply }: {
+  massId: string
+  label: string
+  baseAmount: number
+  targetAmount: number
+  specifiedAmount: number
+  pieces: Piece[]
+  onClose: ()=>void
+  onApply: (plan: Array<{ pieceId: string; amountEur: number }>)=>void
+}) {
+  const remaining = (targetAmount||0) - (specifiedAmount||0)
+  const sign = remaining >= 0 ? 1 : -1
+  const massPieces = pieces
+    .filter(p => (p.cofogMajors||[]).some(m => String(m).padStart(2,'0').slice(0,2) === massId))
+    .slice(0, 6)
+  const [splits, setSplits] = useState<Record<string, number>>(()=>{
+    const init: Record<string, number> = {}
+    const n = Math.max(1, massPieces.length)
+    const per = (Math.abs(remaining) / n) || 0
+    for (const p of massPieces) init[p.id] = per * sign
+    return init
+  })
+  const total = Object.values(splits).reduce((s,v)=> s + v, 0)
+  const adjust = (id: string, v: number) => {
+    setSplits(prev => ({ ...prev, [id]: v }))
+  }
+  const clampPlan = () => {
+    const plan: Array<{pieceId: string; amountEur: number}> = []
+    for (const p of massPieces) {
+      let v = splits[p.id] || 0
+      v = (Math.abs(total)>1e-6) ? v * (remaining / total) : v
+      plan.push({ pieceId: p.id, amountEur: v })
+    }
+    return plan
+  }
+  return (
+    <div role="dialog" aria-modal="true" className="fr-modal__body" style={{ position: 'fixed', left: 0, right: 0, bottom: 0, top: 0, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
+      <div className="fr-card fr-card--no-arrow" style={{ maxWidth: '720px', width: '90%', maxHeight: '80vh', overflow: 'auto' }}>
+        <div className="fr-card__body">
+          <div className="fr-card__title">Explain {massId} — {label}</div>
+          <div className="fr-card__desc">
+            <p className="fr-text--sm">Target: {(targetAmount||0).toLocaleString()} €; Specified: {(specifiedAmount||0).toLocaleString()} €; Remaining: {remaining.toLocaleString()} €</p>
+            {remaining === 0 ? (
+              <p className="fr-text--sm">Target met.</p>
+            ) : (
+              <>
+                <p className="fr-text--sm">Distribute the remaining amount across key pieces. Sliders are sum‑constrained on apply.</p>
+                <div className="stack" style={{ gap: '.5rem' }}>
+                  {massPieces.map(p => (
+                    <div key={p.id} className="fr-input-group">
+                      <label className="fr-label" htmlFor={`split_${p.id}`}>{p.label || p.id} <span className="fr-text--xs">(base {(p.amountEur||0).toLocaleString()} €)</span></label>
+                      <div className="fr-grid-row fr-grid-row--gutters">
+                        <div className="fr-col-8">
+                          <div className="fr-range">
+                            <input id={`split_${p.id}`} type="range" min={-Math.abs(baseAmount)} max={Math.abs(baseAmount)} step={Math.max(1, Math.round((baseAmount||1)/100))} value={splits[p.id] || 0} onChange={e=> adjust(p.id, Number((e.target as HTMLInputElement).value))} />
+                          </div>
+                        </div>
+                        <div className="fr-col-4">
+                          <input className="fr-input" type="number" value={splits[p.id] || 0} onChange={e=> adjust(p.id, Number(e.target.value))} />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+            <div className="fr-btns-group fr-btns-group--inline" style={{ marginTop: '.5rem' }}>
+              <button className="fr-btn fr-btn--secondary" onClick={onClose}>Close</button>
+              <button className="fr-btn" onClick={()=> onApply(clampPlan())} disabled={remaining===0}>Apply</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )

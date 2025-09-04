@@ -1,0 +1,15 @@
+{
+  "masses": [
+    { "id": "01", "displayLabel": "General public services", "description": "Government, executive, financial and fiscal affairs.", "examples": ["Public administration", "Debt management"], "synonyms": ["administration", "gouvernement"] },
+    { "id": "02", "displayLabel": "Defense", "description": "Military and civil defense activities.", "examples": ["Procurement", "Personnel", "Operations"], "synonyms": ["armée", "militaire"] },
+    { "id": "03", "displayLabel": "Public order & safety", "description": "Police services, law courts, prisons.", "examples": ["Police", "Justice"], "synonyms": ["sécurité", "police", "justice"] },
+    { "id": "04", "displayLabel": "Economic affairs", "description": "General economic, commercial and labor affairs.", "examples": ["Industry support", "Transport"], "synonyms": ["économie", "affaires économiques"] },
+    { "id": "05", "displayLabel": "Environmental protection", "description": "Waste management, pollution abatement.", "examples": ["Waste", "Water"], "synonyms": ["environnement", "écologie"] },
+    { "id": "06", "displayLabel": "Housing & community amenities", "description": "Housing development, community amenities.", "examples": ["Urbanism", "Utilities"], "synonyms": ["logement", "aménagement"] },
+    { "id": "07", "displayLabel": "Health", "description": "Health services and public health.", "examples": ["Hospitals", "Primary care"], "synonyms": ["santé", "hôpital"] },
+    { "id": "08", "displayLabel": "Recreation, culture, religion", "description": "Cultural services, broadcasting, recreation.", "examples": ["Culture", "Sports"], "synonyms": ["culture", "sport"] },
+    { "id": "09", "displayLabel": "Education", "description": "Pre‑primary to tertiary education.", "examples": ["Schools", "Universities"], "synonyms": ["éducation", "école", "université"] },
+    { "id": "10", "displayLabel": "Social protection", "description": "Sickness, disability, old age, family, unemployment.", "examples": ["Pensions", "Family", "Unemployment"], "synonyms": ["protection sociale", "pensions"] }
+  ]
+}
+

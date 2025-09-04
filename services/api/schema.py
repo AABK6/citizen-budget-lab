@@ -227,6 +227,28 @@ class PolicyLeverType:
     feasibility: JSON
     conflictsWith: list[str]
     sources: list[str]
+    shortLabel: str | None = None
+    popularity: float | None = None
+
+
+@strawberry.type
+class MassLabelType:
+    id: str
+    displayLabel: str
+    description: str | None
+    examples: list[str]
+    synonyms: list[str]
+
+
+@strawberry.type
+class IntentType:
+    id: str
+    label: str
+    emoji: str | None
+    massId: str
+    seed: JSON
+    popularity: float
+    tags: list[str]
 
 
 @strawberry.type
@@ -493,6 +515,7 @@ class Query:
                 type=str(ent.get("type")),
                 amountEur=(ent.get("amount_eur") if isinstance(ent.get("amount_eur"), (int, float)) else None),
                 share=(ent.get("share") if isinstance(ent.get("share"), (int, float)) else None),
+                cofogMajors=[],
                 beneficiaries={},
                 examples=[],
                 sources=[],
@@ -539,6 +562,82 @@ class Query:
                     feasibility=it.get("feasibility") or {},
                     conflictsWith=[str(x) for x in (it.get("conflicts_with") or [])],
                     sources=[str(x) for x in (it.get("sources") or [])],
+                    shortLabel=str(it.get("short_label") or ""),
+                    popularity=float(it.get("popularity", 0.0)),
+                )
+            )
+        return out
+
+    # UX labels for masses (COFOG majors)
+    @strawberry.field
+    def massLabels(self) -> list[MassLabelType]:
+        import json, os
+        from .data_loader import DATA_DIR  # type: ignore
+        path = os.path.join(DATA_DIR, "ux_labels.json")
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                js = json.load(f)
+            out: list[MassLabelType] = []
+            for ent in js.get("masses", []):
+                out.append(
+                    MassLabelType(
+                        id=str(ent.get("id")),
+                        displayLabel=str(ent.get("displayLabel") or ent.get("id")),
+                        description=str(ent.get("description") or ""),
+                        examples=[str(x) for x in (ent.get("examples") or [])],
+                        synonyms=[str(x) for x in (ent.get("synonyms") or [])],
+                    )
+                )
+            return out
+        except Exception:
+            return []
+
+    # Popular intents (chips)
+    @strawberry.field
+    def popularIntents(self, limit: int = 6) -> list[IntentType]:  # noqa: N802
+        import json, os
+        from .data_loader import DATA_DIR  # type: ignore
+        path = os.path.join(DATA_DIR, "intents.json")
+        out: list[IntentType] = []
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                js = json.load(f)
+            arr = sorted(js.get("intents", []), key=lambda e: float(e.get("popularity", 0.0)), reverse=True)[:limit]
+            for it in arr:
+                out.append(
+                    IntentType(
+                        id=str(it.get("id")),
+                        label=str(it.get("label")),
+                        emoji=str(it.get("emoji") or ""),
+                        massId=str(it.get("massId") or ""),
+                        seed=it.get("seed") or {},
+                        popularity=float(it.get("popularity", 0.0)),
+                        tags=[str(x) for x in (it.get("tags") or [])],
+                    )
+                )
+        except Exception:
+            return []
+        return out
+
+    # Suggest levers for a mass id
+    @strawberry.field
+    def suggestLevers(self, massId: str, limit: int = 5) -> list["PolicyLeverType"]:  # noqa: N802
+        from . import policy_catalog as pol
+        items = pol.suggest_levers_for_mass(massId, limit)
+        out: list[PolicyLeverType] = []
+        for it in items:
+            out.append(
+                PolicyLeverType(
+                    id=str(it.get("id")),
+                    family=PolicyFamilyEnum(str(it.get("family", "OTHER"))),
+                    label=str(it.get("label")),
+                    description=str(it.get("description") or ""),
+                    paramsSchema=it.get("params_schema") or {},
+                    feasibility=it.get("feasibility") or {},
+                    conflictsWith=[str(x) for x in (it.get("conflicts_with") or [])],
+                    sources=[str(x) for x in (it.get("sources") or [])],
+                    shortLabel=str(it.get("short_label") or ""),
+                    popularity=float(it.get("popularity", 0.0)),
                 )
             )
         return out
