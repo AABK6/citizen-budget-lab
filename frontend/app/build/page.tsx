@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState } from 'react'
+import { useI18n } from '@/lib/i18n'
 import { gqlRequest } from '@/lib/graphql'
 
 type Piece = {
@@ -10,6 +11,7 @@ type Piece = {
   amountEur?: number | null
   share?: number | null
   cofogMajors?: string[]
+  locked?: boolean
 }
 
 type Lever = { id: string; family: string; label: string; paramsSchema?: Record<string, any> }
@@ -27,6 +29,7 @@ function yamlQuote(s: string): string {
 }
 
 export default function BuildPage() {
+  const { t } = useI18n()
   const [year, setYear] = useState<number>(2026)
   const [pieces, setPieces] = useState<Piece[]>([])
   const [baseline, setBaseline] = useState<{ depensesTotal: number; recettesTotal: number } | null>(null)
@@ -40,6 +43,7 @@ export default function BuildPage() {
   const [selectedLevers, setSelectedLevers] = useState<string[]>([])
   const [running, setRunning] = useState<boolean>(false)
   const [result, setResult] = useState<{
+    id?: string
     deficitY0: number
     eu3: string
     eu60: string
@@ -49,6 +53,8 @@ export default function BuildPage() {
     masses?: Record<string, { base: number; scen: number }>
   } | null>(null)
   const [conflictNudge, setConflictNudge] = useState<string | null>(null)
+  const [activeTab, setActiveTab] = useState<'masses' | 'pieces'>('masses')
+  const [saveTitle, setSaveTitle] = useState<string>('')
 
   // COFOG major labels (client-side)
   const COFOG_LABELS: Record<string, string> = {
@@ -72,7 +78,7 @@ export default function BuildPage() {
       try {
         const q = `
           query($y:Int!){
-            legoPieces(year:$y){ id label type amountEur share cofogMajors }
+            legoPieces(year:$y){ id label type amountEur share cofogMajors locked }
             legoBaseline(year:$y){ depensesTotal recettesTotal }
             policyLevers { id family label paramsSchema }
           }
@@ -89,7 +95,16 @@ export default function BuildPage() {
         try {
           const params = new URLSearchParams(window.location.search)
           const dslParam = params.get('dsl')
-          if (dslParam) restoreFromDsl(dslParam, data.legoPieces)
+          if (dslParam) {
+            const parsed = parseDsl(dslParam, data.legoPieces)
+            if (parsed) {
+              setTargets(parsed.targets)
+              setDeltas(parsed.deltas)
+              setMassTargets(parsed.massTargets)
+              setMassChanges(parsed.massChanges)
+              setSelectedLevers(parsed.levers)
+            }
+          }
         } catch {}
       } catch (e: any) {
         if (!cancelled) setError(e?.message || 'Failed to load')
@@ -217,7 +232,7 @@ export default function BuildPage() {
         const dd = await gqlRequest(dq, { y: year, dsl: dslB64 })
         distanceScore = Number(dd.legoDistance?.score || 0)
       } catch {}
-      setResult({ deficitY0: Number(def?.[0] || 0), eu3, eu60, resolutionPct: resPct, distanceScore, resolutionByMass: byMass, masses })
+      setResult({ id: data.runScenario.id, deficitY0: Number(def?.[0] || 0), eu3, eu60, resolutionPct: resPct, distanceScore, resolutionByMass: byMass, masses })
       // Sync permalink
       try {
         const url = new URL(window.location.href)
@@ -251,15 +266,16 @@ export default function BuildPage() {
 
   return (
     <div className="stack" style={{ gap: '1.25rem' }}>
-      <BuildHud 
-        estExp={estimateDeltaExp(exp, deltas)} 
-        estRev={estimateDeltaRev(rev, deltas)} 
-        result={result} 
+      <BuildHud
+        estExp={estimateDeltaExp(exp, deltas)}
+        estRev={estimateDeltaRev(rev, deltas)}
+        result={result}
         onRun={runScenario}
         running={running}
         onReset={()=>{ setDeltas({}); setTargets({}); setMassTargets({}); setMassChanges({}); setSelectedLevers([]); setResult(null); }}
+        t={t}
       />
-      <h2 className="fr-h2">Build — Workshop</h2>
+      <h2 className="fr-h2">{t('build.title') || 'Build — Workshop'}</h2>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-8">
           <div className="fr-card fr-card--no-arrow">
@@ -273,30 +289,30 @@ export default function BuildPage() {
                   </div>
                   <div className="fr-col-6" />
                 </div>
-                {loading && <p>Loading…</p>}
-                {error && <p className="fr-error-text">{error}</p>}
+                {loading && <p>{t('loading') || 'Loading…'}</p>}
+                {error && <p className="fr-error-text">{t('error.generic') || error}</p>}
                 {!loading && !error && (
                   <div className="fr-tabs">
                     <ul className="fr-tabs__list" role="tablist">
                       <li role="presentation">
-                        <button id="tab-masses" className="fr-tabs__tab fr-fi-checkbox-line" tabIndex={0} aria-selected="true" aria-controls="panel-masses" role="tab">Mass dials</button>
+                        <button id="tab-masses" className={activeTab==='masses' ? 'fr-tabs__tab fr-tabs__tab--selected' : 'fr-tabs__tab'} tabIndex={0} aria-selected={activeTab==='masses'} aria-controls="panel-masses" role="tab" onClick={()=> setActiveTab('masses')}>{t('build.mass_dials') || 'Mass dials'}</button>
                       </li>
                       <li role="presentation">
-                        <button id="tab-pieces" className="fr-tabs__tab" tabIndex={-1} aria-selected="false" aria-controls="panel-pieces" role="tab">Piece dials</button>
+                        <button id="tab-pieces" className={activeTab==='pieces' ? 'fr-tabs__tab fr-tabs__tab--selected' : 'fr-tabs__tab'} tabIndex={0} aria-selected={activeTab==='pieces'} aria-controls="panel-pieces" role="tab" onClick={()=> setActiveTab('pieces')}>{t('build.piece_dials') || 'Piece dials'}</button>
                       </li>
                     </ul>
-                    <div id="panel-masses" className="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel" aria-labelledby="tab-masses">
+                    <div id="panel-masses" className={activeTab==='masses' ? 'fr-tabs__panel fr-tabs__panel--selected' : 'fr-tabs__panel'} role="tabpanel" aria-labelledby="tab-masses">
                       <MassList masses={massList} labels={COFOG_LABELS} baseAmounts={massBaseAmounts} targets={massTargets} changes={massChanges} onTarget={(m,v)=> setMassTargets({ ...massTargets, [m]: v })} onChangeAmt={(m,v)=> setMassChanges({ ...massChanges, [m]: v })} resolution={result?.resolutionByMass} />
                     </div>
-                    <div id="panel-pieces" className="fr-tabs__panel" role="tabpanel" aria-labelledby="tab-pieces">
+                    <div id="panel-pieces" className={activeTab==='pieces' ? 'fr-tabs__panel fr-tabs__panel--selected' : 'fr-tabs__panel'} role="tabpanel" aria-labelledby="tab-pieces">
                       <div className="fr-grid-row fr-grid-row--gutters">
                         <div className="fr-col-12 fr-col-md-6">
-                          <h4 className="fr-h4">Expenditures</h4>
-                          <PieceList pieces={exp} deltas={deltas} targets={targets} onDelta={updateDelta} onTarget={updateTarget} />
+                          <h4 className="fr-h4">{t('build.expenditures') || 'Expenditures'}</h4>
+                          <PieceList pieces={exp} deltas={deltas} targets={targets} onDelta={updateDelta} onTarget={updateTarget} t={t} />
                         </div>
                         <div className="fr-col-12 fr-col-md-6">
-                          <h4 className="fr-h4">Revenues</h4>
-                          <PieceList pieces={rev} deltas={deltas} targets={targets} onDelta={updateDelta} onTarget={updateTarget} />
+                          <h4 className="fr-h4">{t('build.revenues') || 'Revenues'}</h4>
+                          <PieceList pieces={rev} deltas={deltas} targets={targets} onDelta={updateDelta} onTarget={updateTarget} t={t} />
                         </div>
                       </div>
                     </div>
@@ -310,21 +326,21 @@ export default function BuildPage() {
         <div className="fr-col-12 fr-col-md-4">
           <div className="fr-card fr-card--no-arrow" style={{ marginBottom: '1rem' }}>
             <div className="fr-card__body">
-              <div className="fr-card__title">Scoreboard</div>
+              <div className="fr-card__title">{t('build.scoreboard') || 'Scoreboard'}</div>
               <div className="fr-card__desc">
                 <dl className="fr-description-list">
                   <div className="fr-description-list__row">
-                    <dt className="fr-description-list__term">ΔExpenditures (est.)</dt>
+                    <dt className="fr-description-list__term">{t('build.delta_exp') || 'ΔExpenditures (est.)'}</dt>
                     <dd className="fr-description-list__definition">{estimateDeltaExp(exp, deltas).toLocaleString(undefined, { maximumFractionDigits: 0 })} €</dd>
                   </div>
                   <div className="fr-description-list__row">
-                    <dt className="fr-description-list__term">ΔRevenues (est.)</dt>
+                    <dt className="fr-description-list__term">{t('build.delta_rev') || 'ΔRevenues (est.)'}</dt>
                     <dd className="fr-description-list__definition">{estimateDeltaRev(rev, deltas).toLocaleString(undefined, { maximumFractionDigits: 0 })} €</dd>
                   </div>
                   {result && (
                     <>
                       <div className="fr-description-list__row">
-                        <dt className="fr-description-list__term">Deficit (y0)</dt>
+                        <dt className="fr-description-list__term">{t('score.deficit_y0') || 'Deficit (y0)'}</dt>
                         <dd className="fr-description-list__definition">{result.deficitY0.toLocaleString(undefined, { maximumFractionDigits: 0 })} €</dd>
                       </div>
                       <div className="fr-description-list__row">
@@ -336,16 +352,16 @@ export default function BuildPage() {
                         <dd className="fr-description-list__definition">{result.eu60}</dd>
                       </div>
                       <div className="fr-description-list__row">
-                        <dt className="fr-description-list__term">Resolution</dt>
+                        <dt className="fr-description-list__term">{t('build.resolution') || 'Resolution'}</dt>
                         <dd className="fr-description-list__definition">{(100 * result.resolutionPct).toFixed(1)}%</dd>
                       </div>
                       <div className="fr-description-list__row">
-                        <dt className="fr-description-list__term" aria-label="Resolution meter">&nbsp;</dt>
+                        <dt className="fr-description-list__term" aria-label={t('build.resolution_meter') || 'Resolution meter'}>&nbsp;</dt>
                         <dd className="fr-description-list__definition" style={{width:'100%'}}><div className="fr-progress" aria-label="Resolution"><div className="fr-progress__track"><div className="fr-progress__bar" style={{ width: `${Math.min(100, 100*result.resolutionPct)}%` }} aria-hidden="true"></div></div></div></dd>
                       </div>
                       {result.distanceScore !== undefined && (
                         <div className="fr-description-list__row">
-                          <dt className="fr-description-list__term">Distance</dt>
+                          <dt className="fr-description-list__term">{t('build.distance') || 'Distance'}</dt>
                           <dd className="fr-description-list__definition">{(100 * (1 - result.distanceScore)).toFixed(1)}%</dd>
                         </div>
                       )}
@@ -353,8 +369,8 @@ export default function BuildPage() {
                   )}
                 </dl>
                 <div className="fr-btns-group fr-btns-group--inline">
-                  <button className="fr-btn" onClick={runScenario} disabled={running}>Run</button>
-                  <button className="fr-btn fr-btn--secondary" onClick={() => { setDeltas({}); setTargets({}); setMassTargets({}); setMassChanges({}); setSelectedLevers([]); setResult(null); }}>Reset</button>
+                  <button className="fr-btn" onClick={runScenario} disabled={running}>{t('buttons.run') || 'Run'}</button>
+                  <button className="fr-btn fr-btn--secondary" onClick={() => { setDeltas({}); setTargets({}); setMassTargets({}); setMassChanges({}); setSelectedLevers([]); setResult(null); }}>{t('buttons.reset') || 'Reset'}</button>
                 </div>
                 {conflictNudge && <p className="fr-alert fr-alert--warning" role="alert">{conflictNudge}</p>}
               </div>
@@ -382,6 +398,28 @@ export default function BuildPage() {
               </div>
             </div>
           </div>
+
+          {result?.id && (
+          <div className="fr-card fr-card--no-arrow" style={{ marginTop: '1rem' }}>
+            <div className="fr-card__body">
+              <div className="fr-card__title">{t('scenario.save_title') || 'Scenario title'}</div>
+              <div className="fr-card__desc">
+                <div className="fr-input-group">
+                  <input id="save_title" className="fr-input" value={saveTitle} onChange={e=> setSaveTitle(e.target.value)} placeholder="My plan" />
+                </div>
+                <div className="fr-btns-group fr-btns-group--inline" style={{ marginTop: '.25rem' }}>
+                  <button className="fr-btn fr-btn--secondary" onClick={async()=>{
+                    try {
+                      const q = `mutation($id:ID!,$title:String){ saveScenario(id:$id, title:$title) }`
+                      await gqlRequest(q, { id: result.id, title: saveTitle || 'My plan' })
+                    } catch {}
+                  }}>{t('scenario.save') || 'Save'}</button>
+                  <a className="fr-link" href={`/api/og?scenarioId=${result.id}`} target="_blank" rel="noopener noreferrer">OG preview</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          )}
         </div>
       </div>
       {result?.masses && <TwinBars masses={result.masses} labels={COFOG_LABELS} resolution={result.resolutionByMass} />}
@@ -389,12 +427,13 @@ export default function BuildPage() {
   )
 }
 
-function PieceList({ pieces, deltas, targets, onDelta, onTarget }: {
+function PieceList({ pieces, deltas, targets, onDelta, onTarget, t }: {
   pieces: Piece[]
   deltas: Record<string, number>
   targets: Record<string, number>
   onDelta: (id: string, v: number) => void
   onTarget: (id: string, v: number) => void
+  t: (k: string)=>string
 }) {
   if (!pieces.length) return <p className="fr-text--sm">No pieces</p>
   return (
@@ -402,19 +441,20 @@ function PieceList({ pieces, deltas, targets, onDelta, onTarget }: {
       {pieces.map(p => (
         <div key={p.id} className="fr-input-group" style={{ padding: '.25rem .5rem', border: '1px solid var(--border-default-grey)', borderRadius: '6px' }}>
           <label className="fr-label" htmlFor={`delta_${p.id}`}>{p.label || p.id}</label>
+          {p.locked && <span className="fr-badge fr-badge--sm" aria-label="locked">{t('piece.locked') || 'Locked'}</span>}
           <div className="fr-grid-row fr-grid-row--gutters">
             <div className="fr-col-12 fr-col-sm-6">
               <div className="fr-range">
-                <input id={`delta_${p.id}`} type="range" min={-50} max={50} step={1} value={deltas[p.id] ?? 0} onChange={e => onDelta(p.id, Number((e.target as HTMLInputElement).value))} />
+                <input id={`delta_${p.id}`} type="range" min={-50} max={50} step={1} value={deltas[p.id] ?? 0} onChange={e => onDelta(p.id, Number((e.target as HTMLInputElement).value))} disabled={!!p.locked} aria-label={`change ${p.id}`} />
               </div>
               <div className="fr-input-group" style={{ marginTop: '.25rem' }}>
-                <input className="fr-input" style={{ maxWidth: '8rem' }} type="number" min={-100} max={100} step={0.5} value={deltas[p.id] ?? 0} onChange={e => onDelta(p.id, Number(e.target.value))} /> <span style={{ marginLeft: '.25rem' }}>%</span>
+                <input className="fr-input" style={{ maxWidth: '8rem' }} type="number" min={-100} max={100} step={0.5} value={deltas[p.id] ?? 0} onChange={e => onDelta(p.id, Number(e.target.value))} disabled={!!p.locked} aria-label={`change number ${p.id}`} /> <span style={{ marginLeft: '.25rem' }}>%</span>
               </div>
             </div>
             <div className="fr-col-12 fr-col-sm-6">
-              <label className="fr-label" htmlFor={`target_${p.id}`}>Target (role)</label>
+              <label className="fr-label" htmlFor={`target_${p.id}`}>{t('labels.target_pct') || 'Target (role)'}</label>
               <div className="fr-input-group">
-                <input id={`target_${p.id}`} className="fr-input" style={{ maxWidth: '8rem' }} type="number" min={-100} max={100} step={0.5} value={targets[p.id] ?? 0} onChange={e => onTarget(p.id, Number(e.target.value))} /> <span style={{ marginLeft: '.25rem' }}>%</span>
+                <input id={`target_${p.id}`} className="fr-input" style={{ maxWidth: '8rem' }} type="number" min={-100} max={100} step={0.5} value={targets[p.id] ?? 0} onChange={e => onTarget(p.id, Number(e.target.value))} disabled={!!p.locked} aria-label={`target percent ${p.id}`} /> <span style={{ marginLeft: '.25rem' }}>%</span>
               </div>
             </div>
           </div>
@@ -448,7 +488,7 @@ function defaultTargetForFamily(fam: string): string {
   }
 }
 
-function BuildHud({ estExp, estRev, result, onRun, running, onReset }: { estExp: number, estRev: number, result: any, onRun: ()=>void, running: boolean, onReset: ()=>void }) {
+function BuildHud({ estExp, estRev, result, onRun, running, onReset, t }: { estExp: number, estRev: number, result: any, onRun: ()=>void, running: boolean, onReset: ()=>void, t: (k: string)=>string }) {
   const netEst = (estExp + estRev) || 0
   const eu3 = result?.eu3 || 'info'
   const eu60 = result?.eu60 || 'info'
@@ -463,7 +503,7 @@ function BuildHud({ estExp, estRev, result, onRun, running, onReset }: { estExp:
     <div style={{ position: 'sticky', top: 0, zIndex: 10, background: 'var(--background-default-grey)', borderBottom: '1px solid var(--border-default-grey)', padding: '.5rem .75rem' }}>
       <div className="fr-grid-row fr-grid-row--gutters" style={{ alignItems: 'center' }}>
         <div className="fr-col-12 fr-col-md-4">
-          <strong>Net Δ (est. y0): </strong>{netEst.toLocaleString(undefined,{ maximumFractionDigits: 0 })} €
+          <strong>{t('hud.net_delta') || 'Net Δ (est. y0): '}</strong>{netEst.toLocaleString(undefined,{ maximumFractionDigits: 0 })} €
         </div>
         <div className="fr-col-12 fr-col-md-4">
           <div className="fr-progress" aria-label="Resolution">
@@ -471,22 +511,22 @@ function BuildHud({ estExp, estRev, result, onRun, running, onReset }: { estExp:
               <div className="fr-progress__bar" style={{ width: `${Math.min(100, 100*resPct)}%` }} aria-hidden="true"></div>
             </div>
           </div>
-          <span className="fr-text--xs">Resolution {(100*resPct).toFixed(1)}%</span>
+          <span className="fr-text--xs">{t('hud.resolution') || 'Resolution'} {(100*resPct).toFixed(1)}%</span>
         </div>
         <div className="fr-col-6 fr-col-md-2" aria-label="EU lights">
           <span style={{ display:'inline-flex', alignItems:'center', gap:'.4rem', marginRight:'.5rem' }}>
             <span style={{ width:10, height:10, borderRadius:6, background: badgeTone(eu3), display:'inline-block' }}></span>
-            <span className="fr-text--xs">EU 3%</span>
+            <span className="fr-text--xs">{t('hud.eu3') || 'EU 3%'}</span>
           </span>
           <span style={{ display:'inline-flex', alignItems:'center', gap:'.4rem' }}>
             <span style={{ width:10, height:10, borderRadius:6, background: badgeTone(eu60), display:'inline-block' }}></span>
-            <span className="fr-text--xs">EU 60%</span>
+            <span className="fr-text--xs">{t('hud.eu60') || 'EU 60%'}</span>
           </span>
         </div>
         <div className="fr-col-6 fr-col-md-2" style={{ textAlign: 'right' }}>
           <div className="fr-btns-group fr-btns-group--inline fr-btns-group--right">
-            <button className="fr-btn fr-btn--secondary" onClick={onReset}>Reset</button>
-            <button className="fr-btn" onClick={onRun} disabled={running}>Run</button>
+            <button className="fr-btn fr-btn--secondary" onClick={onReset}>{t('buttons.reset') || 'Reset'}</button>
+            <button className="fr-btn" onClick={onRun} disabled={running}>{t('buttons.run') || 'Run'}</button>
           </div>
         </div>
       </div>
@@ -674,7 +714,7 @@ function TwinBars({ masses, labels, resolution }: { masses: Record<string, { bas
   )
 }
 
-function restoreFromDsl(b64: string, pieces: Piece[]) {
+function parseDsl(b64: string, pieces: Piece[]) {
   try {
     const text = decodeURIComponent(escape(atob(b64)))
     const lines = text.split(/\r?\n/)
@@ -725,7 +765,8 @@ function restoreFromDsl(b64: string, pieces: Piece[]) {
         levs.push(String(a.id))
       }
     }
-    // Dispatch state updates by events if wired; here we expose via custom event for parent to consume in future
-    document.dispatchEvent(new CustomEvent('dsl:restored', { detail: { targets: targ, deltas: delt, massTargets: mT, massChanges: mC, levers: levs } }))
-  } catch {}
+    return { targets: targ, deltas: delt, massTargets: mT, massChanges: mC, levers: levs }
+  } catch {
+    return null
+  }
 }

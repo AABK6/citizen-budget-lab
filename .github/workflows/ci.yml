@@ -83,6 +83,10 @@ jobs:
         working-directory: frontend
         run: npx @axe-core/cli --exit http://127.0.0.1:3000/what-if
 
+      - name: Run axe accessibility check (build)
+        working-directory: frontend
+        run: npx @axe-core/cli --exit http://127.0.0.1:3000/build
+
       - name: Build API Docker image
         run: docker build -f services/api/Dockerfile -t citizen-budget-lab-api:ci .
 
