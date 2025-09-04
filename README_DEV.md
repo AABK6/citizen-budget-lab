@@ -275,6 +275,31 @@ Docker
   - CORS: the API allows `http://localhost:3000` and `http://127.0.0.1:3000` by default.
     - Override with `CORS_ALLOW_ORIGINS` (comma-separated) if your frontend runs elsewhere.
 
+Targets & Resolution (MVP+)
+
+- Mark an action as target-only using `role: target`. Targets contribute to the Resolution Meter but do not change accounting paths.
+- You can also target COFOG majors directly using `target: cofog.<major>` (e.g., `cofog.07`).
+- Example DSL snippet:
+
+  version: 0.1
+  baseline_year: 2026
+  assumptions: { horizon_years: 1 }
+  actions:
+    - id: t1
+      target: piece.ed_schools_staff_ops
+      op: increase
+      delta_pct: 10
+      role: target
+    - id: c1
+      target: cofog.09
+      dimension: cp
+      op: decrease
+      amount_eur: 500000000
+
+Share Card (stub)
+
+- A basic OG route is available at `/api/og?scenarioId=<id>` which returns an SVG placeholder. Replace with a renderer as you design the final card.
+
 - Frontend (Next.js):
 
   - Build: `docker build -t cbl-frontend ./frontend`

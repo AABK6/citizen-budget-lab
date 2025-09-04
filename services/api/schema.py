@@ -141,6 +141,7 @@ class LegoPieceType:
     type: str
     amountEur: float | None
     share: float | None
+    cofogMajors: list[str]
     beneficiaries: JSON
     examples: list[str]
     sources: list[str]
@@ -459,6 +460,7 @@ class Query:
                 type=i.get("type") or "expenditure",
                 amountEur=i.get("amount_eur"),
                 share=i.get("share"),
+                cofogMajors=[str(x) for x in (i.get("cofog_majors") or [])],
                 beneficiaries=i.get("beneficiaries") or {},
                 examples=list(i.get("examples") or []),
                 sources=list(i.get("sources") or []),

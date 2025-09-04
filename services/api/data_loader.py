@@ -639,6 +639,15 @@ def lego_pieces_with_baseline(year: int, scope: str = "S13") -> List[dict]:
     for p in cfg.get("pieces", []):
         pid = str(p.get("id"))
         pol = p.get("policy") or {}
+        cofmaj: list[str] = []
+        try:
+            for mc in (p.get("mapping", {}).get("cofog") or []):
+                code = str(mc.get("code") or "")
+                maj = code.split(".")[0][:2] if code else ""
+                if maj and maj not in cofmaj:
+                    cofmaj.append(maj)
+        except Exception:
+            pass
         out.append(
             {
                 "id": pid,
@@ -646,6 +655,7 @@ def lego_pieces_with_baseline(year: int, scope: str = "S13") -> List[dict]:
                 "type": p.get("type"),
                 "amount_eur": amounts.get(pid),
                 "share": shares.get(pid),
+                "cofog_majors": cofmaj,
                 "beneficiaries": p.get("beneficiaries") or {},
                 "examples": p.get("examples") or [],
                 "sources": p.get("sources") or [],
@@ -737,6 +747,12 @@ def _map_action_to_cofog(action: dict, baseline_year: int) -> List[Tuple[str, fl
     target = str(action.get("target", ""))
     if target.startswith("tax.ir"):
         return [("tax.ir", 1.0)]
+    # Direct COFOG major mapping support (e.g., cofog.07)
+    if target.startswith("cofog."):
+        key = target.split(".", 1)[1]
+        major = str(key).zfill(2)[:2]
+        if major.isdigit():
+            return [(major, 1.0)]
     # mission.<code-or-name>
     if target.startswith("mission."):
         # Accept mission label (e.g., education) or code
