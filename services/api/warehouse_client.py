@@ -76,7 +76,37 @@ def _connect_duckdb():  # noqa: ANN001
         con = duckdb.connect(path, read_only=True)
     except Exception:
         con = duckdb.connect(path)
+    # No default schema change; resolve fully-qualified names dynamically
     return con
+
+
+def _qual_name(con, name: str) -> str:  # noqa: ANN001
+    """Return a schema-qualified relation name for a bare table/view.
+
+    Prefers common namespaces if multiple exist.
+    """
+    try:
+        rows = con.execute(
+            """
+            select table_schema, table_name
+            from information_schema.tables
+            where table_name = ?
+            order by case table_schema
+                     when 'main_fact' then 0
+                     when 'main_staging' then 1
+                     when 'main_vw' then 2
+                     else 3 end
+            limit 1
+            """,
+            [name],
+        ).fetchall()
+        if rows:
+            sch, nm = rows[0]
+            return f"{sch}.{nm}"
+    except Exception:
+        pass
+    # Fallback to bare name; may succeed if DB has default schema aliases
+    return name
 
 
 def table_counts(tables: list[str]) -> dict[str, int]:
@@ -93,15 +123,18 @@ def table_counts(tables: list[str]) -> dict[str, int]:
     except Exception:
         return out
     try:
-        have = set(r[0] for r in con.execute("select table_name from information_schema.tables").fetchall())
+        all_rows = con.execute("select table_schema, table_name from information_schema.tables").fetchall()
+        have = {(r[0], r[1]) for r in all_rows}
+        names = {r[1]: r[0] for r in all_rows if r[1] not in locals()}
         for t in tables:
-            if t not in have:
-                continue
-            try:
-                cnt = con.execute(f"select count(*) from {t}").fetchone()[0]
-                out[t] = int(cnt)
-            except Exception:
-                continue
+            # If present in any schema, count using that schema
+            if t in [r[1] for r in all_rows]:
+                qname = _qual_name(con, t)
+                try:
+                    cnt = con.execute(f"select count(*) from {qname}").fetchone()[0]
+                    out[t] = int(cnt)
+                except Exception:
+                    continue
     except Exception:
         return out
     return out
@@ -115,13 +148,8 @@ def allocation_by_mission(year: int, basis: Basis) -> List[MissionAllocation]:
     except Exception:
         return []
     metric = "cp_eur" if basis == Basis.CP else "ae_eur"
-    sql = f"""
-        select mission_code, any_value(mission_label) as mission_label, sum({metric}) as amount
-        from fct_admin_by_mission
-        where year = ?
-        group by mission_code
-        order by amount desc
-    """
+    rel = _qual_name(con, "fct_admin_by_mission")
+    sql = f"select mission_code, any_value(mission_label) as mission_label, sum({metric}) as amount from {rel} where year = ? group by mission_code order by amount desc"
     try:
         rows = con.execute(sql, [year]).fetchall()
     except Exception:
@@ -143,14 +171,8 @@ def allocation_by_cofog(year: int, basis: Basis) -> List[MissionAllocation]:
     except Exception:
         return []
     metric = "cp_eur" if basis == Basis.CP else "ae_eur"
-    # fct_admin_by_cofog has totals per major code + labels
-    sql = f"""
-        select cofog_code, any_value(cofog_label) as label, sum({metric}) as amount
-        from fct_admin_by_cofog
-        where year = ?
-        group by cofog_code
-        order by amount desc
-    """
+    rel = _qual_name(con, "fct_admin_by_cofog")
+    sql = f"select cofog_code, any_value(cofog_label) as label, sum({metric}) as amount from {rel} where year = ? group by cofog_code order by amount desc"
     try:
         rows = con.execute(sql, [year]).fetchall()
     except Exception:
@@ -196,19 +218,13 @@ def procurement_top_suppliers(
         conds.append("amount_eur <= ?")
         params.append(float(max_amount_eur))
     where_sql = " and ".join(conds)
-    sql = f"""
-        select supplier_siren,
-               any_value(supplier_name) as supplier_name,
-               sum(coalesce(amount_eur,0)) as amount,
-               any_value(cpv_code) as cpv,
-               any_value(procedure_type) as procedure_type,
-               any_value(location_code) as location_code
-        from vw_procurement_contracts
-        where {where_sql}
-        group by supplier_siren
-        order by amount desc
-        limit {int(top_n)}
-    """
+    rel = _qual_name(con, "vw_procurement_contracts")
+    sql = (
+        "select supplier_siren, any_value(supplier_name) as supplier_name, "
+        "sum(coalesce(amount_eur,0)) as amount, any_value(cpv_code) as cpv, "
+        "any_value(procedure_type) as procedure_type, any_value(location_code) as location_code "
+        f"from {rel} where {where_sql} group by supplier_siren order by amount desc limit {int(top_n)}"
+    )
     try:
         rows = con.execute(sql, params).fetchall()
     except Exception:
@@ -237,13 +253,8 @@ def programmes_for_mission(year: int, basis: Basis, mission_code: str) -> List[M
     except Exception:
         return []
     metric = "cp_eur" if basis == Basis.CP else "ae_eur"
-    sql = f"""
-        select programme_code, any_value(programme_label) as label, sum({metric}) as amount
-        from stg_state_budget_lines
-        where year = ? and mission_code = ?
-        group by programme_code
-        order by amount desc
-    """
+    rel = _qual_name(con, "stg_state_budget_lines")
+    sql = f"select programme_code, any_value(programme_label) as label, sum({metric}) as amount from {rel} where year = ? and mission_code = ? group by programme_code order by amount desc"
     try:
         rows = con.execute(sql, [year, mission_code]).fetchall()
     except Exception:
@@ -255,3 +266,27 @@ def programmes_for_mission(year: int, basis: Basis, mission_code: str) -> List[M
         share = (amt / total) if total else 0.0
         out.append(MissionAllocation(code=str(code), label=str(label), amount_eur=amt, share=share))
     return out
+
+
+def cofog_mapping_reliable(year: int, basis: Basis) -> bool:
+    """Heuristic: mapping considered reliable if totals match within 0.5% and there are >= 8 distinct COFOG majors.
+    """
+    if not warehouse_available():
+        return False
+    try:
+        con = _connect_duckdb()
+    except Exception:
+        return False
+    metric = "cp_eur" if basis == Basis.CP else "ae_eur"
+    try:
+        rel_mis = _qual_name(con, "fct_admin_by_mission")
+        rel_cof = _qual_name(con, "fct_admin_by_cofog")
+        tm = con.execute(f"select sum({metric}) from {rel_mis} where year = ?", [year]).fetchone()[0] or 0.0
+        tc = con.execute(f"select sum({metric}) from {rel_cof} where year = ?", [year]).fetchone()[0] or 0.0
+        k = con.execute(f"select count(distinct cofog_code) from {rel_cof} where year = ?", [year]).fetchone()[0] or 0
+    except Exception:
+        return False
+    if tm <= 0 or tc <= 0:
+        return False
+    ratio = abs(tm - tc) / tm
+    return ratio <= 0.005 and int(k or 0) >= 8

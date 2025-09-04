@@ -187,11 +187,21 @@ class Query:
                 ]
             )
         elif lens == LensEnum.COFOG:
-            # Prefer warmed Eurostat S13 COFOG shares scaled by baseline; fallback to mapping over mission CSV.
-            # Allow override to prefer warehouse/dbt mapping via env.
+            # Prefer warmed Eurostat S13 COFOG shares scaled by baseline; fallback to mission mapping.
+            # If warehouse mapping is marked/auto-detected reliable, use warehouse.
             from .settings import get_settings  # lazy import
             settings = get_settings()
+            use_wh = False
             if settings.warehouse_cofog_override:
+                use_wh = True
+            else:
+                try:
+                    from .warehouse_client import cofog_mapping_reliable  # type: ignore
+
+                    use_wh = cofog_mapping_reliable(year, Basis(basis.value))
+                except Exception:
+                    use_wh = False
+            if use_wh:
                 items = allocation_by_cofog(year, Basis(basis.value))
             else:
                 try:
