@@ -32,17 +32,17 @@ export default function CompareEUPage() {
 
   return (
     <div className="stack">
-      <h2>Compare EU — COFOG Shares</h2>
+      <h2 className="fr-h2">Compare EU — COFOG Shares</h2>
       <div className="row gap">
-        <label className="field">
-          <span>Year</span>
-          <input type="number" value={year} onChange={e => setYear(Number(e.target.value))} />
-        </label>
-        <label className="field">
-          <span>Countries (CSV)</span>
-          <input value={countries} onChange={e => setCountries(e.target.value)} />
-        </label>
-        <button onClick={load}>Apply</button>
+        <div className="fr-input-group">
+          <label className="fr-label" htmlFor="eu-year">Year</label>
+          <input id="eu-year" className="fr-input" type="number" value={year} onChange={e => setYear(Number(e.target.value))} />
+        </div>
+        <div className="fr-input-group" style={{ minWidth: 320 }}>
+          <label className="fr-label" htmlFor="eu-countries">Countries (CSV)</label>
+          <input id="eu-countries" className="fr-input" value={countries} onChange={e => setCountries(e.target.value)} />
+        </div>
+        <button className="fr-btn" onClick={load}>Apply</button>
       </div>
       {loading && <p>Loading…</p>}
       {error && <p className="error">{error}</p>}

@@ -88,7 +88,7 @@ export function AllocationChart({ rows, kind, onSliceClick }: Props) {
   }), [onSliceClick])
 
   return (
-    <div className="card">
+    <div className="card fr-card">
       <ReactECharts option={option} style={{ height: 360 }} notMerge={true} lazyUpdate={true} onEvents={onEvents} />
     </div>
   )

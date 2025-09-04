@@ -18,8 +18,7 @@ export function DeficitPathChart({ deficit, debt }: { deficit: number[]; debt: n
     ]
   }), [deficit, debt])
   return (
-    <div className="card">
+    <div className="card fr-card">
       <ReactECharts option={option} style={{ height: 280 }} notMerge lazyUpdate />
     </div>
   )}
-

@@ -77,19 +77,21 @@ export default function WhatIfPage() {
 
   return (
     <div className="stack">
-      <h2>{t('whatif.title') || 'What‑if — Scenario Builder'}</h2>
+      <h2 className="fr-h2">{t('whatif.title') || 'What‑if — Scenario Builder'}</h2>
       <div className="stack">
-        <label className="field">
-          <span>{t('whatif.dsl') || 'Scenario DSL (YAML)'}</span>
+        <div className="fr-input-group" style={{ width: '100%' }}>
+          <label className="fr-label" htmlFor="dsl-editor">{t('whatif.dsl') || 'Scenario DSL (YAML)'}</label>
           <textarea
+            id="dsl-editor"
+            className="fr-input"
             value={yamlText}
             onChange={e => setYamlText(e.target.value)}
             rows={14}
-            style={{ width: '100%', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace', background: '#0b1224', color: 'inherit', border: '1px solid var(--border)', borderRadius: '.5rem', padding: '.75rem' }}
+            style={{ width: '100%', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace' }}
           />
-        </label>
+        </div>
         <div className="row gap">
-          <button onClick={runScenario} disabled={loading}>{loading ? t('whatif.running') || 'Running…' : t('whatif.run') || 'Run Scenario'}</button>
+          <button className="fr-btn" onClick={runScenario} disabled={loading}>{loading ? t('whatif.running') || 'Running…' : t('whatif.run') || 'Run Scenario'}</button>
         </div>
       </div>
 

@@ -17,12 +17,16 @@ export function NavTabs() {
     { href: '/sources' as Route, label: t('nav.sources') }
   ]
   return (
-    <nav className="tabs">
-      {tabs.map(t => (
-        <Link key={t.href} href={t.href} className={pathname?.startsWith(t.href) ? 'tab active' : 'tab'}>
-          {t.label}
-        </Link>
-      ))}
+    <nav className="fr-nav" role="navigation" aria-label="Navigation principale">
+      <ul className="fr-nav__list">
+        {tabs.map(t => (
+          <li key={t.href} className="fr-nav__item">
+            <Link href={t.href} className={pathname?.startsWith(t.href) ? 'fr-nav__link fr-link--active' : 'fr-nav__link'}>
+              {t.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
     </nav>
   )
 }

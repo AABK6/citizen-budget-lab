@@ -81,7 +81,7 @@ export function ProcurementMap({ rows, region }: { rows: Row[]; region?: string 
   const center: [number, number] = (region && DEPT_CENTER[region]) ? DEPT_CENTER[region] : [48.8566, 2.3522]
 
   return (
-    <div className="card" style={{ height: 420 }}>
+    <div className="card fr-card" style={{ height: 420 }}>
       <MapContainer center={center} zoom={11} scrollWheelZoom={false} style={{ height: '100%', borderRadius: '.5rem', overflow: 'hidden' }}>
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

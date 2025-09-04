@@ -93,7 +93,7 @@ export default function ProcurementPage() {
 
   return (
     <div className="stack">
-      <h2>{t('proc.title') || 'Who gets paid? (Procurement)'}</h2>
+      <h2 className="fr-h2">{t('proc.title') || 'Who gets paid? (Procurement)'}</h2>
       <StatCards items={[
         { label: 'Total', value: stats.total.toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' €' },
         { label: 'Suppliers', value: String(stats.suppliers) },
@@ -105,17 +105,17 @@ export default function ProcurementPage() {
       <div className="row gap">
         <YearPicker value={year} onChange={setYear} />
         <Select label={t('proc.department') || 'Department'} value={region} options={DEPARTMENTS} onChange={setRegion} />
-        <label className="field">
-          <span>{t('proc.cpv') || 'CPV prefix'}</span>
-          <input value={cpvPrefix} onChange={e => setCpvPrefix(e.target.value)} placeholder="e.g. 30" />
-        </label>
-        <label className="field">
-          <span>{t('proc.min') || 'Min amount (EUR)'}</span>
-          <input type="number" value={minAmount} onChange={e => setMinAmount(e.target.value === '' ? '' : Number(e.target.value))} />
-        </label>
-        <button onClick={load}>{t('proc.apply') || 'Apply'}</button>
+        <div className="fr-input-group">
+          <label className="fr-label" htmlFor="cpv-input">{t('proc.cpv') || 'CPV prefix'}</label>
+          <input id="cpv-input" className="fr-input" value={cpvPrefix} onChange={e => setCpvPrefix(e.target.value)} placeholder="e.g. 30" />
+        </div>
+        <div className="fr-input-group">
+          <label className="fr-label" htmlFor="min-input">{t('proc.min') || 'Min amount (EUR)'}</label>
+          <input id="min-input" className="fr-input" type="number" value={minAmount} onChange={e => setMinAmount(e.target.value === '' ? '' : Number(e.target.value))} />
+        </div>
+        <button className="fr-btn" onClick={load}>{t('proc.apply') || 'Apply'}</button>
         <Select label={t('proc.view') || 'View'} value={view} onChange={v => setView(v as any)} options={[{ label: t('proc.table') || 'Table', value: 'table' }, { label: t('proc.map') || 'Map', value: 'map' }]} />
-        <button onClick={() => downloadCSV(`procurement_${region}_${year}.csv`, [
+        <button className="fr-btn fr-btn--secondary" onClick={() => downloadCSV(`procurement_${region}_${year}.csv`, [
           { key: 'supplier.name', label: t('proc.supplier') || 'Supplier' },
           { key: 'supplier.siren', label: 'SIREN' },
           { key: 'cpv', label: 'CPV' },

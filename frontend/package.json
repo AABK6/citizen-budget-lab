@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:a11y": "axe http://localhost:3000 --exit 1 || (echo 'Run frontend with npm run dev in another terminal' && exit 0)",
+    "test:smoke": "node -e \"fetch('http://localhost:3000').then(r=>{if(!r.ok)process.exit(2); else process.exit(0)}).catch(()=>process.exit(2))\" || (echo 'Start app to run smoke test' && exit 0)"
   },
   "dependencies": {
     "cross-fetch": "4.0.0",

@@ -31,15 +31,14 @@ export function SourceLink({ ids }: { ids?: string[] }) {
   }, [JSON.stringify(ids || [])])
 
   if (error) return <span aria-live="polite">⚠ Sources</span>
-  if (!sources.length) return <a href="/sources" aria-label="Sources">☆ Sources</a>
+  if (!sources.length) return <a className="fr-link fr-icon-external-link-line fr-link--icon-right" href="/sources" aria-label="Sources">Sources</a>
   return (
     <span className="row gap" aria-label="Source datasets">
       {sources.map(s => (
-        <a key={s.id} href={s.url} target="_blank" rel="noreferrer" title={`${s.datasetName} — ${s.vintage}`} aria-label={`Source: ${s.datasetName}`}>
-          ★ {s.datasetName}
+        <a key={s.id} className="fr-link fr-icon-external-link-line fr-link--icon-right" href={s.url} target="_blank" rel="noreferrer" title={`${s.datasetName} — ${s.vintage}`} aria-label={`Source: ${s.datasetName}`}>
+          {s.datasetName}
         </a>
       ))}
     </span>
   )
 }
-

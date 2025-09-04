@@ -179,6 +179,7 @@ Epics
     - [x] `legoBaseline(year, scope)` returns totals and pieces; scope handling robust.
     - [x] `legoDistance(year, dsl)` computes share deltas and a distance score.
     - [ ] Unit tests for each query with warmed snapshot present/absent.
+      - Note: smoke tests for `legoPieces`, `legoBaseline`, and `legoDistance` exist; add explicit tests for the “absent snapshot” path.
 - LEGO Budget Builder — Calculation Engine [API]
   - Apply deltas on pieces → (COFOG×na_item | ESA revenue) vectors; update mechanical deficit/debt; enforce locks/bounds.
   - Static v0 elasticities for revenue (VAT/PIT/CIT/excises/CSG/contributions) with guardrails + docs.
@@ -197,7 +198,7 @@ Epics
     - [x] README_DEV links to limitations and usage; SECRETS lists relevant envs.
 
 Follow‑ups / TODO (post‑migration)
-- Parameterize revenue splits (VAT standard/reduced; PIT/CIT; D.29 sub‑splits) in `lego_pieces.json` or a dedicated config block instead of code constants.
+- DONE (2025‑09‑03): Parameterized revenue splits via `data/revenue_splits.json`; warmer loads from this config instead of code constants.
 - Add SDMX caching layer for XML calls to speed up warms for multiple years/countries.
 - Identify and wire flows for `D.4` (public income) and `D.7` (transfers received) to populate `rev_public_income` and `rev_transfers_in` precisely.
 - Investigate a pure `D.41` series in a complementary Eurostat flow and switch `debt_interest` to ESA‑only basis when available.
@@ -214,7 +215,7 @@ Epics
 - EU Comparisons [API][UI]
   - Eurostat COFOG & deficit/debt comparisons; Front‑end Compare EU page (selector, charts, export, sourcing notes).
   - Acceptance Criteria (AC):
-    - [ ] EU COFOG shares are warmed (`data/cache/eu_cofog_shares_YYYY.json`) and consumed by the UI for fast renders.
+    - [x] EU COFOG shares are warmed (`data/cache/eu_cofog_shares_YYYY.json`) and consumed by the UI for fast renders.
     - [ ] Compare EU charts expose “show table” with exact slice and a source chip.
     - [ ] Pin 1–2 countries and carry the selection across app views.
 - Classroom Mode [UI]
@@ -249,7 +250,7 @@ Tracking & Ownership
 - Assign owners per epic: Product, Tech Lead, Data Eng, Backend, Front‑end, Economist.
 - Use labels above; prefix titles with milestone ([MVP], [MVP+], [V1], [V2]).
 
-Status Snapshot (MVP) — 2025‑09‑02
+Status Snapshot (MVP) — 2025‑09‑04
 
 - [x] GraphQL API skeleton with allocation, procurement, sources; official API wrappers (INSEE/Eurostat/ODS/data.gouv/geo) with HTTP caching.
 - [x] Scenario DSL validation + mechanical engine; macro kernel (lite) integrated; compliance lights (EU 3%/60%) minimal.

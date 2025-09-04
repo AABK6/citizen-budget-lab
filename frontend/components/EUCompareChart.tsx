@@ -77,7 +77,7 @@ export function EUCompareChart({ data }: { data: Item[] }) {
   }), [countries, series, labels])
 
   return (
-    <div className="card">
+    <div className="card fr-card">
       <ReactECharts option={option} style={{ height: 420 }} notMerge={true} lazyUpdate={true} />
     </div>
   )

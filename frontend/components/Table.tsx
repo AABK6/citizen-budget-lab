@@ -51,7 +51,7 @@ export function DataTable<T>({ columns, rows, sortable = false, pageSize = 0 }: 
 
   return (
     <div className="table-wrap">
-      <table className="table">
+      <table className="fr-table">
         <thead>
           <tr>
             {columns.map(c => (
@@ -76,12 +76,11 @@ export function DataTable<T>({ columns, rows, sortable = false, pageSize = 0 }: 
       </table>
       {pageSize > 0 && (
         <div className="row gap" style={{ padding: '.5rem' }}>
-          <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page <= 1}>Prev</button>
+          <button className="fr-btn fr-btn--sm" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page <= 1}>Précédent</button>
           <span style={{ alignSelf: 'center' }}>Page {page} / {totalPages}</span>
-          <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page >= totalPages}>Next</button>
+          <button className="fr-btn fr-btn--sm" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page >= totalPages}>Suivant</button>
         </div>
       )}
     </div>
   )
 }
-
