@@ -3,6 +3,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useI18n } from '@/lib/i18n'
 import { gqlRequest } from '@/lib/graphql'
+import dynamic from 'next/dynamic'
+const WaterfallDelta = dynamic(() => import('@/components/WaterfallDelta').then(m => m.WaterfallDelta), { ssr: false })
+const SankeyRibbons = dynamic(() => import('@/components/SankeyRibbons').then(m => m.SankeyRibbons), { ssr: false })
 
 type Piece = {
   id: string
@@ -58,6 +61,9 @@ export default function BuildPage() {
   const [conflictNudge, setConflictNudge] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<'masses' | 'pieces'>('masses')
   const [saveTitle, setSaveTitle] = useState<string>('')
+  const [wfItems, setWfItems] = useState<Array<{ id: string; label?: string; deltaEur: number }>>([])
+  const [ribbons, setRibbons] = useState<Array<{ pieceId: string; massId: string; amountEur: number }>>([])
+  const [ribbonLabels, setRibbonLabels] = useState<{ piece: Record<string,string>, mass: Record<string,string> }>({ piece: {}, mass: {} })
 
   // COFOG major labels (client-side)
   const COFOG_LABELS: Record<string, string> = {
@@ -242,6 +248,17 @@ export default function BuildPage() {
         distanceScore = Number(dd.legoDistance?.score || 0)
       } catch {}
       setResult({ id: data.runScenario.id, deficitY0: Number(def?.[0] || 0), eu3, eu60, resolutionPct: resPct, distanceScore, resolutionByMass: byMass, masses })
+      // Fetch ribbons/waterfall for current scenario vs baseline
+      try {
+        const rid = data.runScenario.id
+        const cq = `query($a:ID!){ scenarioCompare(a:$a) }`
+        const cd = await gqlRequest(cq, { a: rid })
+        const comp = cd?.scenarioCompare || {}
+        const wf = (comp.waterfall||[]).map((e:any)=> ({ id: String(e.massId), label: String((comp.massLabels||{})[e.massId]||''), deltaEur: Number(e.deltaEur||0) }))
+        setWfItems(wf)
+        setRibbons((comp.ribbons||[]).map((r:any)=> ({ pieceId: String(r.pieceId), massId: String(r.massId), amountEur: Number(r.amountEur||0) })))
+        setRibbonLabels({ piece: comp.pieceLabels||{}, mass: comp.massLabels||{} })
+      } catch {}
       // Sync permalink
       try {
         const url = new URL(window.location.href)
@@ -445,6 +462,8 @@ export default function BuildPage() {
         </div>
       </div>
       {result?.masses && <TwinBars masses={result.masses} labels={massList.reduce((acc, m)=> (acc[m]=massUiLabel(m), acc), {} as Record<string,string>)} resolution={result.resolutionByMass} />}
+      {wfItems?.length>0 && <WaterfallDelta items={wfItems} title="Δ by Mass (Waterfall)" />}
+      {ribbons?.length>0 && <SankeyRibbons ribbons={ribbons} pieceLabels={ribbonLabels.piece} massLabels={ribbonLabels.mass} />}
       {explainMass && (
         <ExplainPanel
           massId={explainMass}

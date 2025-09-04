@@ -741,6 +741,96 @@ class Query:
         except Exception:
             return {}
 
+    @strawberry.field
+    def scenarioCompare(self, a: strawberry.ID, b: strawberry.ID | None = None) -> JSON:  # noqa: N802
+        """Return ribbons and waterfall deltas between two scenarios (or vs baseline if b is None).
+
+        Output shape (JSON):
+        {
+          "waterfall": [{"massId":"07","deltaEur":1234.0}, ...],
+          "ribbons": [{"pieceId":"health_ops","massId":"07","amountEur":120.0}, ...],
+          "pieceLabels": { "health_ops": "Health ops", ... },
+          "massLabels": { "07": "Health", ... }
+        }
+        """
+        import json as _json
+        from .store import scenario_dsl_store
+        from .data_loader import _piece_amounts_after_dsl as _pad, load_lego_config as _cfg
+
+        dsl_a = scenario_dsl_store.get(a)
+        if not dsl_a:
+            return {}
+        # If b is missing, compare against baseline (no actions)
+        if b:
+            dsl_b = scenario_dsl_store.get(b)
+        else:
+            # Create empty scenario with same baseline_year
+            try:
+                data = _json.loads(base64.b64decode(dsl_a).decode("utf-8"))
+                year = int(data.get("baseline_year", 2026))
+            except Exception:
+                year = 2026
+            empty = _json.dumps({"version": 0.1, "baseline_year": year, "assumptions": {"horizon_years": 3}, "actions": []})
+            dsl_b = base64.b64encode(empty.encode("utf-8")).decode("ascii")
+
+        # Year from a
+        try:
+            data = _json.loads(base64.b64decode(dsl_a).decode("utf-8"))
+            year = int(data.get("baseline_year", 2026))
+        except Exception:
+            year = 2026
+
+        base_a, scen_a = _pad(year, dsl_a)
+        base_b, scen_b = _pad(year, dsl_b)
+        # We want deltas of scenario A vs B: (scen_a - base_a) - (scen_b - base_b)
+        # Approximate piece delta as scen - base for each scenario (baseline from LEGO), then diff
+        delta_a = {k: scen_a.get(k, 0.0) - base_a.get(k, 0.0) for k in set(base_a) | set(scen_a)}
+        delta_b = {k: scen_b.get(k, 0.0) - base_b.get(k, 0.0) for k in set(base_b) | set(scen_b)}
+        piece_delta = {k: float(delta_a.get(k, 0.0) - delta_b.get(k, 0.0)) for k in set(delta_a) | set(delta_b)}
+
+        # Map piece deltas to mass majors via config weights
+        cfg = _cfg()
+        cof_map: dict[str, list[tuple[str, float]]] = {}
+        piece_labels: dict[str, str] = {}
+        for p in cfg.get("pieces", []):
+            pid = str(p.get("id"))
+            piece_labels[pid] = str(p.get("label") or pid)
+            cof = []
+            for mc in (p.get("mapping", {}).get("cofog") or []):
+                cof.append((str(mc.get("code")), float(mc.get("weight", 1.0))))
+            if cof:
+                cof_map[pid] = cof
+        ribbons: list[dict] = []
+        mass_totals: dict[str, float] = {}
+        for pid, dv in piece_delta.items():
+            if abs(dv) <= 0:
+                continue
+            cof = cof_map.get(pid) or []
+            if not cof:
+                continue
+            wsum = sum(w for _, w in cof) or 1.0
+            for code, w in cof:
+                major = str(code).split(".")[0][:2]
+                amt = float(dv) * (w / wsum)
+                ribbons.append({"pieceId": pid, "massId": major, "amountEur": amt})
+                mass_totals[major] = mass_totals.get(major, 0.0) + amt
+        waterfall = [{"massId": k, "deltaEur": float(v)} for k, v in mass_totals.items()]
+        waterfall.sort(key=lambda x: abs(x["deltaEur"]), reverse=True)
+        # Mass labels (COFOG majors)
+        mass_labels = {
+            "01": "General public services",
+            "02": "Defense",
+            "03": "Public order & safety",
+            "04": "Economic affairs",
+            "05": "Environmental protection",
+            "06": "Housing & community amenities",
+            "07": "Health",
+            "08": "Recreation, culture, religion",
+            "09": "Education",
+            "10": "Social protection",
+        }
+        return {"waterfall": waterfall, "ribbons": ribbons, "pieceLabels": piece_labels, "massLabels": mass_labels}
+
 
 @strawberry.type
 class Mutation:
