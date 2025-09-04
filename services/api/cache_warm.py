@@ -353,7 +353,7 @@ def warm_plf_state_budget(
             w.writerow([year, code, label, "", "", cp, ae])
     # Sidecar provenance metadata
     sidecar = {
-        "extraction_ts": dt.datetime.utcnow().isoformat() + "Z",
+        "extraction_ts": dt.datetime.now(dt.timezone.utc).isoformat(),
         "base": base,
         "dataset": dataset,
         "year": int(year),
@@ -922,7 +922,7 @@ def warm_lego_baseline(year: int, country: str = "FR", scope: str = "S13") -> st
     return out_path
 
 
-def main(argv: Iterable[str] | None = None) -> None:
+def _main_dup(argv: Iterable[str] | None = None) -> None:
     p = argparse.ArgumentParser(description="Cache warmer for essential budget data")
     sub = p.add_subparsers(dest="cmd", required=True)
 
@@ -941,22 +941,6 @@ def main(argv: Iterable[str] | None = None) -> None:
     sp_eu_sub = sub.add_parser("eurostat-cofog-sub", help="Cache Eurostat COFOG subfunction shares for countries/year")
     sp_eu_sub.add_argument("--year", type=int, required=True)
     sp_eu_sub.add_argument("--countries", required=True, help="Comma-separated country codes, e.g. FR,DE,IT")
-    sp_eu_sub = sub.add_parser("eurostat-cofog-sub", help="Cache Eurostat COFOG subfunction shares for countries/year")
-    sp_eu_sub.add_argument("--year", type=int, required=True)
-    sp_eu_sub.add_argument("--countries", required=True, help="Comma-separated country codes, e.g. FR,DE,IT")
-    sp_eu_sub = sub.add_parser("eurostat-cofog-sub", help="Cache Eurostat COFOG subfunction shares for countries/year")
-    sp_eu_sub.add_argument("--year", type=int, required=True)
-    sp_eu_sub.add_argument("--countries", required=True, help="Comma-separated country codes, e.g. FR,DE,IT")
-    sp_eu_sub = sub.add_parser("eurostat-cofog-sub", help="Cache Eurostat COFOG subfunction shares for countries/year")
-    sp_eu_sub.add_argument("--year", type=int, required=True)
-    sp_eu_sub.add_argument("--countries", required=True, help="Comma-separated country codes, e.g. FR,DE,IT")
-    sp_eu_sub = sub.add_parser("eurostat-cofog-sub", help="Cache Eurostat COFOG subfunction shares for countries/year")
-    sp_eu_sub.add_argument("--year", type=int, required=True)
-    sp_eu_sub.add_argument("--countries", required=True, help="Comma-separated country codes, e.g. FR,DE,IT")
-
-    sp_eu_sub = sub.add_parser("eurostat-cofog-sub", help="Cache Eurostat COFOG subfunction shares for countries/year")
-    sp_eu_sub.add_argument("--year", type=int, required=True)
-    sp_eu_sub.add_argument("--countries", required=True, help="Comma-separated country codes, e.g. FR,DE,IT")
 
     sp_fields = sub.add_parser("ods-fields", help="List fields for an ODS dataset (to help pick cp/ae/year fields)")
     sp_fields.add_argument("--base", default="https://data.economie.gouv.fr")
@@ -968,6 +952,39 @@ def main(argv: Iterable[str] | None = None) -> None:
     sp_lego.add_argument("--country", default="FR")
     sp_lego.add_argument("--scope", default="S13")
 
+    # DECP procurement ingestion
+    sp_decp = sub.add_parser("decp", help="Ingest DECP procurement and write normalized cache")
+    sp_decp.add_argument("--year", type=int, required=True)
+    sp_decp.add_argument("--csv", dest="csv_path", default=None, help="Path to input CSV (consolidated)")
+    sp_decp.add_argument("--base", default=None, help="ODS base URL (optional)")
+    sp_decp.add_argument("--dataset", default=None, help="ODS dataset id (optional)")
+    sp_decp.add_argument("--enrich-sirene", action="store_true", help="Enrich top suppliers with SIRENE (NAF, size)")
+    sp_decp.add_argument("--sirene-max", type=int, default=100, help="Max suppliers to enrich by amount")
+    sp_decp.add_argument("--enrich-sirene", action="store_true", help="Enrich top suppliers with SIRENE (NAF, size)")
+    sp_decp.add_argument("--sirene-max", type=int, default=100, help="Max suppliers to enrich by amount")
+    sp_decp.add_argument("--enrich-sirene", action="store_true", help="Enrich top suppliers with SIRENE (NAF, size)")
+    sp_decp.add_argument("--sirene-max", type=int, default=100, help="Max suppliers to enrich by amount")
+    sp_decp.add_argument("--enrich-sirene", action="store_true", help="Enrich top suppliers with SIRENE (NAF, size)")
+    sp_decp.add_argument("--sirene-max", type=int, default=100, help="Max suppliers to enrich by amount")
+    sp_decp.add_argument("--enrich-sirene", action="store_true", help="Enrich top suppliers with SIRENE (NAF, size)")
+    sp_decp.add_argument("--sirene-max", type=int, default=100, help="Max suppliers to enrich by amount")
+
+    # Eurostat COFOG subfunction shares
+    sp_eu_sub = sub.add_parser("eurostat-cofog-sub", help="Cache Eurostat COFOG subfunction shares for countries/year")
+    sp_eu_sub.add_argument("--year", type=int, required=True)
+    sp_eu_sub.add_argument("--countries", required=True, help="Comma-separated country codes, e.g. FR,DE,IT")
+
+    # Eurostat COFOG subfunction shares
+    sp_eu_sub = sub.add_parser("eurostat-cofog-sub", help="Cache Eurostat COFOG subfunction shares for countries/year")
+    sp_eu_sub.add_argument("--year", type=int, required=True)
+    sp_eu_sub.add_argument("--countries", required=True, help="Comma-separated country codes, e.g. FR,DE,IT")
+
+    # Eurostat COFOG subfunctions
+    sp_eu_sub = sub.add_parser("eurostat-cofog-sub", help="Cache Eurostat COFOG subfunction shares for countries/year")
+    sp_eu_sub.add_argument("--year", type=int, required=True)
+    sp_eu_sub.add_argument("--countries", required=True, help="Comma-separated country codes, e.g. FR,DE,IT")
+
+    # INSEE macro series warmer
     sp_macro = sub.add_parser("macro-insee", help="Warm selected INSEE BDM macro series from a config JSON")
     sp_macro.add_argument("--config", required=True, help="Path to macro series config JSON")
 
@@ -993,16 +1010,7 @@ def main(argv: Iterable[str] | None = None) -> None:
         path = warm_eurostat_cofog_sub(args.year, countries)
         print(f"Wrote {path}")
         return
-    if args.cmd == "eurostat-cofog-sub":
-        countries = [c.strip() for c in args.countries.split(",") if c.strip()]
-        path = warm_eurostat_cofog_sub(args.year, countries)
-        print(f"Wrote {path}")
-        return
-    if args.cmd == "eurostat-cofog-sub":
-        countries = [c.strip() for c in args.countries.split(",") if c.strip()]
-        path = warm_eurostat_cofog_sub(args.year, countries)
-        print(f"Wrote {path}")
-        return
+
     if args.cmd == "eurostat-cofog-sub":
         countries = [c.strip() for c in args.countries.split(",") if c.strip()]
         path = warm_eurostat_cofog_sub(args.year, countries)
@@ -1027,14 +1035,37 @@ def main(argv: Iterable[str] | None = None) -> None:
         print(f"Wrote {path}")
         return
 
-    # DECP procurement is handled via a dedicated CLI entry (see below)
+    if args.cmd == "decp":
+        path = warm_decp_procurement(
+            args.year,
+            csv_path=args.csv_path,
+            base=args.base,
+            dataset=args.dataset,
+            enrich_sirene=bool(getattr(args, "enrich_sirene", False)),
+            sirene_max=int(getattr(args, "sirene_max", 100)),
+        )
+        print(f"Wrote {path}")
+        return
+
+    if args.cmd == "macro-insee":
+        path = warm_macro_insee(args.config)
+        print(f"Wrote {path}")
+        return
 
 
 # ------------------------------
 # DECP procurement ingestion
 # ------------------------------
 
-def warm_decp_procurement(year: int, csv_path: str | None = None, base: str | None = None, dataset: str | None = None) -> str:
+def warm_decp_procurement(
+    year: int,
+    csv_path: str | None = None,
+    base: str | None = None,
+    dataset: str | None = None,
+    *,
+    enrich_sirene: bool = False,
+    sirene_max: int = 100,
+) -> str:
     """Ingest consolidated DECP-like data (CSV or ODS), deduplicate and roll up lots→contracts.
 
     Writes: data/cache/procurement_contracts_{year}.csv and a sidecar meta JSON.
@@ -1123,6 +1154,38 @@ def warm_decp_procurement(year: int, csv_path: str | None = None, base: str | No
         if not amt or amt <= 0:
             ent["amount_quality"] = "MISSING"
 
+    # Optional Sirene enrichment (NAF, size) for top suppliers by amount
+    supplier_meta: Dict[str, Dict[str, str]] = {}
+    if enrich_sirene:
+        try:
+            # Aggregate amounts by supplier
+            sums: Dict[str, float] = {}
+            for (_, _), rec in groups.items():
+                sir = str(rec.get("supplier_siren") or "")
+                if not sir:
+                    continue
+                try:
+                    amt = float(rec.get("amount_eur") or 0.0)
+                except Exception:
+                    amt = 0.0
+                sums[sir] = sums.get(sir, 0.0) + amt
+            top = sorted(sums.items(), key=lambda x: x[1], reverse=True)[: max(0, int(sirene_max))]
+            sirens = [s for s, _ in top]
+            if sirens:
+                from .clients import insee as insee_client  # lazy import
+
+                for s in sirens:
+                    try:
+                        js = insee_client.sirene_by_siren(s)
+                        ul = js.get("uniteLegale") or js.get("unite_legale") or {}
+                        naf = ul.get("activitePrincipaleUniteLegale") or ul.get("activite_principale") or ""
+                        size = ul.get("trancheEffectifsUniteLegale") or ul.get("tranche_effectifs") or ""
+                        supplier_meta[s] = {"naf": str(naf or ""), "size": str(size or "")}
+                    except Exception:
+                        continue
+        except Exception:
+            supplier_meta = {}
+
     out_csv = os.path.join(CACHE_DIR, f"procurement_contracts_{year}.csv")
     import csv as _csv
 
@@ -1141,8 +1204,12 @@ def warm_decp_procurement(year: int, csv_path: str | None = None, base: str | No
             "lot_count",
             "location_code",
             "amount_quality",
+            "supplier_naf",
+            "supplier_company_size",
         ])
         for (_, _), rec in groups.items():
+            sir = str(rec.get("supplier_siren") or "")
+            meta = supplier_meta.get(sir, {})
             w.writerow([
                 year,
                 rec.get("contract_id"),
@@ -1156,15 +1223,19 @@ def warm_decp_procurement(year: int, csv_path: str | None = None, base: str | No
                 int(rec.get("lot_count") or 0),
                 rec.get("location_code"),
                 rec.get("amount_quality"),
+                meta.get("naf", ""),
+                meta.get("size", ""),
             ])
 
     # Sidecar metadata
     sidecar = {
-        "extraction_ts": dt.datetime.utcnow().isoformat() + "Z",
+        "extraction_ts": dt.datetime.now(dt.timezone.utc).isoformat(),
         "year": int(year),
         "source": (csv_path or f"ods:{base}:{dataset}"),
         "row_count": len(groups),
         "note": "Deduplicated by (contract_id, signed_date); lots rolled up by summing amounts and lot_count",
+        "sirene_enriched": bool(enrich_sirene and supplier_meta),
+        "sirene_enriched_count": len(supplier_meta),
     }
     with open(out_csv.replace(".csv", ".meta.json"), "w", encoding="utf-8") as f:
         json.dump(sidecar, f, ensure_ascii=False, indent=2)
@@ -1176,19 +1247,21 @@ def main(argv: Iterable[str] | None = None) -> None:
     p = argparse.ArgumentParser(description="Cache warmer for essential budget data")
     sub = p.add_subparsers(dest="cmd", required=True)
 
+    # PLF/LFI mission-level credits (ODS)
     sp_plf = sub.add_parser("plf", help="Cache PLF/LFI mission-level credits from ODS")
     sp_plf.add_argument("--base", default="https://data.economie.gouv.fr", help="ODS base URL")
     sp_plf.add_argument("--dataset", required=True, help="Dataset id, e.g. plf25-depenses-2025-selon-destination")
     sp_plf.add_argument("--year", type=int, required=True, help="Budget year (for output tagging)")
-    # Leave empty by default to enable auto-detection from dataset fields
     sp_plf.add_argument("--cp-field", default="", help="Field name for CP amount (override autodetect)")
     sp_plf.add_argument("--ae-field", default="", help="Field name for AE amount (override autodetect)")
     sp_plf.add_argument("--where", dest="extra_where", default=None, help="Extra ODS where clause, e.g. typebudget='PLF'")
 
+    # Eurostat COFOG shares
     sp_eu = sub.add_parser("eurostat-cofog", help="Cache Eurostat COFOG shares for countries/year")
     sp_eu.add_argument("--year", type=int, required=True)
     sp_eu.add_argument("--countries", required=True, help="Comma-separated country codes, e.g. FR,DE,IT")
 
+    # ODS dataset fields helper
     sp_fields = sub.add_parser("ods-fields", help="List fields for an ODS dataset (to help pick cp/ae/year fields)")
     sp_fields.add_argument("--base", default="https://data.economie.gouv.fr")
     sp_fields.add_argument("--dataset", required=True)
@@ -1205,6 +1278,12 @@ def main(argv: Iterable[str] | None = None) -> None:
     sp_decp.add_argument("--csv", dest="csv_path", default=None, help="Path to input CSV (consolidated)")
     sp_decp.add_argument("--base", default=None, help="ODS base URL (optional)")
     sp_decp.add_argument("--dataset", default=None, help="ODS dataset id (optional)")
+    sp_decp.add_argument("--enrich-sirene", action="store_true", help="Enrich top suppliers with SIRENE (NAF, size)")
+    sp_decp.add_argument("--sirene-max", type=int, default=100, help="Max suppliers to enrich by amount")
+
+    # INSEE macro series warmer
+    sp_macro = sub.add_parser("macro-insee", help="Warm selected INSEE BDM macro series from a config JSON")
+    sp_macro.add_argument("--config", required=True, help="Path to macro series config JSON")
 
     args = p.parse_args(list(argv) if argv is not None else None)
 
@@ -1232,7 +1311,14 @@ def main(argv: Iterable[str] | None = None) -> None:
         return
 
     if args.cmd == "decp":
-        path = warm_decp_procurement(args.year, csv_path=args.csv_path, base=args.base, dataset=args.dataset)
+        path = warm_decp_procurement(
+            args.year,
+            csv_path=args.csv_path,
+            base=args.base,
+            dataset=args.dataset,
+            enrich_sirene=bool(getattr(args, "enrich_sirene", False)),
+            sirene_max=int(getattr(args, "sirene_max", 100)),
+        )
         print(f"Wrote {path}")
         return
 
@@ -1283,7 +1369,7 @@ def warm_macro_insee(config_path: str) -> str:
         _json.dump(out, f, ensure_ascii=False, indent=2)
     # Sidecar
     sidecar = {
-        "extraction_ts": dt.datetime.utcnow().isoformat() + "Z",
+        "extraction_ts": dt.datetime.now(dt.timezone.utc).isoformat(),
         "country": country,
         "items": provenance,
         "config": os.path.abspath(config_path),

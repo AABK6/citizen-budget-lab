@@ -218,6 +218,23 @@ Makefile helpers
 
   make summary YEAR=2026
 
+- INSEE macro series (GDP, etc.):
+
+  - Prepare a small config JSON (example):
+
+    {
+      "country": "FR",
+      "items": [
+        {"id": "gdp_nominal", "dataset": "CNA-2014-PIB", "series": ["PIB-VALUE"]}
+      ]
+    }
+
+  - Warm and write `data/cache/macro_series_FR.json`:
+
+    python -m services.api.cache_warm macro-insee --config path/to/config.json
+
+  - When present, the API prefers this snapshot to populate GDP in baselines and scenario macros; otherwise it falls back to `data/gdp_series.csv`.
+
 Notes
 - The LEGO warmer uses Eurostat SDMX 2.1 (XML) for expenditures via `EUROSTAT_SDMX_BASE`, which is generally reliable without cookies.
 - Revenues use SDMX XML (`GOV_10A_TAXAG` for taxes/contributions; `GOV_10A_MAIN` for P.11/P.12 sales/fees). Some ESA lines (e.g., D.4 public income, D.7 transfers received) may require additional flows and are currently left at 0 to avoid double counting. Interest (D.41) is proxied from COFOG 01.7 total (GF0107 TE) until a dedicated ESA series is wired. See `docs/LEGO_METHOD.md` (Known Limitations).

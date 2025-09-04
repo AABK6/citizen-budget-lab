@@ -292,7 +292,8 @@ def allocation_by_cofog_subfunctions(year: int, country: str, major: str) -> Lis
     try:
         from .clients import eurostat as eu
 
-        js = eu.fetch("gov_10a_exp", {"time": str(year), "unit": "MIO_EUR", "sector": "S13", "geo": country})
+        # Request a valid slice including na_item TE to avoid 404 on Eurostat JSON
+        js = eu.fetch("gov_10a_exp", {"time": str(year), "unit": "MIO_EUR", "sector": "S13", "na_item": "TE", "geo": country})
         dims, _, idx_maps, labels = eu._dim_maps(js)  # type: ignore[attr-defined]
         cof_map = idx_maps.get("cofog99", {})
         # Gather subcodes for this major (GF07x) excluding the top-level GF07
@@ -329,6 +330,9 @@ def allocation_by_cofog_subfunctions(year: int, country: str, major: str) -> Lis
         for sub in range(1, 10):
             code = f"GF{major}{sub}"
             v = eu.sdmx_value("gov_10a_exp", f"A.MIO_EUR.S13.{code}.TE.{country}", time=str(year))
+            if v is None:
+                # fallback to last available Obs if target year missing
+                v = eu.sdmx_value("gov_10a_exp", f"A.MIO_EUR.S13.{code}.TE.{country}")
             if v is None:
                 continue
             total_mio += v
@@ -505,6 +509,58 @@ def _decode_yaml_base64(b64: str) -> dict:
 
 
 def _read_gdp_series() -> Dict[int, float]:
+    """Return a map of year→GDP (EUR).
+
+    Preference order:
+      1) Warmed INSEE macro cache at data/cache/macro_series_FR.json (if present and parseable)
+      2) Local CSV fallback at data/gdp_series.csv
+    """
+    # 1) Try warmed INSEE macro cache
+    try:
+        macro_path = os.path.join(CACHE_DIR, "macro_series_FR.json")
+        if os.path.exists(macro_path):
+            js = _read_file_json(macro_path)  # type: ignore[assignment]
+            items = js.get("items") or []
+
+            def _looks_like_gdp(item: dict) -> bool:
+                # Heuristics: id/dataset/series contains PIB/GDP token
+                txt = (str(item.get("id") or "") + " " + str(item.get("dataset") or "") + " " + " ".join([str(x) for x in (item.get("series") or [])])).lower()
+                return any(tok in txt for tok in ("pib", "gdp"))
+
+            def _extract_year_values(payload: dict) -> Dict[int, float]:
+                vals: Dict[int, float] = {}
+                # Traverse recursively and collect nodes with period/time/date and value
+                def rec(node: object) -> None:
+                    if isinstance(node, dict):
+                        lower = {k.lower(): k for k in node.keys()}
+                        pkey = next((lower[k] for k in ("period", "time", "time_period", "date") if k in lower), None)
+                        vkey = next((lower[k] for k in ("value", "obs_value", "val") if k in lower), None)
+                        if pkey and vkey:
+                            try:
+                                p = str(node[pkey])
+                                y = int(p[:4])
+                                vals[y] = float(node[vkey])
+                            except Exception:
+                                pass
+                        for v in node.values():
+                            rec(v)
+                    elif isinstance(node, list):
+                        for it in node:
+                            rec(it)
+                rec(payload)
+                return vals
+
+            for it in items:
+                if not _looks_like_gdp(it):
+                    continue
+                payload = it.get("data") or {}
+                vals = _extract_year_values(payload if isinstance(payload, dict) else {})
+                if vals:
+                    return vals
+    except Exception:
+        pass
+
+    # 2) Fallback to local CSV
     out: Dict[int, float] = {}
     for row in _read_csv(GDP_CSV):
         out[int(row["year"])] = float(row["gdp_eur"])
