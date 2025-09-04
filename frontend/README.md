@@ -5,11 +5,18 @@ This app uses the official French Government Design System (DSFR) for styling (f
 Prerequisites
 
 - Node 18+
-- API running at `http://localhost:8000/graphql` (see `README_DEV.md`)
+- API running locally (default `http://localhost:8000/graphql`, see `README_DEV.md`)
 
 Setup
 
 - Copy `.env.local.example` to `.env.local` and adjust `NEXT_PUBLIC_GRAPHQL_URL` if needed.
+  - The frontend always calls `/api/graphql` (same origin). `next.config.js` rewrites that path to the backend GraphQL URL.
+  - `NEXT_PUBLIC_GRAPHQL_URL` controls the rewrite destination only. If unset, it defaults to `http://localhost:8000/graphql`.
+
+Healthcheck
+
+- The frontend exposes `GET /api/health`, which proxies `${NEXT_PUBLIC_GRAPHQL_URL}/health` and returns `{ ok, backend, warehouse }`.
+- A small badge appears in the header showing API/warehouse status (green = OK, yellow = warming, red = down).
 - Install deps and run dev server:
 
   npm install

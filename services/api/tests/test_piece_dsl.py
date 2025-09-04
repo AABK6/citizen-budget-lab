@@ -30,11 +30,13 @@ actions:
 
 
 def test_piece_delta_pct_uses_baseline_amount(monkeypatch, tmp_path):
-    import json, os
+    import json
+    from services.api import data_loader
 
-    here = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
-    cache_dir = os.path.join(here, "data", "cache")
-    os.makedirs(cache_dir, exist_ok=True)
+    # Redirect baseline path to a temp file so we don't clobber real warmed data
+    path = tmp_path / "lego_baseline_2026.json"
+    monkeypatch.setattr(data_loader, "_lego_baseline_path", lambda year: str(path))
+
     snap = {
         "year": 2026,
         "scope": "S13",
@@ -46,8 +48,7 @@ def test_piece_delta_pct_uses_baseline_amount(monkeypatch, tmp_path):
         ],
         "meta": {"source": "test"},
     }
-    with open(os.path.join(cache_dir, "lego_baseline_2026.json"), "w", encoding="utf-8") as f:
-        json.dump(snap, f)
+    path.write_text(json.dumps(snap), encoding="utf-8")
 
     sdl = """
 version: 0.1
@@ -66,4 +67,3 @@ actions:
     assert not res.errors
     path = res.data["runScenario"]["accounting"]["deficitPath"]
     assert abs(path[0] - 1_000_000_000.0) < 1e-3
-

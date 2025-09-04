@@ -4,6 +4,7 @@ import { NavTabs } from '@/components/NavTabs'
 import { LangSwitcher } from '@/components/LangSwitcher'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { I18nProvider } from '@/lib/i18n'
+import { HealthBadge } from '@/components/HealthBadge'
 
 export const metadata: Metadata = {
   title: 'Citizen Budget Lab',
@@ -58,6 +59,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <div className="fr-header__tools">
                     <div className="fr-header__tools-links">
                       <ul className="fr-btns-group fr-btns-group--inline fr-btns-group--right fr-btns-group--icon-left">
+                        <li><HealthBadge /></li>
                         <li><ThemeToggle /></li>
                         <li><LangSwitcher /></li>
                       </ul>

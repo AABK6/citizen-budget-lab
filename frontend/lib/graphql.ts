@@ -1,4 +1,6 @@
-export const GRAPHQL_URL = process.env.NEXT_PUBLIC_GRAPHQL_URL || 'http://localhost:8000/graphql'
+// Always use a same-origin proxy endpoint to avoid CORS/mixed-content issues.
+// Next.js rewrites map `/api/graphql` to the real backend URL (see next.config.js).
+export const GRAPHQL_URL = '/api/graphql'
 
 export async function gqlRequest(query: string, variables?: Record<string, any>): Promise<any> {
   const res = await fetch(GRAPHQL_URL, {
@@ -11,4 +13,3 @@ export async function gqlRequest(query: string, variables?: Record<string, any>)
   if (js.errors) throw new Error(js.errors.map((e: any) => e.message).join('; '))
   return js.data
 }
-
