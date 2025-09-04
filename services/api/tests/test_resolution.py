@@ -55,3 +55,32 @@ actions:
     # specified 5% vs target 10% -> ratio ~0.5
     assert 0.45 <= overall <= 0.55
 
+
+def test_mass_targets_with_cofog_major(monkeypatch, tmp_path):
+    # Build a scenario that sets a mass target via cofog.09 and a smaller specified change.
+    sdl = """
+version: 0.1
+baseline_year: 2026
+assumptions: { horizon_years: 1 }
+actions:
+  - id: t_mass_09
+    target: cofog.09
+    op: increase
+    amount_eur: 1000000000
+    role: target
+  - id: c_mass_09
+    target: cofog.09
+    op: increase
+    amount_eur: 200000000
+"""
+    q = """
+      mutation Run($dsl:String!){ runScenario(input:{ dsl:$dsl }){ accounting{ deficitPath } resolution{ overallPct byMass{ massId targetDeltaEur specifiedDeltaEur } } } }
+    """
+    res = gql_schema.schema.execute_sync(q, variable_values={"dsl": _b64(sdl)})
+    assert not res.errors, res.errors
+    # Target 1.0B, specified 0.2B -> overall ~0.2
+    overall = res.data["runScenario"]["resolution"]["overallPct"]
+    assert 0.15 <= overall <= 0.25
+    # Deficit reflects only the specified change (0.2B)
+    deficit = res.data["runScenario"]["accounting"]["deficitPath"][0]
+    assert abs(deficit - 200_000_000.0) < 1e-2

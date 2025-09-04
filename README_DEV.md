@@ -51,6 +51,7 @@ Example queries
   mutation {
     runScenario(input: { dsl: "<base64>" }) {
       id
+      scenarioId
       accounting { deficitPath debtPath }
       compliance { eu3pct eu60pct netExpenditure localBalance }
       macro { deltaGDP deltaEmployment deltaDeficit assumptions }
@@ -299,6 +300,11 @@ Targets & Resolution (MVP+)
 Share Card (stub)
 
 - A basic OG route is available at `/api/og?scenarioId=<id>` which returns an SVG placeholder. Replace with a renderer as you design the final card.
+
+Levers & Conflict Nudge (MVP+)
+
+- The Reform Library queries `policyLevers(family, search)` and allows adding a lever as a target‑only action with the selected mass and amount.
+- If two applied levers conflict (based on `conflictsWith`), the UI surfaces a “Conflict Nudge” banner and the server also raises an error when running the scenario.
 
 - Frontend (Next.js):
 

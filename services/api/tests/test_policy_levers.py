@@ -23,3 +23,19 @@ def test_policy_levers_query_stub():
     assert isinstance(items, list)
     assert any(it.get("id") == "pen_age_plus3m_per_year" for it in items)
 
+
+def test_policy_levers_search_filter():
+    app = create_app()
+    client = TestClient(app)
+
+    q = """
+      query Q($q:String){
+        policyLevers(search: $q){ id family label }
+      }
+    """
+    res = client.post("/graphql", json={"query": q, "variables": {"q": "age"}})
+    assert res.status_code == 200
+    js = res.json()
+    assert "errors" not in js
+    arr = js["data"]["policyLevers"]
+    assert any(x["id"] == "pen_age_plus3m_per_year" for x in arr)

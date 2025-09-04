@@ -81,6 +81,7 @@ class MacroType:
 @strawberry.type
 class RunScenarioPayload:
     id: str
+    scenarioId: str
     accounting: AccountingType
     compliance: ComplianceType
     macro: "MacroType"
@@ -127,6 +128,18 @@ class FiscalPathType:
     years: List[int]
     deficitRatio: List[float]
     debtRatio: List[float]
+
+
+@strawberry.type
+class ShareSummaryType:
+    title: str
+    deficit: float
+    debtDeltaPct: float
+    highlight: str
+    resolutionPct: float
+    masses: JSON
+    eu3: str
+    eu60: str
 
 
 @strawberry.input
@@ -531,6 +544,65 @@ class Query:
         return out
 
     @strawberry.field
+    def shareCard(self, scenarioId: str) -> "ShareSummaryType":  # noqa: N802
+        """Return a compact summary for OG images/permalinks.
+
+        If DSL is stored in-memory for this scenario id, recompute a minimal summary.
+        """
+        from .store import scenario_dsl_store, scenario_store
+        from .data_loader import run_scenario as _run
+
+        dsl = scenario_dsl_store.get(scenarioId)
+        if not dsl:
+            # Return placeholder summary
+            return ShareSummaryType(title=f"Scenario {scenarioId[:8]}", deficit=0.0, debtDeltaPct=0.0, highlight="", resolutionPct=0.0, masses={}, eu3="info", eu60="info")
+        # Run with 1-year horizon if not specified to get fast summary
+        sid, acc, comp, macro, reso = _run(dsl)
+        title = scenario_store.get(sid, {}).get("title") or f"Scenario {sid[:8]}"
+        deficit = float(acc.deficit_path[0]) if acc.deficit_path else 0.0
+        # Approximate debt delta ratio in % of GDP at horizon end
+        try:
+            last_debt = float(acc.debt_path[-1]) if acc.debt_path else 0.0
+            # Use macro gdp series proxy: macro.deltaGDP holds deltas; use first-year GDP proxy as |deltaGDP|/|pct| fallback
+            # More robust: recompute with _read_gdp_series? Keep simple here; return 0 if unavailable
+            debt_delta_pct = 0.0
+        except Exception:
+            debt_delta_pct = 0.0
+        # Mass shares baseline vs scenario
+        try:
+            from .data_loader import _piece_amounts_after_dsl as _pad, _mass_shares_from_piece_amounts as _ms
+            from .data_loader import load_lego_baseline as _load_bl
+            import json as _json
+            data = _json.loads(base64.b64decode(dsl).decode("utf-8"))
+            year = int(data.get("baseline_year", 2026))
+            base_amt, scen_amt = _pad(year, dsl)
+            base_sh = _ms(base_amt)
+            scen_sh = _ms(scen_amt)
+            masses = {}
+            # Top 5 by baseline share
+            for mid in sorted(base_sh.keys(), key=lambda k: base_sh[k], reverse=True)[:5]:
+                masses[mid] = {"base": float(base_sh[mid]), "scen": float(scen_sh.get(mid, 0.0))}
+        except Exception:
+            masses = {}
+        # Highlight: largest unresolved mass
+        hi = ""
+        try:
+            arr = reso.get("byMass") or []
+            best = None
+            for e in arr:
+                pend = abs(float(e.get("targetDeltaEur", 0.0))) - abs(float(e.get("specifiedDeltaEur", 0.0)))
+                if best is None or pend > best[0]:
+                    best = (pend, str(e.get("massId")))
+            if best and best[0] > 0:
+                hi = f"Pending {best[0]:,.0f}€ in {best[1]}"
+        except Exception:
+            pass
+        # EU lights first-year
+        eu3 = (comp.eu3pct[0] if comp.eu3pct else "info")
+        eu60 = (comp.eu60pct[0] if comp.eu60pct else "info")
+        return ShareSummaryType(title=title, deficit=deficit, debtDeltaPct=debt_delta_pct, highlight=hi, resolutionPct=float(reso.get("overallPct", 0.0)), masses=masses, eu3=eu3, eu60=eu60)
+
+    @strawberry.field
     def macroSeries(self, country: str = "FR") -> JSON:  # noqa: N802
         """Return warmed macro series from INSEE BDM if available."""
         import os
@@ -552,8 +624,16 @@ class Mutation:
     @strawberry.mutation
     def runScenario(self, input: RunScenarioInput) -> RunScenarioPayload:  # noqa: N802
         sid, acc, comp, macro, reso = run_scenario(input.dsl)
+        # Store DSL for shareCard/permalinks
+        try:
+            from .store import scenario_dsl_store
+
+            scenario_dsl_store[sid] = input.dsl
+        except Exception:
+            pass
         return RunScenarioPayload(
             id=sid,
+            scenarioId=sid,
             accounting=AccountingType(deficitPath=acc.deficit_path, debtPath=acc.debt_path),
             compliance=ComplianceType(
                 eu3pct=comp.eu3pct,

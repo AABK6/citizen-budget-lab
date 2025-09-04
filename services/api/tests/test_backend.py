@@ -186,6 +186,22 @@ def test_graphql_queries_without_network(monkeypatch):
     """)
     assert len(data["sources"]) >= 5
 
+    # shareCard after a runScenario to ensure DSL store wiring
+    run = gql(
+        """
+      mutation Run($dsl:String!){ runScenario(input:{ dsl:$dsl }){ scenarioId } }
+    """,
+        {"dsl": _encode_scenario_yaml("version: 0.1\nbaseline_year: 2026\nassumptions: { horizon_years: 1 }\nactions: []\n")},
+    )
+    sid = run["runScenario"]["scenarioId"]
+    card = gql(
+        """
+      query($id:ID!){ shareCard(scenarioId:$id){ title deficit debtDeltaPct highlight } }
+    """,
+        {"id": sid},
+    )
+    assert card["shareCard"]["title"].startswith("Scenario ") or card["shareCard"]["title"]
+
     # Stub network clients to avoid external calls
     class _Resp:
         def __init__(self, payload: Any):

@@ -76,6 +76,7 @@ type LegoPiece {
   type: String! # "expenditure" | "revenue"
   amountEur: Float
   share: Float
+  cofogMajors: [String!]!
   beneficiaries: JSON!
   examples: [String!]!
   sources: [String!]!

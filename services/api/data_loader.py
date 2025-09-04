@@ -739,6 +739,131 @@ def lego_distance_from_dsl(year: int, dsl_b64: str, scope: str = "S13") -> dict:
     return {"score": score, "byPiece": deltas}
 
 
+def _piece_amounts_after_dsl(year: int, dsl_b64: str, scope: str = "S13") -> tuple[dict[str, float], dict[str, float]]:
+    """Return (baseline_amounts_by_piece, scenario_amounts_by_piece) for expenditure pieces.
+
+    Reuses logic from lego_distance_from_dsl to apply piece.* actions to amounts.
+    """
+    baseline = load_lego_baseline(year)
+    cfg = load_lego_config()
+    amounts: dict[str, float] = {}
+    ptypes: dict[str, str] = {str(p.get("id")): str(p.get("type")) for p in cfg.get("pieces", [])}
+    for ent in (baseline or {}).get("pieces", []):
+        pid = str(ent.get("id"))
+        if ptypes.get(pid) != "expenditure":
+            continue
+        ae = ent.get("amount_eur")
+        if isinstance(ae, (int, float)):
+            amounts[pid] = float(ae)
+    base = dict(amounts)
+    if not amounts:
+        return base, {}
+    data = _decode_yaml_base64(dsl_b64)
+    actions = data.get("actions") or []
+    # Policy settings
+    lego_policy: Dict[str, dict] = {}
+    lego_elast: Dict[str, float] = {}
+    try:
+        for p in cfg.get("pieces", []):
+            pid = str(p.get("id"))
+            pol = p.get("policy") or {}
+            if pol:
+                lego_policy[pid] = pol
+            el = p.get("elasticity") or {}
+            v = el.get("value")
+            if isinstance(v, (int, float)):
+                lego_elast[pid] = float(v)
+    except Exception:
+        pass
+    def _apply(pid: str, op: str, amt_eur: float | None, delta_pct: float | None, role: str | None, ptype: str) -> None:
+        if pid not in amounts:
+            return
+        if role == "target":
+            return  # targets don't change amounts
+        cur = amounts[pid]
+        pol = lego_policy.get(pid) or {}
+        def _enforce_bounds_amount_change(change: float) -> None:
+            bounds_amt = pol.get("bounds_amount_eur") or {}
+            try:
+                amin = float(bounds_amt.get("min")) if bounds_amt.get("min") is not None else None
+                amax = float(bounds_amt.get("max")) if bounds_amt.get("max") is not None else None
+            except Exception:
+                amin = amax = None
+            new_val = cur + change
+            if amin is not None and new_val < amin - 1e-9:
+                raise ValueError()
+            if amax is not None and new_val > amax + 1e-9:
+                raise ValueError()
+        if amt_eur is not None:
+            val = float(amt_eur)
+            if ptype == "expenditure":
+                if op == "increase":
+                    _enforce_bounds_amount_change(val)
+                    amounts[pid] = max(0.0, cur + val)
+                elif op == "decrease":
+                    _enforce_bounds_amount_change(-val)
+                    amounts[pid] = max(0.0, cur - val)
+                elif op == "set":
+                    _enforce_bounds_amount_change(val - cur)
+                    amounts[pid] = max(0.0, val)
+            else:
+                # revenue not modeled here for masses
+                pass
+        elif delta_pct is not None:
+            pct = float(delta_pct)
+            sign = 1.0 if op != "decrease" else -1.0
+            eff = (pct / 100.0) * cur
+            if ptype == "expenditure":
+                amounts[pid] = max(0.0, cur + sign * eff)
+            else:
+                e = lego_elast.get(pid, 1.0)
+                amounts[pid] = max(0.0, cur - sign * eff * e)
+    for act in actions:
+        target = str(act.get("target", ""))
+        if not target.startswith("piece."):
+            continue
+        pid = target.split(".", 1)[1]
+        op = str(act.get("op", "increase")).lower()
+        role = str(act.get("role") or "")
+        amt = act.get("amount_eur")
+        amt_eur = float(amt) if isinstance(amt, (int, float)) else None
+        dp = act.get("delta_pct")
+        delta_pct = float(dp) if isinstance(dp, (int, float)) else None
+        _apply(pid, op, amt_eur, delta_pct, role, ptypes.get(pid, "expenditure"))
+    return base, amounts
+
+
+def _mass_shares_from_piece_amounts(amounts: dict[str, float]) -> dict[str, float]:
+    # Build piece->cofog map from config
+    cfg = load_lego_config()
+    cof_map: Dict[str, List[Tuple[str, float]]] = {}
+    for p in cfg.get("pieces", []):
+        pid = str(p.get("id"))
+        cof = []
+        for mc in (p.get("mapping", {}).get("cofog") or []):
+            cof.append((str(mc.get("code")), float(mc.get("weight", 1.0))))
+        if cof:
+            cof_map[pid] = cof
+    by_major: Dict[str, float] = defaultdict(float)
+    total = 0.0
+    for pid, amt in amounts.items():
+        total += amt
+        cof = cof_map.get(pid) or []
+        if not cof:
+            continue
+        # Distribute to majors
+        wsum = sum(w for _, w in cof) or 1.0
+        for code, w in cof:
+            major = str(code).split(".")[0][:2]
+            by_major[major] += amt * (w / wsum)
+    # Normalize
+    shares: Dict[str, float] = {}
+    if total > 0:
+        for m, v in by_major.items():
+            shares[m] = float(v / total)
+    return shares
+
+
 def _map_action_to_cofog(action: dict, baseline_year: int) -> List[Tuple[str, float]]:
     """
     Returns a list of (category, weight) e.g., [("09", 1.0)] or [("tax.ir", 1.0)].
