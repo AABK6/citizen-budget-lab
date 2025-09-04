@@ -221,7 +221,9 @@ Implementation Plan — Build Page (Polished)
 - Phase E (Share & Compare)
   - Save scenario (title/description); OG image preview hook; Compare & Remix entrypoint.
 
-Milestone AC tie‑in: See `docs/BUILD_PAGE_SPEC.md` for detailed ACs.
+Milestone AC tie‑in: See `docs/BUILD_PAGE_SPEC.md` for detailed ACs and `docs/PLAYGROUND_WORKSHOP_PLAN.md` for the complete dual‑path plan, backlog, and storyboard.
+
+See also: `docs/PLAYGROUND_WORKSHOP_PLAN.md` — Budget Playground ↔ Policy Workshop Plan (Detailed)
 
 Playground Design Options (for future iteration)
 

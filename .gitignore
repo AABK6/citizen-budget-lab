@@ -1,4 +1,5 @@
 .venv
+.venv_py/
 .env
 .env.*
 .pyenv

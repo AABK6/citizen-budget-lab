@@ -191,12 +191,17 @@ Epics
   - Status: [~]
     - [x] `/build` page initial scaffold with Piece dials + Scoreboard
     - [x] Permalinks via `?dsl=<base64>`; server resolution wired; Distance wired
-    - [ ] Mass dials (Target Δ€, Change Δ€) with per‑mass progress
-    - [ ] Global Resolution meter (HUD) and striped “Pending” overlay on TwinBars
-    - [ ] Workshop: lever cards, dynamic params from schema; apply as Target/Change; conflict nudge
-    - [ ] Robust DSL restore (parse YAML; rehydrate Piece/Mass/Levers)
-    - [ ] A11y polish + Axe checks in CI for `/build`; i18n for all labels
-    - [ ] Save scenario (title/description); OG preview link; Compare & Remix entrypoint
+    - [x] Global Resolution meter (HUD); i18n seeds; OG preview; axe CI for `/build`
+    - [x] Workshop: lever cards, dynamic params from schema; apply to mass; conflict nudge skeleton
+    - [x] Robust DSL restore (parse YAML; hydrate Piece/Mass/Levers)
+    - [ ] Mass cards + Explain Panel (ranked suggestions; sum‑constrained split)
+    - [ ] Human labels/desc/examples (masses/pieces) with tooltips; intent chips
+    - [ ] suggestLevers, popularIntents, specifyMass (API)
+    - [ ] WaterfallDelta + Sankey‑lite ribbons; Lens Switch recolorings
+    - [ ] Compare & Remix view; save/publish with lineage
+    - [ ] A11y polish; FR/EN copy; performance budget checks
+
+  - Detailed plan & storyboard: see `docs/PLAYGROUND_WORKSHOP_PLAN.md`.
 
 Build Page — Detailed Tasks [UI][API]
 
