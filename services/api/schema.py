@@ -146,6 +146,30 @@ class ShareSummaryType:
 class RunScenarioInput:
     dsl: str  # base64-encoded YAML
 
+@strawberry.input
+class MassSplitInput:
+    pieceId: str
+    amountEur: float
+
+@strawberry.input
+class SpecifyMassInput:
+    dsl: str
+    massId: str
+    targetDeltaEur: float
+    splits: list[MassSplitInput]
+
+@strawberry.type
+class SpecifyErrorType:
+    code: str
+    message: str
+    pieceId: str | None = None
+
+@strawberry.type
+class SpecifyMassPayload:
+    ok: bool
+    errors: list[SpecifyErrorType]
+    resolution: ResolutionType
+    dsl: str
 
 @strawberry.type
 class LegoPieceType:
@@ -775,6 +799,114 @@ class Mutation:
             del scenario_store[id]
             return True
         return False
+
+    @strawberry.mutation
+    def specifyMass(self, input: SpecifyMassInput) -> SpecifyMassPayload:  # noqa: N802
+        """Validate a mass split plan against the current scenario and return an updated DSL.
+
+        Rules:
+        - Cannot allocate more than remaining pending amount for the mass.
+        - Piece marked as locked in LEGO config cannot be used.
+        - Splits sign should broadly match target sign (warn when mixed).
+        """
+        import base64 as _b64
+        import yaml as _yaml
+        from .data_loader import run_scenario as _run, load_lego_config as _cfg
+
+        # Current resolution to compute pending
+        _, _, _, _, reso = _run(input.dsl)
+        by_mass = {str(e.get("massId")): (float(e.get("targetDeltaEur", 0.0)), float(e.get("specifiedDeltaEur", 0.0))) for e in reso.get("byMass", [])}
+        t, s = by_mass.get(str(input.massId), (float(input.targetDeltaEur), 0.0))
+        # Prefer explicit target from input if non-zero
+        target = float(input.targetDeltaEur if abs(input.targetDeltaEur) > 0 else t)
+        specified = float(s)
+        pending_abs = max(0.0, abs(target) - abs(specified))
+
+        # Validate splits
+        errors: list[SpecifyErrorType] = []
+        total_abs = 0.0
+        total_signed = 0.0
+        for sp in input.splits:
+            try:
+                amt = float(sp.amountEur)
+            except Exception:
+                amt = 0.0
+            total_abs += abs(amt)
+            total_signed += amt
+        tol = 1e-6
+        if total_abs - pending_abs > tol:
+            errors.append(SpecifyErrorType(code="over_allocate", message=f"Plan exceeds pending amount by {(total_abs - pending_abs):,.0f}€"))
+        if target != 0 and (total_signed * target) < 0:
+            errors.append(SpecifyErrorType(code="sign_mismatch", message="Plan sign opposes target sign"))
+
+        # Locked pieces
+        try:
+            cfg = _cfg()
+            locked_ids = {str(p.get("id")) for p in (cfg.get("pieces") or []) if bool(p.get("locked", False))}
+            for sp in input.splits:
+                if str(sp.pieceId) in locked_ids:
+                    errors.append(SpecifyErrorType(code="locked", message="Piece is locked", pieceId=str(sp.pieceId)))
+        except Exception:
+            pass
+
+        if errors:
+            # Return current resolution and unchanged DSL
+            return SpecifyMassPayload(
+                ok=False,
+                errors=errors,
+                resolution=ResolutionType(
+                    overallPct=float(reso.get("overallPct", 0.0)),
+                    byMass=[
+                        MassTargetType(
+                            massId=str(e.get("massId")),
+                            targetDeltaEur=float(e.get("targetDeltaEur", 0.0)),
+                            specifiedDeltaEur=float(e.get("specifiedDeltaEur", 0.0)),
+                        )
+                        for e in reso.get("byMass", [])
+                    ],
+                ),
+                dsl=input.dsl,
+            )
+
+        # Build updated DSL (append piece.* amount actions)
+        try:
+            data = _yaml.safe_load(_b64.b64decode(input.dsl).decode("utf-8")) or {}
+        except Exception:
+            data = {}
+        acts = list(data.get("actions") or [])
+        for sp in input.splits:
+            amt = float(sp.amountEur)
+            if abs(amt) < tol:
+                continue
+            op = "increase" if amt >= 0 else "decrease"
+            acts.append({
+                "id": f"spec_{input.massId}_{sp.pieceId}",
+                "target": f"piece.{sp.pieceId}",
+                "op": op,
+                "amount_eur": abs(amt),
+            })
+        data["actions"] = acts
+        yaml_text = _yaml.safe_dump(data, allow_unicode=True, sort_keys=False)
+        new_dsl = _b64.b64encode(yaml_text.encode("utf-8")).decode("ascii")
+
+        # Recompute resolution
+        _, _, _, _, reso2 = _run(new_dsl)
+        return SpecifyMassPayload(
+            ok=True,
+            errors=[],
+            dsl=new_dsl,
+            resolution=ResolutionType(
+                overallPct=float(reso2.get("overallPct", 0.0)),
+                byMass=[
+                    MassTargetType(
+                        massId=str(e.get("massId")),
+                        targetDeltaEur=float(e.get("targetDeltaEur", 0.0)),
+                        specifiedDeltaEur=float(e.get("specifiedDeltaEur", 0.0)),
+                    )
+                    for e in reso2.get("byMass", [])
+                ],
+            ),
+        )
 
 
 schema = strawberry.Schema(query=Query, mutation=Mutation)

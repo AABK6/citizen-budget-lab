@@ -453,18 +453,37 @@ export default function BuildPage() {
           targetAmount={massTargets[explainMass]||0}
           specifiedAmount={(result?.resolutionByMass||[]).find(e=> e.massId===explainMass)?.specifiedDeltaEur || 0}
           pieces={pieces}
+          dslB64={dslB64}
+          t={t}
           onClose={()=> setExplainMass(null)}
-          onApply={(plan)=>{
-            const newD = { ...deltas }
-            for (const { pieceId, amountEur } of plan) {
-              const p = pieces.find(pp=> pp.id===pieceId)
-              const base = Number(p?.amountEur||0)
-              if (!base) continue
-              const pct = (amountEur / base) * 100
-              newD[pieceId] = (newD[pieceId]||0) + pct
+          onApply={async(plan)=>{
+            try {
+              const q = `mutation($input:SpecifyMassInput!){ specifyMass(input:$input){ ok dsl errors{ code message pieceId } resolution{ overallPct byMass{ massId targetDeltaEur specifiedDeltaEur } } } }`
+              const payload = { dsl: dslB64, massId: explainMass, targetDeltaEur: massTargets[explainMass]||0, splits: plan.map(p=>({ pieceId: p.pieceId, amountEur: p.amountEur })) }
+              const data = await gqlRequest(q, { input: payload })
+              const sp = data?.specifyMass
+              if (!sp?.ok) {
+                const msg = (sp?.errors||[]).map((e:any)=> e.message).join('; ')
+                setConflictNudge(msg || 'Validation failed')
+                return
+              }
+              // Update state from returned DSL
+              const parsed = parseDsl(sp.dsl, pieces)
+              if (parsed) {
+                setTargets(parsed.targets)
+                setDeltas(parsed.deltas)
+                setMassTargets(parsed.massTargets)
+                setMassChanges(parsed.massChanges)
+                setSelectedLevers(parsed.levers)
+              }
+              // Update resolution in result (keep other fields)
+              setResult(prev => ({ ...(prev||{ deficitY0: 0, eu3: 'info', eu60: 'info', resolutionPct: 0 }), resolutionPct: Number(sp.resolution?.overallPct||0), resolutionByMass: (sp.resolution?.byMass||[]).map((e:any)=>({ massId:String(e.massId), targetDeltaEur:Number(e.targetDeltaEur||0), specifiedDeltaEur:Number(e.specifiedDeltaEur||0) })) }))
+              // Sync permalink
+              try { const url = new URL(window.location.href); url.searchParams.set('dsl', sp.dsl); window.history.replaceState({}, '', url.toString()) } catch {}
+              setExplainMass(null)
+            } catch (e:any) {
+              setConflictNudge(e?.message||'Failed to specify mass')
             }
-            setDeltas(newD)
-            setExplainMass(null)
           }}
         />
       )}
@@ -763,13 +782,15 @@ function TwinBars({ masses, labels, resolution }: { masses: Record<string, { bas
   )
 }
 
-function ExplainPanel({ massId, label, baseAmount, targetAmount, specifiedAmount, pieces, onClose, onApply }: {
+function ExplainPanel({ massId, label, baseAmount, targetAmount, specifiedAmount, pieces, dslB64, t, onClose, onApply }: {
   massId: string
   label: string
   baseAmount: number
   targetAmount: number
   specifiedAmount: number
   pieces: Piece[]
+  dslB64: string
+  t: (k: string)=>string
   onClose: ()=>void
   onApply: (plan: Array<{ pieceId: string; amountEur: number }>)=>void
 }) {
@@ -802,14 +823,14 @@ function ExplainPanel({ massId, label, baseAmount, targetAmount, specifiedAmount
     <div role="dialog" aria-modal="true" className="fr-modal__body" style={{ position: 'fixed', left: 0, right: 0, bottom: 0, top: 0, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
       <div className="fr-card fr-card--no-arrow" style={{ maxWidth: '720px', width: '90%', maxHeight: '80vh', overflow: 'auto' }}>
         <div className="fr-card__body">
-          <div className="fr-card__title">Explain {massId} — {label}</div>
+          <div className="fr-card__title">{t('build.explain') || 'Explain'} {massId} — {label}</div>
           <div className="fr-card__desc">
-            <p className="fr-text--sm">Target: {(targetAmount||0).toLocaleString()} €; Specified: {(specifiedAmount||0).toLocaleString()} €; Remaining: {remaining.toLocaleString()} €</p>
+            <p className="fr-text--sm">{t('build.target') || 'Target'}: {(targetAmount||0).toLocaleString()} €; {t('build.specified') || 'Specified'}: {(specifiedAmount||0).toLocaleString()} €; {t('build.remaining') || 'Remaining'}: {remaining.toLocaleString()} €</p>
             {remaining === 0 ? (
-              <p className="fr-text--sm">Target met.</p>
+              <p className="fr-text--sm">{t('build.target_met') || 'Target met.'}</p>
             ) : (
               <>
-                <p className="fr-text--sm">Distribute the remaining amount across key pieces. Sliders are sum‑constrained on apply.</p>
+                <p className="fr-text--sm">{t('build.distribute_hint') || 'Distribute the remaining amount across key pieces. Sliders are sum‑constrained on apply.'}</p>
                 <div className="stack" style={{ gap: '.5rem' }}>
                   {massPieces.map(p => (
                     <div key={p.id} className="fr-input-group">
@@ -830,8 +851,8 @@ function ExplainPanel({ massId, label, baseAmount, targetAmount, specifiedAmount
               </>
             )}
             <div className="fr-btns-group fr-btns-group--inline" style={{ marginTop: '.5rem' }}>
-              <button className="fr-btn fr-btn--secondary" onClick={onClose}>Close</button>
-              <button className="fr-btn" onClick={()=> onApply(clampPlan())} disabled={remaining===0}>Apply</button>
+              <button className="fr-btn fr-btn--secondary" onClick={onClose}>{t('buttons.close') || 'Close'}</button>
+              <button className="fr-btn" onClick={()=> onApply(clampPlan())} disabled={remaining===0}>{t('buttons.apply') || 'Apply'}</button>
             </div>
           </div>
         </div>
