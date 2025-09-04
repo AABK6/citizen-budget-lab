@@ -21,6 +21,8 @@ import datetime as dt
 import csv
 import json
 import os
+import time
+import logging
 from typing import Any, Dict, Iterable, List
 
 from .clients import eurostat as eu
@@ -30,6 +32,7 @@ from .clients import ods
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 DATA_DIR = os.path.join(ROOT, "data")
 CACHE_DIR = os.path.join(DATA_DIR, "cache")
+LOG = logging.getLogger("cbl.warmers")
 
 
 def _ensure_dir(path: str) -> None:
@@ -150,6 +153,8 @@ def warm_plf_state_budget(
     (programme columns left blank at this aggregation level)
     """
     _ensure_dir(CACHE_DIR)
+    t0 = time.time()
+    LOG.info("[PLF] base=%s dataset=%s year=%s", base, dataset, year)
 
     # Introspect fields and decide actual names
     meta = ods.dataset_info(base, dataset)
@@ -351,6 +356,7 @@ def warm_plf_state_budget(
             cp = float(rec.get("cp_eur") or rec.get(cp_col) or 0)
             ae = float(rec.get("ae_eur") or rec.get(ae_col) or 0)
             w.writerow([year, code, label, "", "", cp, ae])
+    LOG.info("[PLF] wrote %d rows to %s in %.1fs", len(rows), out_csv, time.time() - t0)
     # Sidecar provenance metadata
     sidecar = {
         "extraction_ts": dt.datetime.now(dt.timezone.utc).isoformat(),
@@ -377,6 +383,8 @@ def warm_eurostat_cofog(year: int, countries: List[str]) -> str:
     { "FR": [{"code":"09","label":"Education","share":0.21}, ...], ... }
     """
     _ensure_dir(CACHE_DIR)
+    t0 = time.time()
+    LOG.info("[EUROSTAT] shares year=%s in %s", year, ",".join(countries))
     out: Dict[str, Any] = {}
     try:
         js = eu.fetch("gov_10a_exp", {"time": str(year), "unit": "MIO_EUR", "sector": "S13"})
@@ -430,6 +438,7 @@ def warm_eurostat_cofog(year: int, countries: List[str]) -> str:
     out_path = os.path.join(CACHE_DIR, f"eu_cofog_shares_{year}.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=2)
+    LOG.info("[EUROSTAT] wrote shares to %s in %.1fs", out_path, time.time() - t0)
     return out_path
 
 
@@ -444,14 +453,19 @@ def warm_eurostat_cofog_sub(year: int, countries: List[str]) -> str:
       { "FR": { "07": [{"code":"07.1","label":"...","share":0.025}, ...], ... }, ... }
     """
     _ensure_dir(CACHE_DIR)
+    t0 = time.time()
+    LOG.info("[EUROSTAT] sub-shares year=%s in %s", year, ",".join(countries))
     out: Dict[str, Any] = {}
+    majors = [f"{i:02d}" for i in range(1, 11)]
     try:
-        js = eu.fetch("gov_10a_exp", {"time": str(year), "unit": "MIO_EUR", "sector": "S13"})
-        dims, _, idx_maps, labels = eu._dim_maps(js)  # type: ignore[attr-defined]
-        cof_map = idx_maps.get("cofog99", {})
-        geo_map = idx_maps.get("geo", {})
-        majors = [f"{i:02d}" for i in range(1, 11)]
+        # Fetch per-country with na_item=TE to avoid 404 and reduce payload
         for c in countries:
+            js = eu.fetch(
+                "gov_10a_exp",
+                {"time": str(year), "unit": "MIO_EUR", "sector": "S13", "na_item": "TE", "geo": c},
+            )
+            dims, _, idx_maps, labels = eu._dim_maps(js)  # type: ignore[attr-defined]
+            cof_map = idx_maps.get("cofog99", {})
             # Compute grand total across top-level GFxx for this country
             grand_total = 0.0
             for m in majors:
@@ -462,9 +476,7 @@ def warm_eurostat_cofog_sub(year: int, countries: List[str]) -> str:
             for m in majors:
                 vals: List[tuple[str, str, float]] = []
                 for code in cof_map.keys():
-                    if not code.startswith(f"GF{m}"):
-                        continue
-                    if code == f"GF{m}":
+                    if not code.startswith(f"GF{m}") or code == f"GF{m}":
                         continue
                     v = eu.value_at(js, {"unit": "MIO_EUR", "sector": "S13", "na_item": "TE", "time": str(year), "geo": c, "cofog99": code})
                     if v is None:
@@ -499,13 +511,21 @@ def warm_eurostat_cofog_sub(year: int, countries: List[str]) -> str:
                     if v is not None:
                         grand_total += float(v)
                 per_major: Dict[str, List[Dict[str, Any]]] = {}
+                # Known COFOG L2 counts per major (COFOG99)
+                cofog_l2_counts: Dict[str, int] = {"01": 7, "02": 4, "03": 7, "04": 9, "05": 6, "06": 6, "07": 7, "08": 4, "09": 6, "10": 9}
                 for m in majors:
                     vals: List[tuple[str, float]] = []
-                    for sub in range(1, 10):
+                    consecutive_misses = 0
+                    max_sub = cofog_l2_counts.get(m, 9)
+                    for sub in range(1, max_sub + 1):  # bounded to plausible subcodes
                         code = f"GF{m}{sub}"
                         v = eu.sdmx_value("gov_10a_exp", f"A.MIO_EUR.S13.{code}.TE.{c}", time=str(year))
                         if v is None:
+                            consecutive_misses += 1
+                            if consecutive_misses >= 2:
+                                break
                             continue
+                        consecutive_misses = 0
                         vals.append((code, float(v)))
                     if vals and grand_total > 0:
                         arr = []
@@ -522,6 +542,7 @@ def warm_eurostat_cofog_sub(year: int, countries: List[str]) -> str:
     out_path = os.path.join(CACHE_DIR, f"eu_cofog_subshares_{year}.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=2)
+    LOG.info("[EUROSTAT] wrote sub-shares to %s in %.1fs", out_path, time.time() - t0)
     return out_path
 # ------------------------------
 # LEGO baseline (expenditures v0)
@@ -614,6 +635,8 @@ def warm_lego_baseline(year: int, country: str = "FR", scope: str = "S13") -> st
       { year, scope, country, pib_eur, depenses_total_eur, pieces: [{id,type,amount_eur,share}], meta }
     """
     _ensure_dir(CACHE_DIR)
+    t0 = time.time()
+    LOG.info("[LEGO] build baseline year=%s", year)
     cfg = _load_lego_config()
 
     # Prepare warning aggregator
@@ -775,6 +798,7 @@ def warm_lego_baseline(year: int, country: str = "FR", scope: str = "S13") -> st
     D29_ENV = float(splits_cfg.get("d29", {}).get("env", 0.10))
     D29_FINES = float(splits_cfg.get("d29", {}).get("fines", 0.02))
     D29_TRANSFERS = float(splits_cfg.get("d29", {}).get("transfers", 0.24))
+    D29_OTHER = max(0.0, 1.0 - (D29_WAGE + D29_ENV + D29_FINES + D29_TRANSFERS))
 
     # Pre-fetch main revenue bases in MIO_EUR
     # gov_10a_taxag exposes taxes/social contributions by ESA code
@@ -796,15 +820,7 @@ def warm_lego_baseline(year: int, country: str = "FR", scope: str = "S13") -> st
     for c in main_codes:
         main_vals[c] = _sdmx_value_fallback("gov_10a_main", f"A.MIO_EUR.{scope}.{c}.{country}", year)
 
-    # Default splits (rough but documented):
-    VAT_STANDARD_SPLIT = 0.70  # remainder goes to reduced
-    PIT_SPLIT = 0.60           # CIT = 0.40
-    # Break D29 across sub-buckets to fill LEGO pieces; sums to 1.0
-    D29_WAGE = 0.14
-    D29_ENV = 0.10
-    D29_FINES = 0.02
-    D29_TRANSFERS = 0.24
-    D29_OTHER = max(0.0, 1.0 - (D29_WAGE + D29_ENV + D29_FINES + D29_TRANSFERS))
+    # Splits above may come from config; ensure residual share for generic D29 (if used)
 
     # Build pieces_out with expenditures amounts
     for p in pieces_cfg:
@@ -919,138 +935,14 @@ def warm_lego_baseline(year: int, country: str = "FR", scope: str = "S13") -> st
     out_path = os.path.join(CACHE_DIR, f"lego_baseline_{year}.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=2)
+    LOG.info("[LEGO] wrote %s (exp=%.0f, rev=%.0f, pieces=%d) in %.1fs", out_path, dep_total, recettes_total, len(pieces_out), time.time() - t0)
     return out_path
 
 
 def _main_dup(argv: Iterable[str] | None = None) -> None:
-    p = argparse.ArgumentParser(description="Cache warmer for essential budget data")
-    sub = p.add_subparsers(dest="cmd", required=True)
-
-    sp_plf = sub.add_parser("plf", help="Cache PLF/LFI mission-level credits from ODS")
-    sp_plf.add_argument("--base", default="https://data.economie.gouv.fr", help="ODS base URL")
-    sp_plf.add_argument("--dataset", required=True, help="Dataset id, e.g. plf25-depenses-2025-selon-destination")
-    sp_plf.add_argument("--year", type=int, required=True, help="Budget year (for output tagging)")
-    # Leave empty by default to enable auto-detection from dataset fields
-    sp_plf.add_argument("--cp-field", default="", help="Field name for CP amount (override autodetect)")
-    sp_plf.add_argument("--ae-field", default="", help="Field name for AE amount (override autodetect)")
-    sp_plf.add_argument("--where", dest="extra_where", default=None, help="Extra ODS where clause, e.g. typebudget='PLF'")
-
-    sp_eu = sub.add_parser("eurostat-cofog", help="Cache Eurostat COFOG shares for countries/year")
-    sp_eu.add_argument("--year", type=int, required=True)
-    sp_eu.add_argument("--countries", required=True, help="Comma-separated country codes, e.g. FR,DE,IT")
-    sp_eu_sub = sub.add_parser("eurostat-cofog-sub", help="Cache Eurostat COFOG subfunction shares for countries/year")
-    sp_eu_sub.add_argument("--year", type=int, required=True)
-    sp_eu_sub.add_argument("--countries", required=True, help="Comma-separated country codes, e.g. FR,DE,IT")
-
-    sp_fields = sub.add_parser("ods-fields", help="List fields for an ODS dataset (to help pick cp/ae/year fields)")
-    sp_fields.add_argument("--base", default="https://data.economie.gouv.fr")
-    sp_fields.add_argument("--dataset", required=True)
-
-    # LEGO baseline warmer (expenditures v0)
-    sp_lego = sub.add_parser("lego", help="Build LEGO baseline for a year (expenditures v0)")
-    sp_lego.add_argument("--year", type=int, required=True)
-    sp_lego.add_argument("--country", default="FR")
-    sp_lego.add_argument("--scope", default="S13")
-
-    # DECP procurement ingestion
-    sp_decp = sub.add_parser("decp", help="Ingest DECP procurement and write normalized cache")
-    sp_decp.add_argument("--year", type=int, required=True)
-    sp_decp.add_argument("--csv", dest="csv_path", default=None, help="Path to input CSV (consolidated)")
-    sp_decp.add_argument("--base", default=None, help="ODS base URL (optional)")
-    sp_decp.add_argument("--dataset", default=None, help="ODS dataset id (optional)")
-    sp_decp.add_argument("--enrich-sirene", action="store_true", help="Enrich top suppliers with SIRENE (NAF, size)")
-    sp_decp.add_argument("--sirene-max", type=int, default=100, help="Max suppliers to enrich by amount")
-    sp_decp.add_argument("--enrich-sirene", action="store_true", help="Enrich top suppliers with SIRENE (NAF, size)")
-    sp_decp.add_argument("--sirene-max", type=int, default=100, help="Max suppliers to enrich by amount")
-    sp_decp.add_argument("--enrich-sirene", action="store_true", help="Enrich top suppliers with SIRENE (NAF, size)")
-    sp_decp.add_argument("--sirene-max", type=int, default=100, help="Max suppliers to enrich by amount")
-    sp_decp.add_argument("--enrich-sirene", action="store_true", help="Enrich top suppliers with SIRENE (NAF, size)")
-    sp_decp.add_argument("--sirene-max", type=int, default=100, help="Max suppliers to enrich by amount")
-    sp_decp.add_argument("--enrich-sirene", action="store_true", help="Enrich top suppliers with SIRENE (NAF, size)")
-    sp_decp.add_argument("--sirene-max", type=int, default=100, help="Max suppliers to enrich by amount")
-
-    # Eurostat COFOG subfunction shares
-    sp_eu_sub = sub.add_parser("eurostat-cofog-sub", help="Cache Eurostat COFOG subfunction shares for countries/year")
-    sp_eu_sub.add_argument("--year", type=int, required=True)
-    sp_eu_sub.add_argument("--countries", required=True, help="Comma-separated country codes, e.g. FR,DE,IT")
-
-    # Eurostat COFOG subfunction shares
-    sp_eu_sub = sub.add_parser("eurostat-cofog-sub", help="Cache Eurostat COFOG subfunction shares for countries/year")
-    sp_eu_sub.add_argument("--year", type=int, required=True)
-    sp_eu_sub.add_argument("--countries", required=True, help="Comma-separated country codes, e.g. FR,DE,IT")
-
-    # Eurostat COFOG subfunctions
-    sp_eu_sub = sub.add_parser("eurostat-cofog-sub", help="Cache Eurostat COFOG subfunction shares for countries/year")
-    sp_eu_sub.add_argument("--year", type=int, required=True)
-    sp_eu_sub.add_argument("--countries", required=True, help="Comma-separated country codes, e.g. FR,DE,IT")
-
-    # INSEE macro series warmer
-    sp_macro = sub.add_parser("macro-insee", help="Warm selected INSEE BDM macro series from a config JSON")
-    sp_macro.add_argument("--config", required=True, help="Path to macro series config JSON")
-
-    args = p.parse_args(list(argv) if argv is not None else None)
-
-    if args.cmd == "plf":
-        path = warm_plf_state_budget(args.base, args.dataset, args.year, args.cp_field, args.ae_field, args.extra_where)
-        print(f"Wrote {path}")
-        return
-
-    if args.cmd == "eurostat-cofog":
-        countries = [c.strip() for c in args.countries.split(",") if c.strip()]
-        path = warm_eurostat_cofog(args.year, countries)
-        print(f"Wrote {path}")
-        return
-    if args.cmd == "eurostat-cofog-sub":
-        countries = [c.strip() for c in args.countries.split(",") if c.strip()]
-        path = warm_eurostat_cofog_sub(args.year, countries)
-        print(f"Wrote {path}")
-        return
-    if args.cmd == "eurostat-cofog-sub":
-        countries = [c.strip() for c in args.countries.split(",") if c.strip()]
-        path = warm_eurostat_cofog_sub(args.year, countries)
-        print(f"Wrote {path}")
-        return
-
-    if args.cmd == "eurostat-cofog-sub":
-        countries = [c.strip() for c in args.countries.split(",") if c.strip()]
-        path = warm_eurostat_cofog_sub(args.year, countries)
-        print(f"Wrote {path}")
-        return
-
-    if args.cmd == "eurostat-cofog-sub":
-        countries = [c.strip() for c in args.countries.split(",") if c.strip()]
-        path = warm_eurostat_cofog_sub(args.year, countries)
-        print(f"Wrote {path}")
-        return
-
-    if args.cmd == "ods-fields":
-        meta = ods.dataset_info(args.base, args.dataset)
-        fields = meta.get("dataset", {}).get("fields") or meta.get("fields") or []
-        for f in fields:
-            print(f"{f.get('name')}: {f.get('type')} — {f.get('label')}")
-        return
-
-    if args.cmd == "lego":
-        path = warm_lego_baseline(args.year, country=args.country, scope=args.scope)
-        print(f"Wrote {path}")
-        return
-
-    if args.cmd == "decp":
-        path = warm_decp_procurement(
-            args.year,
-            csv_path=args.csv_path,
-            base=args.base,
-            dataset=args.dataset,
-            enrich_sirene=bool(getattr(args, "enrich_sirene", False)),
-            sirene_max=int(getattr(args, "sirene_max", 100)),
-        )
-        print(f"Wrote {path}")
-        return
-
-    if args.cmd == "macro-insee":
-        path = warm_macro_insee(args.config)
-        print(f"Wrote {path}")
-        return
+    # Deprecated/unused duplicate CLI retained temporarily during refactor.
+    # Intentionally left blank.
+    pass
 
 
 # ------------------------------
@@ -1065,6 +957,7 @@ def warm_decp_procurement(
     *,
     enrich_sirene: bool = False,
     sirene_max: int = 100,
+    sirene_qps: int = 5,
 ) -> str:
     """Ingest consolidated DECP-like data (CSV or ODS), deduplicate and roll up lots→contracts.
 
@@ -1075,33 +968,8 @@ def warm_decp_procurement(
     If multiple rows share the same (contract_id, signed_date), amounts are summed and lot_count aggregated.
     """
     _ensure_dir(CACHE_DIR)
-
-    rows: List[Dict[str, Any]] = []
-    if csv_path:
-        # Read CSV from local path
-        import csv as _csv
-
-        with open(csv_path, newline="", encoding="utf-8") as f:
-            r = _csv.DictReader(f)
-            for rec in r:
-                rows.append(rec)
-    elif base and dataset:
-        # Try ODS explore API
-        try:
-            js = ods.records(base, dataset, select=None, where=None, group_by=None, order_by=None, limit=1000)
-            for item in _ods_results(js):
-                rows.append(item.get("record") or item)
-        except Exception:
-            rows = []
-    else:
-        # Default to sample CSV
-        csv_path = os.path.join(DATA_DIR, "sample_procurement.csv")
-        import csv as _csv
-
-        with open(csv_path, newline="", encoding="utf-8") as f:
-            r = _csv.DictReader(f)
-            for rec in r:
-                rows.append(rec)
+    t0 = time.time()
+    LOG.info("[DECP] start year=%s csv=%s ods=%s:%s enrich_sirene=%s max=%s qps=%s", year, csv_path or '-', base or '-', dataset or '-', enrich_sirene, sirene_max, sirene_qps)
 
     # Normalize and group by contract_id + signed_date
     def _year_of(s: str | None) -> int | None:
@@ -1113,16 +981,15 @@ def warm_decp_procurement(
             return None
 
     groups: Dict[tuple, Dict[str, Any]] = {}
-    for rec in rows:
+    def _process_record(rec: Dict[str, Any]) -> None:
         if not rec:
-            continue
+            return
         y = _year_of(rec.get("signed_date") or rec.get("datePublication"))
         if y != year:
-            continue
+            return
         cid = str(rec.get("contract_id") or rec.get("id") or rec.get("id_marche") or rec.get("id_contract") or "").strip()
         if not cid:
-            # Skip rows without a contract id
-            continue
+            return
         key = (cid, rec.get("signed_date") or rec.get("datePublication") or "")
         ent = groups.setdefault(
             key,
@@ -1145,7 +1012,6 @@ def warm_decp_procurement(
         except Exception:
             amt = 0.0
         ent["amount_eur"] = float(ent["amount_eur"]) + amt
-        # Aggregate lot count if present else count rows
         try:
             lc = int(rec.get("lot_count") or rec.get("nombreLots") or 1)
         except Exception:
@@ -1153,6 +1019,59 @@ def warm_decp_procurement(
         ent["lot_count"] = int(ent["lot_count"]) + lc
         if not amt or amt <= 0:
             ent["amount_quality"] = "MISSING"
+
+    # Input sources (in priority): CSV path → ODS → auto-download from data.gouv → sample CSV
+    auto_src: str | None = None
+    if csv_path:
+        import csv as _csv
+        with open(csv_path, newline="", encoding="utf-8") as f:
+            for rec in _csv.DictReader(f):
+                _process_record(rec)
+        auto_src = csv_path
+    elif base and dataset:
+        try:
+            cnt = 0
+            for item in ods.iterate_records(base, dataset, select=None, where=None, order_by=None, page_size=1000, max_pages=5000):
+                _process_record(item)
+                cnt += 1
+                if cnt % 5000 == 0:
+                    LOG.info("[DECP] fetched %d rows...", cnt)
+            LOG.info("[DECP] fetched total %d rows from ODS", cnt)
+            auto_src = f"ods:{base}:{dataset}"
+        except Exception as e:
+            LOG.warning("[DECP] ODS fetch failed: %s", e)
+    else:
+        # Auto-download latest DECP resource (CSV) from data.gouv.fr
+        try:
+            from .clients import decp as dg
+            import httpx as _httpx
+            res = dg.latest_resource()
+            url = str(res.get("url") or "")
+            fmt = str(res.get("format") or "").lower()
+            if url and fmt == "csv":
+                tmp_csv = os.path.join(CACHE_DIR, f"decp_download_{year}.csv")
+                LOG.info("[DECP] downloading %s → %s", url, tmp_csv)
+                with _httpx.stream("GET", url, timeout=30.0) as r:
+                    r.raise_for_status()
+                    with open(tmp_csv, "wb") as out:
+                        for chunk in r.iter_bytes(1 << 20):
+                            out.write(chunk)
+                import csv as _csv
+                with open(tmp_csv, newline="", encoding="utf-8") as f:
+                    for rec in _csv.DictReader(f):
+                        _process_record(rec)
+                auto_src = f"datagouv:{url}"
+            else:
+                LOG.warning("[DECP] No suitable CSV resource found on data.gouv.fr; falling back to sample")
+        except Exception as e:
+            LOG.warning("[DECP] Auto-download failed: %s", e)
+        if not auto_src:
+            csv_path = os.path.join(DATA_DIR, "sample_procurement.csv")
+            import csv as _csv
+            with open(csv_path, newline="", encoding="utf-8") as f:
+                for rec in _csv.DictReader(f):
+                    _process_record(rec)
+            auto_src = csv_path
 
     # Optional Sirene enrichment (NAF, size) for top suppliers by amount
     supplier_meta: Dict[str, Dict[str, str]] = {}
@@ -1173,8 +1092,8 @@ def warm_decp_procurement(
             sirens = [s for s, _ in top]
             if sirens:
                 from .clients import insee as insee_client  # lazy import
-
-                for s in sirens:
+                delay = 1.0 / max(1, int(sirene_qps))
+                for idx, s in enumerate(sirens, 1):
                     try:
                         js = insee_client.sirene_by_siren(s)
                         ul = js.get("uniteLegale") or js.get("unite_legale") or {}
@@ -1183,6 +1102,10 @@ def warm_decp_procurement(
                         supplier_meta[s] = {"naf": str(naf or ""), "size": str(size or "")}
                     except Exception:
                         continue
+                    if delay > 0:
+                        time.sleep(delay)
+                    if idx % 20 == 0:
+                        LOG.info("[DECP] sirene enriched %d/%d", idx, len(sirens))
         except Exception:
             supplier_meta = {}
 
@@ -1231,7 +1154,7 @@ def warm_decp_procurement(
     sidecar = {
         "extraction_ts": dt.datetime.now(dt.timezone.utc).isoformat(),
         "year": int(year),
-        "source": (csv_path or f"ods:{base}:{dataset}"),
+        "source": auto_src or (csv_path or f"ods:{base}:{dataset}"),
         "row_count": len(groups),
         "note": "Deduplicated by (contract_id, signed_date); lots rolled up by summing amounts and lot_count",
         "sirene_enriched": bool(enrich_sirene and supplier_meta),
@@ -1240,10 +1163,17 @@ def warm_decp_procurement(
     with open(out_csv.replace(".csv", ".meta.json"), "w", encoding="utf-8") as f:
         json.dump(sidecar, f, ensure_ascii=False, indent=2)
 
+    LOG.info("[DECP] wrote %d contracts to %s in %.1fs", len(groups), out_csv, time.time() - t0)
     return out_csv
 
 
 def main(argv: Iterable[str] | None = None) -> None:
+    # Basic CLI logging setup (honors LOG_LEVEL)
+    level = getattr(logging, os.getenv("LOG_LEVEL", "INFO").upper(), logging.INFO)
+    logging.basicConfig(level=level, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
+    # Quiet noisy httpx request logs (4xx expected on some probes)
+    logging.getLogger("httpx").setLevel(logging.WARNING)
+    logging.getLogger("httpcore").setLevel(logging.WARNING)
     p = argparse.ArgumentParser(description="Cache warmer for essential budget data")
     sub = p.add_subparsers(dest="cmd", required=True)
 
@@ -1260,6 +1190,11 @@ def main(argv: Iterable[str] | None = None) -> None:
     sp_eu = sub.add_parser("eurostat-cofog", help="Cache Eurostat COFOG shares for countries/year")
     sp_eu.add_argument("--year", type=int, required=True)
     sp_eu.add_argument("--countries", required=True, help="Comma-separated country codes, e.g. FR,DE,IT")
+
+    # Eurostat COFOG subfunction shares (GFxx.y)
+    sp_eu_sub = sub.add_parser("eurostat-cofog-sub", help="Cache Eurostat COFOG subfunction shares for countries/year")
+    sp_eu_sub.add_argument("--year", type=int, required=True)
+    sp_eu_sub.add_argument("--countries", required=True, help="Comma-separated country codes, e.g. FR,DE,IT")
 
     # ODS dataset fields helper
     sp_fields = sub.add_parser("ods-fields", help="List fields for an ODS dataset (to help pick cp/ae/year fields)")
@@ -1280,6 +1215,7 @@ def main(argv: Iterable[str] | None = None) -> None:
     sp_decp.add_argument("--dataset", default=None, help="ODS dataset id (optional)")
     sp_decp.add_argument("--enrich-sirene", action="store_true", help="Enrich top suppliers with SIRENE (NAF, size)")
     sp_decp.add_argument("--sirene-max", type=int, default=100, help="Max suppliers to enrich by amount")
+    sp_decp.add_argument("--sirene-qps", type=int, default=5, help="Throttle SIRENE lookups (queries per second)")
 
     # INSEE macro series warmer
     sp_macro = sub.add_parser("macro-insee", help="Warm selected INSEE BDM macro series from a config JSON")
@@ -1295,6 +1231,12 @@ def main(argv: Iterable[str] | None = None) -> None:
     if args.cmd == "eurostat-cofog":
         countries = [c.strip() for c in args.countries.split(",") if c.strip()]
         path = warm_eurostat_cofog(args.year, countries)
+        print(f"Wrote {path}")
+        return
+
+    if args.cmd == "eurostat-cofog-sub":
+        countries = [c.strip() for c in args.countries.split(",") if c.strip()]
+        path = warm_eurostat_cofog_sub(args.year, countries)
         print(f"Wrote {path}")
         return
 
@@ -1318,6 +1260,7 @@ def main(argv: Iterable[str] | None = None) -> None:
             dataset=args.dataset,
             enrich_sirene=bool(getattr(args, "enrich_sirene", False)),
             sirene_max=int(getattr(args, "sirene_max", 100)),
+            sirene_qps=int(getattr(args, "sirene_qps", 5)),
         )
         print(f"Wrote {path}")
         return
@@ -1345,6 +1288,8 @@ def warm_macro_insee(config_path: str) -> str:
     }
     """
     _ensure_dir(CACHE_DIR)
+    t0 = time.time()
+    LOG.info("[INSEE] warm macro from %s", config_path)
     import json as _json
     from .clients import insee as insee_client
 
@@ -1376,6 +1321,7 @@ def warm_macro_insee(config_path: str) -> str:
     }
     with open(out_path.replace(".json", ".meta.json"), "w", encoding="utf-8") as f:
         _json.dump(sidecar, f, ensure_ascii=False, indent=2)
+    LOG.info("[INSEE] wrote %s in %.1fs (items=%d)", out_path, time.time() - t0, len(items))
     return out_path
 
 

@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any, Dict, List, Optional
 
 from .. import http_client as hc
+import httpx
 from ..settings import get_settings
 
 
@@ -46,9 +47,12 @@ def sdmx_value(flow: str, key: str, *, time: str | None = None) -> Optional[floa
     params: Dict[str, Any] = {}
     if time:
         params["time"] = time
+    # Use a direct httpx client without retry to avoid long delays on 4xx
     try:
-        resp = hc.get(url, headers=headers, params=params)
-        text = resp.text  # type: ignore[attr-defined]
+        with httpx.Client(timeout=get_settings().http_timeout) as client:
+            resp = client.get(url, headers=headers, params=params)
+            resp.raise_for_status()
+            text = resp.text
     except Exception:
         return None
     # Parse SDMX-XML GenericData and extract Obs values

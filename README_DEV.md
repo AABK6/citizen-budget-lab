@@ -210,9 +210,25 @@ Makefile helpers
 
   make warm-eurostat YEAR=2026 COUNTRIES=FR,DE,IT
 
+- Eurostat COFOG subfunction shares (GFxx.y):
+
+  make warm-eurostat-sub YEAR=2026 COUNTRIES=FR,DE,IT
+
+- Sanity-check sources before warming (fast probes):
+
+  make verify-warmers YEAR=2026 COUNTRIES=FR,DE,IT DATASET=plf25-depenses-2025-du-bg-et-des-ba-selon-nomenclatures-destination-et-nature
+
 - Optional ODS snapshot (set DATASET):
 
   make warm-plf YEAR=2025 DATASET=plf25-depenses-2025-selon-destination
+
+- INSEE macro (preferred by baseline when present):
+
+  make warm-macro CFG=data/macro_config.json
+
+- DECP procurement (consolidated ODS):
+
+  make warm-decp YEAR=2024 DATASET=decp-v3-marches-valides ENRICH=1 SIRENE_MAX=100 SIRENE_QPS=5
 
 - Print summary for a warmed year:
 

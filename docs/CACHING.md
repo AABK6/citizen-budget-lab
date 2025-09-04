@@ -43,13 +43,15 @@ Warmers (explicit prefetch)
 
      Output: `data/cache/lego_baseline_2026.json` with totals and per-piece amounts; `meta.warning` documents any fallbacks/proxies (e.g., debt interest from COFOG 01.7).
 
-  4) Policy catalog (lever definitions):
+  4) Eurostat COFOG subfunction shares (GFxx.y):
 
-     python -m services.api.cache_warm policy-catalog \
-       --out data/cache/policy_levers.json \
-       --version 2025-09-01
+     python -m services.api.cache_warm eurostat-cofog-sub --year 2026 --countries FR,DE,IT
 
-     Output: `data/cache/policy_levers.json` with `{ version, levers: [...] }` used to power the Reform Library and feasibility/conflict tags. Include a version stamp for cache invalidation.
+     Or via Makefile:
+
+     make warm-eurostat-sub YEAR=2026 COUNTRIES=FR,DE,IT
+
+     Output: `data/cache/eu_cofog_subshares_2026.json` with per-country breakdowns under each major (e.g., FR → 07 → [07.1, 07.2, ...]). API uses this for subfunction drilldowns when present.
 
 Integration options
 
