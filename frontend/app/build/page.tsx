@@ -591,6 +591,8 @@ export default function BuildPage() {
                         fav={favExp}
                         onToggleFav={(id)=> setFavExp(arr => arr.includes(id) ? arr.filter(x=>x!==id) : [...arr, id])}
                         onExplain={setExplainId}
+                        unresolved={unresolvedMasses}
+                        defaultView={(k)=> unresolvedMasses.has(k) ? 'unresolved' : expView}
                       />
                     </div>
                     {/* Revenue column */}
@@ -887,7 +889,7 @@ function PieceList2({ pieces, deltas, targets, onDelta, onTarget, t, resByMass, 
   )
 }
 
-function GroupedPieceList2({ grouped, deltas, targets, onDelta, onTarget, t, resByMass, fav, onToggleFav, onExplain }: {
+function GroupedPieceList2({ grouped, deltas, targets, onDelta, onTarget, t, resByMass, fav, onToggleFav, onExplain, unresolved, defaultView }: {
   grouped: { key: string; label: string; pieces: Piece[] }[]
   deltas: Record<string, number>
   targets: Record<string, number>
@@ -898,8 +900,11 @@ function GroupedPieceList2({ grouped, deltas, targets, onDelta, onTarget, t, res
   fav: string[]
   onToggleFav: (id: string) => void
   onExplain: (id: string) => void
+  unresolved: Set<string>
+  defaultView: (key: string)=> 'all'|'adjusted'|'favorites'|'unresolved'
 }) {
   const [open, setOpen] = useState<Record<string, boolean>>(() => Object.fromEntries(grouped.map(g => [g.key, true])))
+  const [viewBy, setViewBy] = useState<Record<string,'all'|'adjusted'|'favorites'|'unresolved'>>(() => Object.fromEntries(grouped.map(g => [g.key, defaultView(g.key)])))
   return (
     <div className="stack" style={{ gap: '.5rem' }}>
       {grouped.map(g => (
@@ -913,12 +918,27 @@ function GroupedPieceList2({ grouped, deltas, targets, onDelta, onTarget, t, res
                   {(Math.min(100, Math.abs(resByMass[g.key].s) / (Math.abs(resByMass[g.key].t) || 1) * 100)).toFixed(0)}%
                 </span>
               )}
+              <span style={{ marginLeft: '.5rem' }}>
+                <button className={"fr-tag fr-tag--sm" + (viewBy[g.key]==='all' ? ' fr-tag--dismiss':'')} onClick={(e)=>{e.stopPropagation(); setViewBy(v=>({...v,[g.key]:'all'}))}}>All</button>
+                <button className={"fr-tag fr-tag--sm" + (viewBy[g.key]==='adjusted' ? ' fr-tag--dismiss':'')} onClick={(e)=>{e.stopPropagation(); setViewBy(v=>({...v,[g.key]:'adjusted'}))}}>Adj</button>
+                <button className={"fr-tag fr-tag--sm" + (viewBy[g.key]==='favorites' ? ' fr-tag--dismiss':'')} onClick={(e)=>{e.stopPropagation(); setViewBy(v=>({...v,[g.key]:'favorites'}))}}>Fav</button>
+                <button className={"fr-tag fr-tag--sm" + (viewBy[g.key]==='unresolved' ? ' fr-tag--dismiss':'')} onClick={(e)=>{e.stopPropagation(); setViewBy(v=>({...v,[g.key]:'unresolved'}))}}>Unres</button>
+              </span>
             </button>
           </h3>
           {open[g.key] && (
             <div className="fr-accordion__content" style={{ paddingTop: '.5rem' }}>
               <div className="stack" style={{ gap: '.5rem' }}>
-                {g.pieces.map(p => (
+                {g.pieces.filter(p => {
+                  const hasChange = Math.abs(Number(deltas[p.id]||0))>0 || Math.abs(Number(targets[p.id]||0))>0
+                  const isFav = fav.includes(p.id)
+                  const isUnres = unresolved.has(g.key)
+                  const v = viewBy[g.key]
+                  if (v==='adjusted') return hasChange
+                  if (v==='favorites') return isFav
+                  if (v==='unresolved') return isUnres
+                  return true
+                }).map(p => (
                   <PieceRow2 key={p.id} p={p} deltas={deltas} targets={targets} onDelta={onDelta} onTarget={onTarget} t={t} resByMass={resByMass} pinned={fav.includes(p.id)} onToggleFav={onToggleFav} onExplain={onExplain} />
                 ))}
               </div>
@@ -950,15 +970,16 @@ function PieceRow2({ p, deltas, targets, onDelta, onTarget, t, resByMass, pinned
     return (hasDelta && hasTarget) ? 100 : (hasDelta || hasTarget) ? 50 : 0
   })()
   return (
-    <div data-piece-id={p.id} className="fr-input-group" style={{ padding: '.25rem .5rem', border: '1px solid var(--border-default-grey)', borderRadius: 6, position: 'relative', overflow: 'hidden' }}>
+    <div data-piece-id={p.id} className="fr-input-group" style={{ padding: '.2rem .4rem', border: '1px solid var(--border-default-grey)', borderRadius: 6, position: 'relative', overflow: 'hidden' }}>
       {unresolved && (
         <div aria-hidden="true" style={{ position:'absolute', inset:0, backgroundImage: 'repeating-linear-gradient(45deg, rgba(0,0,0,0.06) 0, rgba(0,0,0,0.06) 3px, transparent 3px, transparent 6px)' }}></div>
       )}
       <div style={{ position:'relative' }}>
-        <div style={{ display:'flex', alignItems:'center', gap: '.5rem' }}>
-          <button className="fr-btn fr-btn--sm fr-btn--secondary" title={pinned ? (t('labels.unpin') || 'Unpin') : (t('labels.pin') || 'Pin')} onClick={()=> onToggleFav(p.id)} style={{ minWidth:28, padding:'.1rem .35rem' }}>{pinned ? '★' : '☆'}</button>
-          <div style={{ flex:1, minWidth:0 }}>
-            <div className="fr-text--sm" style={{ whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{p.label || p.id}{p.locked && <span className="fr-badge fr-badge--sm" style={{ marginLeft: '.35rem' }}>{t('piece.locked') || 'Locked'}</span>}</div>
+        <div style={{ display:'flex', alignItems:'center', gap: '.4rem' }}>
+          <div style={{ flex:1, minWidth:0, display:'flex', alignItems:'center', gap:'.35rem' }}>
+            <div className="fr-text--sm" title={p.label || p.id} style={{ whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{p.label || p.id}{p.locked && <span className="fr-badge fr-badge--sm" style={{ marginLeft: '.35rem' }}>{t('piece.locked') || 'Locked'}</span>}</div>
+            <button className="fr-btn fr-btn--sm fr-btn--secondary" title={t('labels.explain') || 'Explain'} onClick={()=> onExplain(p.id)} style={{ minWidth:24, padding:'.05rem .3rem' }}>?</button>
+            <button className="fr-btn fr-btn--sm fr-btn--secondary" title={pinned ? (t('labels.unpin') || 'Unpin') : (t('labels.pin') || 'Pin')} onClick={()=> onToggleFav(p.id)} style={{ minWidth:24, padding:'.05rem .3rem' }}>{pinned ? '★' : '☆'}</button>
             <div className="fr-text--xs" style={{ color:'var(--text-mention-grey)' }}>{(p.amountEur||0).toLocaleString(undefined,{maximumFractionDigits:0})} €</div>
           </div>
           <div aria-label="delta" title="Change %" style={{ display:'flex', alignItems:'center', gap:'.25rem' }}>
@@ -967,10 +988,9 @@ function PieceRow2({ p, deltas, targets, onDelta, onTarget, t, resByMass, pinned
           </div>
           <TargetPill id={`target_${p.id}`} value={Number(targets[p.id]||0)} disabled={!!p.locked} onChange={(v)=> onTarget(p.id, v)} />
           <span className="fr-badge fr-badge--sm" title="Δ€">{((Number(deltas[p.id]||0)/100)*(Number(p.amountEur||0))).toLocaleString(undefined,{maximumFractionDigits:0})} €</span>
-          <button className="fr-btn fr-btn--sm fr-btn--secondary" onClick={()=> onExplain(p.id)} title={t('labels.explain') || 'Explain'} style={{ minWidth:28, padding:'.1rem .35rem' }}>…</button>
         </div>
-        <div style={{ height:2, background:'#e5e5e5', marginTop:4, position:'relative' }} aria-hidden="true">
-          <div style={{ position:'absolute', left:0, top:0, height:2, width:`${microPct}%`, background:'#0a7aff' }}></div>
+        <div style={{ height:1, background:'#e5e5e5', marginTop:3, position:'relative' }} aria-hidden="true">
+          <div style={{ position:'absolute', left:0, top:0, height:1, width:`${microPct}%`, background:'#0a7aff' }}></div>
         </div>
       </div>
     </div>
@@ -1028,10 +1048,10 @@ function Stepper({ id, value, onChange, min, max, step, disabled }: { id: string
   const dec = ()=> onChange(Math.max(mn, v - st))
   const inc = ()=> onChange(Math.min(mx, v + st))
   return (
-    <span style={{ display:'inline-flex', alignItems:'center', gap:'.15rem' }}>
-      <button className="fr-btn fr-btn--sm fr-btn--secondary" onClick={dec} disabled={disabled} style={{ minWidth:24, padding:'.1rem .25rem' }}>−</button>
-      <input id={id} className="fr-input fr-input--sm" type="number" value={v} onChange={e=> onChange(Number(e.target.value||0))} min={min} max={max} step={step||1} disabled={disabled} style={{ width:56 }} />
-      <button className="fr-btn fr-btn--sm fr-btn--secondary" onClick={inc} disabled={disabled} style={{ minWidth:24, padding:'.1rem .25rem' }}>+</button>
+    <span style={{ display:'inline-flex', alignItems:'center', gap:'.1rem' }}>
+      <button className="fr-btn fr-btn--sm fr-btn--secondary" onClick={dec} disabled={disabled} style={{ minWidth:22, padding:'.05rem .2rem' }}>−</button>
+      <input id={id} className="fr-input fr-input--sm" type="number" value={v} onChange={e=> onChange(Number(e.target.value||0))} min={min} max={max} step={step||1} disabled={disabled} style={{ width:48 }} />
+      <button className="fr-btn fr-btn--sm fr-btn--secondary" onClick={inc} disabled={disabled} style={{ minWidth:22, padding:'.05rem .2rem' }}>+</button>
     </span>
   )
 }
@@ -1120,9 +1140,7 @@ function PinnedPieces({ pieces, ids, deltas, targets, onDelta, onTarget, onUnpin
                 <span className="fr-text--sm" style={{ whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', flex:1 }}>{p.label || id}</span>
                 <Stepper id={`pin_delta_${id}`} value={Number(deltas[id]||0)} min={-50} max={50} step={1} onChange={(v)=> onDelta(id, v)} />
                 <span className="fr-text--xs">%</span>
-                <span style={{ fontSize:12 }}>🎯</span>
-                <Stepper id={`pin_target_${id}`} value={Number(targets[id]||0)} min={-100} max={100} step={0.5} onChange={(v)=> onTarget(id, v)} />
-                <span className="fr-text--xs">%</span>
+                <TargetPill id={`pin_target_${id}`} value={Number(targets[id]||0)} onChange={(v)=> onTarget(id, v)} />
                 <span className="fr-badge fr-badge--sm">{((Number(deltas[id]||0)/100)*(Number(p.amountEur||0))).toLocaleString(undefined,{maximumFractionDigits:0})} €</span>
               </div>
             </div>
