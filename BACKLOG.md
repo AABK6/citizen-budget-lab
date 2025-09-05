@@ -352,8 +352,8 @@ Next Sprint (2 weeks) — Top Priorities
     - [x] ODS client fetches mission-level credits and writes `state_budget_mission_{year}.csv` with CP/AE sums.
     - [x] Warmer retries and falls back to client-side aggregation when server-side `group_by` fails.
     - [x] Persist vintage (extraction timestamp, dataset id/resource id) alongside CSV or in sidecar JSON. Implemented sidecar `data/cache/state_budget_mission_YYYY.meta.json`; tested.
-    - [ ] Programme/action level mapping and year-aware joins for COFOG with tests; weights sum to 1 per source code.
-      - Added unit test to ensure COFOG weights sum to 1 per mission in `data/cofog_mapping.json`.
+    - [x] Programme/action level mapping and year-aware joins for COFOG with tests; weights sum to 1 per source code.
+      - Unit tests ensure weights sum to 1 for mission, programme, and per-year overrides; precedence verified (year-aware programme > programme > mission) using sample data and synthetic mapping.
     - [x] Procurement ingestion from consolidated DECP, dedup by `id` + `datePublication`, lot→contract rollup, amount quality flags. CLI `python -m services.api.cache_warm decp --year YYYY --csv <path>` writes `data/cache/procurement_contracts_YYYY.csv` + sidecar.
     - [x] INSEE Sirene + BDM clients with token caching and HTTP retries.
     - [x] Join SIRENE attributes (NAF/size) into procurement outputs and expose via API. Best‑effort API enrichment adds `naf`, `companySize` when available (non‑blocking).
