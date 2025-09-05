@@ -6,6 +6,7 @@ import { gqlRequest } from '@/lib/graphql'
 import dynamic from 'next/dynamic'
 const WaterfallDelta = dynamic(() => import('@/components/WaterfallDelta').then(m => m.WaterfallDelta), { ssr: false })
 const SankeyRibbons = dynamic(() => import('@/components/SankeyRibbons').then(m => m.SankeyRibbons), { ssr: false })
+import { DeficitPathChart } from '@/components/DeficitPathChart'
 
 type Piece = {
   id: string
@@ -51,6 +52,8 @@ export default function BuildPage() {
   const [result, setResult] = useState<{
     id?: string
     deficitY0: number
+    deficitPath?: number[]
+    debtPath?: number[]
     eu3: string
     eu60: string
     resolutionPct: number
@@ -65,6 +68,13 @@ export default function BuildPage() {
   const [wfItems, setWfItems] = useState<Array<{ id: string; label?: string; deltaEur: number }>>([])
   const [ribbons, setRibbons] = useState<Array<{ pieceId: string; massId: string; amountEur: number }>>([])
   const [ribbonLabels, setRibbonLabels] = useState<{ piece: Record<string,string>, mass: Record<string,string> }>({ piece: {}, mass: {} })
+  // Two-column Controls UX
+  const [expFilter, setExpFilter] = useState<string>('')
+  const [revFilter, setRevFilter] = useState<string>('')
+  const [favExp, setFavExp] = useState<string[]>([])
+  const [favRev, setFavRev] = useState<string[]>([])
+  const [explainId, setExplainId] = useState<string | null>(null)
+  const [showTray, setShowTray] = useState<boolean>(false)
 
   // COFOG major labels (client-side)
   const COFOG_LABELS: Record<string, string> = {
@@ -230,6 +240,7 @@ export default function BuildPage() {
       `
       const data = await gqlRequest(q, { dsl: dslB64 })
       const def = data.runScenario.accounting.deficitPath
+      const debt = data.runScenario.accounting.debtPath
       const eu3 = data.runScenario.compliance.eu3pct?.[0] || 'info'
       const eu60 = data.runScenario.compliance.eu60pct?.[0] || 'info'
       const resPct = Number(data.runScenario.resolution?.overallPct || 0)
@@ -248,7 +259,7 @@ export default function BuildPage() {
         const dd = await gqlRequest(dq, { y: year, dsl: dslB64 })
         distanceScore = Number(dd.legoDistance?.score || 0)
       } catch {}
-      setResult({ id: data.runScenario.id, deficitY0: Number(def?.[0] || 0), eu3, eu60, resolutionPct: resPct, distanceScore, resolutionByMass: byMass, masses })
+      setResult({ id: data.runScenario.id, deficitY0: Number(def?.[0] || 0), deficitPath: (def||[]).map((x:number)=>Number(x||0)), debtPath: (debt||[]).map((x:number)=>Number(x||0)), eu3, eu60, resolutionPct: resPct, distanceScore, resolutionByMass: byMass, masses })
       // Fetch ribbons/waterfall for current scenario vs baseline
       try {
         const rid = data.runScenario.id
@@ -291,6 +302,14 @@ export default function BuildPage() {
   const massList = Object.keys(COFOG_LABELS)
   const massBaseAmounts = useMemo(() => computeMassBase(pieces), [pieces])
   const massUiLabel = (m: string) => massLabels[m]?.displayLabel || COFOG_LABELS[m] || m
+  const resByMass = useMemo(() => {
+    const m: Record<string, { t: number; s: number }> = {}
+    for (const e of (result?.resolutionByMass || [])) m[e.massId] = { t: e.targetDeltaEur, s: e.specifiedDeltaEur }
+    return m
+  }, [result?.resolutionByMass])
+  const groupedExp = useMemo(() => groupPiecesByMass(exp, massList.reduce((acc,m)=> (acc[m]=massUiLabel(m), acc), {} as Record<string,string>)), [exp, massLabels])
+  const filteredGroupedExp = useMemo(() => filterGrouped(groupedExp, expFilter), [groupedExp, expFilter])
+  const filteredRev = useMemo(() => rev.filter(p => (p.label || p.id).toLowerCase().includes(revFilter.toLowerCase())), [rev, revFilter])
 
   return (
     <div className="stack" style={{ gap: '1.25rem' }}>
@@ -306,140 +325,149 @@ export default function BuildPage() {
       />
       <h2 className="fr-h2">{t('build.title') || 'Build — Workshop'}</h2>
       <div className="fr-grid-row fr-grid-row--gutters">
-        {/* Left Shelf */}
-        <div className="fr-col-12 fr-col-md-3">
+        {/* Left column: Controls (Spending vs Revenue) */}
+        <div className="fr-col-12 fr-col-md-8">
           <div className="fr-card fr-card--no-arrow">
             <div className="fr-card__body">
-              <div className="fr-card__title">Shelf</div>
-              <div className="fr-card__desc">
-                {intents.length>0 && (
-                  <div style={{ margin: '.25rem 0 .5rem' }}>
-                    <span className="fr-text--sm" style={{ marginRight: '.5rem' }}>{t('build.popular_intents') || 'Popular intents:'}</span>
-                    {intents.map((it)=> (
-                      <button key={it.id} className="fr-tag fr-tag--sm" style={{ margin: '0 .25rem .25rem 0' }} onClick={()=>{
-                        const m = (it.massId||'').padStart(2,'0').slice(0,2)
-                        const amt = Number(it.seed?.amount_eur||0)
-                        if (m && isFinite(amt) && amt !== 0) setMassTargets(prev => ({ ...prev, [m]: (prev[m]||0) + amt }))
-                      }}>{it.emoji ? `${it.emoji} `: ''}{it.label}</button>
-                    ))}
-                  </div>
-                )}
-                <div className="fr-tabs">
-                  <ul className="fr-tabs__list" role="tablist">
-                    <li role="presentation">
-                      <button id="tab-masses" className={activeTab==='masses' ? 'fr-tabs__tab fr-tabs__tab--selected' : 'fr-tabs__tab'} tabIndex={0} aria-selected={activeTab==='masses'} aria-controls="panel-masses" role="tab" onClick={()=> setActiveTab('masses')}>{t('build.mass_dials') || 'Mass dials'}</button>
-                    </li>
-                    <li role="presentation">
-                      <button id="tab-pieces" className={activeTab==='pieces' ? 'fr-tabs__tab fr-tabs__tab--selected' : 'fr-tabs__tab'} tabIndex={0} aria-selected={activeTab==='pieces'} aria-controls="panel-pieces" role="tab" onClick={()=> setActiveTab('pieces')}>{t('build.piece_dials') || 'Piece dials'}</button>
-                    </li>
-                  </ul>
-                  <div id="panel-masses" className={activeTab==='masses' ? 'fr-tabs__panel fr-tabs__panel--selected' : 'fr-tabs__panel'} role="tabpanel" aria-labelledby="tab-masses">
-                    <MassList masses={massList} labels={massUiLabel} baseAmounts={massBaseAmounts} targets={massTargets} changes={massChanges} onTarget={(m,v)=> setMassTargets({ ...massTargets, [m]: v })} onChangeAmt={(m,v)=> setMassChanges({ ...massChanges, [m]: v })} resolution={result?.resolutionByMass} onExplain={(m)=> setExplainMass(m)} />
-                  </div>
-                  <div id="panel-pieces" className={activeTab==='pieces' ? 'fr-tabs__panel fr-tabs__panel--selected' : 'fr-tabs__panel'} role="tabpanel" aria-labelledby="tab-pieces">
-                    <div className="fr-grid-row fr-grid-row--gutters">
-                      <div className="fr-col-12">
-                        <h4 className="fr-h4">{t('build.expenditures') || 'Expenditures'}</h4>
-                        <PieceList pieces={exp} deltas={deltas} targets={targets} onDelta={updateDelta} onTarget={updateTarget} t={t} />
-                        <h4 className="fr-h4" style={{ marginTop: '.75rem' }}>{t('build.revenues') || 'Revenues'}</h4>
-                        <PieceList pieces={rev} deltas={deltas} targets={targets} onDelta={updateDelta} onTarget={updateTarget} t={t} />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Center Canvas */}
-        <div className="fr-col-12 fr-col-md-6">
-          <div className="fr-card fr-card--no-arrow">
-            <div className="fr-card__body">
-              <div className="fr-card__title">Canvas</div>
+              <div className="fr-card__title">{t('build.controls') || 'Controls'}</div>
               <div className="fr-card__desc">
                 <div className="fr-grid-row fr-grid-row--gutters" style={{ marginBottom: '.5rem' }}>
                   <div className="fr-col-6">
-                    <label className="fr-label" htmlFor="year">Year</label>
+                    <label className="fr-label" htmlFor="year">{t('labels.year') || 'Year'}</label>
                     <input id="year" className="fr-input" type="number" value={year} onChange={e => setYear(parseInt(e.target.value || '2026', 10))} />
                   </div>
-                  <div className="fr-col-6" />
+                  <div className="fr-col-6">
+                    <div className="fr-hint-text">{t('hud.hints') || 'Hints: +/- to adjust; ⌘Z undo; ⇧⌘Z redo'}</div>
+                  </div>
                 </div>
-                {result?.masses && <TwinBars masses={result.masses} labels={massList.reduce((acc, m)=> (acc[m]=massUiLabel(m), acc), {} as Record<string,string>)} resolution={result.resolutionByMass} />}
-                {wfItems?.length>0 && <WaterfallDelta items={wfItems} title="Δ by Mass (Waterfall)" />}
-                {ribbons?.length>0 && <SankeyRibbons ribbons={ribbons} pieceLabels={ribbonLabels.piece} massLabels={ribbonLabels.mass} />}
+                {loading && <p>{t('loading') || 'Loading…'}</p>}
+                {error && <p className="fr-error-text">{t('error.generic') || error}</p>}
+                {!loading && !error && (
+                  <div className="fr-grid-row fr-grid-row--gutters">
+                    {/* Spending column */}
+                    <div className="fr-col-12 fr-col-md-6">
+                      <div style={{ position:'sticky', top: 48, zIndex: 1, background: 'var(--background-default-grey)', paddingBottom: '.25rem' }}>
+                        <h4 className="fr-h4" style={{ marginBottom: '.25rem' }}>{t('build.expenditures') || 'Spending'}</h4>
+                        <div className="fr-input-group">
+                          <input className="fr-input" placeholder={t('labels.search') || 'Search…'} value={expFilter} onChange={(e)=> setExpFilter(e.target.value)} />
+                        </div>
+                        {favExp.length>0 && (
+                          <div className="fr-text--xs" style={{ marginTop: '.25rem' }}>{t('labels.pinned') || 'Pinned'}: {favExp.length}</div>
+                        )}
+                      </div>
+                      <GroupedPieceList2
+                        grouped={filteredGroupedExp}
+                        deltas={deltas}
+                        targets={targets}
+                        onDelta={updateDelta}
+                        onTarget={updateTarget}
+                        t={t}
+                        resByMass={resByMass}
+                        fav={favExp}
+                        onToggleFav={(id)=> setFavExp(arr => arr.includes(id) ? arr.filter(x=>x!==id) : [...arr, id])}
+                        onExplain={setExplainId}
+                      />
+                    </div>
+                    {/* Revenue column */}
+                    <div className="fr-col-12 fr-col-md-6">
+                      <div style={{ position:'sticky', top: 48, zIndex: 1, background: 'var(--background-default-grey)', paddingBottom: '.25rem' }}>
+                        <h4 className="fr-h4" style={{ marginBottom: '.25rem' }}>{t('build.revenues') || 'Revenue'}</h4>
+                        <div className="fr-input-group">
+                          <input className="fr-input" placeholder={t('labels.search') || 'Search…'} value={revFilter} onChange={(e)=> setRevFilter(e.target.value)} />
+                        </div>
+                        {favRev.length>0 && (
+                          <div className="fr-text--xs" style={{ marginTop: '.25rem' }}>{t('labels.pinned') || 'Pinned'}: {favRev.length}</div>
+                        )}
+                      </div>
+                      <PieceList2
+                        pieces={filteredRev}
+                        deltas={deltas}
+                        targets={targets}
+                        onDelta={updateDelta}
+                        onTarget={updateTarget}
+                        t={t}
+                        resByMass={resByMass}
+                        fav={favRev}
+                        onToggleFav={(id)=> setFavRev(arr => arr.includes(id) ? arr.filter(x=>x!==id) : [...arr, id])}
+                        onExplain={setExplainId}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </div>
 
-        {/* Right Panel: Workshop | Consequences */}
-        <div className="fr-col-12 fr-col-md-3">
-          <div className="fr-card fr-card--no-arrow">
-            <div className="fr-card__body">
-              <div className="fr-card__title">Right Panel</div>
-              <div className="fr-card__desc">
-                <div className="fr-tabs">
-                  <ul className="fr-tabs__list" role="tablist">
-                    <li role="presentation"><button id="tab-work" className={'fr-tabs__tab fr-tabs__tab--selected'} aria-selected={true} aria-controls="panel-work" role="tab">Workshop</button></li>
-                    <li role="presentation"><button id="tab-cons" className={'fr-tabs__tab'} aria-selected={false} aria-controls="panel-cons" role="tab" disabled>Consequences</button></li>
-                  </ul>
-                  <div id="panel-work" className={'fr-tabs__panel fr-tabs__panel--selected'} role="tabpanel" aria-labelledby="tab-work">
-                    <p className="fr-text--sm">Select levers and adjust parameters. Apply as Target or Change on a mass.</p>
-                    <LeverWorkshop levers={levers} masses={massList} labels={COFOG_LABELS} baseAmounts={massBaseAmounts} onApply={(mass, amount, asTarget)=>{
-                      if (asTarget) setMassTargets({ ...massTargets, [mass]: (massTargets[mass]||0) + amount })
-                      else setMassChanges({ ...massChanges, [mass]: (massChanges[mass]||0) + amount })
-                    }} onToggle={toggleLever} selected={selectedLevers} />
-                  </div>
-                  <div id="panel-cons" className={'fr-tabs__panel'} role="tabpanel" aria-labelledby="tab-cons">
-                    <dl className="fr-description-list">
-                      <div className="fr-description-list__row">
-                        <dt className="fr-description-list__term">{t('build.delta_exp') || 'ΔExpenditures (est.)'}</dt>
-                        <dd className="fr-description-list__definition">{estimateDeltaExp(exp, deltas).toLocaleString(undefined, { maximumFractionDigits: 0 })} €</dd>
-                      </div>
-                      <div className="fr-description-list__row">
-                        <dt className="fr-description-list__term">{t('build.delta_rev') || 'ΔRevenues (est.)'}</dt>
-                        <dd className="fr-description-list__definition">{estimateDeltaRev(rev, deltas).toLocaleString(undefined, { maximumFractionDigits: 0 })} €</dd>
-                      </div>
-                      {result && (
-                        <>
-                          <div className="fr-description-list__row">
-                            <dt className="fr-description-list__term">{t('score.deficit_y0') || 'Deficit (y0)'}</dt>
-                            <dd className="fr-description-list__definition">{result.deficitY0.toLocaleString(undefined, { maximumFractionDigits: 0 })} €</dd>
-                          </div>
-                          <div className="fr-description-list__row">
-                            <dt className="fr-description-list__term">EU 3%</dt>
-                            <dd className="fr-description-list__definition">{result.eu3}</dd>
-                          </div>
-                          <div className="fr-description-list__row">
-                            <dt className="fr-description-list__term">EU 60%</dt>
-                            <dd className="fr-description-list__definition">{result.eu60}</dd>
-                          </div>
-                          <div className="fr-description-list__row">
-                            <dt className="fr-description-list__term">{t('build.resolution') || 'Resolution'}</dt>
-                            <dd className="fr-description-list__definition">{(100 * result.resolutionPct).toFixed(1)}%</dd>
-                          </div>
-                        </>
-                      )}
-                    </dl>
-                    {conflictNudge && <p className="fr-alert fr-alert--warning" role="alert">{conflictNudge}</p>}
-                  </div>
+        {/* Right column: Canvas + Scoreboard */}
+        <div className="fr-col-12 fr-col-md-4">
+          <div className="stack" style={{ gap: '.75rem' }}>
+            <div className="fr-card fr-card--no-arrow">
+              <div className="fr-card__body">
+                <div className="fr-card__title">{t('build.canvas') || 'Canvas'}</div>
+                <div className="fr-card__desc">
+                  {result?.masses && <TwinBars masses={result.masses} labels={massList.reduce((acc, m)=> (acc[m]=massUiLabel(m), acc), {} as Record<string,string>)} resolution={result.resolutionByMass} />}
                 </div>
-                {result?.id && (
-                  <div className="stack" style={{ gap: '.5rem', marginTop: '.75rem' }}>
-                    <div className="fr-input-group">
-                      <label className="fr-label" htmlFor="save_title">{t('scenario.save_title') || 'Scenario title'}</label>
-                      <input id="save_title" className="fr-input" value={saveTitle} onChange={e=> setSaveTitle(e.target.value)} placeholder="My plan" />
+              </div>
+            </div>
+            <ScoreStrip
+              estExp={estimateDeltaExp(exp, deltas)}
+              estRev={estimateDeltaRev(rev, deltas)}
+              result={result}
+              conflictNudge={conflictNudge}
+            />
+            <div className="fr-card fr-card--no-arrow">
+              <div className="fr-card__body">
+                <button className="fr-btn fr-btn--secondary" onClick={()=> setShowTray(v=>!v)} aria-expanded={showTray} aria-controls="results_tray">
+                  {showTray ? (t('labels.hide_results') || 'Hide results') : (t('labels.show_results') || 'Show results')}
+                </button>
+                {showTray && (
+                  <div id="results_tray" className="stack" style={{ gap: '.75rem', marginTop: '.5rem' }}>
+                    {(result?.deficitPath?.length || result?.debtPath?.length) ? (
+                      <>
+                        <h4 className="fr-h4">{t('charts.deficit_path') || 'Deficit & Debt Path'}</h4>
+                        <DeficitPathChart deficit={result?.deficitPath || []} debt={result?.debtPath || []} />
+                      </>
+                    ) : null}
+                    {wfItems?.length>0 && <WaterfallDelta items={wfItems} title={t('charts.waterfall') || 'Δ by Mass (Waterfall)'} />}
+                    {ribbons?.length>0 && <SankeyRibbons ribbons={ribbons} pieceLabels={ribbonLabels.piece} massLabels={ribbonLabels.mass} />}
+                    <div className="fr-card fr-card--no-arrow">
+                      <div className="fr-card__body">
+                        <div className="fr-card__title">{t('build.workshop') || 'Policy Workshop'}</div>
+                        <div className="fr-card__desc">
+                          <p className="fr-text--sm">{t('workshop.hint') || 'Select levers and adjust parameters. Apply as Target or Change on a mass.'}</p>
+                          <LeverWorkshop levers={levers} masses={massList} labels={massList.reduce((acc, m)=> (acc[m]=massUiLabel(m), acc), {} as Record<string,string>)} baseAmounts={massBaseAmounts} onApply={(mass, amount, asTarget)=>{
+                            if (asTarget) setMassTargets({ ...massTargets, [mass]: (massTargets[mass]||0) + amount })
+                            else setMassChanges({ ...massChanges, [mass]: (massChanges[mass]||0) + amount })
+                          }} onToggle={toggleLever} selected={selectedLevers} />
+                        </div>
+                      </div>
                     </div>
-                    <div className="fr-btns-group fr-btns-group--inline">
-                      <button className="fr-btn fr-btn--secondary" onClick={async()=>{
-                        try {
-                          const q = `mutation($id:ID!,$title:String){ saveScenario(id:$id, title:$title) }`
-                          await gqlRequest(q, { id: result.id, title: saveTitle || 'My plan' })
-                        } catch {}
-                      }}>{t('scenario.save') || 'Save'}</button>
-                      <a className="fr-link" href={`/api/og?scenarioId=${result.id}`} target="_blank" rel="noopener noreferrer">OG preview</a>
-                    </div>
+                    {result?.id && (
+                      <div className="fr-card fr-card--no-arrow">
+                        <div className="fr-card__body">
+                          <div className="fr-card__title">{t('build.dsl') || 'Scenario DSL'}</div>
+                          <div className="fr-card__desc">
+                            <pre style={{ whiteSpace: 'pre-wrap' }}><code>{dsl}</code></pre>
+                          </div>
+                          <div className="fr-card__title" style={{ marginTop: '.5rem' }}>{t('scenario.save_title') || 'Scenario title'}</div>
+                          <div className="fr-card__desc">
+                            <div className="fr-input-group">
+                              <input id="save_title" className="fr-input" value={saveTitle} onChange={e=> setSaveTitle(e.target.value)} placeholder="My plan" />
+                            </div>
+                            <div className="fr-btns-group fr-btns-group--inline" style={{ marginTop: '.25rem' }}>
+                              <button className="fr-btn fr-btn--secondary" onClick={async()=>{
+                                try {
+                                  const q = `mutation($id:ID!,$title:String){ saveScenario(id:$id, title:$title) }`
+                                  await gqlRequest(q, { id: result.id, title: saveTitle || 'My plan' })
+                                } catch {}
+                              }}>{t('scenario.save') || 'Save'}</button>
+                              <a className="fr-link" href={`/api/og?scenarioId=${result.id}`} target="_blank" rel="noopener noreferrer">OG preview</a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -510,6 +538,10 @@ export default function BuildPage() {
           }}
         />
       )}
+      {/* Piece Explain overlay */}
+      {explainId && (
+        <ExplainOverlay piece={pieces.find(p=> p.id===explainId)} onClose={()=> setExplainId(null)} t={t} />
+      )}
     </div>
   )
 }
@@ -575,6 +607,222 @@ function defaultTargetForFamily(fam: string): string {
   }
 }
 
+// Advanced controls: grouped lists and overlays
+function groupPiecesByMass(items: Piece[], labels: Record<string,string>): { key: string; label: string; pieces: Piece[] }[] {
+  const byKey: Record<string, Piece[]> = {}
+  for (const p of items) {
+    const key = (p.cofogMajors && p.cofogMajors[0]) ? String(p.cofogMajors[0]).padStart(2,'0').slice(0,2) : '00'
+    byKey[key] = byKey[key] || []
+    byKey[key].push(p)
+  }
+  const keys = Object.keys(byKey).sort()
+  return keys.map(k => ({ key: k, label: labels[k] || (k==='00' ? 'Other' : k), pieces: byKey[k] }))
+}
+
+function filterGrouped(grouped: { key: string; label: string; pieces: Piece[] }[], q: string) {
+  const needle = (q||'').toLowerCase()
+  if (!needle) return grouped
+  return grouped.map(g => ({ ...g, pieces: g.pieces.filter(p => (p.label||p.id).toLowerCase().includes(needle)) })).filter(g => g.pieces.length)
+}
+
+function PieceList2({ pieces, deltas, targets, onDelta, onTarget, t, resByMass, fav, onToggleFav, onExplain }: {
+  pieces: Piece[]
+  deltas: Record<string, number>
+  targets: Record<string, number>
+  onDelta: (id: string, v: number) => void
+  onTarget: (id: string, v: number) => void
+  t: (k: string)=>string
+  resByMass: Record<string, { t: number; s: number }>
+  fav: string[]
+  onToggleFav: (id: string) => void
+  onExplain: (id: string) => void
+}) {
+  if (!pieces.length) return <p className="fr-text--sm">{t('labels.no_pieces') || 'No pieces'}</p>
+  return (
+    <div className="stack" style={{ gap: '.5rem' }}>
+      {pieces.map(p => (
+        <PieceRow2 key={p.id} p={p} deltas={deltas} targets={targets} onDelta={onDelta} onTarget={onTarget} t={t} resByMass={resByMass} pinned={fav.includes(p.id)} onToggleFav={onToggleFav} onExplain={onExplain} />
+      ))}
+    </div>
+  )
+}
+
+function GroupedPieceList2({ grouped, deltas, targets, onDelta, onTarget, t, resByMass, fav, onToggleFav, onExplain }: {
+  grouped: { key: string; label: string; pieces: Piece[] }[]
+  deltas: Record<string, number>
+  targets: Record<string, number>
+  onDelta: (id: string, v: number) => void
+  onTarget: (id: string, v: number) => void
+  t: (k: string)=>string
+  resByMass: Record<string, { t: number; s: number }>
+  fav: string[]
+  onToggleFav: (id: string) => void
+  onExplain: (id: string) => void
+}) {
+  const [open, setOpen] = useState<Record<string, boolean>>(() => Object.fromEntries(grouped.map(g => [g.key, true])))
+  return (
+    <div className="stack" style={{ gap: '.5rem' }}>
+      {grouped.map(g => (
+        <div key={g.key} className="fr-accordion" style={{ border: '1px solid var(--border-default-grey)', borderRadius: '6px' }}>
+          <h3 className="fr-accordion__title" style={{ margin: 0 }}>
+            <button className={open[g.key] ? 'fr-accordion__btn' : 'fr-accordion__btn collapsed'} aria-expanded={!!open[g.key]} onClick={()=> setOpen({ ...open, [g.key]: !open[g.key] })}>
+              {g.key} — {g.label} <span className="fr-text--xs" style={{ marginLeft: '.5rem' }}>({g.pieces.length})</span>
+            </button>
+          </h3>
+          {open[g.key] && (
+            <div className="fr-accordion__content" style={{ paddingTop: '.5rem' }}>
+              <div className="stack" style={{ gap: '.5rem' }}>
+                {g.pieces.map(p => (
+                  <PieceRow2 key={p.id} p={p} deltas={deltas} targets={targets} onDelta={onDelta} onTarget={onTarget} t={t} resByMass={resByMass} pinned={fav.includes(p.id)} onToggleFav={onToggleFav} onExplain={onExplain} />
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function PieceRow2({ p, deltas, targets, onDelta, onTarget, t, resByMass, pinned, onToggleFav, onExplain }: {
+  p: Piece
+  deltas: Record<string, number>
+  targets: Record<string, number>
+  onDelta: (id: string, v: number) => void
+  onTarget: (id: string, v: number) => void
+  t: (k: string)=>string
+  resByMass: Record<string, { t: number; s: number }>
+  pinned: boolean
+  onToggleFav: (id: string)=> void
+  onExplain: (id: string)=> void
+}) {
+  const pieceMass = (p.cofogMajors && p.cofogMajors[0]) ? String(p.cofogMajors[0]).padStart(2,'0').slice(0,2) : ''
+  const unresolved = pieceMass && resByMass[pieceMass] && Math.abs(resByMass[pieceMass].s) < Math.abs(resByMass[pieceMass].t)
+  const microPct = (() => {
+    const hasDelta = Math.abs(Number(deltas[p.id] || 0)) > 0
+    const hasTarget = Math.abs(Number(targets[p.id] || 0)) > 0
+    return (hasDelta && hasTarget) ? 100 : (hasDelta || hasTarget) ? 50 : 0
+  })()
+  return (
+    <div className="fr-input-group" style={{ padding: '.4rem .5rem', border: '1px solid var(--border-default-grey)', borderRadius: '6px', position: 'relative', overflow: 'hidden' }}>
+      {unresolved && (
+        <div aria-hidden="true" style={{ position:'absolute', inset:0, backgroundImage: 'repeating-linear-gradient(45deg, rgba(0,0,0,0.06) 0, rgba(0,0,0,0.06) 3px, transparent 3px, transparent 6px)' }}></div>
+      )}
+      <div style={{ position:'relative' }}>
+        <div className="fr-grid-row fr-grid-row--gutters" style={{ alignItems:'center' }}>
+          <div className="fr-col-10">
+            <label className="fr-label" htmlFor={`delta_${p.id}`}>{p.label || p.id}</label>
+            {p.locked && <span className="fr-badge fr-badge--sm" aria-label="locked" style={{ marginLeft: '.5rem' }}>{t('piece.locked') || 'Locked'}</span>}
+            <div className="fr-text--xs" style={{ color:'var(--text-mention-grey)' }}>{(p.amountEur||0).toLocaleString(undefined,{maximumFractionDigits:0})} €</div>
+          </div>
+          <div className="fr-col-2" style={{ textAlign: 'right' }}>
+            <button className="fr-btn fr-btn--sm fr-btn--secondary" title={pinned ? (t('labels.unpin') || 'Unpin') : (t('labels.pin') || 'Pin')} onClick={()=> onToggleFav(p.id)}>
+              {pinned ? '★' : '☆'}
+            </button>
+          </div>
+        </div>
+        <div className="fr-grid-row fr-grid-row--gutters">
+          <div className="fr-col-12 fr-col-sm-6">
+            <div className="fr-range">
+              <input id={`delta_${p.id}`} type="range" min={-50} max={50} step={1} value={deltas[p.id] ?? 0} onChange={e => onDelta(p.id, Number((e.target as HTMLInputElement).value))} disabled={!!p.locked} aria-label={`change ${p.id}`} />
+            </div>
+            <div className="fr-input-group" style={{ marginTop: '.25rem' }}>
+              <input className="fr-input" style={{ maxWidth: '8rem' }} type="number" min={-100} max={100} step={0.5} value={deltas[p.id] ?? 0} onChange={e => onDelta(p.id, Number(e.target.value))} disabled={!!p.locked} aria-label={`change number ${p.id}`} /> <span style={{ marginLeft: '.25rem' }}>%</span>
+            </div>
+          </div>
+          <div className="fr-col-12 fr-col-sm-6">
+            <label className="fr-label" htmlFor={`target_${p.id}`}>{t('labels.target_pct') || 'Target (role)'}</label>
+            <div className="fr-input-group">
+              <input id={`target_${p.id}`} className="fr-input" style={{ maxWidth: '8rem' }} type="number" min={-100} max={100} step={0.5} value={targets[p.id] ?? 0} onChange={e => onTarget(p.id, Number(e.target.value))} disabled={!!p.locked} aria-label={`target percent ${p.id}`} /> <span style={{ marginLeft: '.25rem' }}>%</span>
+            </div>
+          </div>
+        </div>
+        <div className="fr-grid-row fr-grid-row--gutters" style={{ alignItems: 'center', marginTop: '.25rem' }}>
+          <div className="fr-col-8">
+            <div className="fr-progress fr-progress--sm" aria-label="specification status">
+              <div className="fr-progress__track">
+                <div className="fr-progress__bar" style={{ width: `${microPct}%` }} aria-hidden="true"></div>
+              </div>
+            </div>
+          </div>
+          <div className="fr-col-4" style={{ textAlign: 'right' }}>
+            <button className="fr-btn fr-btn--sm fr-btn--secondary" onClick={()=> onExplain(p.id)}>{t('labels.explain') || 'Explain'}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function ScoreStrip({ estExp, estRev, result, conflictNudge }: { estExp: number, estRev: number, result: any, conflictNudge: string | null }) {
+  const net = (estExp + estRev) || 0
+  return (
+    <div style={{ position: 'sticky', top: 64, zIndex: 11 }}>
+      <div className="fr-card fr-card--no-arrow">
+        <div className="fr-card__body">
+          <div className="fr-card__title">{`Scoreboard`}</div>
+          <div className="fr-card__desc">
+            <dl className="fr-description-list">
+              <div className="fr-description-list__row">
+                <dt className="fr-description-list__term">ΔExp</dt>
+                <dd className="fr-description-list__definition">{estExp.toLocaleString(undefined, { maximumFractionDigits: 0 })} €</dd>
+              </div>
+              <div className="fr-description-list__row">
+                <dt className="fr-description-list__term">ΔRev</dt>
+                <dd className="fr-description-list__definition">{estRev.toLocaleString(undefined, { maximumFractionDigits: 0 })} €</dd>
+              </div>
+              <div className="fr-description-list__row">
+                <dt className="fr-description-list__term">Net</dt>
+                <dd className="fr-description-list__definition">{net.toLocaleString(undefined, { maximumFractionDigits: 0 })} €</dd>
+              </div>
+              {result && (
+                <>
+                  <div className="fr-description-list__row">
+                    <dt className="fr-description-list__term">Deficit y0</dt>
+                    <dd className="fr-description-list__definition">{Number(result.deficitY0||0).toLocaleString(undefined,{ maximumFractionDigits: 0 })} €</dd>
+                  </div>
+                  <div className="fr-description-list__row">
+                    <dt className="fr-description-list__term">Resolution</dt>
+                    <dd className="fr-description-list__definition">{(100 * (Number(result.resolutionPct||0))).toFixed(1)}%</dd>
+                  </div>
+                </>
+              )}
+            </dl>
+            {conflictNudge && <p className="fr-alert fr-alert--warning" role="alert" style={{ marginTop: '.25rem' }}>{conflictNudge}</p>}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function ExplainOverlay({ piece, onClose, t }: { piece?: Piece, onClose: ()=>void, t: (k:string)=>string }) {
+  if (!piece) return null
+  return (
+    <div role="dialog" aria-modal="true" style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.45)', zIndex: 100 }} onClick={onClose}>
+      <div className="fr-container" style={{ maxWidth: 720, margin:'10vh auto', background: 'var(--background-default-grey)', borderRadius: 8, padding: '1rem', position: 'relative' }} onClick={(e)=> e.stopPropagation()}>
+        <div className="fr-grid-row fr-grid-row--gutters" style={{ alignItems:'center' }}>
+          <div className="fr-col-10">
+            <h3 className="fr-h3" style={{ margin: 0 }}>{piece.label || piece.id}</h3>
+            <div className="fr-text--sm" style={{ color: 'var(--text-mention-grey)' }}>
+              {(piece.amountEur||0).toLocaleString(undefined,{ maximumFractionDigits: 0 })} € — {(piece.share||0).toLocaleString(undefined,{ style:'percent', maximumFractionDigits: 2 })}
+            </div>
+          </div>
+          <div className="fr-col-2" style={{ textAlign: 'right' }}>
+            <button className="fr-btn fr-btn--secondary" onClick={onClose} aria-label={t('buttons.close') || 'Close'}>✕</button>
+          </div>
+        </div>
+        <div style={{ marginTop: '.5rem' }}>
+          <p className="fr-text--sm">{t('explain.placeholder') || 'Focused explanation and context for this piece. Add detailed notes, assumptions, and links here.'}</p>
+        </div>
+        <div style={{ textAlign:'right', marginTop: '.5rem' }}>
+          <button className="fr-btn" onClick={onClose}>{t('buttons.done') || 'Done'}</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function BuildHud({ estExp, estRev, result, onRun, running, onReset, onToggleDsl, t }: { estExp: number, estRev: number, result: any, onRun: ()=>void, running: boolean, onReset: ()=>void, onToggleDsl: ()=>void, t: (k: string)=>string }) {
   const netEst = (estExp + estRev) || 0
   const eu3 = result?.eu3 || 'info'
@@ -587,12 +835,17 @@ function BuildHud({ estExp, estRev, result, onRun, running, onReset, onToggleDsl
     return '#D32F2F'
   }
   return (
-    <div style={{ position: 'sticky', top: 0, zIndex: 10, background: 'var(--background-default-grey)', borderBottom: '1px solid var(--border-default-grey)', padding: '.5rem .75rem' }}>
+    <div style={{ position: 'sticky', top: 0, zIndex: 12, background: 'var(--background-default-grey)', borderBottom: '1px solid var(--border-default-grey)', padding: '.5rem .75rem' }}>
       <div className="fr-grid-row fr-grid-row--gutters" style={{ alignItems: 'center' }}>
-        <div className="fr-col-12 fr-col-md-4">
-          <strong>{t('hud.net_delta') || 'Net Δ (est. y0): '}</strong>{netEst.toLocaleString(undefined,{ maximumFractionDigits: 0 })} €
+        <div className="fr-col-12 fr-col-md-3">
+          <div className="fr-text--sm">
+            <strong>{t('build.delta_exp') || 'ΔExpenditures (est.)'}:</strong> {estExp.toLocaleString(undefined,{ maximumFractionDigits: 0 })} €
+            {' '}·{' '}
+            <strong>{t('build.delta_rev') || 'ΔRevenues (est.)'}:</strong> {estRev.toLocaleString(undefined,{ maximumFractionDigits: 0 })} €
+          </div>
+          <div><strong>{t('hud.net_delta') || 'Net Δ (est. y0): '}</strong>{netEst.toLocaleString(undefined,{ maximumFractionDigits: 0 })} €</div>
         </div>
-        <div className="fr-col-12 fr-col-md-4">
+        <div className="fr-col-12 fr-col-md-3">
           <div className="fr-progress" aria-label="Resolution">
             <div className="fr-progress__track">
               <div className="fr-progress__bar" style={{ width: `${Math.min(100, 100*resPct)}%` }} aria-hidden="true"></div>
@@ -616,6 +869,11 @@ function BuildHud({ estExp, estRev, result, onRun, running, onReset, onToggleDsl
             <button className="fr-btn" onClick={onRun} disabled={running}>{t('buttons.run') || 'Run'}</button>
             <button className="fr-btn fr-btn--secondary" onClick={onToggleDsl}>{'</>'} DSL</button>
           </div>
+        </div>
+        <div className="fr-col-12 fr-col-md-2" style={{ textAlign: 'right' }}>
+          {typeof result?.deficitY0 === 'number' && (
+            <div className="fr-text--sm"><strong>{t('score.deficit_y0') || 'Deficit (y0)'}</strong>: {result.deficitY0.toLocaleString(undefined,{ maximumFractionDigits: 0 })} €</div>
+          )}
         </div>
       </div>
     </div>
