@@ -20,7 +20,7 @@ Routing & Pages
 - `/` Home: navigation + 10‑sec onboarding (two equal CTAs: Start with Budget · Start with Policy) and a quick explainer; carousel with weekly Challenges and trending public scenarios.
 - `/explore` Explore €1: lens toggle (ADMIN/COFOG), basis (CP/AE), year slider, sunburst/treemap, outcomes panel, export, source links.
 - `/procurement` Who gets paid?: map + table, filters (sector/size/geo), competition flags, export.
-- `/build` Budget Playground & Policy Workshop: three‑panel command center (Left = LEGO Shelf & Reform Library, Center = Twin‑Bars Canvas with Budget Dials and Δ chips, Right = Consequences & Workshop). Scenario drawer remains available for DSL view. See detailed spec in `docs/BUILD_PAGE_SPEC.md`.
+- `/build` Budget Playground & Policy Workshop: two‑column command center with a cockpit HUD. Left = Controls (Spending vs Revenue twin columns, grouped lists, inline configurators); Right = Canvas (TwinBars, Waterfall) + slim Scoreboard and expandable Results Tray (Accounting, Debt path, Macro fan, Distribution, Workshop, DSL, Save). Scenario state persists to URL. See detailed spec in `docs/BUILD_PAGE_SPEC.md`.
 - `/compare-eu` Compare EU: country selector, COFOG shares, deficit/debt ratios (Eurostat-backed), export.
 - `/sources` Sources: dataset registry with license/vintage/cadence links and search.
 - V1: `/my-household` OpenFisca view (static synthetic grid first, optional local input).
@@ -39,10 +39,11 @@ Components (selected)
 
 - Explore: `Sunburst`, `Treemap`, `LensToggle`, `YearSlider`, `BasisToggle`, `OutcomePanel`, `ExportButton`.
 - Procurement: `ProcurementMap`, `SupplierTable`, `FiltersPanel`, `ExportButton`.
-- Playground & Workshop (three‑panel command center):
-  - Left (Shelf): `PiecesPanel` (tabs: Spending/Revenues; search with synonyms; beneficiary lens filter; lock/bounds badges), `ReformLibrary` (cards grouped by family), `PresetChips`.
-  - Center (Canvas): `TwinBars`, `CanvasStack` (stacked masses), `BudgetDial` (overlay on a mass), `DeltaChip` (per mass and global surplus/room), `ResolutionMeter` (HUD), `DeficitGapGauge` (animated gap, %GDP badge), `LensSwitch` (Mass/Family/Named), `ScenarioTimelineChips`.
-  - Right (Consequences & Workshop): `ConsequenceTabs` (Accounting + `RuleLights`, `DebtPathChart`, `MacroFan`, `DistributionChart`), `PolicyDashboard` (families → levers), `ProgressToTarget`, `PathCompareTray`, `FeasibilityTags`, `ConflictNudge` (double‑count guard), `ShareCardButton`.
+- Playground & Workshop (two‑column command center + HUD):
+  - Cockpit HUD (sticky): `BudgetHUD` (ΔExp/ΔRev, Net Δ, Resolution bar, EU rule lights, Run/Reset, keyboard hints); future: debt sparkline, %GDP badge, Undo/Redo.
+  - Left (Controls): `PiecesPanel` split into twin lists — `SpendingList` (grouped by COFOG with collapsible headers) and `RevenueList` (flat list for now). Each row: label, amount, pin, delta slider, target input, micro progress bar, Explain button. `SearchBox` and `PinnedRow` above lists. Inline `PolicyConfigurator` for quick parameter edits.
+  - Right (Canvas + Scoreboard): `TwinBars` (baseline vs scenario; pending stripes), optional `WaterfallDelta`. Slim `ScoreStrip` mirrors HUD basics and stays sticky. `ResultsTray` expands to show `DeficitPathChart`, `MacroFan`, `DistributionChart`, `PolicyWorkshop`, `DslPanel`, `SaveBlock`.
+  - Explain Overlay (progressive disclosure): `ExplainOverlay` focused on one piece or mass; background dims; shows description, assumptions, links, and quick actions.
   - Editors/utilities: `TargetPicker`, `TaxParamEditor`, `AmountSlider`, `OffsetsEditor`, `DslDrawer`.
 - Shared: `Layout`, `LangSwitcher`, `SourceLink`, `ErrorBoundary`, `Loading`, `GlobalControls` (FR/EN, color‑blind, Show table, Share/Remix, Assumptions), `BudgetHUD` (bottom: balance €/ %GDP, debt sparkline with fan, EU lights, real/nominal, year, undo/redo, reset).
 
@@ -200,23 +201,24 @@ Entity Pages (New) — Missions/Programmes/COFOGs
 
 Implementation Plan — Build Page (Polished)
 
-- Phase A (Scaffold & Data Wiring)
-  - Add `/build` page with Mass and Piece tabs; wire GraphQL for `legoPieces`, `legoBaseline`, `policyLevers`.
-  - Serialize DSL (mass + piece + lever IDs); runScenario; display Resolution/Scoreboard.
-  - Permalink sync (`?dsl=<base64>`) and robust restore using YAML parser.
+Phase A (Scaffold & Data Wiring)
+  - Add `/build` page with twin lists (Spending/Revenue). Wire GraphQL for `legoPieces`, `legoBaseline`, `policyLevers`.
+  - Serialize DSL (mass + piece + lever IDs); `runScenario`; display HUD + ScoreStrip with Resolution/EU.
+  - Permalink sync (`?dsl=<base64>`) and robust restore using YAML/YAML‑lite parser.
 
 - Phase B (Workshop & Resolution)
   - Dynamic lever parameter forms from `paramsSchema`; heuristics to derive Δ€.
   - Apply lever as Target or Change on selected Mass; conflict nudge on runScenario errors.
   - Global Resolution meter and per‑mass progress; striped pending overlay on TwinBars.
 
-- Phase C (HUD & Consequences)
-  - Budget HUD (balance, EU lights, debt sparkline, resolution, timeline, undo/redo).
-  - Macro fan chart and Debt path chart; lazy‑load heavy charts.
+Phase C (HUD & Consequences)
+  - Cockpit HUD (ΔExp/ΔRev, Net Δ, EU lights, resolution bar, shortcuts). Add debt sparkline and %GDP badge.
+  - Slim ScoreStrip under Canvas; ResultsTray with Debt path, Macro, Distribution. Lazy‑load heavy charts.
 
-- Phase D (UX Polish & A11y)
-  - Keyboard flows for tabs, sliders, lever forms; ARIA for progress and alerts.
-  - i18n labels; Axe checks in CI for `/build`.
+Phase D (UX Polish & A11y)
+  - Keyboard flows for sliders, list navigation, Explain overlay, ResultsTray; ARIA roles for progress/alerts/dialog.
+  - Focus management on overlay open/close; trap focus; Esc to close; Restore focus to invoker.
+  - i18n labels; Axe checks in CI; color‑blind safe palettes; reduced‑motion support.
 
 - Phase E (Share & Compare)
   - Save scenario (title/description); OG image preview hook; Compare & Remix entrypoint.
@@ -272,3 +274,12 @@ Tech Notes
 - Keep components headless/simple; styling via globals.css + small utility classes
 - Consider colocating page-level copies of Source metadata where GraphQL doesn’t yet provide direct source URLs
 - Maintain SSR/CSR balance: current pages remain client components; entity pages can be server components if queries stabilize
+Build — Visual & Interaction Heuristics
+
+- Information hierarchy: cockpit HUD for instant state; controls on the left for action; canvas on the right for feedback; tray for deeper analysis.
+- Density and scannability: 44px min tap targets; compact rows with secondary info in subdued color; sticky group headers and search afford quick scanning.
+- Progressive disclosure: Keep heavy analytics in the tray; keep configurators inline; elevate Explain overlay only when needed.
+- Micro‑interactions: animate bar widths on changes; use subtle pending stripes; optimistic UI for sliders; toast on save/run; loading skeletons.
+- Keyboard: arrow keys on focused sliders; +/- adjust; Cmd/Ctrl+Z/Y (undo/redo, future); F to pin/unpin; / to focus search; Esc to dismiss overlays.
+- Accessibility: list semantics; aria‑expanded on groups; aria‑valuenow/min/max on sliders; live regions for resolution updates.
+- Responsiveness: stack columns under Canvas on small screens; HUD and ScoreStrip remain sticky; tray becomes a full‑width drawer.

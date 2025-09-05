@@ -8,9 +8,10 @@ North Star
 
 Experience Pillars
 
-- Playground (What): Twin Bars + Dials; Δ chips; striped “Pending”; Waterfall of deltas.
-- Workshop (How): Reform families → levers with params; progress‑to‑target; feasibility tags; conflict nudges.
+- Playground (What): Twin Bars + Dials; Δ chips; striped “Pending”; Waterfall of deltas; cockpit HUD for instant state.
+- Workshop (How): Reform families → levers with params; progress‑to‑target; feasibility tags; conflict nudges; scoped Explain overlay anchored to the item.
 - Lens Switch: By Mass • By Reform Family • By Named Reform (same scenario, 3 views).
+- ScoreStrip & Results Tray: Slim sticky strip mirrors HUD basics; tray expands for debt/macro/distribution; collapses to return focus.
 - Share/Remix: permalink + OG card; “Duplicate & Edit”; Challenges/Classroom hooks.
 
 Design Language
@@ -18,12 +19,14 @@ Design Language
 - Mass cards with human labels (e.g., “Health”, “Schools”, “Police & Justice”), emoji/icon, 1‑line definition, 2–3 example reforms.
 - Intent chips: popular goals and reforms (“Hire more nurses”, “Rural ER coverage”, “Raise top income tax”) → one‑tap seeds targets or reforms.
 - Micro‑animations: tactile dials, ribbons, pending stripes slow as you specify more; confetti on 100% (respects prefers‑reduced‑motion).
+ - Motion language: short ease‑out anims on bar changes (150–200ms); staggered ribbons in Lens view; reduced‑motion disables non‑essential transitions.
 
 Architecture Additions
 
 - Content: humanized labels and synonyms for masses/pieces; policy tags, popularity; curated “intents”.
 - API: reform suggestion and intent discovery; mass specification assistance.
 - UI: Mass Cards + Explain Panel; Reform Library with search; Waterfall + Sankey‑lite ribbons; HUD; Compare/Remix.
+ - UI: Two‑column command center; Cockpit HUD; Slim ScoreStrip; Results Tray; Explain Overlay; inline configurators; pinned items; sticky headers.
 
 Roadmap (Phased)
 
@@ -32,7 +35,7 @@ Phase 0 — Alignment & Framing
 - AC: sign‑off on dual‑path mechanic and visuals.
 
 Phase 1 — Option D Baseline (delivered/in hardening)
-- Build page scaffold; mass/piece dials; resolution; permalink; lever params; HUD; i18n seeds; OG preview; axe on /build.
+ - Build page scaffold; twin lists; resolution; permalink; lever params; cockpit HUD + ScoreStrip; i18n seeds; OG preview; axe on /build.
 - Hardening: numeric inputs, keyboard controls, DSFR ARIA; copy polish.
 
 Phase 2 — Human Labels + Intents (content + API)
@@ -46,8 +49,8 @@ Phase 3 — Suggest & Specify (server)
 - AC: for a mass target, suggestions are sensible; partial plans raise resolution accordingly.
 
 Phase 4 — Explain Panel + Mass Cards (client)
-- Mass Cards: Δ€ input, pending badge, info tooltip; “Explain this” CTA opens panel scoped to mass.
-- Explain Panel: progress‑to‑target bar; lever suggestions + presets; split sliders sum‑constrained to target.
+ - Mass Cards: Δ€ input, pending badge, info tooltip; “Explain this” CTA opens overlay scoped to mass or piece.
+ - Explain Overlay: progress‑to‑target bar; lever suggestions + presets; split sliders sum‑constrained to target; focus‑trap; Esc closes; restores focus.
 - AC: Dial → Pending → Explain → Specified loop in < 90s; progress hits 100% with mixes.
 
 Phase 5 — Visual Rigor: Waterfall + Ribbons + Lens
@@ -114,7 +117,7 @@ Compare & Remix
 Challenges/Classroom (later)
 - Challenge registry; validation (resolution threshold); leaderboard; Room join/freeze; Debrief export.
 
-A11y/Perf
+Polish: A11y/Perf
 - Keyboardable dials; aria-live for progress; skeleton states; lazy charts; code‑split Workshop.
 
 Telemetry
@@ -169,14 +172,15 @@ Implementation Notes
 Annotated Storyboard (Frames)
 
 Frame 0 — Home & Onboarding: two equal CTAs (Budget/Policy); promise copy; micro‑preview hovers; FR/EN toggle.
-Frame 1 — Playground Default: Twin Bars + stacks; HUD; Lens Switch; right Consequences panel.
+Frame 1 — Playground Default: Twin Bars + stacks; Cockpit HUD; Lens Switch; slim ScoreStrip.
 Frame 2 — Mass Focus + Dial: tactile dial overlay; apply −10%; micro prompt.
 Frame 3 — Pending + Δ Chip: striped mass; Δ chip; toast “Choose how to get there.”
-Frame 4 — Scoped Workshop: hierarchical levers; progress bar; feasibility; conflict nudges.
+Frame 4 — Scoped Workshop: hierarchical levers; progress bar; feasibility; conflict nudges; Explain overlay in focus.
 Frame 5 — Partial Spec: presets; Δ chip shows specified portion; HUD resolution rises.
 Frame 6 — Target Met: confetti (a11y‑aware); ✓ Specified; EU lights/debt recompute.
 Frame 7 — Lens Switch: recolor stacks to Family/Reform; ribbons on hover.
 Frame 8 — Path Compare Tray: alternative mixes; distribution/EU/macro/risk; promote/blend.
+Frame 8b — Results Tray: debt path chart; distribution chart; macro fan; collapsible.
 Frame 9 — Policy‑First Entry: Reform Library with cards; tags/search; incidence bullets.
 Frame 10 — Apply Reform → Playground: room to allocate chip; suggested next actions.
 Frame 11 — Compare & Remix: side‑by‑side diffs; lineage; Duplicate & Edit.
@@ -184,4 +188,3 @@ Frame 12 — Challenges: weekly prompt; Resolution ≥80%; leaderboard; badge on
 Frame 13 — Classroom: Room join; freeze/debrief; export slides.
 Frame 14 — Share Card & One‑Pager: preview and export; watermark when partial.
 Frame 15 — A11y & Mobile: stacked flow; numeric entry; color‑blind palette; prefers‑reduced‑motion.
-

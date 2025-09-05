@@ -55,6 +55,15 @@ New Epics — Playground ↔ Workshop (MVP+ → V1)
     - Challenges enforce `Resolution ≥80%` before submit; share card includes a challenge badge.
     - Classroom: Room with live leaderboard (Balance, Equity, Compliance, Resolution) and auto‑debrief slides.
 
+Build Page — Two‑Column Architecture [UI]
+  - AC:
+    - Cockpit HUD stays visible while scrolling and shows ΔExp/ΔRev, Net Δ, Resolution %, EU lights, Run/Reset.
+    - Controls column contains twin lists (Spending grouped by COFOG majors with collapsible headers; Revenue flat list).
+    - Each row renders label, amount, pin toggle, delta slider, target input, micro progress bar, and Explain button.
+    - Canvas column shows TwinBars; slim ScoreStrip under the chart mirrors HUD basics and remains sticky.
+    - Results Tray expands/collapses and contains Debt path, Macro/Distribution (stubs ok) + Workshop + DSL + Save.
+    - Mobile stacks columns under Canvas; HUD and ScoreStrip stay sticky; tray becomes a bottom drawer.
+
 Milestone: MVP
 
 Product outcomes
@@ -189,12 +198,12 @@ Epics
   - Scoreboard & comparator: balance, debt, EU lights, distance; stacked bars “Your budget vs current”; scale tooltips.
   - Modes & sharing: “From scratch” and “From current”; permalinks (deterministic IDs); share‑card image generator + OG tags; Challenge presets; deterministic IDs wired to OG image.
   - Status: [~]
-    - [x] `/build` page initial scaffold with Piece dials + Scoreboard
+    - [x] `/build` page scaffold with twin lists (Spending/Revenue), cockpit HUD, slim ScoreStrip
     - [x] Permalinks via `?dsl=<base64>`; server resolution wired; Distance wired
-    - [x] Global Resolution meter (HUD); i18n seeds; OG preview; axe CI for `/build`
+    - [x] HUD + Resolution bar; i18n seeds; OG preview; axe CI target for `/build`
     - [x] Workshop: lever cards, dynamic params from schema; apply to mass; conflict nudge skeleton
-    - [x] Robust DSL restore (parse YAML; hydrate Piece/Mass/Levers)
-    - [ ] Mass cards + Explain Panel (ranked suggestions; sum‑constrained split)
+    - [x] DSL restore (parse YAML‑lite; hydrate Piece/Mass/Levers)
+    - [ ] Mass cards + Explain Overlay (ranked suggestions; sum‑constrained split)
     - [ ] Human labels/desc/examples (masses/pieces) with tooltips; intent chips
     - [ ] suggestLevers, popularIntents, specifyMass (API)
     - [ ] WaterfallDelta + Sankey‑lite ribbons; Lens Switch recolorings
@@ -205,30 +214,40 @@ Epics
 
 Build Page — Detailed Tasks [UI][API]
 
-- A) Scaffold & Data Wiring
-  - [x] Create `/build` page and wire GraphQL for `legoPieces`, `legoBaseline`, `policyLevers`, `legoDistance`
-  - [x] Serialize DSL; `runScenario` + Scoreboard (Deficit/EU lights/Resolution/Distance)
-  - [ ] Robust DSL restore (yaml → state): piece targets/changes, mass targets/changes, lever ids
+ A) Scaffold & Data Wiring
+  - [x] Create `/build` page and wire GraphQL for `legoPieces`, `legoBaseline`, `policyLevers`, `legoDistance`.
+  - [x] Serialize DSL; `runScenario`; HUD + ScoreStrip (Deficit/Resolution/EU lights/Distance).
+  - [x] DSL restore (yaml‑lite → state): piece targets/changes, mass targets/changes, lever ids.
 
-- B) Workshop & Resolution
-  - [ ] Render lever params from `paramsSchema` (min/max/step)
-  - [ ] Heuristics to derive Δ€ from params (pct, cut_pct, delay_months)
-  - [ ] Apply lever as Target/Change to selected mass; show conflict nudge on server error
-  - [ ] Per‑mass progress bars; striped pending overlay in Canvas TwinBars
-  - [ ] Global Resolution meter in HUD
+ B) Controls & Grouping
+  - [x] Twin lists (Spending grouped; Revenue flat) with search and pinned items.
+  - [ ] Human labels/emoji for masses/pieces; tooltips with examples; synonyms in search.
+  - [ ] Inline configurators for simple policy params in rows (expandable).
 
-- C) Consequences & HUD
-  - [ ] Debt sparkline and Macro fan chart (lazy)
-  - [ ] Budget HUD: balance, EU lights, resolution, undo/redo, reset
+ C) Workshop & Resolution
+  - [x] Render lever params from `paramsSchema` (min/max/step); derive Δ€ heuristics.
+  - [x] Apply lever as Target/Change to selected mass; conflict nudge on server error.
+  - [ ] Per‑mass progress bars from API `resolution.byMass`; link rows to mass progress; pending stripes.
+  - [ ] Explain Overlay: scoped panel with suggestions and sum‑constrained sliders; focus management.
 
-- D) A11y, i18n, Perf
-  - [ ] Full keyboard flows and ARIA for tabs/progress/alerts
-  - [ ] FR/EN for all Build labels; Axe CI check for `/build`
-  - [ ] Lazy‑load heavy charts; verify P95 budgets
+ D) Canvas & Consequences
+  - [x] TwinBars (baseline vs scenario) with pending stripes.
+  - [x] Slim ScoreStrip under Canvas (sticky); Results Tray with Debt path; Workshop/DSL/Save in tray.
+  - [ ] WaterfallDelta and Lens ribbons; export image; lazy‑load charts.
 
-- E) Share & Compare
-  - [ ] Save scenario (title/description); OG preview link
-  - [ ] Compare & Remix entrypoint (link to future view)
+ E) HUD & Shortcuts
+  - [x] Cockpit HUD (ΔExp/ΔRev, Net Δ, Resolution %, EU lights, Run/Reset).
+  - [ ] Debt sparkline in HUD; %GDP badge on Net Δ; Undo/Redo (stacked ops).
+  - [ ] Keyboard shortcuts: / focus search; F pin; +/- adjust; Esc close overlays; Cmd/Ctrl+Z/Y undo/redo.
+
+ F) A11y, i18n, Perf
+  - [ ] ARIA roles/labels for progress, alerts, dialogs; visible focus; skip links remain usable.
+  - [ ] FR/EN for all Build labels; Axe CI check for `/build`.
+  - [ ] Code‑split heavy charts; throttle slider rerenders; memoize filters; meet P95 budgets.
+
+ G) Share & Compare
+  - [ ] Save scenario (title/description); OG preview link; partial watermark when Specified < 100%.
+  - [ ] Compare & Remix entrypoint.
   - Accessibility & i18n: full FR/EN, keyboard, contrast; “show the table”.
 - LEGO Budget Builder — Documentation [Docs]
   - `docs/LEGO_METHOD.md`: sources, mapping, beneficiary rules, elasticities (v0), limitations, versioning; audit tables.
