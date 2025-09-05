@@ -936,6 +936,18 @@ def warm_lego_baseline(year: int, country: str = "FR", scope: str = "S13") -> st
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=2)
     LOG.info("[LEGO] wrote %s (exp=%.0f, rev=%.0f, pieces=%d) in %.1fs", out_path, dep_total, recettes_total, len(pieces_out), time.time() - t0)
+    # Sidecar meta for provenance
+    sidecar = {
+        "extraction_ts": dt.datetime.now(dt.timezone.utc).isoformat(),
+        "year": int(year),
+        "country": country,
+        "scope": scope,
+        "method": "Eurostat SDMX 2.1 (gov_10a_exp/taxag/main) with mapping-based fallback",
+        "pieces": len(pieces_out),
+        "warning": out.get("meta", {}).get("warning", ""),
+    }
+    with open(out_path.replace('.json', '.meta.json'), 'w', encoding='utf-8') as f:
+        json.dump(sidecar, f, ensure_ascii=False, indent=2)
     return out_path
 
 
