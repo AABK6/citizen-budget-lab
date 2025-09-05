@@ -400,6 +400,43 @@ export default function BuildPage() {
         e.preventDefault()
         if (e.shiftKey) redo()
         else undo()
+      } else if (!isMeta && (e.key === '+' || e.key === '-' || e.key === '=')) {
+        // Adjust focused piece delta by +/- step
+        const el = document.activeElement as HTMLElement | null
+        if (!el) return
+        const id = (el.getAttribute('id') || '').trim()
+        if (id.startsWith('delta_')) {
+          const pid = id.slice(6)
+          const cur = Number(deltas[pid] || 0)
+          const step = 1
+          const dir = (e.key === '-') ? -1 : 1 // '=' key is often '+' without shift
+          updateDelta(pid, cur + dir * step)
+          e.preventDefault()
+        }
+      } else if (!isMeta && (e.key.toLowerCase() === 'f')) {
+        // Toggle pin on focused piece row
+        const el = document.activeElement as HTMLElement | null
+        if (!el) return
+        let node: HTMLElement | null = el
+        let pid: string | null = null
+        // Try from input id or nearest data attribute
+        const idAttr = el.getAttribute('id') || ''
+        if (idAttr.startsWith('delta_')) pid = idAttr.slice(6)
+        else if (idAttr.startsWith('target_')) pid = idAttr.slice(7)
+        if (!pid) {
+          // find ancestor with data-piece-id
+          while (node && !node.getAttribute('data-piece-id')) node = node.parentElement
+          pid = node?.getAttribute('data-piece-id') || null
+        }
+        if (pid) {
+          const piece = pieces.find(p => p.id === pid)
+          if (piece?.type === 'revenue') {
+            setFavRev(arr => arr.includes(pid!) ? arr.filter(x => x !== pid) : [...arr, pid!])
+          } else {
+            setFavExp(arr => arr.includes(pid!) ? arr.filter(x => x !== pid) : [...arr, pid!])
+          }
+          e.preventDefault()
+        }
       } else if (!isMeta && e.key === '/') {
         const el = searchRef.current
         if (el) { e.preventDefault(); el.focus() }
@@ -442,6 +479,24 @@ export default function BuildPage() {
                 {error && <p className="fr-error-text">{t('error.generic') || error}</p>}
                 {!loading && !error && (
                   <div className="fr-grid-row fr-grid-row--gutters">
+                    {/* Pinned Levers (inline configurators) */}
+                    {selectedLevers.length>0 && (
+                      <div className="fr-col-12" style={{ marginBottom: '.5rem' }}>
+                        <PinnedLevers
+                          levers={levers}
+                          selected={selectedLevers}
+                          masses={massList}
+                          labels={massList.reduce((acc, m)=> (acc[m]=massUiLabel(m), acc), {} as Record<string,string>)}
+                          baseAmounts={massBaseAmounts}
+                          onApply={(mass, amount, asTarget)=>{
+                            if (asTarget) updateMassTarget(mass, (massTargets[mass]||0) + amount)
+                            else updateMassChange(mass, (massChanges[mass]||0) + amount)
+                          }}
+                          onToggle={toggleLever}
+                          t={t}
+                        />
+                      </div>
+                    )}
                     {/* Spending column */}
                     <div className="fr-col-12 fr-col-md-6">
                       <div style={{ position:'sticky', top: 48, zIndex: 1, background: 'var(--background-default-grey)', paddingBottom: '.25rem' }}>
@@ -510,7 +565,14 @@ export default function BuildPage() {
           <div className="stack" style={{ gap: '.75rem' }}>
             <div className="fr-card fr-card--no-arrow">
               <div className="fr-card__body">
-                <div className="fr-card__title">{t('build.canvas') || 'Canvas'}</div>
+                <div className="fr-card__title" style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+                  <span>{t('build.canvas') || 'Canvas'}</span>
+                  <div className="fr-tags-group" aria-label="Lens">
+                    <button className="fr-tag fr-tag--sm fr-tag--dismiss" disabled>Mass</button>
+                    <button className="fr-tag fr-tag--sm" disabled>Family</button>
+                    <button className="fr-tag fr-tag--sm" disabled>Reform</button>
+                  </div>
+                </div>
                 <div className="fr-card__desc">
                   {result?.masses && <TwinBars masses={result.masses} labels={massList.reduce((acc, m)=> (acc[m]=massUiLabel(m), acc), {} as Record<string,string>)} resolution={result.resolutionByMass} />}
                   {wfItems?.length>0 && <div style={{ marginTop: '.5rem' }}><WaterfallDelta items={wfItems} title={t('charts.waterfall') || 'Δ by Mass (Waterfall)'} /></div>}
@@ -545,8 +607,8 @@ export default function BuildPage() {
                         <div className="fr-card__desc">
                           <p className="fr-text--sm">{t('workshop.hint') || 'Select levers and adjust parameters. Apply as Target or Change on a mass.'}</p>
                           <LeverWorkshop levers={levers} masses={massList} labels={massList.reduce((acc, m)=> (acc[m]=massUiLabel(m), acc), {} as Record<string,string>)} baseAmounts={massBaseAmounts} onApply={(mass, amount, asTarget)=>{
-                            if (asTarget) setMassTargets({ ...massTargets, [mass]: (massTargets[mass]||0) + amount })
-                            else setMassChanges({ ...massChanges, [mass]: (massChanges[mass]||0) + amount })
+                            if (asTarget) updateMassTarget(mass, (massTargets[mass]||0) + amount)
+                            else updateMassChange(mass, (massChanges[mass]||0) + amount)
                           }} onToggle={toggleLever} selected={selectedLevers} />
                         </div>
                       </div>
@@ -818,7 +880,7 @@ function PieceRow2({ p, deltas, targets, onDelta, onTarget, t, resByMass, pinned
     return (hasDelta && hasTarget) ? 100 : (hasDelta || hasTarget) ? 50 : 0
   })()
   return (
-    <div className="fr-input-group" style={{ padding: '.4rem .5rem', border: '1px solid var(--border-default-grey)', borderRadius: '6px', position: 'relative', overflow: 'hidden' }}>
+    <div data-piece-id={p.id} className="fr-input-group" style={{ padding: '.4rem .5rem', border: '1px solid var(--border-default-grey)', borderRadius: '6px', position: 'relative', overflow: 'hidden' }}>
       {unresolved && (
         <div aria-hidden="true" style={{ position:'absolute', inset:0, backgroundImage: 'repeating-linear-gradient(45deg, rgba(0,0,0,0.06) 0, rgba(0,0,0,0.06) 3px, transparent 3px, transparent 6px)' }}></div>
       )}
@@ -994,6 +1056,7 @@ function BuildHud({ estExp, estRev, result, onRun, running, onReset, onToggleDsl
   const eu3 = result?.eu3 || 'info'
   const eu60 = result?.eu60 || 'info'
   const resPct = typeof result?.resolutionPct === 'number' ? result.resolutionPct : 0
+  const debt = Array.isArray(result?.debtPath) ? (result.debtPath as number[]) : []
   function badgeTone(s: string) {
     const v = String(s).toLowerCase()
     if (v === 'ok' || v === 'info') return '#2CB67D'
@@ -1038,7 +1101,10 @@ function BuildHud({ estExp, estRev, result, onRun, running, onReset, onToggleDsl
         </div>
         <div className="fr-col-12 fr-col-md-2" style={{ textAlign: 'right' }}>
           {typeof result?.deficitY0 === 'number' && (
-            <div className="fr-text--sm"><strong>{t('score.deficit_y0') || 'Deficit (y0)'}</strong>: {result.deficitY0.toLocaleString(undefined,{ maximumFractionDigits: 0 })} €</div>
+            <div className="fr-text--sm" style={{ display:'flex', alignItems:'center', gap: '.5rem', justifyContent:'flex-end' }}>
+              <span><strong>{t('score.deficit_y0') || 'Deficit (y0)'}</strong>: {result.deficitY0.toLocaleString(undefined,{ maximumFractionDigits: 0 })} €</span>
+              {debt.length>0 && <MiniSpark data={debt} color="#666" />}
+            </div>
           )}
         </div>
       </div>
@@ -1058,6 +1124,24 @@ function computeMassBase(pieces: Piece[]): Record<string, number> {
     }
   }
   return by
+}
+
+function MiniSpark({ data, color }: { data: number[], color?: string }) {
+  const w = 60, h = 20
+  if (!Array.isArray(data) || data.length < 2) return null
+  const min = Math.min(...data)
+  const max = Math.max(...data)
+  const rng = (max - min) || 1
+  const pts = data.map((v, i) => {
+    const x = (i/(data.length-1)) * (w-2) + 1
+    const y = h - 1 - ((v - min)/rng) * (h-2)
+    return `${x},${y}`
+  }).join(' ')
+  return (
+    <svg width={w} height={h} aria-hidden="true" focusable="false">
+      <polyline fill="none" stroke={color||'#999'} strokeWidth="1" points={pts} />
+    </svg>
+  )
 }
 
 function MassList({ masses, labels, baseAmounts, targets, changes, onTarget, onChangeAmt, resolution, onExplain }: {
@@ -1183,6 +1267,77 @@ function deriveDelta(lever: Lever | undefined, params: Record<string, number>, b
   let sum = 0
   for (const k of keys) sum += Number(params[k]||0)
   return Math.min(base, Math.max(-base, sum))
+}
+
+function PinnedLevers({ levers, selected, masses, labels, baseAmounts, onApply, onToggle, t }: {
+  levers: Lever[]
+  selected: string[]
+  masses: string[]
+  labels: Record<string,string>
+  baseAmounts: Record<string, number>
+  onApply: (mass: string, amount: number, asTarget: boolean) => void
+  onToggle: (id: string)=> void
+  t: (k: string)=>string
+}) {
+  const map = new Map(levers.map(l => [l.id, l]))
+  const [massBy, setMassBy] = useState<Record<string,string>>({})
+  const [paramsBy, setParamsBy] = useState<Record<string, Record<string, number>>>({})
+  return (
+    <div className="fr-card fr-card--no-arrow">
+      <div className="fr-card__body">
+        <div className="fr-card__title">{t('build.pinned_levers') || 'Pinned Levers'}</div>
+        <div className="fr-card__desc">
+          {selected.length===0 ? <p className="fr-text--sm">{t('build.no_pinned_levers') || 'No pinned levers'}</p> : (
+            <div className="fr-grid-row fr-grid-row--gutters">
+              {selected.map(id => {
+                const lev = map.get(id)
+                if (!lev) return null
+                const mass = massBy[id] || masses[0]
+                const params = paramsBy[id] || {}
+                const base = baseAmounts[mass] || 0
+                const derived = deriveDelta(lev, params, base)
+                return (
+                  <div key={id} className="fr-col-12 fr-col-md-6">
+                    <div className="fr-input-group" style={{ border:'1px solid var(--border-default-grey)', borderRadius: 6, padding: '.5rem' }}>
+                      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap: '.5rem' }}>
+                        <span className="fr-text--sm" style={{ whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{lev.label}</span>
+                        <button className="fr-btn fr-btn--sm fr-btn--secondary" onClick={()=> onToggle(id)}>✕</button>
+                      </div>
+                      <div className="fr-select-group" style={{ marginTop: '.25rem' }}>
+                        <label className="fr-label" htmlFor={`pl_mass_${id}`}>{t('labels.mass') || 'Mass'}</label>
+                        <select id={`pl_mass_${id}`} className="fr-select" value={mass} onChange={e=> setMassBy(m => ({ ...m, [id]: e.target.value }))}>
+                          {masses.map(m => <option key={m} value={m}>{m} — {labels[m] || ''}</option>)}
+                        </select>
+                      </div>
+                      <div className="stack" style={{ gap: '.25rem', marginTop: '.25rem' }}>
+                        {(Object.entries(lev?.paramsSchema || {}) as [string, any][]).map(([k, spec]) => {
+                          const min = Number(spec?.min ?? 0)
+                          const max = Number(spec?.max ?? 100)
+                          const step = Number(spec?.step ?? 1)
+                          const val = Number((paramsBy[id]?.[k]) ?? min)
+                          return (
+                            <div key={k} className="fr-input-group">
+                              <label className="fr-label" htmlFor={`pl_param_${id}_${k}`}>{k}</label>
+                              <input id={`pl_param_${id}_${k}`} className="fr-input" type="number" min={min} max={max} step={step} value={val} onChange={e=> setParamsBy(pb => ({ ...pb, [id]: { ...(pb[id]||{}), [k]: Number(e.target.value) } }))} />
+                            </div>
+                          )
+                        })}
+                      </div>
+                      <div className="fr-hint-text">≈ {(derived).toLocaleString(undefined,{maximumFractionDigits:0})} €</div>
+                      <div className="fr-btns-group fr-btns-group--inline" style={{ marginTop: '.25rem' }}>
+                        <button className="fr-btn fr-btn--secondary" onClick={()=> onApply(mass, derived, true)}>{t('buttons.apply_target') || 'Use as Target'}</button>
+                        <button className="fr-btn" onClick={()=> onApply(mass, derived, false)}>{t('buttons.apply_change') || 'Use as Change'}</button>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
 }
 
 function TwinBars({ masses, labels, resolution }: { masses: Record<string, { base: number; scen: number }>, labels: Record<string,string>, resolution?: { massId: string; targetDeltaEur: number; specifiedDeltaEur: number }[] }) {
