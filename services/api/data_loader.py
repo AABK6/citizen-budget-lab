@@ -465,24 +465,27 @@ def procurement_top_suppliers(
             ent["procedure_type"] = row.get("procedure_type")
         if not ent.get("location_code") and row.get("location_code"):
             ent["location_code"] = row.get("location_code")
-    # Optional enrichment from INSEE SIRENE (best-effort)
+    # Optional enrichment from INSEE SIRENE (best-effort), can be disabled via env for perf/benchmarks
     naf_map: Dict[str, str] = {}
     size_map: Dict[str, str] = {}
     try:
-        from .clients import insee as insee_client
-        for siren in list(by_supplier.keys())[: top_n]:
-            try:
-                js = insee_client.sirene_by_siren(siren)
-                # SIRENE shapes may vary; try common paths
-                ul = js.get("uniteLegale") or js.get("unite_legale") or {}
-                naf = ul.get("activitePrincipaleUniteLegale") or ul.get("activite_principale") or ""
-                size = ul.get("trancheEffectifsUniteLegale") or ul.get("tranche_effectifs") or ""
-                if naf:
-                    naf_map[siren] = str(naf)
-                if size:
-                    size_map[siren] = str(size)
-            except Exception:
-                continue
+        from .settings import get_settings as _get_settings  # lazy import
+
+        if _get_settings().procurement_enrich_sirene:
+            from .clients import insee as insee_client
+            for siren in list(by_supplier.keys())[: top_n]:
+                try:
+                    js = insee_client.sirene_by_siren(siren)
+                    # SIRENE shapes may vary; try common paths
+                    ul = js.get("uniteLegale") or js.get("unite_legale") or {}
+                    naf = ul.get("activitePrincipaleUniteLegale") or ul.get("activite_principale") or ""
+                    size = ul.get("trancheEffectifsUniteLegale") or ul.get("tranche_effectifs") or ""
+                    if naf:
+                        naf_map[siren] = str(naf)
+                    if size:
+                        size_map[siren] = str(size)
+                except Exception:
+                    continue
     except Exception:
         pass
 

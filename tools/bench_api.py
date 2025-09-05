@@ -15,8 +15,6 @@ import time
 
 from fastapi.testclient import TestClient
 
-from services.api.app import create_app
-
 
 def _bench_query(client: TestClient, query: str, variables: dict | None = None, runs: int = 30, warmup: int = 5) -> list[float]:
     times: list[float] = []
@@ -50,7 +48,15 @@ def main() -> None:
     ap.add_argument("--year", type=int, default=2026)
     ap.add_argument("--proc-year", type=int, default=2024)
     ap.add_argument("--region", default="75")
+    ap.add_argument("--no-enrichment", action="store_true", help="Disable SIRENE enrichment for procurement during the bench")
     args = ap.parse_args()
+
+    # Optionally disable procurement enrichment for consistent, low-variance runs
+    if args.no_enrichment:
+        import os
+        os.environ["PROCUREMENT_ENRICH_SIRENE"] = "0"
+    # Import the app only after env toggles are set to avoid early initialization picks up defaults
+    from services.api.app import create_app  # defer import
 
     app = create_app()
     client = TestClient(app)
@@ -73,4 +79,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

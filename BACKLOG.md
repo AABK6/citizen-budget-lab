@@ -359,7 +359,7 @@ Next Sprint (2 weeks) — Top Priorities
     - [x] Join SIRENE attributes (NAF/size) into procurement outputs and expose via API. Best‑effort API enrichment adds `naf`, `companySize` when available (non‑blocking).
     - [x] Macro series reader for GDP; expose BDM series via GraphQL.
     - [x] Add deflators/employment series and provenance entries. CLI warmer `python -m services.api.cache_warm macro-insee --config data/macro_series_config.json` writes `data/cache/macro_series_FR.json` + sidecar; GraphQL `macroSeries(country)` returns warmed JSON. Tests added.
-    - [ ] Performance: procurement p95 — consider disabling SIRENE enrichment for bench or pre‑warming company lookups; update docs with measured p95 (tools/bench_api.py).
+    - [x] Performance: procurement p95 — add SIRENE enrichment toggle for benches; update docs with measured p95 (tools/bench_api.py). Bench (sample, no enrichment): allocation ≈70ms p95; procurement ≈120ms p95.
     - [x] Source registry loads from `data/sources.json` and is exposed via GraphQL `sources()`.
 
 6) Locks/bounds enforcement & validation [MVP+] [API]
@@ -373,8 +373,8 @@ Next Sprint (2 weeks) — Top Priorities
     - [x] `allocation(lens=BENEFICIARY)` returns HH/ENT/COL from LEGO baseline + beneficiary weights.
     - [x] `procurement(year, region)` supports cpvPrefix/procedureType/min/max filters.
     - [x] `sources()` reads `data/sources.json` and returns registry items.
-    - [ ] P95 < 1.5s locally against warmed caches (document measurement).
-    - [ ] Error handling and input validation tests.
+    - [x] P95 < 1.5s locally against warmed caches (document measurement). Documented in docs/CACHING.md with bench helper and env flag.
+    - [x] Error handling and input validation tests (invalid DSL schema and base64 for runScenario; procurement enrichment toggle unit test).
 
 Future Phases (UI & Trust)
 

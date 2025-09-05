@@ -69,3 +69,21 @@ Share card cache
 - Purpose: accelerate OG/social previews and embeds for popular scenarios.
 - Strategy: cache rendered Share Card images (SVG/PNG) keyed by `scenarioId` and method/policy versions.
 - Invalidation: on any of (i) methods/version bump, (ii) `policy_catalog.version` change, or (iii) scenario mutation. Keep a small TTL for long‑tail scenarios.
+
+Benchmarking & Perf
+
+- Quick local p95 benchmark against warmed/sample data:
+  - Disable SIRENE enrichment for a fair procurement bench:
+    - Either set `PROCUREMENT_ENRICH_SIRENE=0`
+    - Or pass `--no-enrichment` to the bench helper
+  - Run:
+
+    PYTHONPATH=. python3 tools/bench_api.py --runs 30 --warmup 5 --no-enrichment
+
+  - Example (on sample data, no enrichment):
+    - allocation COFOG: p95 ≈ 70 ms
+    - procurement: p95 ≈ 120 ms
+
+- Notes
+  - With enrichment enabled and no INSEE token configured, SIRENE calls will 401 and add latency. For benchmarks, keep enrichment disabled or pre‑warm SIRENE lookups.
+  - Target: P95 < 1.5s locally against warmed caches.

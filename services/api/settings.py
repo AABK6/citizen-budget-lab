@@ -45,6 +45,10 @@ class Settings:
     log_level: str = os.getenv("LOG_LEVEL", "INFO")
     sentry_dsn: str | None = os.getenv("SENTRY_DSN")
 
+    # Feature flags / Perf toggles
+    # Optional enrichment for procurement suppliers using INSEE SIRENE. Disable for benchmarks.
+    procurement_enrich_sirene: bool = os.getenv("PROCUREMENT_ENRICH_SIRENE", "1") not in ("0", "false", "False")
+
 
 def get_settings() -> Settings:
     # Load .env once at first import
