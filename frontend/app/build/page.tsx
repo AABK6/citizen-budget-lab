@@ -75,8 +75,8 @@ export default function BuildPage() {
   const [favRev, setFavRev] = useState<string[]>([])
   const [explainId, setExplainId] = useState<string | null>(null)
   const [showTray, setShowTray] = useState<boolean>(false)
-  const [showAdjExp, setShowAdjExp] = useState<boolean>(false)
-  const [showAdjRev, setShowAdjRev] = useState<boolean>(false)
+  const [showAdjExp, setShowAdjExp] = useState<boolean>(true)
+  const [showAdjRev, setShowAdjRev] = useState<boolean>(true)
   const [lastDsl, setLastDsl] = useState<string>('')
   const [lens, setLens] = useState<'mass'|'family'|'reform'>('mass')
   const [dense, setDense] = useState<boolean>(true)
@@ -911,53 +911,31 @@ function PieceRow2({ p, deltas, targets, onDelta, onTarget, t, resByMass, pinned
     return (hasDelta && hasTarget) ? 100 : (hasDelta || hasTarget) ? 50 : 0
   })()
   return (
-    <div data-piece-id={p.id} className="fr-input-group" style={{ padding: '.4rem .5rem', border: '1px solid var(--border-default-grey)', borderRadius: '6px', position: 'relative', overflow: 'hidden' }}>
+    <div data-piece-id={p.id} className="fr-input-group" style={{ padding: '.25rem .5rem', border: '1px solid var(--border-default-grey)', borderRadius: 6, position: 'relative', overflow: 'hidden' }}>
       {unresolved && (
         <div aria-hidden="true" style={{ position:'absolute', inset:0, backgroundImage: 'repeating-linear-gradient(45deg, rgba(0,0,0,0.06) 0, rgba(0,0,0,0.06) 3px, transparent 3px, transparent 6px)' }}></div>
       )}
       <div style={{ position:'relative' }}>
-        <div className="fr-grid-row fr-grid-row--gutters" style={{ alignItems:'center' }}>
-          <div className="fr-col-10">
-            <label className="fr-label" htmlFor={`delta_${p.id}`}>{p.label || p.id}</label>
-            {p.locked && <span className="fr-badge fr-badge--sm" aria-label="locked" style={{ marginLeft: '.5rem' }}>{t('piece.locked') || 'Locked'}</span>}
-            <div className="fr-text--xs" style={{ color:'var(--text-mention-grey)', display:'flex', alignItems:'center', gap:'.5rem' }}>
-              <span>{(p.amountEur||0).toLocaleString(undefined,{maximumFractionDigits:0})} €</span>
-              <span className="fr-badge fr-badge--sm">{((Number(deltas[p.id]||0)/100)*(Number(p.amountEur||0))).toLocaleString(undefined,{maximumFractionDigits:0})} €</span>
-            </div>
+        <div style={{ display:'flex', alignItems:'center', gap: '.5rem' }}>
+          <button className="fr-btn fr-btn--sm fr-btn--secondary" title={pinned ? (t('labels.unpin') || 'Unpin') : (t('labels.pin') || 'Pin')} onClick={()=> onToggleFav(p.id)} style={{ minWidth:28, padding:'.1rem .35rem' }}>{pinned ? '★' : '☆'}</button>
+          <div style={{ flex:1, minWidth:0 }}>
+            <div className="fr-text--sm" style={{ whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{p.label || p.id}{p.locked && <span className="fr-badge fr-badge--sm" style={{ marginLeft: '.35rem' }}>{t('piece.locked') || 'Locked'}</span>}</div>
+            <div className="fr-text--xs" style={{ color:'var(--text-mention-grey)' }}>{(p.amountEur||0).toLocaleString(undefined,{maximumFractionDigits:0})} €</div>
           </div>
-          <div className="fr-col-2" style={{ textAlign: 'right' }}>
-            <button className="fr-btn fr-btn--sm fr-btn--secondary" title={pinned ? (t('labels.unpin') || 'Unpin') : (t('labels.pin') || 'Pin')} onClick={()=> onToggleFav(p.id)}>
-              {pinned ? '★' : '☆'}
-            </button>
+          <div aria-label="delta" title="Change %" style={{ display:'flex', alignItems:'center', gap:'.25rem' }}>
+            <Stepper id={`delta_${p.id}`} value={Number(deltas[p.id]||0)} min={-50} max={50} step={1} onChange={(v)=> onDelta(p.id, v)} disabled={!!p.locked} />
+            <span className="fr-text--xs">%</span>
           </div>
+          <div aria-label="target" title="Target % (role)" style={{ display:'flex', alignItems:'center', gap:'.25rem' }}>
+            <span style={{ fontSize:12 }}>🎯</span>
+            <Stepper id={`target_${p.id}`} value={Number(targets[p.id]||0)} min={-100} max={100} step={0.5} onChange={(v)=> onTarget(p.id, v)} disabled={!!p.locked} />
+            <span className="fr-text--xs">%</span>
+          </div>
+          <span className="fr-badge fr-badge--sm" title="Δ€">{((Number(deltas[p.id]||0)/100)*(Number(p.amountEur||0))).toLocaleString(undefined,{maximumFractionDigits:0})} €</span>
+          <button className="fr-btn fr-btn--sm fr-btn--secondary" onClick={()=> onExplain(p.id)} title={t('labels.explain') || 'Explain'} style={{ minWidth:28, padding:'.1rem .35rem' }}>…</button>
         </div>
-        <div className="fr-grid-row fr-grid-row--gutters">
-          <div className="fr-col-12 fr-col-sm-6">
-            <div className="fr-range">
-              <input id={`delta_${p.id}`} type="range" min={-50} max={50} step={1} value={deltas[p.id] ?? 0} onChange={e => onDelta(p.id, Number((e.target as HTMLInputElement).value))} disabled={!!p.locked} aria-label={`change ${p.id}`} />
-            </div>
-            <div className="fr-input-group" style={{ marginTop: '.25rem' }}>
-              <input className="fr-input" style={{ maxWidth: '8rem' }} type="number" min={-100} max={100} step={0.5} value={deltas[p.id] ?? 0} onChange={e => onDelta(p.id, Number(e.target.value))} disabled={!!p.locked} aria-label={`change number ${p.id}`} /> <span style={{ marginLeft: '.25rem' }}>%</span>
-            </div>
-          </div>
-          <div className="fr-col-12 fr-col-sm-6">
-            <label className="fr-label" htmlFor={`target_${p.id}`}>{t('labels.target_pct') || 'Target (role)'}</label>
-            <div className="fr-input-group">
-              <input id={`target_${p.id}`} className="fr-input" style={{ maxWidth: '8rem' }} type="number" min={-100} max={100} step={0.5} value={targets[p.id] ?? 0} onChange={e => onTarget(p.id, Number(e.target.value))} disabled={!!p.locked} aria-label={`target percent ${p.id}`} /> <span style={{ marginLeft: '.25rem' }}>%</span>
-            </div>
-          </div>
-        </div>
-        <div className="fr-grid-row fr-grid-row--gutters" style={{ alignItems: 'center', marginTop: '.25rem' }}>
-          <div className="fr-col-8">
-            <div className="fr-progress fr-progress--sm" aria-label="specification status">
-              <div className="fr-progress__track">
-                <div className="fr-progress__bar" style={{ width: `${microPct}%` }} aria-hidden="true"></div>
-              </div>
-            </div>
-          </div>
-          <div className="fr-col-4" style={{ textAlign: 'right' }}>
-            <button className="fr-btn fr-btn--sm fr-btn--secondary" onClick={()=> onExplain(p.id)}>{t('labels.explain') || 'Explain'}</button>
-          </div>
+        <div style={{ height:2, background:'#e5e5e5', marginTop:4, position:'relative' }} aria-hidden="true">
+          <div style={{ position:'absolute', left:0, top:0, height:2, width:`${microPct}%`, background:'#0a7aff' }}></div>
         </div>
       </div>
     </div>
@@ -1004,6 +982,22 @@ function ScoreStrip({ estExp, estRev, result, conflictNudge, currentDsl, lastDsl
         </div>
       </div>
     </div>
+  )
+}
+
+function Stepper({ id, value, onChange, min, max, step, disabled }: { id: string, value: number, onChange: (v:number)=>void, min?: number, max?: number, step?: number, disabled?: boolean }) {
+  const v = Number(value||0)
+  const st = Number(step||1)
+  const mn = typeof min === 'number' ? min : -Infinity
+  const mx = typeof max === 'number' ? max : Infinity
+  const dec = ()=> onChange(Math.max(mn, v - st))
+  const inc = ()=> onChange(Math.min(mx, v + st))
+  return (
+    <span style={{ display:'inline-flex', alignItems:'center', gap:'.15rem' }}>
+      <button className="fr-btn fr-btn--sm fr-btn--secondary" onClick={dec} disabled={disabled} style={{ minWidth:24, padding:'.1rem .25rem' }}>−</button>
+      <input id={id} className="fr-input fr-input--sm" type="number" value={v} onChange={e=> onChange(Number(e.target.value||0))} min={min} max={max} step={step||1} disabled={disabled} style={{ width:56 }} />
+      <button className="fr-btn fr-btn--sm fr-btn--secondary" onClick={inc} disabled={disabled} style={{ minWidth:24, padding:'.1rem .25rem' }}>+</button>
+    </span>
   )
 }
 
@@ -1065,20 +1059,15 @@ function PinnedPieces({ pieces, ids, deltas, targets, onDelta, onTarget, onUnpin
         return (
           <div className="fr-col-12 fr-col-sm-6" key={id}>
             <div className="fr-input-group" style={{ padding: '.25rem .5rem', border: '1px solid var(--border-default-grey)', borderRadius: 6 }}>
-              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap: '.5rem' }}>
-                <span className="fr-text--sm" style={{ whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{p.label || id}</span>
-                <button className="fr-btn fr-btn--sm fr-btn--secondary" title={t('labels.unpin') || 'Unpin'} onClick={()=> onUnpin(id)}>✕</button>
-              </div>
-              <div className="fr-grid-row fr-grid-row--gutters" style={{ marginTop: '.25rem' }}>
-                <div className="fr-col-4">
-                  <input className="fr-input fr-input--sm" type="number" value={deltas[id] ?? 0} onChange={e=> onDelta(id, Number(e.target.value))} aria-label={`Δ% ${id}`} />
-                </div>
-                <div className="fr-col-4">
-                  <input className="fr-input fr-input--sm" type="number" value={targets[id] ?? 0} onChange={e=> onTarget(id, Number(e.target.value))} aria-label={`Target% ${id}`} />
-                </div>
-                <div className="fr-col-4 fr-text--xs" style={{ display:'flex', alignItems:'center' }}>
-                  <span className="fr-badge fr-badge--sm">{((Number(deltas[id]||0)/100)*(Number(p.amountEur||0))).toLocaleString(undefined,{maximumFractionDigits:0})} €</span>
-                </div>
+              <div style={{ display:'flex', alignItems:'center', gap: '.5rem' }}>
+                <button className="fr-btn fr-btn--sm fr-btn--secondary" title={t('labels.unpin') || 'Unpin'} onClick={()=> onUnpin(id)} style={{ minWidth:28, padding:'.1rem .35rem' }}>✕</button>
+                <span className="fr-text--sm" style={{ whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', flex:1 }}>{p.label || id}</span>
+                <Stepper id={`pin_delta_${id}`} value={Number(deltas[id]||0)} min={-50} max={50} step={1} onChange={(v)=> onDelta(id, v)} />
+                <span className="fr-text--xs">%</span>
+                <span style={{ fontSize:12 }}>🎯</span>
+                <Stepper id={`pin_target_${id}`} value={Number(targets[id]||0)} min={-100} max={100} step={0.5} onChange={(v)=> onTarget(id, v)} />
+                <span className="fr-text--xs">%</span>
+                <span className="fr-badge fr-badge--sm">{((Number(deltas[id]||0)/100)*(Number(p.amountEur||0))).toLocaleString(undefined,{maximumFractionDigits:0})} €</span>
               </div>
             </div>
           </div>
@@ -1364,9 +1353,9 @@ function PinnedLevers({ levers, selected, masses, labels, baseAmounts, onApply, 
                           const step = Number(spec?.step ?? 1)
                           const val = Number((paramsBy[id]?.[k]) ?? min)
                           return (
-                            <div key={k} className="fr-input-group">
-                              <label className="fr-label" htmlFor={`pl_param_${id}_${k}`}>{k}</label>
-                              <input id={`pl_param_${id}_${k}`} className="fr-input" type="number" min={min} max={max} step={step} value={val} onChange={e=> setParamsBy(pb => ({ ...pb, [id]: { ...(pb[id]||{}), [k]: Number(e.target.value) } }))} />
+                            <div key={k} className="fr-input-group" style={{ display:'flex', alignItems:'center', gap:'.35rem' }}>
+                              <label className="fr-label" htmlFor={`pl_param_${id}_${k}`} style={{ margin:0 }}>{k}</label>
+                              <Stepper id={`pl_param_${id}_${k}`} value={val} min={min} max={max} step={step} onChange={(v)=> setParamsBy(pb => ({ ...pb, [id]: { ...(pb[id]||{}), [k]: v } }))} />
                             </div>
                           )
                         })}
