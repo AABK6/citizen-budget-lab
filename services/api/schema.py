@@ -964,6 +964,18 @@ class Mutation:
         except Exception:
             data = {}
         acts = list(data.get("actions") or [])
+        # Insert/refresh a target marker for this mass to drive progress bars without affecting deltas
+        if abs(target) > tol:
+            # Remove any prior marker for this mass
+            acts = [a for a in acts if str(a.get("id","")) != f"target_{input.massId}"]
+            acts.append({
+                "id": f"target_{input.massId}",
+                "target": f"cofog.{input.massId}",
+                "dimension": "cp",
+                "role": "target",
+                "op": ("increase" if target >= 0 else "decrease"),
+                "amount_eur": abs(target),
+            })
         for sp in input.splits:
             amt = float(sp.amountEur)
             if abs(amt) < tol:
