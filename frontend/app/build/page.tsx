@@ -975,23 +975,23 @@ function PieceRow2({ p, deltas, targets, onDelta, onTarget, t, resByMass, pinned
         <div aria-hidden="true" style={{ position:'absolute', inset:0, backgroundImage: 'repeating-linear-gradient(45deg, rgba(0,0,0,0.06) 0, rgba(0,0,0,0.06) 3px, transparent 3px, transparent 6px)' }}></div>
       )}
       <div style={{ position:'relative' }}>
-        <div style={{ display:'flex', alignItems:'center', gap: '.35rem' }}>
-          <div style={{ flex:1, minWidth:0, display:'flex', alignItems:'center', gap:'.3rem' }}>
-            <div className="fr-text--sm" style={{ whiteSpace:'normal', lineHeight:'1.25em', maxHeight:'2.6em', overflow:'hidden' }}>
-              {p.label || p.id}{p.locked && <span className="fr-badge fr-badge--sm" style={{ marginLeft: '.3rem' }}>{t('piece.locked') || 'Locked'}</span>}
-            </div>
-            <button aria-label={t('labels.explain') || 'Explain'} onClick={()=> onExplain(p.id)} style={{ border:'none', background:'transparent', cursor:'pointer', fontSize:'12px' }}>🕘</button>
-            <button aria-label={pinned ? (t('labels.unpin') || 'Unpin') : (t('labels.pin') || 'Pin')} onClick={()=> onToggleFav(p.id)} style={{ border:'none', background:'transparent', cursor:'pointer', fontSize:'14px', color: pinned ? '#4a3aff' : 'inherit' }}>{pinned ? '★' : '☆'}</button>
-            <div className="fr-text--xs" style={{ color:'var(--text-mention-grey)' }}>{(p.amountEur||0).toLocaleString(undefined,{maximumFractionDigits:0})} €</div>
+        <div style={{ display:'flex', alignItems:'center', gap: '.3rem' }}>
+          <div style={{ flex:1, minWidth:0, display:'flex', alignItems:'center', gap:'.25rem' }}>
+            <button onClick={()=> onExplain(p.id)} title={(p.label||p.id) + ' — ' + ((p.amountEur||0).toLocaleString(undefined,{maximumFractionDigits:0}) + ' €')} style={{ border:'none', background:'transparent', padding:0, margin:0, cursor:'pointer', textAlign:'left', flex:1 }}>
+              <span className="fr-text--sm" style={{ whiteSpace:'normal', lineHeight:'1.25em', maxHeight:'2.6em', overflow:'hidden' }}>{p.label || p.id}</span>
+            </button>
+            {p.locked && <span className="fr-badge fr-badge--sm" style={{ marginLeft: '.2rem' }}>{t('piece.locked') || 'Locked'}</span>}
+            <button aria-label={pinned ? (t('labels.unpin') || 'Unpin') : (t('labels.pin') || 'Pin')} onClick={()=> onToggleFav(p.id)} style={{ border:'none', background:'transparent', cursor:'pointer', fontSize:'13px', color: pinned ? '#4a3aff' : 'inherit' }}>{pinned ? '★' : '☆'}</button>
+            <span className="fr-text--xs" style={{ color:'var(--text-mention-grey)' }}>{(p.amountEur||0).toLocaleString(undefined,{maximumFractionDigits:0})} €</span>
           </div>
-          <div aria-label="delta" title="Change %" style={{ display:'flex', alignItems:'center', gap:'.2rem' }}>
-            <input id={`delta_${p.id}`} className="fr-input fr-input--sm" type="number" min={-50} max={50} step={1} value={Number(deltas[p.id]||0)} onChange={e=> onDelta(p.id, Number((e.target as HTMLInputElement).value||0))} disabled={!!p.locked} style={{ width:52 }} />
+          <div aria-label="delta" title="Change %" style={{ display:'flex', alignItems:'center', gap:'.15rem' }}>
+            <input id={`delta_${p.id}`} className="fr-input fr-input--sm" type="number" min={-50} max={50} step={1} value={Number(deltas[p.id]||0)} onChange={e=> onDelta(p.id, Number((e.target as HTMLInputElement).value||0))} disabled={!!p.locked} style={{ width:46 }} />
             <span className="fr-text--xs">%</span>
           </div>
           <TargetPill id={`target_${p.id}`} value={Number(targets[p.id]||0)} disabled={!!p.locked} onChange={(v)=> onTarget(p.id, v)} />
-          <span className="fr-badge fr-badge--sm" title="Δ€" style={{ width:80, textAlign:'right' }}>{((Number(deltas[p.id]||0)/100)*(Number(p.amountEur||0))).toLocaleString(undefined,{maximumFractionDigits:0})} €</span>
+          <span className="fr-badge fr-badge--sm" title="Δ€" style={{ width:86, textAlign:'right' }}>{((Number(deltas[p.id]||0)/100)*(Number(p.amountEur||0))).toLocaleString(undefined,{maximumFractionDigits:0})} €</span>
         </div>
-        <div style={{ height:1, background:'#e5e5e5', marginTop:2, position:'relative' }} aria-hidden="true">
+        <div style={{ height:1, background:'#e5e5e5', marginTop:1, position:'relative' }} aria-hidden="true">
           <div style={{ position:'absolute', left:0, top:0, height:1, width:`${microPct}%`, background:'#0a7aff' }}></div>
         </div>
       </div>
