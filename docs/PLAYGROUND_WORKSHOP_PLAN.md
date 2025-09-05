@@ -36,7 +36,7 @@ Phase 0 — Alignment & Framing
 
 Phase 1 — Option D Baseline (delivered/in hardening)
  - Build page scaffold; twin lists; resolution; permalink; lever params; cockpit HUD + ScoreStrip; i18n seeds; OG preview; axe on /build.
- - Added: Outdated results chip (DSL diff), Adjusted‑only filters, Pinned pieces quick edits, Waterfall in Canvas, per‑mass progress chips.
+ - Added: Outdated results chip (DSL diff), default Adjusted‑only filters, one‑line rows with steppers (Δ and 🎯), Δ€ chips, MassJumpBar, Waterfall in Canvas, per‑mass progress chips, compact density mode.
 - Hardening: numeric inputs, keyboard controls, DSFR ARIA; copy polish.
 
 Phase 2 — Human Labels + Intents (content + API)
@@ -123,6 +123,7 @@ Challenges/Classroom (later)
 Polish: A11y/Perf
 - Keyboardable dials; aria-live for progress; skeleton states; lazy charts; code‑split Workshop.
 - Undo/Redo stack (Cmd/Ctrl+Z / Shift+Z); '/' search focus; 'f' pin/unpin; '+'/'-' adjust focused delta; Esc closes overlays.
+ - Next: Shift modifier for ±5; segmented filters per group; mode pill for target editor.
 
 Telemetry
 - Emit events; anonymous; DNT support; dashboards for funnel.

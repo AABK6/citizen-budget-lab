@@ -41,7 +41,11 @@ Components (selected)
 - Procurement: `ProcurementMap`, `SupplierTable`, `FiltersPanel`, `ExportButton`.
 - Playground & Workshop (two‑column command center + HUD):
   - Cockpit HUD (sticky): `BudgetHUD` (ΔExp/ΔRev, Net Δ, Resolution bar, EU rule lights, Run/Reset, keyboard hints); added: mini debt sparkline, approximate %GDP badge (uses baseline total until GDP is wired), Undo/Redo.
-  - Left (Controls): `PiecesPanel` split into twin lists — `SpendingList` (grouped by COFOG with collapsible headers) and `RevenueList` (flat list). Each row: label, amount, pin, delta slider, target input, micro progress bar, Explain button. Sticky `SearchBox` and filters (Adjusted‑only). `PinnedRow` above lists for quick Δ/Target edits. `PinnedLevers` inline configurators render params + mass select + Apply as Target/Change.
+  - Left (Controls): `PiecesPanel` split into twin lists — `SpendingList` (grouped by COFOG with collapsible headers) and `RevenueList` (flat list).
+    - Rows (compact only, one‑line): pin · label · Δ stepper · 🎯 stepper · Δ€ chip · Explain. Micro progress meter under row.
+    - Defaults: Adjusted‑only filter ON; segmented filters planned (All/Adjusted/Favorites/Unresolved).
+    - Navigation: MassJumpBar to jump to any COFOG group; per‑mass progress chips in headers.
+    - `PinnedLevers` inline configurators render params + mass select + Apply as Target/Change.
   - Right (Canvas + Scoreboard): `TwinBars` (baseline vs scenario; pending stripes) recolored by mass palette; `WaterfallDelta` under bars. Slim `ScoreStrip` mirrors HUD basics and stays sticky. `ResultsTray` expands to show `DeficitPathChart`, `MacroFan`, `DistributionChart`, `PolicyWorkshop`, `DslPanel`, `SaveBlock`.
   - Explain Overlay (progressive disclosure): `ExplainOverlay` focused on one piece or mass; background dims; shows description, assumptions, links, and quick actions.
   - Editors/utilities: `TargetPicker`, `TaxParamEditor`, `AmountSlider`, `OffsetsEditor`, `DslDrawer`.

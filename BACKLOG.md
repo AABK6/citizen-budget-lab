@@ -207,6 +207,7 @@ Epics
     - [ ] Human labels/desc/examples (masses/pieces) with tooltips; intent chips
     - [ ] suggestLevers, popularIntents, specifyMass (API)
     - [x] WaterfallDelta in Canvas; Sankey‑lite ribbons in Results Tray; Lens Switch recolorings
+    - [x] One‑line rows with steppers (Δ and 🎯); Δ€ chips; default Adjusted‑only filters; MassJumpBar navigation; compact density mode.
     - [ ] Compare & Remix view; save/publish with lineage
     - [ ] A11y polish; FR/EN copy; performance budget checks
 
@@ -220,10 +221,11 @@ Build Page — Detailed Tasks [UI][API]
   - [x] DSL restore (yaml‑lite → state): piece targets/changes, mass targets/changes, lever ids.
 
  B) Controls & Grouping
-  - [x] Twin lists (Spending grouped; Revenue flat) with search, Adjusted‑only filters, pinned items.
+  - [x] Twin lists (Spending grouped; Revenue flat) with search, default Adjusted‑only filters, pinned items.
   - [x] Per‑mass progress chips in group headers.
   - [ ] Human labels/emoji for masses/pieces; tooltips with examples; synonyms in search.
   - [~] PinnedLevers inline configurator scaffold (selected levers list + apply buttons).
+  - [ ] Segmented filters per group (All/Adjusted/Favorites/Unresolved).
 
  C) Workshop & Resolution
   - [x] Render lever params from `paramsSchema` (min/max/step); derive Δ€ heuristics.
@@ -239,7 +241,7 @@ Build Page — Detailed Tasks [UI][API]
  E) HUD & Shortcuts
   - [x] Cockpit HUD (ΔExp/ΔRev, Net Δ, Resolution %, EU lights, Run/Reset).
   - [~] Debt sparkline in HUD; %GDP badge on Net Δ (approx using baseline total until GDP wired).
-  - [x] Undo/Redo stack (Cmd/Ctrl+Z and Shift+Z); '/' focuses search. Next: F pin; +/- adjust; Esc close overlays.
+  - [x] Undo/Redo stack (Cmd/Ctrl+Z and Shift+Z); '/' focuses search; '+'/'-' adjust; 'f' pin/unpin; Esc closes overlays. Next: Shift for ±5.
 
  F) A11y, i18n, Perf
   - [ ] ARIA roles/labels for progress, alerts, dialogs; visible focus; skip links remain usable.
