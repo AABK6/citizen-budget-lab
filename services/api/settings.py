@@ -52,6 +52,9 @@ class Settings:
     # Macro kernel configuration (V2 prep): override IRF parameters JSON path
     macro_irfs_path: str | None = os.getenv("MACRO_IRFS_PATH")
 
+    # Local balance tolerance (EUR) when checking compliance for subsectors
+    local_balance_tolerance_eur: float = float(os.getenv("LOCAL_BAL_TOLERANCE_EUR", "0"))
+
 
 def get_settings() -> Settings:
     # Load .env once at first import

@@ -1306,11 +1306,24 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
         debt_ratio.append((total_debt / gdp_series[i]))
     eu60 = ["above" if r > 0.60 else "info" for r in debt_ratio]
 
-    # Local balance (APUL): simple rule — net delta must be ~0 per year
+    # Local balance checks by subsector
     apu = str((data.get("assumptions") or {}).get("apu_subsector") or "").upper()
+    try:
+        tol = float(get_settings().local_balance_tolerance_eur)
+    except Exception:
+        tol = 0.0
     lb: List[str]
     if apu == "APUL":
-        lb = ["ok" if abs(d) <= 1e-6 else "breach" for d in deltas_by_year]
+        # Local gov: balanced each year within tolerance
+        lb = ["ok" if abs(d) <= tol else "breach" for d in deltas_by_year]
+    elif apu == "ASSO":
+        # Social security funds: also aim for yearly balance
+        lb = ["ok" if abs(d) <= tol else "breach" for d in deltas_by_year]
+    elif apu == "APUC":
+        # Central gov: multi-year balance — last year cumulative near zero; earlier years 'info'
+        cum = sum(deltas_by_year)
+        lb = ["info" for _ in range(horizon_years)]
+        lb[-1] = "ok" if abs(cum) <= tol else "breach"
     else:
         lb = ["n/a" for _ in range(horizon_years)]
 

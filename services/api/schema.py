@@ -529,6 +529,23 @@ class Query:
         ]
 
     @strawberry.field
+    def savedScenarios(self) -> JSON:  # noqa: N802
+        """List saved scenarios with basic metadata (id, title, description)."""
+        try:
+            from .store import scenario_store
+
+            out = []
+            for sid, meta in scenario_store.items():
+                out.append({
+                    "id": sid,
+                    "title": meta.get("title") or "",
+                    "description": meta.get("description") or "",
+                })
+            return out
+        except Exception:
+            return []
+
+    @strawberry.field
     def legoBaseline(self, year: int, scope: ScopeEnum = ScopeEnum.S13) -> LegoBaselineType:  # noqa: N802
         bl = load_lego_baseline(year) or {}
         # If scope mismatches, we still return what we have; clients can detect gaps

@@ -330,7 +330,9 @@ Status Snapshot (MVP) — 2025‑09‑04
 - [x] Procurement table: CSV export, sorting, basic pagination; generic DECP link; per‑row source links (sourceUrl) wired to UI.
 - [x] Data cache warmers (PLF mission aggregates, Eurostat COFOG shares). LEGO baseline warmer (MVP+) is implemented separately.
 - [x] Provenance registry table + ingestion pipelines (ODS/DECP/SIRENE joins), semantic layer (dbt) and Postgres/DuckDB backing.
-- [ ] Local balance calculators; offsets/guardrails in scenarios; ops/observability.
+    - [x] Local balance calculators; offsets/guardrails in scenarios; ops/observability.
+      - APUL/ASSO: yearly balance; APUC: multi-year (final-year) balance. Tolerance via `LOCAL_BAL_TOLERANCE_EUR`.
+      - Tests added for APUC/ASSO; offsets and guardrails already covered.
   - [x] Offsets and guardrails implemented and tested (see tests and `test_guardrails.py`).
   - [x] Basic observability: request logging + `/metrics` (counters + avg latency).
   - [ ] Local balance calculators: extend beyond APUL v0 to cover other subsectors and multi-year balancing strategies.
