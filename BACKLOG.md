@@ -122,7 +122,7 @@ Epics
   - Acceptance Criteria (AC):
     - [x] IRFs loaded from versioned JSON; horizon documented.
     - [x] Convolution transforms mechanical shocks to macro deltas with correct units (pct GDP → EUR).
-    - [ ] Sensitivity toggles/priors prepped for V2 (configurable kernels).
+    - [x] Sensitivity toggles/priors prepped for V2 (configurable kernels). Env override `MACRO_IRFS_PATH` added; unit test covers override.
 - Front‑end — Full Scope (Next.js) [UI]
   - Shell & nav; Explore ADMIN/COFOG; outcome panel; Procurement map/table; What‑if builder + results cards; Sources page; a11y+i18n; performance; tests.
     - Current: minimal scaffold present; core charts and pages partially implemented; see status snapshot.
@@ -187,7 +187,7 @@ Epics
     - [x] `legoPieces(year, scope)` includes amountEur/share when warmed; falls back gracefully.
     - [x] `legoBaseline(year, scope)` returns totals and pieces; scope handling robust.
     - [x] `legoDistance(year, dsl)` computes share deltas and a distance score.
-    - [ ] Unit tests for each query with warmed snapshot present/absent.
+    - [x] Unit tests for each query with warmed snapshot present/absent (allocation COFOG, procurement, macroSeries).
       - Note: smoke tests for `legoPieces`, `legoBaseline`, and `legoDistance` exist; add explicit tests for the “absent snapshot” path.
 - LEGO Budget Builder — Calculation Engine [API]
   - Apply deltas on pieces → (COFOG×na_item | ESA revenue) vectors; update mechanical deficit/debt; enforce locks/bounds.
@@ -330,6 +330,9 @@ Status Snapshot (MVP) — 2025‑09‑04
 - [x] Data cache warmers (PLF mission aggregates, Eurostat COFOG shares). LEGO baseline warmer (MVP+) is implemented separately.
 - [x] Provenance registry table + ingestion pipelines (ODS/DECP/SIRENE joins), semantic layer (dbt) and Postgres/DuckDB backing.
 - [ ] Local balance calculators; offsets/guardrails in scenarios; ops/observability.
+  - [x] Offsets and guardrails implemented and tested (see tests and `test_guardrails.py`).
+  - [x] Basic observability: request logging + `/metrics` (counters + avg latency).
+  - [ ] Local balance calculators: extend beyond APUL v0 to cover other subsectors and multi-year balancing strategies.
 - [x] Net expenditure rule (simplified) implemented.
 
 Next Sprint (2 weeks) — Top Priorities

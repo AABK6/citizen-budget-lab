@@ -49,6 +49,14 @@ def test_allocation_by_mission_and_cofog_sample_data():
 
 
 def test_procurement_top_suppliers_filters():
+    # Ensure test uses sample by removing any warmed 2024 cache
+    import os, glob
+    from services.api.data_loader import CACHE_DIR as _CACHE_DIR
+    for p in glob.glob(os.path.join(_CACHE_DIR, "procurement_contracts_*.csv")):
+        try:
+            os.remove(p)
+        except Exception:
+            pass
     # 2024, region starting with 75 matches 4 rows in sample, aggregated by supplier
     items = procurement_top_suppliers(2024, region="75")
     assert items, "Expected some procurement items"

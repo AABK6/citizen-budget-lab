@@ -902,7 +902,18 @@ def _map_action_to_cofog(action: dict, baseline_year: int) -> List[Tuple[str, fl
 
 
 def _macro_kernel(horizon: int, shocks_pct_gdp: Dict[str, List[float]], gdp_series: List[float]) -> MacroResult:
-    params = _load_json(MACRO_IRF_JSON)
+    # Allow overriding IRF parameter source via env for sensitivity toggles (V2 prep)
+    try:
+        import os as _os
+        env_path = _os.getenv("MACRO_IRFS_PATH")
+        if env_path:
+            _macro_path = env_path
+        else:
+            from .settings import get_settings as _get_settings  # lazy import
+            _macro_path = _get_settings().macro_irfs_path or MACRO_IRF_JSON
+    except Exception:
+        _macro_path = MACRO_IRF_JSON
+    params = _load_json(_macro_path)
     H_param = int(params.get("horizon", horizon))
     T = min(int(horizon), len(gdp_series), H_param)
     okun = float(params.get("okun_elasticity", 0.4))

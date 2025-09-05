@@ -49,6 +49,9 @@ class Settings:
     # Optional enrichment for procurement suppliers using INSEE SIRENE. Disable for benchmarks.
     procurement_enrich_sirene: bool = os.getenv("PROCUREMENT_ENRICH_SIRENE", "1") not in ("0", "false", "False")
 
+    # Macro kernel configuration (V2 prep): override IRF parameters JSON path
+    macro_irfs_path: str | None = os.getenv("MACRO_IRFS_PATH")
+
 
 def get_settings() -> Settings:
     # Load .env once at first import

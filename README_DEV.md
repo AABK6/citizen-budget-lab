@@ -176,6 +176,8 @@ Official API wiring
     - `HTTP_CACHE_TTL_GEO` — seconds (default 604800)
   - Compliance parameters:
     - `NET_EXP_REFERENCE_RATE` — annual allowed growth for net primary expenditure (default 0.015 = 1.5%)
+  - Macro kernel (V2 prep):
+    - `MACRO_IRFS_PATH` — override path to IRF parameters JSON (defaults to `data/macro_irfs.json`)
   - Eurostat (SDMX / JSON):
     - `EUROSTAT_SDMX_BASE` — dissemination SDMX XML base (default `https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1`)
     - `EUROSTAT_BASE` — legacy SDMX‑JSON base (default `https://ec.europa.eu/eurostat/wdds/rest/data/v2.1/json`)
