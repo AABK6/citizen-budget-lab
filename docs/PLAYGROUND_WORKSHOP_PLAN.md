@@ -36,7 +36,7 @@ Phase 0 — Alignment & Framing
 
 Phase 1 — Option D Baseline (delivered/in hardening)
  - Build page scaffold; twin lists; resolution; permalink; lever params; cockpit HUD + ScoreStrip; i18n seeds; OG preview; axe on /build.
- - Added: Outdated results chip (DSL diff), default Adjusted‑only filters, one‑line rows with steppers (Δ and 🎯), Δ€ chips, MassJumpBar, Waterfall in Canvas, per‑mass progress chips, compact density mode.
+ - Added: Outdated results chip (DSL diff), one‑line rows with steppers (Δ and 🎯 pill), Δ€ chips, segmented filters (All/Adjusted/Favorites/Unresolved), MassJumpBar, Waterfall in Canvas, per‑mass progress chips, compact density mode.
 - Hardening: numeric inputs, keyboard controls, DSFR ARIA; copy polish.
 
 Phase 2 — Human Labels + Intents (content + API)

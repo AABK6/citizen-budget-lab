@@ -285,6 +285,6 @@ Build — Visual & Interaction Heuristics
 - Progressive disclosure: Keep heavy analytics in the tray; keep configurators inline; elevate Explain overlay only when needed.
 - Micro‑interactions: animate bar widths on changes; use subtle pending stripes; optimistic UI for sliders; toast on save/run; loading skeletons.
 - Keyboard: arrow keys on focused sliders; +/- adjust; Cmd/Ctrl+Z/Y (undo/redo, future); F to pin/unpin; / to focus search; Esc to dismiss overlays.
-  - Implemented: Cmd/Ctrl+Z (undo), Cmd/Ctrl+Shift+Z (redo), / focuses search, '+'/'-' adjust focused delta, 'f' pins/unpins focused piece, Esc closes overlays.
+  - Implemented: Cmd/Ctrl+Z (undo), Cmd/Ctrl+Shift+Z (redo), / focuses search, '+'/'-' adjust focused delta (±1), 'f' pins/unpins focused piece, Esc closes overlays. Target uses a compact 🎯 pill popover editor.
 - Accessibility: list semantics; aria‑expanded on groups; aria‑valuenow/min/max on sliders; live regions for resolution updates.
 - Responsiveness: stack columns under Canvas on small screens; HUD and ScoreStrip remain sticky; tray becomes a full‑width drawer.

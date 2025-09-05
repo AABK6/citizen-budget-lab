@@ -221,7 +221,7 @@ Build Page — Detailed Tasks [UI][API]
   - [x] DSL restore (yaml‑lite → state): piece targets/changes, mass targets/changes, lever ids.
 
  B) Controls & Grouping
-  - [x] Twin lists (Spending grouped; Revenue flat) with search, default Adjusted‑only filters, pinned items.
+  - [x] Twin lists (Spending grouped; Revenue flat) with search, segmented filters (All/Adjusted/Favorites/Unresolved) default All, pinned items.
   - [x] Per‑mass progress chips in group headers.
   - [ ] Human labels/emoji for masses/pieces; tooltips with examples; synonyms in search.
   - [~] PinnedLevers inline configurator scaffold (selected levers list + apply buttons).
