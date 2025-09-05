@@ -79,6 +79,7 @@ export default function BuildPage() {
   const [showAdjRev, setShowAdjRev] = useState<boolean>(false)
   const [lastDsl, setLastDsl] = useState<string>('')
   const [lens, setLens] = useState<'mass'|'family'|'reform'>('mass')
+  const [dense, setDense] = useState<boolean>(true)
   // Undo/Redo stack
   type Op =
     | { kind: 'pieceDelta'; id: string; prev?: number; next?: number }
@@ -101,6 +102,19 @@ export default function BuildPage() {
     '08': 'Recreation, culture, religion',
     '09': 'Education',
     '10': 'Social protection',
+  }
+  // Mass color palette (consistent with EU compare)
+  const COFOG_COLORS: Record<string, string> = {
+    '01': '#7c3aed',
+    '02': '#f59e0b',
+    '03': '#ef4444',
+    '04': '#2563eb',
+    '05': '#10b981',
+    '06': '#fb7185',
+    '07': '#22c55e',
+    '08': '#06b6d4',
+    '09': '#0ea5e9',
+    '10': '#a855f7',
   }
 
   useEffect(() => {
@@ -448,7 +462,7 @@ export default function BuildPage() {
   }, [undo, redo])
 
   return (
-    <div className="stack" style={{ gap: '1.25rem' }}>
+    <div className={"stack" + (dense ? ' build-dense' : '')} style={{ gap: '1.25rem' }}>
       <BuildHud
         estExp={estimateDeltaExp(exp, deltas)}
         estRev={estimateDeltaRev(rev, deltas)}
@@ -458,8 +472,22 @@ export default function BuildPage() {
         running={running}
         onReset={()=>{ setDeltas({}); setTargets({}); setMassTargets({}); setMassChanges({}); setSelectedLevers([]); setResult(null); setOps([]); setCursor(0); setLastDsl(''); }}
         onToggleDsl={()=> setShowDsl(s => !s)}
+        onToggleDensity={()=> setDense(v=>!v)}
+        dense={dense}
         t={t}
       />
+      {/* Dense layout tweaks (scoped) */}
+      <style>{`
+        .build-dense .fr-card__body{ padding:.75rem }
+        .build-dense .fr-card__title{ margin-bottom:.25rem }
+        .build-dense .fr-input{ padding:.25rem .4rem; min-height:30px }
+        .build-dense .fr-select{ padding:.25rem .4rem; min-height:30px }
+        .build-dense .fr-label{ margin-bottom:.125rem; font-size:.85rem }
+        .build-dense .fr-input-group{ margin-bottom:.25rem }
+        .build-dense .fr-range input{ height:18px }
+        .build-dense .fr-tag{ padding:.15rem .45rem }
+        .build-dense .fr-badge{ transform:translateY(-1px) }
+      `}</style>
       <h2 className="fr-h2">{t('build.title') || 'Build — Workshop'}</h2>
       <div className="fr-grid-row fr-grid-row--gutters">
         {/* Left column: Controls (Spending vs Revenue) */}
@@ -506,6 +534,7 @@ export default function BuildPage() {
                         <div className="fr-input-group">
                           <input ref={(el)=> (searchRef.current = el)} className="fr-input" placeholder={t('labels.search') || 'Search…'} value={expFilter} onChange={(e)=> setExpFilter(e.target.value)} />
                         </div>
+                        <MassJumpBar keys={groupedExp.map(g=> g.key)} onJump={(k)=> document.getElementById('mass_'+k)?.scrollIntoView({ behavior:'smooth', block:'start' })} />
                         <div className="fr-checkbox-group fr-checkbox-group--sm" style={{ marginTop: '.25rem' }}>
                           <input type="checkbox" id="exp_adj" checked={showAdjExp} onChange={(e)=> setShowAdjExp(e.currentTarget.checked)} />
                           <label className="fr-label" htmlFor="exp_adj">{t('labels.adjusted_only') || 'Adjusted only'}</label>
@@ -570,13 +599,13 @@ export default function BuildPage() {
                 <div className="fr-card__title" style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
                   <span>{t('build.canvas') || 'Canvas'}</span>
                   <div className="fr-tags-group" aria-label="Lens">
-                    <button className="fr-tag fr-tag--sm fr-tag--dismiss" disabled>Mass</button>
-                    <button className="fr-tag fr-tag--sm" disabled>Family</button>
-                    <button className="fr-tag fr-tag--sm" disabled>Reform</button>
+                    <button className={"fr-tag fr-tag--sm" + (lens==='mass' ? ' fr-tag--dismiss': '')} onClick={()=> setLens('mass')}>Mass</button>
+                    <button className={"fr-tag fr-tag--sm" + (lens==='family' ? ' fr-tag--dismiss': '')} onClick={()=> setLens('family')} disabled>Family</button>
+                    <button className={"fr-tag fr-tag--sm" + (lens==='reform' ? ' fr-tag--dismiss': '')} onClick={()=> setLens('reform')} disabled>Reform</button>
                   </div>
                 </div>
                 <div className="fr-card__desc">
-                  {result?.masses && <TwinBars masses={result.masses} labels={massList.reduce((acc, m)=> (acc[m]=massUiLabel(m), acc), {} as Record<string,string>)} resolution={result.resolutionByMass} />}
+                  {result?.masses && <TwinBars masses={result.masses} labels={massList.reduce((acc, m)=> (acc[m]=massUiLabel(m), acc), {} as Record<string,string>)} resolution={result.resolutionByMass} palette={COFOG_COLORS} />}
                   {wfItems?.length>0 && <div style={{ marginTop: '.5rem' }}><WaterfallDelta items={wfItems} title={t('charts.waterfall') || 'Δ by Mass (Waterfall)'} /></div>}
                 </div>
               </div>
@@ -835,7 +864,7 @@ function GroupedPieceList2({ grouped, deltas, targets, onDelta, onTarget, t, res
   return (
     <div className="stack" style={{ gap: '.5rem' }}>
       {grouped.map(g => (
-        <div key={g.key} className="fr-accordion" style={{ border: '1px solid var(--border-default-grey)', borderRadius: '6px' }}>
+        <div key={g.key} id={`mass_${g.key}`} className="fr-accordion" style={{ border: '1px solid var(--border-default-grey)', borderRadius: '6px' }}>
           <h3 className="fr-accordion__title" style={{ margin: 0 }}>
             <button className={open[g.key] ? 'fr-accordion__btn' : 'fr-accordion__btn collapsed'} aria-expanded={!!open[g.key]} onClick={()=> setOpen({ ...open, [g.key]: !open[g.key] })}>
               <span>{g.key} — {g.label}</span>
@@ -891,7 +920,10 @@ function PieceRow2({ p, deltas, targets, onDelta, onTarget, t, resByMass, pinned
           <div className="fr-col-10">
             <label className="fr-label" htmlFor={`delta_${p.id}`}>{p.label || p.id}</label>
             {p.locked && <span className="fr-badge fr-badge--sm" aria-label="locked" style={{ marginLeft: '.5rem' }}>{t('piece.locked') || 'Locked'}</span>}
-            <div className="fr-text--xs" style={{ color:'var(--text-mention-grey)' }}>{(p.amountEur||0).toLocaleString(undefined,{maximumFractionDigits:0})} €</div>
+            <div className="fr-text--xs" style={{ color:'var(--text-mention-grey)', display:'flex', alignItems:'center', gap:'.5rem' }}>
+              <span>{(p.amountEur||0).toLocaleString(undefined,{maximumFractionDigits:0})} €</span>
+              <span className="fr-badge fr-badge--sm">{((Number(deltas[p.id]||0)/100)*(Number(p.amountEur||0))).toLocaleString(undefined,{maximumFractionDigits:0})} €</span>
+            </div>
           </div>
           <div className="fr-col-2" style={{ textAlign: 'right' }}>
             <button className="fr-btn fr-btn--sm fr-btn--secondary" title={pinned ? (t('labels.unpin') || 'Unpin') : (t('labels.pin') || 'Pin')} onClick={()=> onToggleFav(p.id)}>
@@ -1038,11 +1070,14 @@ function PinnedPieces({ pieces, ids, deltas, targets, onDelta, onTarget, onUnpin
                 <button className="fr-btn fr-btn--sm fr-btn--secondary" title={t('labels.unpin') || 'Unpin'} onClick={()=> onUnpin(id)}>✕</button>
               </div>
               <div className="fr-grid-row fr-grid-row--gutters" style={{ marginTop: '.25rem' }}>
-                <div className="fr-col-6">
+                <div className="fr-col-4">
                   <input className="fr-input fr-input--sm" type="number" value={deltas[id] ?? 0} onChange={e=> onDelta(id, Number(e.target.value))} aria-label={`Δ% ${id}`} />
                 </div>
-                <div className="fr-col-6">
+                <div className="fr-col-4">
                   <input className="fr-input fr-input--sm" type="number" value={targets[id] ?? 0} onChange={e=> onTarget(id, Number(e.target.value))} aria-label={`Target% ${id}`} />
+                </div>
+                <div className="fr-col-4 fr-text--xs" style={{ display:'flex', alignItems:'center' }}>
+                  <span className="fr-badge fr-badge--sm">{((Number(deltas[id]||0)/100)*(Number(p.amountEur||0))).toLocaleString(undefined,{maximumFractionDigits:0})} €</span>
                 </div>
               </div>
             </div>
@@ -1058,7 +1093,7 @@ function OutdatedChip({ dirty }: { dirty: boolean }) {
   return <span className="fr-badge fr-badge--sm" style={{ marginTop: '.25rem' }}>Outdated results</span>
 }
 
-function BuildHud({ estExp, estRev, result, baselineTotal, onRun, running, onReset, onToggleDsl, t }: { estExp: number, estRev: number, result: any, baselineTotal: number, onRun: ()=>void, running: boolean, onReset: ()=>void, onToggleDsl: ()=>void, t: (k: string)=>string }) {
+function BuildHud({ estExp, estRev, result, baselineTotal, onRun, running, onReset, onToggleDsl, onToggleDensity, dense, t }: { estExp: number, estRev: number, result: any, baselineTotal: number, onRun: ()=>void, running: boolean, onReset: ()=>void, onToggleDsl: ()=>void, onToggleDensity: ()=>void, dense: boolean, t: (k: string)=>string }) {
   const netEst = (estExp + estRev) || 0
   const eu3 = result?.eu3 || 'info'
   const eu60 = result?.eu60 || 'info'
@@ -1109,6 +1144,7 @@ function BuildHud({ estExp, estRev, result, baselineTotal, onRun, running, onRes
             <button className="fr-btn fr-btn--secondary" onClick={onReset} title={t('buttons.reset') || 'Reset'}>⟲</button>
             <button className="fr-btn" onClick={onRun} disabled={running} title={t('buttons.run') || 'Run'}>▶︎</button>
             <button className="fr-btn fr-btn--secondary" onClick={onToggleDsl} title="DSL">{'</>'}</button>
+            <button className="fr-btn fr-btn--secondary" onClick={onToggleDensity} title="Compact density">{dense ? '−' : '+'}</button>
           </div>
         </div>
         <div className="fr-col-12 fr-col-md-2" style={{ textAlign: 'right' }}>
@@ -1404,6 +1440,17 @@ function TwinBars({ masses, labels, resolution, palette }: { masses: Record<stri
           )
         })}
       </div>
+    </div>
+  )
+}
+
+function MassJumpBar({ keys, onJump }: { keys: string[], onJump: (k:string)=>void }) {
+  if (!keys.length) return null
+  return (
+    <div className="fr-tags-group" style={{ marginTop: '.25rem', flexWrap: 'wrap' }}>
+      {keys.map(k => (
+        <button key={k} className="fr-tag fr-tag--sm" onClick={()=> onJump(k)} title={`Jump to ${k}`}>{k}</button>
+      ))}
     </div>
   )
 }
