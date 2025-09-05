@@ -33,7 +33,16 @@ function yamlQuote(s: string): string {
 }
 
 export default function BuildPage() {
-  const { t } = useI18n()
+  const { t: t0 } = useI18n()
+  // Local i18n wrapper: if translation returns key itself, treat as missing for fallback
+  const t = (k: string) => {
+    try {
+      const v = t0(k)
+      return v === k ? '' : v
+    } catch {
+      return ''
+    }
+  }
   const [year, setYear] = useState<number>(2026)
   const [pieces, setPieces] = useState<Piece[]>([])
   const [baseline, setBaseline] = useState<{ depensesTotal: number; recettesTotal: number } | null>(null)
@@ -75,8 +84,10 @@ export default function BuildPage() {
   const [favRev, setFavRev] = useState<string[]>([])
   const [explainId, setExplainId] = useState<string | null>(null)
   const [showTray, setShowTray] = useState<boolean>(false)
-  const [showAdjExp, setShowAdjExp] = useState<boolean>(true)
-  const [showAdjRev, setShowAdjRev] = useState<boolean>(true)
+  const [showAdjExp, setShowAdjExp] = useState<boolean>(false)
+  const [showAdjRev, setShowAdjRev] = useState<boolean>(false)
+  const [expView, setExpView] = useState<'all'|'adjusted'|'favorites'|'unresolved'>('all')
+  const [revView, setRevView] = useState<'all'|'adjusted'|'favorites'|'unresolved'>('all')
   const [lastDsl, setLastDsl] = useState<string>('')
   const [lens, setLens] = useState<'mass'|'family'|'reform'>('mass')
   const [dense, setDense] = useState<boolean>(true)
@@ -394,17 +405,41 @@ export default function BuildPage() {
     return m
   }, [result?.resolutionByMass])
   const groupedExp = useMemo(() => groupPiecesByMass(exp, massList.reduce((acc,m)=> (acc[m]=massUiLabel(m), acc), {} as Record<string,string>)), [exp, massLabels])
+  const unresolvedMasses = useMemo(() => {
+    const s = new Set<string>()
+    for (const k of Object.keys(resByMass)) {
+      const r = resByMass[k]
+      if (Math.abs(r.s) < Math.abs(r.t)) s.add(k)
+    }
+    return s
+  }, [resByMass])
   const filteredGroupedExp = useMemo(() => {
     const f = filterGrouped(groupedExp, expFilter)
-    if (!showAdjExp) return f
     const hasChange = (p: Piece) => Math.abs(Number(deltas[p.id]||0))>0 || Math.abs(Number(targets[p.id]||0))>0
-    return f.map(g => ({...g, pieces: g.pieces.filter(hasChange)})).filter(g=> g.pieces.length)
-  }, [groupedExp, expFilter, showAdjExp, deltas, targets])
+    const isFav = (p: Piece) => favExp.includes(p.id)
+    const isUnresolved = (p: Piece) => {
+      const m = (p.cofogMajors && p.cofogMajors[0]) ? String(p.cofogMajors[0]).padStart(2,'0').slice(0,2) : ''
+      return m && unresolvedMasses.has(m)
+    }
+    let out = f
+    if (expView === 'adjusted') out = f.map(g => ({...g, pieces: g.pieces.filter(hasChange)})).filter(g=> g.pieces.length)
+    else if (expView === 'favorites') out = f.map(g => ({...g, pieces: g.pieces.filter(isFav)})).filter(g=> g.pieces.length)
+    else if (expView === 'unresolved') out = f.map(g => ({...g, pieces: g.pieces.filter(isUnresolved)})).filter(g=> g.pieces.length)
+    return out
+  }, [groupedExp, expFilter, expView, deltas, targets, favExp, unresolvedMasses])
   const filteredRev = useMemo(() => {
-    const list = rev.filter(p => (p.label || p.id).toLowerCase().includes(revFilter.toLowerCase()))
-    if (!showAdjRev) return list
-    return list.filter(p => Math.abs(Number(deltas[p.id]||0))>0 || Math.abs(Number(targets[p.id]||0))>0)
-  }, [rev, revFilter, showAdjRev, deltas, targets])
+    const listAll = rev.filter(p => (p.label || p.id).toLowerCase().includes(revFilter.toLowerCase()))
+    const hasChange = (p: Piece) => Math.abs(Number(deltas[p.id]||0))>0 || Math.abs(Number(targets[p.id]||0))>0
+    const isFav = (p: Piece) => favRev.includes(p.id)
+    const isUnresolved = (p: Piece) => {
+      const m = (p.cofogMajors && p.cofogMajors[0]) ? String(p.cofogMajors[0]).padStart(2,'0').slice(0,2) : ''
+      return m && unresolvedMasses.has(m)
+    }
+    if (revView === 'adjusted') return listAll.filter(hasChange)
+    if (revView === 'favorites') return listAll.filter(isFav)
+    if (revView === 'unresolved') return listAll.filter(isUnresolved)
+    return listAll
+  }, [rev, revFilter, revView, deltas, targets, favRev, unresolvedMasses])
 
   // Keyboard shortcuts: Undo/Redo and search focus
   const searchRef = useMemo(() => ({ current: null as HTMLInputElement | null }), []) as { current: HTMLInputElement | null }
@@ -535,9 +570,11 @@ export default function BuildPage() {
                           <input ref={(el)=> (searchRef.current = el)} className="fr-input" placeholder={t('labels.search') || 'Search…'} value={expFilter} onChange={(e)=> setExpFilter(e.target.value)} />
                         </div>
                         <MassJumpBar keys={groupedExp.map(g=> g.key)} onJump={(k)=> document.getElementById('mass_'+k)?.scrollIntoView({ behavior:'smooth', block:'start' })} />
-                        <div className="fr-checkbox-group fr-checkbox-group--sm" style={{ marginTop: '.25rem' }}>
-                          <input type="checkbox" id="exp_adj" checked={showAdjExp} onChange={(e)=> setShowAdjExp(e.currentTarget.checked)} />
-                          <label className="fr-label" htmlFor="exp_adj">{t('labels.adjusted_only') || 'Adjusted only'}</label>
+                        <div className="fr-tags-group" style={{ marginTop: '.25rem' }}>
+                          <button className={"fr-tag fr-tag--sm" + (expView==='all' ? ' fr-tag--dismiss':'')} onClick={()=> setExpView('all')}>All</button>
+                          <button className={"fr-tag fr-tag--sm" + (expView==='adjusted' ? ' fr-tag--dismiss':'')} onClick={()=> setExpView('adjusted')}>Adjusted</button>
+                          <button className={"fr-tag fr-tag--sm" + (expView==='favorites' ? ' fr-tag--dismiss':'')} onClick={()=> setExpView('favorites')}>Favorites</button>
+                          <button className={"fr-tag fr-tag--sm" + (expView==='unresolved' ? ' fr-tag--dismiss':'')} onClick={()=> setExpView('unresolved')}>Unresolved</button>
                         </div>
                         {favExp.length>0 && (
                           <PinnedPieces pieces={pieces} ids={favExp} deltas={deltas} targets={targets} onDelta={updateDelta} onTarget={updateTarget} onUnpin={(id)=> setFavExp(v=> v.filter(x=> x!==id))} t={t} />
@@ -563,9 +600,11 @@ export default function BuildPage() {
                         <div className="fr-input-group">
                           <input className="fr-input" placeholder={t('labels.search') || 'Search…'} value={revFilter} onChange={(e)=> setRevFilter(e.target.value)} />
                         </div>
-                        <div className="fr-checkbox-group fr-checkbox-group--sm" style={{ marginTop: '.25rem' }}>
-                          <input type="checkbox" id="rev_adj" checked={showAdjRev} onChange={(e)=> setShowAdjRev(e.currentTarget.checked)} />
-                          <label className="fr-label" htmlFor="rev_adj">{t('labels.adjusted_only') || 'Adjusted only'}</label>
+                        <div className="fr-tags-group" style={{ marginTop: '.25rem' }}>
+                          <button className={"fr-tag fr-tag--sm" + (revView==='all' ? ' fr-tag--dismiss':'')} onClick={()=> setRevView('all')}>All</button>
+                          <button className={"fr-tag fr-tag--sm" + (revView==='adjusted' ? ' fr-tag--dismiss':'')} onClick={()=> setRevView('adjusted')}>Adjusted</button>
+                          <button className={"fr-tag fr-tag--sm" + (revView==='favorites' ? ' fr-tag--dismiss':'')} onClick={()=> setRevView('favorites')}>Favorites</button>
+                          <button className={"fr-tag fr-tag--sm" + (revView==='unresolved' ? ' fr-tag--dismiss':'')} onClick={()=> setRevView('unresolved')}>Unresolved</button>
                         </div>
                         {favRev.length>0 && (
                           <PinnedPieces pieces={pieces} ids={favRev} deltas={deltas} targets={targets} onDelta={updateDelta} onTarget={updateTarget} onUnpin={(id)=> setFavRev(v=> v.filter(x=> x!==id))} t={t} />
@@ -926,11 +965,7 @@ function PieceRow2({ p, deltas, targets, onDelta, onTarget, t, resByMass, pinned
             <Stepper id={`delta_${p.id}`} value={Number(deltas[p.id]||0)} min={-50} max={50} step={1} onChange={(v)=> onDelta(p.id, v)} disabled={!!p.locked} />
             <span className="fr-text--xs">%</span>
           </div>
-          <div aria-label="target" title="Target % (role)" style={{ display:'flex', alignItems:'center', gap:'.25rem' }}>
-            <span style={{ fontSize:12 }}>🎯</span>
-            <Stepper id={`target_${p.id}`} value={Number(targets[p.id]||0)} min={-100} max={100} step={0.5} onChange={(v)=> onTarget(p.id, v)} disabled={!!p.locked} />
-            <span className="fr-text--xs">%</span>
-          </div>
+          <TargetPill id={`target_${p.id}`} value={Number(targets[p.id]||0)} disabled={!!p.locked} onChange={(v)=> onTarget(p.id, v)} />
           <span className="fr-badge fr-badge--sm" title="Δ€">{((Number(deltas[p.id]||0)/100)*(Number(p.amountEur||0))).toLocaleString(undefined,{maximumFractionDigits:0})} €</span>
           <button className="fr-btn fr-btn--sm fr-btn--secondary" onClick={()=> onExplain(p.id)} title={t('labels.explain') || 'Explain'} style={{ minWidth:28, padding:'.1rem .35rem' }}>…</button>
         </div>
@@ -997,6 +1032,27 @@ function Stepper({ id, value, onChange, min, max, step, disabled }: { id: string
       <button className="fr-btn fr-btn--sm fr-btn--secondary" onClick={dec} disabled={disabled} style={{ minWidth:24, padding:'.1rem .25rem' }}>−</button>
       <input id={id} className="fr-input fr-input--sm" type="number" value={v} onChange={e=> onChange(Number(e.target.value||0))} min={min} max={max} step={step||1} disabled={disabled} style={{ width:56 }} />
       <button className="fr-btn fr-btn--sm fr-btn--secondary" onClick={inc} disabled={disabled} style={{ minWidth:24, padding:'.1rem .25rem' }}>+</button>
+    </span>
+  )
+}
+
+function TargetPill({ id, value, onChange, disabled }: { id: string, value: number, onChange: (v:number)=>void, disabled?: boolean }) {
+  const [open, setOpen] = useState<boolean>(false)
+  const val = Number(value||0)
+  const label = isFinite(val) && Math.abs(val) > 0.0001 ? `🎯 ${val}%` : '🎯'
+  return (
+    <span style={{ position:'relative', display:'inline-flex', alignItems:'center' }}>
+      <button className={"fr-tag fr-tag--sm" + (val ? ' fr-tag--dismiss' : '')} id={id} onClick={()=> !disabled && setOpen(o=>!o)} disabled={!!disabled} title="Target (role)">{label}</button>
+      {open && !disabled && (
+        <div role="dialog" aria-modal="true" style={{ position:'absolute', top:'100%', right:0, zIndex:50, background:'var(--background-default-grey)', border:'1px solid var(--border-default-grey)', borderRadius:6, padding:'.5rem', boxShadow:'0 4px 12px rgba(0,0,0,0.12)' }}>
+          <div className="fr-text--xs" style={{ marginBottom:'.25rem' }}>Target %</div>
+          <Stepper id={id+"_editor"} value={val} min={-100} max={100} step={0.5} onChange={onChange} />
+          <div className="fr-btns-group fr-btns-group--inline" style={{ marginTop:'.35rem' }}>
+            <button className="fr-btn fr-btn--secondary fr-btn--sm" onClick={()=> { onChange(0); setOpen(false) }}>Clear</button>
+            <button className="fr-btn fr-btn--sm" onClick={()=> setOpen(false)}>Done</button>
+          </div>
+        </div>
+      )}
     </span>
   )
 }
