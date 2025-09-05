@@ -248,6 +248,12 @@ Build Page — Detailed Tasks [UI][API]
  G) Share & Compare
   - [ ] Save scenario (title/description); OG preview link; partial watermark when Specified < 100%.
   - [ ] Compare & Remix entrypoint.
+
+ H) Undo / Redo & Outdated Results
+  - [ ] Maintain an operation stack (pieceDeltaSet, pieceTargetSet, massTargetSet, massChangeSet, leverToggle) with timestamps.
+  - [ ] Keyboard: Cmd/Ctrl+Z undo; Cmd/Ctrl+Shift+Z redo; disabled when stack empty.
+  - [ ] Show an “Outdated results” chip when controls changed since last run; clicking Run clears chip.
+  - [ ] Persist last run timestamp and scenario id in URL (optional) for sharing reproducible states.
   - Accessibility & i18n: full FR/EN, keyboard, contrast; “show the table”.
 - LEGO Budget Builder — Documentation [Docs]
   - `docs/LEGO_METHOD.md`: sources, mapping, beneficiary rules, elasticities (v0), limitations, versioning; audit tables.
