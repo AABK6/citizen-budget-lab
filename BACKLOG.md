@@ -61,7 +61,7 @@ Build Page — Two‑Column Architecture [UI]
     - Controls column contains twin lists (Spending grouped by COFOG majors with collapsible headers; Revenue flat list).
     - Each row renders label, amount, pin toggle, delta slider, target input, micro progress bar, and Explain button.
     - Canvas column shows TwinBars; slim ScoreStrip under the chart mirrors HUD basics and remains sticky.
-    - Results Tray expands/collapses and contains Debt path, Macro/Distribution (stubs ok) + Workshop + DSL + Save.
+    - Results Tray expands/collapses and contains Debt path, Macro/Distribution (stubs ok) + Workshop + DSL + Save. WaterfallDelta can appear in Canvas for immediate delta transparency.
     - Mobile stacks columns under Canvas; HUD and ScoreStrip stay sticky; tray becomes a bottom drawer.
 
 Milestone: MVP
@@ -198,7 +198,7 @@ Epics
   - Scoreboard & comparator: balance, debt, EU lights, distance; stacked bars “Your budget vs current”; scale tooltips.
   - Modes & sharing: “From scratch” and “From current”; permalinks (deterministic IDs); share‑card image generator + OG tags; Challenge presets; deterministic IDs wired to OG image.
   - Status: [~]
-    - [x] `/build` page scaffold with twin lists (Spending/Revenue), cockpit HUD, slim ScoreStrip
+    - [x] `/build` page scaffold with twin lists (Spending/Revenue), cockpit HUD, slim ScoreStrip, Outdated chip (DSL diff)
     - [x] Permalinks via `?dsl=<base64>`; server resolution wired; Distance wired
     - [x] HUD + Resolution bar; i18n seeds; OG preview; axe CI target for `/build`
     - [x] Workshop: lever cards, dynamic params from schema; apply to mass; conflict nudge skeleton
@@ -206,7 +206,7 @@ Epics
     - [ ] Mass cards + Explain Overlay (ranked suggestions; sum‑constrained split)
     - [ ] Human labels/desc/examples (masses/pieces) with tooltips; intent chips
     - [ ] suggestLevers, popularIntents, specifyMass (API)
-    - [ ] WaterfallDelta + Sankey‑lite ribbons; Lens Switch recolorings
+    - [x] WaterfallDelta in Canvas; Sankey‑lite ribbons in Results Tray; Lens Switch recolorings
     - [ ] Compare & Remix view; save/publish with lineage
     - [ ] A11y polish; FR/EN copy; performance budget checks
 
@@ -220,9 +220,10 @@ Build Page — Detailed Tasks [UI][API]
   - [x] DSL restore (yaml‑lite → state): piece targets/changes, mass targets/changes, lever ids.
 
  B) Controls & Grouping
-  - [x] Twin lists (Spending grouped; Revenue flat) with search and pinned items.
+  - [x] Twin lists (Spending grouped; Revenue flat) with search, Adjusted‑only filters, pinned items.
+  - [x] Per‑mass progress chips in group headers.
   - [ ] Human labels/emoji for masses/pieces; tooltips with examples; synonyms in search.
-  - [ ] Inline configurators for simple policy params in rows (expandable).
+  - [~] PinnedLevers inline configurator scaffold (selected levers list + apply buttons).
 
  C) Workshop & Resolution
   - [x] Render lever params from `paramsSchema` (min/max/step); derive Δ€ heuristics.
@@ -231,14 +232,14 @@ Build Page — Detailed Tasks [UI][API]
   - [ ] Explain Overlay: scoped panel with suggestions and sum‑constrained sliders; focus management.
 
  D) Canvas & Consequences
-  - [x] TwinBars (baseline vs scenario) with pending stripes.
-  - [x] Slim ScoreStrip under Canvas (sticky); Results Tray with Debt path; Workshop/DSL/Save in tray.
-  - [ ] WaterfallDelta and Lens ribbons; export image; lazy‑load charts.
+  - [x] TwinBars (baseline vs scenario) with pending stripes; WaterfallDelta in Canvas.
+  - [x] Slim ScoreStrip under Canvas (sticky); Results Tray with Debt path; Workshop/DSL/Save in tray; Sankey ribbons remain in tray.
+  - [ ] Lens recolorings; export image; lazy‑load charts.
 
  E) HUD & Shortcuts
   - [x] Cockpit HUD (ΔExp/ΔRev, Net Δ, Resolution %, EU lights, Run/Reset).
-  - [ ] Debt sparkline in HUD; %GDP badge on Net Δ; Undo/Redo (stacked ops).
-  - [ ] Keyboard shortcuts: / focus search; F pin; +/- adjust; Esc close overlays; Cmd/Ctrl+Z/Y undo/redo.
+  - [ ] Debt sparkline in HUD; %GDP badge on Net Δ.
+  - [x] Undo/Redo stack (Cmd/Ctrl+Z and Shift+Z); '/' focuses search. Next: F pin; +/- adjust; Esc close overlays.
 
  F) A11y, i18n, Perf
   - [ ] ARIA roles/labels for progress, alerts, dialogs; visible focus; skip links remain usable.

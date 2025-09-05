@@ -36,6 +36,7 @@ Phase 0 — Alignment & Framing
 
 Phase 1 — Option D Baseline (delivered/in hardening)
  - Build page scaffold; twin lists; resolution; permalink; lever params; cockpit HUD + ScoreStrip; i18n seeds; OG preview; axe on /build.
+ - Added: Outdated results chip (DSL diff), Adjusted‑only filters, Pinned pieces quick edits, Waterfall in Canvas, per‑mass progress chips.
 - Hardening: numeric inputs, keyboard controls, DSFR ARIA; copy polish.
 
 Phase 2 — Human Labels + Intents (content + API)
@@ -51,6 +52,7 @@ Phase 3 — Suggest & Specify (server)
 Phase 4 — Explain Panel + Mass Cards (client)
  - Mass Cards: Δ€ input, pending badge, info tooltip; “Explain this” CTA opens overlay scoped to mass or piece.
  - Explain Overlay: progress‑to‑target bar; lever suggestions + presets; split sliders sum‑constrained to target; focus‑trap; Esc closes; restores focus.
+  - Pinned levers: inline configurators with mass select and Apply as Target/Change.
 - AC: Dial → Pending → Explain → Specified loop in < 90s; progress hits 100% with mixes.
 
 Phase 5 — Visual Rigor: Waterfall + Ribbons + Lens
@@ -118,7 +120,8 @@ Challenges/Classroom (later)
 - Challenge registry; validation (resolution threshold); leaderboard; Room join/freeze; Debrief export.
 
 Polish: A11y/Perf
-- Keyboardable dials; aria-live for progress; skeleton states; lazy charts; code‑split Workshop.
+ - Keyboardable dials; aria-live for progress; skeleton states; lazy charts; code‑split Workshop.
+ - Undo/Redo stack (Cmd/Ctrl+Z / Shift+Z); '/' search focus.
 
 Telemetry
 - Emit events; anonymous; DNT support; dashboards for funnel.
