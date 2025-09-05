@@ -81,7 +81,8 @@ DBT_PROFILES_DIR := warehouse
 
 dbt-install:
 	python -m pip install --upgrade pip
-	pip install dbt-core dbt-duckdb dbt-postgres dbt-utils
+	# Install Python packages only; dbt macro packages (e.g., dbt_utils) are installed via `dbt deps`
+	pip install "dbt-core~=1.9.0" "dbt-duckdb~=1.9.0" "dbt-postgres~=1.9.0"
 
 dbt-seed:
 	python tools/build_seeds.py
@@ -96,3 +97,12 @@ dbt-test:
 
 dbt-clean:
 	DBT_PROFILES_DIR=$(DBT_PROFILES_DIR) $(DBT) clean --project-dir warehouse
+
+# -----------------
+# Benchmarks
+# -----------------
+
+.PHONY: bench-api
+bench-api:
+	@echo "==> Running API benchmark (no SIRENE enrichment)"
+	@PROCUREMENT_ENRICH_SIRENE=0 PYTHONPATH=. python3 tools/bench_api.py --runs 30 --warmup 5 --no-enrichment
