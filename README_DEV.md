@@ -23,6 +23,12 @@ Run locally
 
   http://127.0.0.1:8000/graphql
 
+- Metrics (basic):
+
+  http://127.0.0.1:8000/metrics
+
+  Exposes simple counters and average latencies per path for local observability.
+
 Frontend
 
 - A minimal Next.js frontend scaffold is included under `frontend/` with the following pages:

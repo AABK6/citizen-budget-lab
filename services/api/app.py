@@ -1,6 +1,6 @@
 import logging
 import time
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from strawberry.fastapi import GraphQLRouter
 
@@ -38,6 +38,9 @@ def create_app() -> FastAPI:
             logger.warning("Sentry init failed: %s", e)
 
     # Request logging middleware
+    # Simple in-memory metrics
+    app.state.metrics = {"req_count": {}, "latency_sum_ms": {}}
+
     @app.middleware("http")
     async def _log_requests(request: Request, call_next):  # noqa: ANN001
         start = time.perf_counter()
@@ -47,6 +50,14 @@ def create_app() -> FastAPI:
         finally:
             dur_ms = (time.perf_counter() - start) * 1000.0
             logger.info("%s %s -> %s in %.1fms", request.method, request.url.path, getattr(request, 'state', {}), dur_ms)
+            try:
+                path = str(request.url.path)
+                mc = app.state.metrics["req_count"]
+                ms = app.state.metrics["latency_sum_ms"]
+                mc[path] = mc.get(path, 0) + 1
+                ms[path] = ms.get(path, 0.0) + float(dur_ms)
+            except Exception:
+                pass
 
     graphql_app = GraphQLRouter(schema)
     app.include_router(graphql_app, prefix="/graphql")
@@ -96,6 +107,22 @@ def create_app() -> FastAPI:
             "rows": counts,
             "dbt": {"version": dbt_ver},
         }
+
+    @app.get("/metrics")
+    def metrics() -> Response:
+        lines: list[str] = []
+        try:
+            mc = app.state.metrics["req_count"]
+            ms = app.state.metrics["latency_sum_ms"]
+            for path, cnt in mc.items():
+                lines.append(f"cbl_request_count{{path=\"{path}\"}} {int(cnt)}")
+                if cnt > 0:
+                    avg = (ms.get(path, 0.0) / float(cnt))
+                    lines.append(f"cbl_request_latency_ms_avg{{path=\"{path}\"}} {avg:.3f}")
+        except Exception:
+            pass
+        body = "\n".join(lines) + "\n"
+        return Response(content=body, media_type="text/plain; version=0.0.4")
 
     return app
 

@@ -150,9 +150,11 @@ _COFOG_LABELS = {
 
 
 def allocation_by_cofog(year: int, basis: Basis) -> List[MissionAllocation]:
-    # Try warehouse aggregate first
+    # Optional: prefer warehouse aggregate only when explicitly enabled
     try:
-        if wh.warehouse_available():
+        from .settings import get_settings as _get_settings  # lazy import
+
+        if _get_settings().warehouse_cofog_override and wh.warehouse_available():
             items = wh.allocation_by_cofog(year, basis)
             if items:
                 return items
@@ -203,7 +205,7 @@ def allocation_by_cofog(year: int, basis: Basis) -> List[MissionAllocation]:
         for d in mapping:
             code = str(d.get("code"))
             major = code.split(".")[0] if code else ""
-            major = major[:2]
+            major = major[:2].zfill(2)
             w = float(d.get("weight", 1.0))
             by_cofog[major] += val * w
 

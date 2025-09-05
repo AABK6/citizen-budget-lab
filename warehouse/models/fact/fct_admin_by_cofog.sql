@@ -13,7 +13,10 @@ map_mission as (
 ),
 joined as (
   select l.year,
-         left(m.cofog_code, 2) as cofog_major,
+         case when length(split_part(m.cofog_code::varchar, '.', 1)) = 1
+              then '0' || split_part(m.cofog_code::varchar, '.', 1)
+              else split_part(m.cofog_code::varchar, '.', 1)
+          end as cofog_major,
          sum(l.cp_eur * m.weight) as cp_eur,
          sum(l.ae_eur * m.weight) as ae_eur
   from lines l
