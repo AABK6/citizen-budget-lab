@@ -59,6 +59,7 @@ Phase 5 — Visual Rigor: Waterfall + Ribbons + Lens
 - WaterfallDelta: Δ by Mass/Family/Reform; lazy‑loaded; export static.
 - Sankey‑lite ribbons: hover highlights reform → mass attribution.
 - AC: hover answers “which lever contributed most?”; totals reconcile.
+- Implemented (initial): Waterfall in Canvas for Mass lens; ribbons available in Results Tray; lens chips scaffolded in Canvas (Mass active).
 
 Phase 6 — Policy‑First Flow
 - Reform Library: categories/tags/search; cards with summary, € range, incidence bullets, feasibility tags.
@@ -120,8 +121,8 @@ Challenges/Classroom (later)
 - Challenge registry; validation (resolution threshold); leaderboard; Room join/freeze; Debrief export.
 
 Polish: A11y/Perf
- - Keyboardable dials; aria-live for progress; skeleton states; lazy charts; code‑split Workshop.
- - Undo/Redo stack (Cmd/Ctrl+Z / Shift+Z); '/' search focus.
+- Keyboardable dials; aria-live for progress; skeleton states; lazy charts; code‑split Workshop.
+- Undo/Redo stack (Cmd/Ctrl+Z / Shift+Z); '/' search focus; 'f' pin/unpin; '+'/'-' adjust focused delta; next: Esc closes overlays.
 
 Telemetry
 - Emit events; anonymous; DNT support; dashboards for funnel.
