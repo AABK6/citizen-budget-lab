@@ -75,6 +75,9 @@ export default function BuildPage() {
   const [favRev, setFavRev] = useState<string[]>([])
   const [explainId, setExplainId] = useState<string | null>(null)
   const [showTray, setShowTray] = useState<boolean>(false)
+  const [showAdjExp, setShowAdjExp] = useState<boolean>(false)
+  const [showAdjRev, setShowAdjRev] = useState<boolean>(false)
+  const [lastDsl, setLastDsl] = useState<string>('')
 
   // COFOG major labels (client-side)
   const COFOG_LABELS: Record<string, string> = {
@@ -271,12 +274,13 @@ export default function BuildPage() {
         setRibbons((comp.ribbons||[]).map((r:any)=> ({ pieceId: String(r.pieceId), massId: String(r.massId), amountEur: Number(r.amountEur||0) })))
         setRibbonLabels({ piece: comp.pieceLabels||{}, mass: comp.massLabels||{} })
       } catch {}
-      // Sync permalink
+      // Sync permalink and mark last run
       try {
         const url = new URL(window.location.href)
         url.searchParams.set('dsl', dslB64)
         window.history.replaceState({}, '', url.toString())
       } catch {}
+      try { setLastDsl(dslB64) } catch {}
     } catch (e: any) {
       setError(e?.message || 'Failed to run scenario')
       if ((e?.message||'').toLowerCase().includes('conflict')) {
@@ -308,8 +312,17 @@ export default function BuildPage() {
     return m
   }, [result?.resolutionByMass])
   const groupedExp = useMemo(() => groupPiecesByMass(exp, massList.reduce((acc,m)=> (acc[m]=massUiLabel(m), acc), {} as Record<string,string>)), [exp, massLabels])
-  const filteredGroupedExp = useMemo(() => filterGrouped(groupedExp, expFilter), [groupedExp, expFilter])
-  const filteredRev = useMemo(() => rev.filter(p => (p.label || p.id).toLowerCase().includes(revFilter.toLowerCase())), [rev, revFilter])
+  const filteredGroupedExp = useMemo(() => {
+    const f = filterGrouped(groupedExp, expFilter)
+    if (!showAdjExp) return f
+    const hasChange = (p: Piece) => Math.abs(Number(deltas[p.id]||0))>0 || Math.abs(Number(targets[p.id]||0))>0
+    return f.map(g => ({...g, pieces: g.pieces.filter(hasChange)})).filter(g=> g.pieces.length)
+  }, [groupedExp, expFilter, showAdjExp, deltas, targets])
+  const filteredRev = useMemo(() => {
+    const list = rev.filter(p => (p.label || p.id).toLowerCase().includes(revFilter.toLowerCase()))
+    if (!showAdjRev) return list
+    return list.filter(p => Math.abs(Number(deltas[p.id]||0))>0 || Math.abs(Number(targets[p.id]||0))>0)
+  }, [rev, revFilter, showAdjRev, deltas, targets])
 
   return (
     <div className="stack" style={{ gap: '1.25rem' }}>
@@ -351,8 +364,12 @@ export default function BuildPage() {
                         <div className="fr-input-group">
                           <input className="fr-input" placeholder={t('labels.search') || 'Search…'} value={expFilter} onChange={(e)=> setExpFilter(e.target.value)} />
                         </div>
+                        <div className="fr-checkbox-group fr-checkbox-group--sm" style={{ marginTop: '.25rem' }}>
+                          <input type="checkbox" id="exp_adj" checked={showAdjExp} onChange={(e)=> setShowAdjExp(e.currentTarget.checked)} />
+                          <label className="fr-label" htmlFor="exp_adj">{t('labels.adjusted_only') || 'Adjusted only'}</label>
+                        </div>
                         {favExp.length>0 && (
-                          <div className="fr-text--xs" style={{ marginTop: '.25rem' }}>{t('labels.pinned') || 'Pinned'}: {favExp.length}</div>
+                          <PinnedPieces pieces={pieces} ids={favExp} deltas={deltas} targets={targets} onDelta={updateDelta} onTarget={updateTarget} onUnpin={(id)=> setFavExp(v=> v.filter(x=> x!==id))} t={t} />
                         )}
                       </div>
                       <GroupedPieceList2
@@ -375,8 +392,12 @@ export default function BuildPage() {
                         <div className="fr-input-group">
                           <input className="fr-input" placeholder={t('labels.search') || 'Search…'} value={revFilter} onChange={(e)=> setRevFilter(e.target.value)} />
                         </div>
+                        <div className="fr-checkbox-group fr-checkbox-group--sm" style={{ marginTop: '.25rem' }}>
+                          <input type="checkbox" id="rev_adj" checked={showAdjRev} onChange={(e)=> setShowAdjRev(e.currentTarget.checked)} />
+                          <label className="fr-label" htmlFor="rev_adj">{t('labels.adjusted_only') || 'Adjusted only'}</label>
+                        </div>
                         {favRev.length>0 && (
-                          <div className="fr-text--xs" style={{ marginTop: '.25rem' }}>{t('labels.pinned') || 'Pinned'}: {favRev.length}</div>
+                          <PinnedPieces pieces={pieces} ids={favRev} deltas={deltas} targets={targets} onDelta={updateDelta} onTarget={updateTarget} onUnpin={(id)=> setFavRev(v=> v.filter(x=> x!==id))} t={t} />
                         )}
                       </div>
                       <PieceList2
@@ -415,6 +436,8 @@ export default function BuildPage() {
               estRev={estimateDeltaRev(rev, deltas)}
               result={result}
               conflictNudge={conflictNudge}
+              currentDsl={dslB64}
+              lastDsl={lastDsl}
             />
             <div className="fr-card fr-card--no-arrow">
               <div className="fr-card__body">
@@ -754,13 +777,13 @@ function PieceRow2({ p, deltas, targets, onDelta, onTarget, t, resByMass, pinned
   )
 }
 
-function ScoreStrip({ estExp, estRev, result, conflictNudge }: { estExp: number, estRev: number, result: any, conflictNudge: string | null }) {
+function ScoreStrip({ estExp, estRev, result, conflictNudge, currentDsl, lastDsl }: { estExp: number, estRev: number, result: any, conflictNudge: string | null, currentDsl: string, lastDsl: string }) {
   const net = (estExp + estRev) || 0
   return (
     <div style={{ position: 'sticky', top: 64, zIndex: 11 }}>
       <div className="fr-card fr-card--no-arrow">
         <div className="fr-card__body">
-          <div className="fr-card__title">{`Scoreboard`}</div>
+          <div className="fr-card__title">Scoreboard</div>
           <div className="fr-card__desc">
             <dl className="fr-description-list">
               <div className="fr-description-list__row">
@@ -790,6 +813,7 @@ function ScoreStrip({ estExp, estRev, result, conflictNudge }: { estExp: number,
             </dl>
             {conflictNudge && <p className="fr-alert fr-alert--warning" role="alert" style={{ marginTop: '.25rem' }}>{conflictNudge}</p>}
           </div>
+          <OutdatedChip dirty={!!lastDsl && lastDsl !== currentDsl} />
         </div>
       </div>
     </div>
@@ -814,6 +838,12 @@ function ExplainOverlay({ piece, onClose, t }: { piece?: Piece, onClose: ()=>voi
         </div>
         <div style={{ marginTop: '.5rem' }}>
           <p className="fr-text--sm">{t('explain.placeholder') || 'Focused explanation and context for this piece. Add detailed notes, assumptions, and links here.'}</p>
+          <ul className="fr-tags-group" style={{ marginTop: '.5rem' }}>
+            <li><span className="fr-tag fr-tag--sm">{t('build.base_amount') || 'Base'}: {(piece.amountEur||0).toLocaleString()} €</span></li>
+            {Array.isArray(piece.cofogMajors) && piece.cofogMajors[0] && (
+              <li><span className="fr-tag fr-tag--sm">COFOG {String(piece.cofogMajors[0]).padStart(2,'0')}</span></li>
+            )}
+          </ul>
         </div>
         <div style={{ textAlign:'right', marginTop: '.5rem' }}>
           <button className="fr-btn" onClick={onClose}>{t('buttons.done') || 'Done'}</button>
@@ -821,6 +851,51 @@ function ExplainOverlay({ piece, onClose, t }: { piece?: Piece, onClose: ()=>voi
       </div>
     </div>
   )
+}
+
+function PinnedPieces({ pieces, ids, deltas, targets, onDelta, onTarget, onUnpin, t }: {
+  pieces: Piece[]
+  ids: string[]
+  deltas: Record<string, number>
+  targets: Record<string, number>
+  onDelta: (id: string, v: number)=>void
+  onTarget: (id: string, v: number)=>void
+  onUnpin: (id: string)=>void
+  t: (k: string)=>string
+}) {
+  const map = new Map(pieces.map(p => [p.id, p]))
+  if (!ids.length) return null
+  return (
+    <div className="fr-grid-row fr-grid-row--gutters" style={{ marginTop: '.25rem' }}>
+      {ids.map(id => {
+        const p = map.get(id)
+        if (!p) return null
+        return (
+          <div className="fr-col-12 fr-col-sm-6" key={id}>
+            <div className="fr-input-group" style={{ padding: '.25rem .5rem', border: '1px solid var(--border-default-grey)', borderRadius: 6 }}>
+              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap: '.5rem' }}>
+                <span className="fr-text--sm" style={{ whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{p.label || id}</span>
+                <button className="fr-btn fr-btn--sm fr-btn--secondary" title={t('labels.unpin') || 'Unpin'} onClick={()=> onUnpin(id)}>✕</button>
+              </div>
+              <div className="fr-grid-row fr-grid-row--gutters" style={{ marginTop: '.25rem' }}>
+                <div className="fr-col-6">
+                  <input className="fr-input fr-input--sm" type="number" value={deltas[id] ?? 0} onChange={e=> onDelta(id, Number(e.target.value))} aria-label={`Δ% ${id}`} />
+                </div>
+                <div className="fr-col-6">
+                  <input className="fr-input fr-input--sm" type="number" value={targets[id] ?? 0} onChange={e=> onTarget(id, Number(e.target.value))} aria-label={`Target% ${id}`} />
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+function OutdatedChip({ dirty }: { dirty: boolean }) {
+  if (!dirty) return null
+  return <span className="fr-badge fr-badge--sm" style={{ marginTop: '.25rem' }}>Outdated results</span>
 }
 
 function BuildHud({ estExp, estRev, result, onRun, running, onReset, onToggleDsl, t }: { estExp: number, estRev: number, result: any, onRun: ()=>void, running: boolean, onReset: ()=>void, onToggleDsl: ()=>void, t: (k: string)=>string }) {
@@ -865,9 +940,9 @@ function BuildHud({ estExp, estRev, result, onRun, running, onReset, onToggleDsl
         </div>
         <div className="fr-col-6 fr-col-md-2" style={{ textAlign: 'right' }}>
           <div className="fr-btns-group fr-btns-group--inline fr-btns-group--right">
-            <button className="fr-btn fr-btn--secondary" onClick={onReset}>{t('buttons.reset') || 'Reset'}</button>
-            <button className="fr-btn" onClick={onRun} disabled={running}>{t('buttons.run') || 'Run'}</button>
-            <button className="fr-btn fr-btn--secondary" onClick={onToggleDsl}>{'</>'} DSL</button>
+            <button className="fr-btn fr-btn--secondary" onClick={onReset} title={t('buttons.reset') || 'Reset'}>⟲</button>
+            <button className="fr-btn" onClick={onRun} disabled={running} title={t('buttons.run') || 'Run'}>▶︎</button>
+            <button className="fr-btn fr-btn--secondary" onClick={onToggleDsl} title="DSL">{'</>'}</button>
           </div>
         </div>
         <div className="fr-col-12 fr-col-md-2" style={{ textAlign: 'right' }}>
@@ -926,7 +1001,7 @@ function MassList({ masses, labels, baseAmounts, targets, changes, onTarget, onC
             </div>
           </div>
           <div className="fr-btns-group fr-btns-group--inline" style={{ marginTop: '.25rem' }}>
-            <button className="fr-btn fr-btn--secondary fr-btn--sm" onClick={()=> onExplain && onExplain(m)}>Explain this</button>
+            <button className="fr-btn fr-btn--secondary fr-btn--sm" onClick={()=> onExplain && onExplain(m)}>{labels instanceof Function ? (labels(m)+': ') : ''}{'Explain'}</button>
           </div>
           {resBy[m] && (
             <div className="fr-progress" style={{marginTop:'.25rem'}} aria-label="Resolution">
