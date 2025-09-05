@@ -204,6 +204,7 @@ Epics
     - [x] Workshop: lever cards, dynamic params from schema; apply to mass; conflict nudge skeleton
     - [x] DSL restore (parse YAML‑lite; hydrate Piece/Mass/Levers)
     - [ ] Mass cards + Explain Overlay (ranked suggestions; sum‑constrained split)
+      - [x] Backend: `explainPiece(id, year, scope)` returns mapping, bounds, baseline, beneficiaries, sources.
     - [ ] Human labels/desc/examples (masses/pieces) with tooltips; intent chips
     - [x] suggestLevers, popularIntents, specifyMass (API)
       - Implemented/resolved in GraphQL with tests covering suggestions, mass labels/intents, and specifyMass validation + DSL update.

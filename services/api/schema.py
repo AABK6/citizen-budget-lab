@@ -185,6 +185,36 @@ class LegoPieceType:
     locked: bool
 
 
+@strawberry.type
+class CofogWeightType:
+    code: str
+    weight: float
+
+
+@strawberry.type
+class NaItemWeightType:
+    code: str
+    weight: float
+
+
+@strawberry.type
+class ExplainPieceType:
+    id: str
+    label: str
+    description: Optional[str]
+    examples: list[str]
+    beneficiaries: JSON
+    cofog: list[CofogWeightType]
+    naItems: list[NaItemWeightType]
+    baselineAmountEur: Optional[float]
+    baselineShare: Optional[float]
+    lockedDefault: bool
+    boundsPct: JSON
+    boundsAmountEur: JSON
+    elasticity: JSON
+    sources: list[str]
+
+
 @strawberry.enum
 class ScopeEnum(str, enum.Enum):
     S13 = "S13"
@@ -544,6 +574,78 @@ class Query:
             return out
         except Exception:
             return []
+
+    @strawberry.field
+    def explainPiece(self, id: str, year: int, scope: ScopeEnum = ScopeEnum.S13) -> ExplainPieceType:  # noqa: N802
+        """Explain a LEGO piece: mapping, bounds, baseline, beneficiaries, sources."""
+        from .data_loader import load_lego_config as _cfg, lego_pieces_with_baseline as _lp
+
+        cfg = _cfg() or {}
+        by_id = {str(p.get("id")): p for p in (cfg.get("pieces") or [])}
+        p = by_id.get(id)
+        if not p:
+            # Return an empty shell to avoid errors
+            return ExplainPieceType(
+                id=id,
+                label=id,
+                description=None,
+                examples=[],
+                beneficiaries={},
+                cofog=[],
+                naItems=[],
+                baselineAmountEur=None,
+                baselineShare=None,
+                lockedDefault=False,
+                boundsPct={},
+                boundsAmountEur={},
+                elasticity={},
+                sources=[],
+            )
+        mapping = p.get("mapping") or {}
+        cof = []
+        for ent in (mapping.get("cofog") or []):
+            try:
+                cof.append(CofogWeightType(code=str(ent.get("code")), weight=float(ent.get("weight", 1.0))))
+            except Exception:
+                continue
+        nai = []
+        for ent in (mapping.get("na_item") or []):
+            try:
+                nai.append(NaItemWeightType(code=str(ent.get("code")), weight=float(ent.get("weight", 1.0))))
+            except Exception:
+                continue
+        pol = p.get("policy") or {}
+        locked = bool(pol.get("locked_default", False))
+        bounds_pct = pol.get("bounds_pct") or {}
+        bounds_amt = pol.get("bounds_amount_eur") or {}
+        elasticity = p.get("elasticity") or {}
+        # Baseline amount/share from warmed baseline
+        baseline_amt = None
+        baseline_share = None
+        try:
+            for it in _lp(year, scope.value):
+                if str(it.get("id")) == id:
+                    baseline_amt = it.get("amount_eur")
+                    baseline_share = it.get("share")
+                    break
+        except Exception:
+            pass
+        return ExplainPieceType(
+            id=id,
+            label=str(p.get("label") or id),
+            description=str(p.get("description") or ""),
+            examples=[str(x) for x in (p.get("examples") or [])],
+            beneficiaries=p.get("beneficiaries") or {},
+            cofog=cof,
+            naItems=nai,
+            baselineAmountEur=(float(baseline_amt) if isinstance(baseline_amt, (int, float)) else None),
+            baselineShare=(float(baseline_share) if isinstance(baseline_share, (int, float)) else None),
+            lockedDefault=locked,
+            boundsPct=bounds_pct,
+            boundsAmountEur=bounds_amt,
+            elasticity=elasticity,
+            sources=[str(x) for x in (p.get("sources") or [])],
+        )
 
     @strawberry.field
     def legoBaseline(self, year: int, scope: ScopeEnum = ScopeEnum.S13) -> LegoBaselineType:  # noqa: N802
