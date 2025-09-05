@@ -232,13 +232,13 @@ Build Page — Detailed Tasks [UI][API]
   - [ ] Explain Overlay: scoped panel with suggestions and sum‑constrained sliders; focus management.
 
  D) Canvas & Consequences
-  - [x] TwinBars (baseline vs scenario) with pending stripes; WaterfallDelta in Canvas.
+  - [x] TwinBars (baseline vs scenario) with pending stripes; WaterfallDelta in Canvas; mass palette applied.
   - [x] Slim ScoreStrip under Canvas (sticky); Results Tray with Debt path; Workshop/DSL/Save in tray; Sankey ribbons remain in tray.
   - [ ] Lens recolorings; export image; lazy‑load charts.
 
  E) HUD & Shortcuts
   - [x] Cockpit HUD (ΔExp/ΔRev, Net Δ, Resolution %, EU lights, Run/Reset).
-  - [ ] Debt sparkline in HUD; %GDP badge on Net Δ.
+  - [~] Debt sparkline in HUD; %GDP badge on Net Δ (approx using baseline total until GDP wired).
   - [x] Undo/Redo stack (Cmd/Ctrl+Z and Shift+Z); '/' focuses search. Next: F pin; +/- adjust; Esc close overlays.
 
  F) A11y, i18n, Perf

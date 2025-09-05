@@ -40,9 +40,9 @@ Components (selected)
 - Explore: `Sunburst`, `Treemap`, `LensToggle`, `YearSlider`, `BasisToggle`, `OutcomePanel`, `ExportButton`.
 - Procurement: `ProcurementMap`, `SupplierTable`, `FiltersPanel`, `ExportButton`.
 - Playground & Workshop (two‑column command center + HUD):
-  - Cockpit HUD (sticky): `BudgetHUD` (ΔExp/ΔRev, Net Δ, Resolution bar, EU rule lights, Run/Reset, keyboard hints); future: debt sparkline, %GDP badge, Undo/Redo.
+  - Cockpit HUD (sticky): `BudgetHUD` (ΔExp/ΔRev, Net Δ, Resolution bar, EU rule lights, Run/Reset, keyboard hints); added: mini debt sparkline, approximate %GDP badge (uses baseline total until GDP is wired), Undo/Redo.
   - Left (Controls): `PiecesPanel` split into twin lists — `SpendingList` (grouped by COFOG with collapsible headers) and `RevenueList` (flat list). Each row: label, amount, pin, delta slider, target input, micro progress bar, Explain button. Sticky `SearchBox` and filters (Adjusted‑only). `PinnedRow` above lists for quick Δ/Target edits. `PinnedLevers` inline configurators render params + mass select + Apply as Target/Change.
-  - Right (Canvas + Scoreboard): `TwinBars` (baseline vs scenario; pending stripes), optional `WaterfallDelta`. Slim `ScoreStrip` mirrors HUD basics and stays sticky. `ResultsTray` expands to show `DeficitPathChart`, `MacroFan`, `DistributionChart`, `PolicyWorkshop`, `DslPanel`, `SaveBlock`.
+  - Right (Canvas + Scoreboard): `TwinBars` (baseline vs scenario; pending stripes) recolored by mass palette; `WaterfallDelta` under bars. Slim `ScoreStrip` mirrors HUD basics and stays sticky. `ResultsTray` expands to show `DeficitPathChart`, `MacroFan`, `DistributionChart`, `PolicyWorkshop`, `DslPanel`, `SaveBlock`.
   - Explain Overlay (progressive disclosure): `ExplainOverlay` focused on one piece or mass; background dims; shows description, assumptions, links, and quick actions.
   - Editors/utilities: `TargetPicker`, `TaxParamEditor`, `AmountSlider`, `OffsetsEditor`, `DslDrawer`.
 - Shared: `Layout`, `LangSwitcher`, `SourceLink`, `ErrorBoundary`, `Loading`, `GlobalControls` (FR/EN, color‑blind, Show table, Share/Remix, Assumptions), `BudgetHUD` (bottom: balance €/ %GDP, debt sparkline with fan, EU lights, real/nominal, year, undo/redo, reset).
@@ -281,6 +281,6 @@ Build — Visual & Interaction Heuristics
 - Progressive disclosure: Keep heavy analytics in the tray; keep configurators inline; elevate Explain overlay only when needed.
 - Micro‑interactions: animate bar widths on changes; use subtle pending stripes; optimistic UI for sliders; toast on save/run; loading skeletons.
 - Keyboard: arrow keys on focused sliders; +/- adjust; Cmd/Ctrl+Z/Y (undo/redo, future); F to pin/unpin; / to focus search; Esc to dismiss overlays.
-  - Implemented: Cmd/Ctrl+Z (undo), Cmd/Ctrl+Shift+Z (redo), / focuses search, '+'/'-' adjust focused delta, 'f' pins/unpins focused piece. Next: Esc to close overlays, move focus to group headers.
+  - Implemented: Cmd/Ctrl+Z (undo), Cmd/Ctrl+Shift+Z (redo), / focuses search, '+'/'-' adjust focused delta, 'f' pins/unpins focused piece, Esc closes overlays.
 - Accessibility: list semantics; aria‑expanded on groups; aria‑valuenow/min/max on sliders; live regions for resolution updates.
 - Responsiveness: stack columns under Canvas on small screens; HUD and ScoreStrip remain sticky; tray becomes a full‑width drawer.

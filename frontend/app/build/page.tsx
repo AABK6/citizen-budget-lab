@@ -78,6 +78,7 @@ export default function BuildPage() {
   const [showAdjExp, setShowAdjExp] = useState<boolean>(false)
   const [showAdjRev, setShowAdjRev] = useState<boolean>(false)
   const [lastDsl, setLastDsl] = useState<string>('')
+  const [lens, setLens] = useState<'mass'|'family'|'reform'>('mass')
   // Undo/Redo stack
   type Op =
     | { kind: 'pieceDelta'; id: string; prev?: number; next?: number }
@@ -452,6 +453,7 @@ export default function BuildPage() {
         estExp={estimateDeltaExp(exp, deltas)}
         estRev={estimateDeltaRev(rev, deltas)}
         result={result}
+        baselineTotal={Number(baseline?.depensesTotal || 0)}
         onRun={runScenario}
         running={running}
         onReset={()=>{ setDeltas({}); setTargets({}); setMassTargets({}); setMassChanges({}); setSelectedLevers([]); setResult(null); setOps([]); setCursor(0); setLastDsl(''); }}
@@ -975,6 +977,11 @@ function ScoreStrip({ estExp, estRev, result, conflictNudge, currentDsl, lastDsl
 
 function ExplainOverlay({ piece, onClose, t }: { piece?: Piece, onClose: ()=>void, t: (k:string)=>string }) {
   if (!piece) return null
+  useEffect(() => {
+    function onKey(e: KeyboardEvent){ if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onClose])
   return (
     <div role="dialog" aria-modal="true" style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.45)', zIndex: 100 }} onClick={onClose}>
       <div className="fr-container" style={{ maxWidth: 720, margin:'10vh auto', background: 'var(--background-default-grey)', borderRadius: 8, padding: '1rem', position: 'relative' }} onClick={(e)=> e.stopPropagation()}>
@@ -1051,7 +1058,7 @@ function OutdatedChip({ dirty }: { dirty: boolean }) {
   return <span className="fr-badge fr-badge--sm" style={{ marginTop: '.25rem' }}>Outdated results</span>
 }
 
-function BuildHud({ estExp, estRev, result, onRun, running, onReset, onToggleDsl, t }: { estExp: number, estRev: number, result: any, onRun: ()=>void, running: boolean, onReset: ()=>void, onToggleDsl: ()=>void, t: (k: string)=>string }) {
+function BuildHud({ estExp, estRev, result, baselineTotal, onRun, running, onReset, onToggleDsl, t }: { estExp: number, estRev: number, result: any, baselineTotal: number, onRun: ()=>void, running: boolean, onReset: ()=>void, onToggleDsl: ()=>void, t: (k: string)=>string }) {
   const netEst = (estExp + estRev) || 0
   const eu3 = result?.eu3 || 'info'
   const eu60 = result?.eu60 || 'info'
@@ -1072,7 +1079,12 @@ function BuildHud({ estExp, estRev, result, onRun, running, onReset, onToggleDsl
             {' '}·{' '}
             <strong>{t('build.delta_rev') || 'ΔRevenues (est.)'}:</strong> {estRev.toLocaleString(undefined,{ maximumFractionDigits: 0 })} €
           </div>
-          <div><strong>{t('hud.net_delta') || 'Net Δ (est. y0): '}</strong>{netEst.toLocaleString(undefined,{ maximumFractionDigits: 0 })} €</div>
+          <div>
+            <strong>{t('hud.net_delta') || 'Net Δ (est. y0): '}</strong>{netEst.toLocaleString(undefined,{ maximumFractionDigits: 0 })} €
+            {baselineTotal>0 && (
+              <span className="fr-badge fr-badge--sm" style={{ marginLeft: '.5rem' }}>≈ {(100*netEst/ baselineTotal).toFixed(2)}% GDP</span>
+            )}
+          </div>
         </div>
         <div className="fr-col-12 fr-col-md-3">
           <div className="fr-progress" aria-label="Resolution">
@@ -1340,9 +1352,18 @@ function PinnedLevers({ levers, selected, masses, labels, baseAmounts, onApply, 
   )
 }
 
-function TwinBars({ masses, labels, resolution }: { masses: Record<string, { base: number; scen: number }>, labels: Record<string,string>, resolution?: { massId: string; targetDeltaEur: number; specifiedDeltaEur: number }[] }) {
+function TwinBars({ masses, labels, resolution, palette }: { masses: Record<string, { base: number; scen: number }>, labels: Record<string,string>, resolution?: { massId: string; targetDeltaEur: number; specifiedDeltaEur: number }[], palette?: Record<string,string> }) {
   const keys = Object.keys(masses)
   if (!keys.length) return null
+  function lighten(hex: string, amt: number) {
+    const m = hex.replace('#','')
+    const num = parseInt(m.length===3 ? m.split('').map(c=>c+c).join('') : m, 16)
+    let r = (num >> 16) + amt
+    let g = ((num >> 8) & 0xff) + amt
+    let b = (num & 0xff) + amt
+    r = Math.max(0, Math.min(255, r)); g = Math.max(0, Math.min(255, g)); b = Math.max(0, Math.min(255, b))
+    return '#' + ((1<<24) + (r<<16) + (g<<8) + b).toString(16).slice(1)
+  }
   return (
     <div className="fr-container" style={{ marginTop: '1rem' }}>
       <h4 className="fr-h4">Top Masses — Baseline vs Scenario</h4>
@@ -1354,6 +1375,8 @@ function TwinBars({ masses, labels, resolution }: { masses: Record<string, { bas
           const pending = (resolution||[]).find(e=> e.massId === k)
           const pendAmt = Math.max(0, Math.abs((pending?.targetDeltaEur||0)) - Math.abs((pending?.specifiedDeltaEur||0)))
           const pendPct = Math.min(100, (pendAmt / (Math.abs(base) + 1e-9)) * 100)
+          const col = (palette && palette[k]) ? palette[k] : '#0A76F6'
+          const col2 = lighten(col, 30)
           return (
             <div key={k}>
               <div className="fr-grid-row fr-grid-row--gutters" style={{ alignItems: 'center' }}>
@@ -1362,13 +1385,13 @@ function TwinBars({ masses, labels, resolution }: { masses: Record<string, { bas
                   <div style={{ display: 'flex', gap: '.5rem' }}>
                     <div style={{ flex: 1 }}>
                       <div style={{ background: '#e5e5e5', height: '10px', position:'relative' }}>
-                        <div style={{ width: `${(base/tot)*100}%`, background: '#0A76F6', height: '10px' }}></div>
+                        <div style={{ width: `${(base/tot)*100}%`, background: col, height: '10px' }}></div>
                       </div>
                       <span className="fr-text--xs">Base {(base*100).toFixed(1)}%</span>
                     </div>
                     <div style={{ flex: 1 }}>
                       <div style={{ background: '#e5e5e5', height: '10px', position:'relative' }}>
-                        <div style={{ width: `${(scen/tot)*100}%`, background: '#2CB67D', height: '10px', position:'relative' }}>
+                        <div style={{ width: `${(scen/tot)*100}%`, background: col2, height: '10px', position:'relative' }}>
                           {pendPct>0 && <div style={{ position:'absolute', top:0, right:0, height:'10px', width: `${pendPct}%`, backgroundImage: 'repeating-linear-gradient(45deg, rgba(0,0,0,0.2) 0, rgba(0,0,0,0.2) 3px, transparent 3px, transparent 6px)' }}></div>}
                         </div>
                       </div>
@@ -1399,6 +1422,11 @@ function ExplainPanel({ massId, label, baseAmount, targetAmount, specifiedAmount
   onClose: ()=>void
   onApply: (plan: Array<{ pieceId: string; amountEur: number }>)=>void
 }) {
+  useEffect(() => {
+    function onKey(e: KeyboardEvent){ if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onClose])
   const remaining = (targetAmount||0) - (specifiedAmount||0)
   const sign = remaining >= 0 ? 1 : -1
   const massPieces = pieces
