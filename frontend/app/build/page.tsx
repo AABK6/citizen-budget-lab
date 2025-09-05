@@ -970,26 +970,28 @@ function PieceRow2({ p, deltas, targets, onDelta, onTarget, t, resByMass, pinned
     return (hasDelta && hasTarget) ? 100 : (hasDelta || hasTarget) ? 50 : 0
   })()
   return (
-    <div data-piece-id={p.id} className="fr-input-group" style={{ padding: '.2rem .4rem', border: '1px solid var(--border-default-grey)', borderRadius: 6, position: 'relative', overflow: 'hidden' }}>
+    <div data-piece-id={p.id} className="fr-input-group" style={{ padding: '.15rem .35rem', border: '1px solid var(--border-default-grey)', borderRadius: 6, position: 'relative', overflow: 'hidden' }}>
       {unresolved && (
         <div aria-hidden="true" style={{ position:'absolute', inset:0, backgroundImage: 'repeating-linear-gradient(45deg, rgba(0,0,0,0.06) 0, rgba(0,0,0,0.06) 3px, transparent 3px, transparent 6px)' }}></div>
       )}
       <div style={{ position:'relative' }}>
-        <div style={{ display:'flex', alignItems:'center', gap: '.4rem' }}>
-          <div style={{ flex:1, minWidth:0, display:'flex', alignItems:'center', gap:'.35rem' }}>
-            <div className="fr-text--sm" title={p.label || p.id} style={{ whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{p.label || p.id}{p.locked && <span className="fr-badge fr-badge--sm" style={{ marginLeft: '.35rem' }}>{t('piece.locked') || 'Locked'}</span>}</div>
-            <button className="fr-btn fr-btn--sm fr-btn--secondary" title={t('labels.explain') || 'Explain'} onClick={()=> onExplain(p.id)} style={{ minWidth:24, padding:'.05rem .3rem' }}>?</button>
-            <button className="fr-btn fr-btn--sm fr-btn--secondary" title={pinned ? (t('labels.unpin') || 'Unpin') : (t('labels.pin') || 'Pin')} onClick={()=> onToggleFav(p.id)} style={{ minWidth:24, padding:'.05rem .3rem' }}>{pinned ? '★' : '☆'}</button>
+        <div style={{ display:'flex', alignItems:'center', gap: '.35rem' }}>
+          <div style={{ flex:1, minWidth:0, display:'flex', alignItems:'center', gap:'.3rem' }}>
+            <div className="fr-text--sm" style={{ whiteSpace:'normal', lineHeight:'1.25em', maxHeight:'2.6em', overflow:'hidden' }}>
+              {p.label || p.id}{p.locked && <span className="fr-badge fr-badge--sm" style={{ marginLeft: '.3rem' }}>{t('piece.locked') || 'Locked'}</span>}
+            </div>
+            <button aria-label={t('labels.explain') || 'Explain'} onClick={()=> onExplain(p.id)} style={{ border:'none', background:'transparent', cursor:'pointer', fontSize:'12px' }}>🕘</button>
+            <button aria-label={pinned ? (t('labels.unpin') || 'Unpin') : (t('labels.pin') || 'Pin')} onClick={()=> onToggleFav(p.id)} style={{ border:'none', background:'transparent', cursor:'pointer', fontSize:'14px', color: pinned ? '#4a3aff' : 'inherit' }}>{pinned ? '★' : '☆'}</button>
             <div className="fr-text--xs" style={{ color:'var(--text-mention-grey)' }}>{(p.amountEur||0).toLocaleString(undefined,{maximumFractionDigits:0})} €</div>
           </div>
-          <div aria-label="delta" title="Change %" style={{ display:'flex', alignItems:'center', gap:'.25rem' }}>
-            <Stepper id={`delta_${p.id}`} value={Number(deltas[p.id]||0)} min={-50} max={50} step={1} onChange={(v)=> onDelta(p.id, v)} disabled={!!p.locked} />
+          <div aria-label="delta" title="Change %" style={{ display:'flex', alignItems:'center', gap:'.2rem' }}>
+            <input id={`delta_${p.id}`} className="fr-input fr-input--sm" type="number" min={-50} max={50} step={1} value={Number(deltas[p.id]||0)} onChange={e=> onDelta(p.id, Number((e.target as HTMLInputElement).value||0))} disabled={!!p.locked} style={{ width:52 }} />
             <span className="fr-text--xs">%</span>
           </div>
           <TargetPill id={`target_${p.id}`} value={Number(targets[p.id]||0)} disabled={!!p.locked} onChange={(v)=> onTarget(p.id, v)} />
-          <span className="fr-badge fr-badge--sm" title="Δ€">{((Number(deltas[p.id]||0)/100)*(Number(p.amountEur||0))).toLocaleString(undefined,{maximumFractionDigits:0})} €</span>
+          <span className="fr-badge fr-badge--sm" title="Δ€" style={{ width:80, textAlign:'right' }}>{((Number(deltas[p.id]||0)/100)*(Number(p.amountEur||0))).toLocaleString(undefined,{maximumFractionDigits:0})} €</span>
         </div>
-        <div style={{ height:1, background:'#e5e5e5', marginTop:3, position:'relative' }} aria-hidden="true">
+        <div style={{ height:1, background:'#e5e5e5', marginTop:2, position:'relative' }} aria-hidden="true">
           <div style={{ position:'absolute', left:0, top:0, height:1, width:`${microPct}%`, background:'#0a7aff' }}></div>
         </div>
       </div>
@@ -1136,12 +1138,12 @@ function PinnedPieces({ pieces, ids, deltas, targets, onDelta, onTarget, onUnpin
           <div className="fr-col-12 fr-col-sm-6" key={id}>
             <div className="fr-input-group" style={{ padding: '.25rem .5rem', border: '1px solid var(--border-default-grey)', borderRadius: 6 }}>
               <div style={{ display:'flex', alignItems:'center', gap: '.5rem' }}>
-                <button className="fr-btn fr-btn--sm fr-btn--secondary" title={t('labels.unpin') || 'Unpin'} onClick={()=> onUnpin(id)} style={{ minWidth:28, padding:'.1rem .35rem' }}>✕</button>
-                <span className="fr-text--sm" style={{ whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', flex:1 }}>{p.label || id}</span>
-                <Stepper id={`pin_delta_${id}`} value={Number(deltas[id]||0)} min={-50} max={50} step={1} onChange={(v)=> onDelta(id, v)} />
+                <button aria-label={t('labels.unpin') || 'Unpin'} onClick={()=> onUnpin(id)} style={{ border:'none', background:'transparent', cursor:'pointer', fontSize:'12px' }}>✕</button>
+                <span className="fr-text--sm" title={p.label || id} style={{ whiteSpace:'normal', lineHeight:'1.25em', maxHeight:'2.6em', overflow:'hidden', flex:1 }}>{p.label || id}</span>
+                <input id={`pin_delta_${id}`} className="fr-input fr-input--sm" type="number" min={-50} max={50} step={1} value={Number(deltas[id]||0)} onChange={e=> onDelta(id, Number((e.target as HTMLInputElement).value||0))} style={{ width:52 }} />
                 <span className="fr-text--xs">%</span>
                 <TargetPill id={`pin_target_${id}`} value={Number(targets[id]||0)} onChange={(v)=> onTarget(id, v)} />
-                <span className="fr-badge fr-badge--sm">{((Number(deltas[id]||0)/100)*(Number(p.amountEur||0))).toLocaleString(undefined,{maximumFractionDigits:0})} €</span>
+                <span className="fr-badge fr-badge--sm" style={{ width:80, textAlign:'right' }}>{((Number(deltas[id]||0)/100)*(Number(p.amountEur||0))).toLocaleString(undefined,{maximumFractionDigits:0})} €</span>
               </div>
             </div>
           </div>
