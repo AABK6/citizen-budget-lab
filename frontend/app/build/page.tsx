@@ -78,6 +78,15 @@ export default function BuildPage() {
   const [showAdjExp, setShowAdjExp] = useState<boolean>(false)
   const [showAdjRev, setShowAdjRev] = useState<boolean>(false)
   const [lastDsl, setLastDsl] = useState<string>('')
+  // Undo/Redo stack
+  type Op =
+    | { kind: 'pieceDelta'; id: string; prev?: number; next?: number }
+    | { kind: 'pieceTarget'; id: string; prev?: number; next?: number }
+    | { kind: 'massTarget'; id: string; prev?: number; next?: number }
+    | { kind: 'massChange'; id: string; prev?: number; next?: number }
+    | { kind: 'leverToggle'; id: string; added: boolean }
+  const [ops, setOps] = useState<Op[]>([])
+  const [cursor, setCursor] = useState<number>(0) // next index
 
   // COFOG major labels (client-side)
   const COFOG_LABELS: Record<string, string> = {
@@ -291,14 +300,72 @@ export default function BuildPage() {
     }
   }
 
+  function commitOp(op: Op) {
+    setOps(prev => {
+      const base = prev.slice(0, cursor)
+      return [...base, op]
+    })
+    setCursor(c => c + 1)
+  }
+  function applyOp(op: Op, dir: 'undo' | 'redo') {
+    if (op.kind === 'pieceDelta') {
+      const val = dir === 'undo' ? op.prev : op.next
+      setDeltas(d => ({ ...d, [op.id]: Number(val ?? 0) }))
+    } else if (op.kind === 'pieceTarget') {
+      const val = dir === 'undo' ? op.prev : op.next
+      setTargets(t => ({ ...t, [op.id]: Number(val ?? 0) }))
+    } else if (op.kind === 'massTarget') {
+      const val = dir === 'undo' ? op.prev : op.next
+      setMassTargets(m => ({ ...m, [op.id]: Number(val ?? 0) }))
+    } else if (op.kind === 'massChange') {
+      const val = dir === 'undo' ? op.prev : op.next
+      setMassChanges(m => ({ ...m, [op.id]: Number(val ?? 0) }))
+    } else if (op.kind === 'leverToggle') {
+      setSelectedLevers(sel => {
+        const shouldAdd = dir === 'undo' ? !op.added : op.added
+        const exists = sel.includes(op.id)
+        if (shouldAdd && !exists) return [...sel, op.id]
+        if (!shouldAdd && exists) return sel.filter(x => x !== op.id)
+        return sel
+      })
+    }
+  }
+  function undo() {
+    if (cursor <= 0) return
+    const op = ops[cursor - 1]
+    applyOp(op, 'undo')
+    setCursor(c => c - 1)
+  }
+  function redo() {
+    if (cursor >= ops.length) return
+    const op = ops[cursor]
+    applyOp(op, 'redo')
+    setCursor(c => c + 1)
+  }
   function updateDelta(id: string, v: number) {
+    const prev = deltas[id]
+    commitOp({ kind: 'pieceDelta', id, prev, next: v })
     setDeltas({ ...deltas, [id]: v })
   }
   function updateTarget(id: string, v: number) {
+    const prev = targets[id]
+    commitOp({ kind: 'pieceTarget', id, prev, next: v })
     setTargets({ ...targets, [id]: v })
   }
+  function updateMassTarget(id: string, v: number) {
+    const prev = massTargets[id]
+    commitOp({ kind: 'massTarget', id, prev, next: v })
+    setMassTargets({ ...massTargets, [id]: v })
+  }
+  function updateMassChange(id: string, v: number) {
+    const prev = massChanges[id]
+    commitOp({ kind: 'massChange', id, prev, next: v })
+    setMassChanges({ ...massChanges, [id]: v })
+  }
   function toggleLever(id: string) {
-    setSelectedLevers(sel => sel.includes(id) ? sel.filter(x => x !== id) : [...sel, id])
+    const added = !selectedLevers.includes(id)
+    commitOp({ kind: 'leverToggle', id, added })
+    setSelectedLevers(sel => added ? [...sel, id] : sel.filter(x => x !== id))
   }
 
   const exp = pieces.filter(p => p.type !== 'revenue')
@@ -324,6 +391,24 @@ export default function BuildPage() {
     return list.filter(p => Math.abs(Number(deltas[p.id]||0))>0 || Math.abs(Number(targets[p.id]||0))>0)
   }, [rev, revFilter, showAdjRev, deltas, targets])
 
+  // Keyboard shortcuts: Undo/Redo and search focus
+  const searchRef = useMemo(() => ({ current: null as HTMLInputElement | null }), []) as { current: HTMLInputElement | null }
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      const isMeta = e.metaKey || e.ctrlKey
+      if (isMeta && e.key.toLowerCase() === 'z') {
+        e.preventDefault()
+        if (e.shiftKey) redo()
+        else undo()
+      } else if (!isMeta && e.key === '/') {
+        const el = searchRef.current
+        if (el) { e.preventDefault(); el.focus() }
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [undo, redo])
+
   return (
     <div className="stack" style={{ gap: '1.25rem' }}>
       <BuildHud
@@ -332,7 +417,7 @@ export default function BuildPage() {
         result={result}
         onRun={runScenario}
         running={running}
-        onReset={()=>{ setDeltas({}); setTargets({}); setMassTargets({}); setMassChanges({}); setSelectedLevers([]); setResult(null); }}
+        onReset={()=>{ setDeltas({}); setTargets({}); setMassTargets({}); setMassChanges({}); setSelectedLevers([]); setResult(null); setOps([]); setCursor(0); setLastDsl(''); }}
         onToggleDsl={()=> setShowDsl(s => !s)}
         t={t}
       />
@@ -362,7 +447,7 @@ export default function BuildPage() {
                       <div style={{ position:'sticky', top: 48, zIndex: 1, background: 'var(--background-default-grey)', paddingBottom: '.25rem' }}>
                         <h4 className="fr-h4" style={{ marginBottom: '.25rem' }}>{t('build.expenditures') || 'Spending'}</h4>
                         <div className="fr-input-group">
-                          <input className="fr-input" placeholder={t('labels.search') || 'Search…'} value={expFilter} onChange={(e)=> setExpFilter(e.target.value)} />
+                          <input ref={(el)=> (searchRef.current = el)} className="fr-input" placeholder={t('labels.search') || 'Search…'} value={expFilter} onChange={(e)=> setExpFilter(e.target.value)} />
                         </div>
                         <div className="fr-checkbox-group fr-checkbox-group--sm" style={{ marginTop: '.25rem' }}>
                           <input type="checkbox" id="exp_adj" checked={showAdjExp} onChange={(e)=> setShowAdjExp(e.currentTarget.checked)} />
@@ -428,6 +513,7 @@ export default function BuildPage() {
                 <div className="fr-card__title">{t('build.canvas') || 'Canvas'}</div>
                 <div className="fr-card__desc">
                   {result?.masses && <TwinBars masses={result.masses} labels={massList.reduce((acc, m)=> (acc[m]=massUiLabel(m), acc), {} as Record<string,string>)} resolution={result.resolutionByMass} />}
+                  {wfItems?.length>0 && <div style={{ marginTop: '.5rem' }}><WaterfallDelta items={wfItems} title={t('charts.waterfall') || 'Δ by Mass (Waterfall)'} /></div>}
                 </div>
               </div>
             </div>
@@ -452,7 +538,6 @@ export default function BuildPage() {
                         <DeficitPathChart deficit={result?.deficitPath || []} debt={result?.debtPath || []} />
                       </>
                     ) : null}
-                    {wfItems?.length>0 && <WaterfallDelta items={wfItems} title={t('charts.waterfall') || 'Δ by Mass (Waterfall)'} />}
                     {ribbons?.length>0 && <SankeyRibbons ribbons={ribbons} pieceLabels={ribbonLabels.piece} massLabels={ribbonLabels.mass} />}
                     <div className="fr-card fr-card--no-arrow">
                       <div className="fr-card__body">
@@ -689,7 +774,13 @@ function GroupedPieceList2({ grouped, deltas, targets, onDelta, onTarget, t, res
         <div key={g.key} className="fr-accordion" style={{ border: '1px solid var(--border-default-grey)', borderRadius: '6px' }}>
           <h3 className="fr-accordion__title" style={{ margin: 0 }}>
             <button className={open[g.key] ? 'fr-accordion__btn' : 'fr-accordion__btn collapsed'} aria-expanded={!!open[g.key]} onClick={()=> setOpen({ ...open, [g.key]: !open[g.key] })}>
-              {g.key} — {g.label} <span className="fr-text--xs" style={{ marginLeft: '.5rem' }}>({g.pieces.length})</span>
+              <span>{g.key} — {g.label}</span>
+              <span className="fr-text--xs" style={{ marginLeft: '.5rem' }}>({g.pieces.length})</span>
+              {resByMass[g.key] && (
+                <span className="fr-text--xs" style={{ marginLeft: '.5rem' }}>
+                  {(Math.min(100, Math.abs(resByMass[g.key].s) / (Math.abs(resByMass[g.key].t) || 1) * 100)).toFixed(0)}%
+                </span>
+              )}
             </button>
           </h3>
           {open[g.key] && (
