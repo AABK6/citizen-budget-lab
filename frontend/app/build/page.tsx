@@ -18,7 +18,7 @@ type Piece = {
   locked?: boolean
 }
 
-type Lever = { id: string; family: string; label: string; paramsSchema?: Record<string, any> }
+type Lever = { id: string; family: string; label: string; fixedImpactEur?: number | null }
 
 function b64Yaml(yaml: string): string {
   if (typeof window === 'undefined') return ''
@@ -138,7 +138,7 @@ export default function BuildPage() {
           query($y:Int!){
             legoPieces(year:$y){ id label type amountEur share cofogMajors locked }
             legoBaseline(year:$y){ depensesTotal recettesTotal }
-            policyLevers { id family label paramsSchema }
+            policyLevers { id family label fixedImpactEur }
             massLabels { id displayLabel description }
             popularIntents(limit: 6){ id label emoji massId seed }
           }
@@ -239,17 +239,10 @@ export default function BuildPage() {
         `  amount_eur: ${mag}`
       ].join('\\n'))
     })
-    // Lever IDs (for conflicts/attribution only; include neutral target/op to satisfy schema)
+    // Lever IDs are now the primary way to apply their fixed impact.
+    // The backend will read the lever from the catalog and apply its `fixed_impact_eur`.
     selectedLevers.forEach(id => {
-      const lev = levers.find(l => l.id === id)
-      const fam = lev?.family?.toUpperCase() || 'OTHER'
-      const tgt = defaultTargetForFamily(fam)
-      actions.push([
-        `- id: ${yamlQuote(id)}`,
-        `  target: ${tgt}`,
-        `  op: increase`,
-        `  amount_eur: 0`
-      ].join('\n'))
+      actions.push(`- id: ${yamlQuote(id)}`)
     })
     const yaml = `version: 0.1\n` +
       `baseline_year: ${year}\n` +
@@ -544,24 +537,16 @@ export default function BuildPage() {
                 {error && <p className="fr-error-text">{t('error.generic') || error}</p>}
                 {!loading && !error && (
                   <div className="fr-grid-row fr-grid-row--gutters">
-                    {/* Pinned Levers (inline configurators) */}
-                    {selectedLevers.length>0 && (
-                      <div className="fr-col-12" style={{ marginBottom: '.5rem' }}>
-                        <PinnedLevers
-                          levers={levers}
-                          selected={selectedLevers}
-                          masses={massList}
-                          labels={massList.reduce((acc, m)=> (acc[m]=massUiLabel(m), acc), {} as Record<string,string>)}
-                          baseAmounts={massBaseAmounts}
-                          onApply={(mass, amount, asTarget)=>{
-                            if (asTarget) updateMassTarget(mass, (massTargets[mass]||0) + amount)
-                            else updateMassChange(mass, (massChanges[mass]||0) + amount)
-                          }}
-                          onToggle={toggleLever}
-                          t={t}
-                        />
+                    <div className="fr-col-12" style={{ marginBottom: '.5rem' }}>
+                        <div className="fr-card fr-card--no-arrow">
+                          <div className="fr-card__body">
+                            <div className="fr-card__title">{t('build.pinned_levers') || 'Selected Levers'}</div>
+                            <div className="fr-card__desc">
+                              <LeverWorkshop levers={levers} onToggle={toggleLever} selected={selectedLevers} t={t} />rs} t={t} />
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                    )}
                     {/* Spending column */}
                     <div className="fr-col-12 fr-col-md-6">
                       <div style={{ position:'sticky', top: 48, zIndex: 1, background: 'var(--background-default-grey)', paddingBottom: '.25rem' }}>
@@ -677,11 +662,8 @@ export default function BuildPage() {
                       <div className="fr-card__body">
                         <div className="fr-card__title">{t('build.workshop') || 'Policy Workshop'}</div>
                         <div className="fr-card__desc">
-                          <p className="fr-text--sm">{t('workshop.hint') || 'Select levers and adjust parameters. Apply as Target or Change on a mass.'}</p>
-                          <LeverWorkshop levers={levers} masses={massList} labels={massList.reduce((acc, m)=> (acc[m]=massUiLabel(m), acc), {} as Record<string,string>)} baseAmounts={massBaseAmounts} onApply={(mass, amount, asTarget)=>{
-                            if (asTarget) updateMassTarget(mass, (massTargets[mass]||0) + amount)
-                            else updateMassChange(mass, (massChanges[mass]||0) + amount)
-                          }} onToggle={toggleLever} selected={selectedLevers} />
+                          <p className="fr-text--sm">{t('workshop.hint') || 'Select reforms to apply their fixed budgetary impact.'}</p>
+                          <LeverWorkshop levers={levers} onToggle={toggleLever} selected={selectedLevers} t={t} />
                         </div>
                       </div>
                     </div>
@@ -836,17 +818,6 @@ function estimateDeltaExp(pieces: Piece[], deltas: Record<string, number>): numb
 
 function estimateDeltaRev(pieces: Piece[], deltas: Record<string, number>): number {
   return -estimateDeltaExp(pieces, deltas) // sign: revenue increases reduce deficit
-}
-
-function defaultTargetForFamily(fam: string): string {
-  switch (fam) {
-    case 'DEFENSE': return 'mission.defense'
-    case 'PENSIONS': return 'mission.pensions'
-    case 'STAFFING': return 'mission.administration'
-    case 'HEALTH': return 'mission.health'
-    case 'TAXES': return 'mission.revenue'
-    default: return 'mission.general'
-  }
 }
 
 // Advanced controls: grouped lists and overlays
@@ -1305,149 +1276,20 @@ function MassList({ masses, labels, baseAmounts, targets, changes, onTarget, onC
   )
 }
 
-function LeverWorkshop({ levers, masses, labels, baseAmounts, onApply, onToggle, selected }: {
+function LeverWorkshop({ levers, onToggle, selected, t }: {
   levers: Lever[]
-  masses: string[]
-  labels: Record<string,string>
-  baseAmounts: Record<string, number>
-  onApply: (mass: string, amount: number, asTarget: boolean) => void
   onToggle: (id: string) => void
   selected: string[]
+  t: (k: string) => string
 }) {
-  const [active, setActive] = useState<string>(levers[0]?.id || '')
-  const [mass, setMass] = useState<string>(masses[0] || '09')
-  const [params, setParams] = useState<Record<string, number>>({})
-  const lev = levers.find(l => l.id === active) || levers[0]
-  const base = baseAmounts[mass] || 0
-  const derived = deriveDelta(lev, params, base)
-  function updateParam(k: string, v: number) { setParams({ ...params, [k]: v }) }
   return (
     <div className="stack" style={{ gap: '.5rem' }}>
-      <div className="fr-select-group">
-        <label className="fr-label" htmlFor="lever_pick">Lever</label>
-        <select id="lever_pick" className="fr-select" value={active} onChange={e=> { setActive(e.target.value); setParams({}) }}>
-          {levers.map(l => <option key={l.id} value={l.id}>{l.label}</option>)}
-        </select>
-      </div>
-      <div className="fr-select-group">
-        <label className="fr-label" htmlFor="mass_pick">Mass</label>
-        <select id="mass_pick" className="fr-select" value={mass} onChange={e=> setMass(e.target.value)}>
-          {masses.map(m => <option key={m} value={m}>{m} — {labels[m] || ''}</option>)}
-        </select>
-      </div>
-      <div className="stack" style={{ gap: '.25rem' }}>
-        {(Object.entries(lev?.paramsSchema || {}) as [string, any][]).map(([k, spec]) => {
-          const min = Number(spec?.min ?? 0)
-          const max = Number(spec?.max ?? 100)
-          const step = Number(spec?.step ?? 1)
-          const val = Number(params[k] ?? min)
-          return (
-            <div key={k} className="fr-input-group">
-              <label className="fr-label" htmlFor={`param_${k}`}>{k}</label>
-              <input id={`param_${k}`} className="fr-input" type="number" min={min} max={max} step={step} value={val} onChange={e=> updateParam(k, Number(e.target.value))} />
-            </div>
-          )
-        })}
-      </div>
-      <div className="fr-hint-text">≈ {(derived).toLocaleString(undefined,{maximumFractionDigits:0})} €</div>
-      <div className="fr-btns-group fr-btns-group--inline">
-        <button className="fr-btn fr-btn--secondary" onClick={()=> onApply(mass, derived, true)}>Use as Target</button>
-        <button className="fr-btn" onClick={()=> onApply(mass, derived, false)}>Use as Change</button>
-      </div>
       <div className="fr-tags-group">
         {levers.map(l => (
-          <button key={l.id} className={"fr-tag" + (selected.includes(l.id) ? ' fr-tag--dismiss' : '')} onClick={() => onToggle(l.id)}>
+          <button key={l.id} className={"fr-tag" + (selected.includes(l.id) ? ' fr-tag--dismiss' : '')} onClick={() => onToggle(l.id)} title={`${l.label} (${(l.fixedImpactEur || 0).toLocaleString()} €)`}>
             {l.label}
           </button>
         ))}
-      </div>
-    </div>
-  )
-}
-
-function deriveDelta(lever: Lever | undefined, params: Record<string, number>, base: number): number {
-  if (!lever) return 0
-  const keys = Object.keys(params)
-  if (!keys.length) return 0
-  // Prefer pct-like keys
-  const pctKey = keys.find(k => /pct/i.test(k))
-  if (pctKey) return base * (Number(params[pctKey]||0)/100)
-  const cutKey = keys.find(k => /cut_pct/i.test(k))
-  if (cutKey) return base * (Number(params[cutKey]||0)/100)
-  const monthsKey = keys.find(k => /months/i.test(k))
-  if (monthsKey) return base * (Number(params[monthsKey]||0)/12) * 0.2
-  // Fallback: sum of numeric params scaled (very conservative stub)
-  let sum = 0
-  for (const k of keys) sum += Number(params[k]||0)
-  return Math.min(base, Math.max(-base, sum))
-}
-
-function PinnedLevers({ levers, selected, masses, labels, baseAmounts, onApply, onToggle, t }: {
-  levers: Lever[]
-  selected: string[]
-  masses: string[]
-  labels: Record<string,string>
-  baseAmounts: Record<string, number>
-  onApply: (mass: string, amount: number, asTarget: boolean) => void
-  onToggle: (id: string)=> void
-  t: (k: string)=>string
-}) {
-  const map = new Map(levers.map(l => [l.id, l]))
-  const [massBy, setMassBy] = useState<Record<string,string>>({})
-  const [paramsBy, setParamsBy] = useState<Record<string, Record<string, number>>>({})
-  return (
-    <div className="fr-card fr-card--no-arrow">
-      <div className="fr-card__body">
-        <div className="fr-card__title">{t('build.pinned_levers') || 'Pinned Levers'}</div>
-        <div className="fr-card__desc">
-          {selected.length===0 ? <p className="fr-text--sm">{t('build.no_pinned_levers') || 'No pinned levers'}</p> : (
-            <div className="fr-grid-row fr-grid-row--gutters">
-              {selected.map(id => {
-                const lev = map.get(id)
-                if (!lev) return null
-                const mass = massBy[id] || masses[0]
-                const params = paramsBy[id] || {}
-                const base = baseAmounts[mass] || 0
-                const derived = deriveDelta(lev, params, base)
-                return (
-                  <div key={id} className="fr-col-12 fr-col-md-6">
-                    <div className="fr-input-group" style={{ border:'1px solid var(--border-default-grey)', borderRadius: 6, padding: '.5rem' }}>
-                      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap: '.5rem' }}>
-                        <span className="fr-text--sm" style={{ whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{lev.label}</span>
-                        <button className="fr-btn fr-btn--sm fr-btn--secondary" onClick={()=> onToggle(id)}>✕</button>
-                      </div>
-                      <div className="fr-select-group" style={{ marginTop: '.25rem' }}>
-                        <label className="fr-label" htmlFor={`pl_mass_${id}`}>{t('labels.mass') || 'Mass'}</label>
-                        <select id={`pl_mass_${id}`} className="fr-select" value={mass} onChange={e=> setMassBy(m => ({ ...m, [id]: e.target.value }))}>
-                          {masses.map(m => <option key={m} value={m}>{m} — {labels[m] || ''}</option>)}
-                        </select>
-                      </div>
-                      <div className="stack" style={{ gap: '.25rem', marginTop: '.25rem' }}>
-                        {(Object.entries(lev?.paramsSchema || {}) as [string, any][]).map(([k, spec]) => {
-                          const min = Number(spec?.min ?? 0)
-                          const max = Number(spec?.max ?? 100)
-                          const step = Number(spec?.step ?? 1)
-                          const val = Number((paramsBy[id]?.[k]) ?? min)
-                          return (
-                            <div key={k} className="fr-input-group" style={{ display:'flex', alignItems:'center', gap:'.35rem' }}>
-                              <label className="fr-label" htmlFor={`pl_param_${id}_${k}`} style={{ margin:0 }}>{k}</label>
-                              <Stepper id={`pl_param_${id}_${k}`} value={val} min={min} max={max} step={step} onChange={(v)=> setParamsBy(pb => ({ ...pb, [id]: { ...(pb[id]||{}), [k]: v } }))} />
-                            </div>
-                          )
-                        })}
-                      </div>
-                      <div className="fr-hint-text">≈ {(derived).toLocaleString(undefined,{maximumFractionDigits:0})} €</div>
-                      <div className="fr-btns-group fr-btns-group--inline" style={{ marginTop: '.25rem' }}>
-                        <button className="fr-btn fr-btn--secondary" onClick={()=> onApply(mass, derived, true)}>{t('buttons.apply_target') || 'Use as Target'}</button>
-                        <button className="fr-btn" onClick={()=> onApply(mass, derived, false)}>{t('buttons.apply_change') || 'Use as Change'}</button>
-                      </div>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          )}
-        </div>
       </div>
     </div>
   )

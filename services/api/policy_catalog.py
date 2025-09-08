@@ -3,60 +3,92 @@ from __future__ import annotations
 from typing import Dict, List, Optional
 
 
-# Minimal stub catalog for MVP+: extend with real config later.
+# A catalog of well-defined, named reforms with fixed, pre-estimated budgetary impacts.
+# In this model, levers are toggles, not parametric sliders.
+# The impact is sourced from official reports or widely cited analyses.
 _LEVER_CATALOG: List[dict] = [
+    # --- PENSIONS ---
     {
-        "id": "def_procurements_trim",
-        "family": "DEFENSE",
-        "label": "Reduce vessel orders",
-        "description": "Defer or cancel a portion of naval procurement.",
-        "params_schema": {"cut_pct": {"min": 1, "max": 20, "step": 1}},
-        "feasibility": {"law": False, "adminLagMonths": 6, "notes": "Contractual negotiations required."},
-        "conflicts_with": ["def_fleet_delay"],
-        "sources": ["LPM", "Cour des comptes"],
-        "short_label": "Trim procurement",
-        "popularity": 0.6,
-        "mass_mapping": {"02": 0.9}
-    },
-    {
-        "id": "def_fleet_delay",
-        "family": "DEFENSE",
-        "label": "Delay fleet renewal",
-        "description": "Shift delivery schedule to later years.",
-        "params_schema": {"delay_months": {"min": 3, "max": 24, "step": 3}},
-        "feasibility": {"law": False, "adminLagMonths": 3, "notes": "Operational risk; avoid double-count with procurement cuts."},
-        "conflicts_with": ["def_procurements_trim"],
-        "sources": ["LPM"],
-        "short_label": "Delay deliveries",
-        "popularity": 0.5,
-        "mass_mapping": {"02": 0.7}
-    },
-    {
-        "id": "staffing_headcount_minus1pct",
-        "family": "STAFFING",
-        "label": "Headcount −1%",
-        "description": "Reduce public headcount via attrition.",
-        "params_schema": {"pct": {"min": 0.5, "max": 3.0, "step": 0.5}},
-        "feasibility": {"law": False, "adminLagMonths": 12, "notes": "Natural attrition path."},
-        "conflicts_with": [],
-        "sources": ["PAP", "RAP"],
-        "short_label": "-1% headcount",
-        "popularity": 0.7,
-        "mass_mapping": {"01": 0.5, "09": 0.3, "07": 0.2}
-    },
-    {
-        "id": "pen_age_plus3m_per_year",
+        "id": "pensions_repeal_reform_64",
         "family": "PENSIONS",
-        "label": "Retirement age +3m/yr",
-        "description": "Gradual increase in retirement age.",
-        "params_schema": {"hike_months_per_year": {"min": 3, "max": 6, "step": 3}},
-        "feasibility": {"law": True, "adminLagMonths": 18, "notes": "Requires legislation."},
-        "conflicts_with": [],
-        "sources": ["DREES"],
-        "short_label": "Age +3m/y",
-        "popularity": 0.8,
-        "mass_mapping": {"10": 0.8}
+        "label": "Repeal 2023 Pension Reform (Return to 62)",
+        "description": "Cancels the 2023 reform, progressively returning the legal retirement age from 64 to 62.",
+        "params_schema": {},
+        "fixed_impact_eur": -17700000000,  # Cost of ~€17.7B in 2030
+        "feasibility": {"law": True, "adminLagMonths": 12, "notes": "Impact estimate for horizon year 2030."},
+        "conflicts_with": ["pensions_maintain_reform_64"],
+        "sources": ["Conseil d'orientation des retraites (COR)"],
+        "popularity": 0.6,
+        "mass_mapping": {"10": 1.0}
     },
+    {
+        "id": "pensions_maintain_reform_64",
+        "family": "PENSIONS",
+        "label": "Maintain Retirement Age at 64",
+        "description": "Represents the baseline savings from the 2023 pension reform.",
+        "params_schema": {},
+        "fixed_impact_eur": 177000000000, # This is a saving
+        "feasibility": {"law": False, "adminLagMonths": 0, "notes": "Baseline scenario."},
+        "conflicts_with": ["pensions_repeal_reform_64"],
+        "sources": ["Conseil d'orientation des retraites (COR)"],
+        "popularity": 0.4,
+        "mass_mapping": {"10": 1.0}
+    },
+    # --- TAXES ---
+    {
+        "id": "tax_vat_energy_lower_5_5",
+        "family": "TAXES",
+        "label": "Lower VAT on Energy to 5.5%",
+        "description": "Reduces the Value Added Tax on all energy products (gas, electricity, fuel) to the reduced rate of 5.5%.",
+        "params_schema": {},
+        "fixed_impact_eur": -11000000000,  # Cost (revenue loss) of ~€11B per year
+        "feasibility": {"law": True, "adminLagMonths": 3, "notes": "Significant revenue loss."},
+        "conflicts_with": [],
+        "sources": ["Budget 2023 official estimates"],
+        "popularity": 0.8,
+        "mass_mapping": {} # Revenue levers do not map to expenditure masses
+    },
+    {
+        "id": "tax_abolish_cvae",
+        "family": "TAXES",
+        "label": "Abolish CVAE Production Tax",
+        "description": "Completes the two-year plan to abolish the CVAE, a tax on the added value produced by companies.",
+        "params_schema": {},
+        "fixed_impact_eur": -4000000000,  # Cost (revenue loss) of ~€4B per year
+        "feasibility": {"law": True, "adminLagMonths": 6, "notes": "This is part of a multi-year government plan."},
+        "conflicts_with": [],
+        "sources": ["PLF 2024"],
+        "popularity": 0.5,
+        "mass_mapping": {}
+    },
+    # --- STAFFING ---
+    {
+        "id": "staffing_freeze_public_hiring",
+        "family": "STAFFING",
+        "label": "Freeze Public Sector Hiring (Non-priority)",
+        "description": "Halts new hiring across the central state, except for security and education, relying on attrition for headcount reduction.",
+        "params_schema": {},
+        "fixed_impact_eur": 1500000000,  # Savings of ~€1.5B per year
+        "feasibility": {"law": False, "adminLagMonths": 3, "notes": "Excludes priority sectors; may affect service quality."},
+        "conflicts_with": [],
+        "sources": ["Cour des comptes reports"],
+        "popularity": 0.3,
+        "mass_mapping": {"01": 0.6, "04": 0.2, "08": 0.2}
+    },
+    # --- DEFENSE ---
+    {
+        "id": "defense_reduce_vessel_orders",
+        "family": "DEFENSE",
+        "label": "Reduce Naval Vessel Orders",
+        "description": "Cancel or defer the order for one new-generation frigate as part of the military programming law (LPM).",
+        "params_schema": {},
+        "fixed_impact_eur": 3000000000, # Savings of ~€3B spread over several years
+        "feasibility": {"law": False, "adminLagMonths": 12, "notes": "Long-term impact on naval capacity. Contractual negotiations required."},
+        "conflicts_with": [],
+        "sources": ["Loi de Programmation Militaire (LPM)"],
+        "popularity": 0.4,
+        "mass_mapping": {"02": 1.0}
+    }
 ]
 
 

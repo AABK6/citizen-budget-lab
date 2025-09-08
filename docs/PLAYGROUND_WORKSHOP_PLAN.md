@@ -9,7 +9,7 @@ North Star
 Experience Pillars
 
 - Playground (What): Twin Bars + Dials; Δ chips; striped “Pending”; Waterfall of deltas; cockpit HUD for instant state.
-- Workshop (How): Reform families → levers with params; progress‑to‑target; feasibility tags; conflict nudges; scoped Explain overlay anchored to the item.
+- - Workshop (How): Reform families → levers (fixed-impact toggles); progress-to-target; feasibility tags; conflict nudges; scoped Explain overlay anchored to the item.
 - Lens Switch: By Mass • By Reform Family • By Named Reform (same scenario, 3 views).
 - ScoreStrip & Results Tray: Slim sticky strip mirrors HUD basics; tray expands for debt/macro/distribution; collapses to return focus.
 - Share/Remix: permalink + OG card; “Duplicate & Edit”; Challenges/Classroom hooks.

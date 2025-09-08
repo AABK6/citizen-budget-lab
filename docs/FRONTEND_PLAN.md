@@ -211,7 +211,7 @@ Phase A (Scaffold & Data Wiring)
   - Permalink sync (`?dsl=<base64>`) and robust restore using YAML/YAML‑lite parser.
 
 - Phase B (Workshop & Resolution)
-  - Dynamic lever parameter forms from `paramsSchema`; heuristics to derive Δ€.
+  - Levers are now fixed-impact. The UI will render them as toggles or add/remove buttons.
   - Apply lever as Target or Change on selected Mass; conflict nudge on runScenario errors.
   - Global Resolution meter and per‑mass progress; striped pending overlay on TwinBars.
 

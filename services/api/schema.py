@@ -278,6 +278,7 @@ class PolicyLeverType:
     label: str
     description: str | None
     paramsSchema: JSON
+    fixedImpactEur: float | None = None
     feasibility: JSON
     conflictsWith: list[str]
     sources: list[str]
@@ -702,6 +703,7 @@ class Query:
                     label=str(it.get("label")),
                     description=str(it.get("description") or ""),
                     paramsSchema=it.get("params_schema") or {},
+                    fixedImpactEur=it.get("fixed_impact_eur"),
                     feasibility=it.get("feasibility") or {},
                     conflictsWith=[str(x) for x in (it.get("conflicts_with") or [])],
                     sources=[str(x) for x in (it.get("sources") or [])],
@@ -776,6 +778,7 @@ class Query:
                     label=str(it.get("label")),
                     description=str(it.get("description") or ""),
                     paramsSchema=it.get("params_schema") or {},
+                    fixedImpactEur=it.get("fixed_impact_eur"),
                     feasibility=it.get("feasibility") or {},
                     conflictsWith=[str(x) for x in (it.get("conflicts_with") or [])],
                     sources=[str(x) for x in (it.get("sources") or [])],

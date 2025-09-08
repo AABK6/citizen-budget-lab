@@ -55,14 +55,14 @@ Beneficiary Categories
 
 Policy Levers → Mass Attribution (V1)
 
-- Each Policy Lever is defined as a small composition over LEGO mappings with optional behavioral parameters:
+- Each Policy Lever is defined with a fixed, pre-estimated impact (`fixed_impact_eur`).
   - `family`: high‑level grouping (PENSIONS, TAXES, HEALTH, DEFENSE, STAFFING, SUBSIDIES, CLIMATE, SOCIAL_SECURITY, PROCUREMENT, OPERATIONS, OTHER).
-  - `params_schema`: schema for UI inputs (e.g., { rate_bps: [min,max,step], base_coverage: enum, recycling: enum }).
-  - `mapping`: same shape as pieces (COFOG × NA_ITEM and/or ESA NA_ITEM) with weights or rules to derive a delta from params.
+  - `params_schema`: this is now typically empty, as levers are non-parametric.
+  - `mapping`: defines how the lever's fixed impact attributes to different COFOG masses.
   - `feasibility`: tags `{ law: bool, admin_lag_months: int, notes: string }` surfaced in the UI.
   - `conflicts_with`: list of lever ids to guard double counting.
 - Applying a lever produces a `PolicyEffect` with:
-  - `delta_eur`: accounting impact at horizon.
+  - `delta_eur`: the fixed accounting impact at horizon.
   - `mass_attribution`: how the delta paints across masses (for ribbons on the Lens Switch).
   - `incidence` (optional): distributional placeholders (e.g., sectors/regions; deciles if OpenFisca wired).
   - `risk_notes`: uncertainty/implementation caveats.

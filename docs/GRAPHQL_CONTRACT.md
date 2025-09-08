@@ -127,7 +127,8 @@ type PolicyLever {
   family: PolicyFamily!
   label: String!
   description: String
-  paramsSchema: JSON!          # UI builds sliders/inputs
+  paramsSchema: JSON!          # Kept for potential future use, but levers are now primarily fixed-impact.
+  fixedImpactEur: Float        # The fixed, pre-estimated budgetary impact of the lever.
   feasibility: JSON!           # { law: Boolean, adminLagMonths: Int, notes: String }
   conflictsWith: [ID!]!        # prevent double-count
   sources: [String!]!

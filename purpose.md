@@ -23,7 +23,7 @@ What It Is (Product in One Page)
 - Who gets paid?: procurement recipients (firms/NGOs), geography, sectors; transparency on amounts and data quality flags.
 - Budget Playground ↔ Policy Workshop (MVP+/V1): two synchronized ways to build a plan.
   - Top‑Down “What”: use Budget Dials on big mass blocks (Education, Pensions, Health, Defense, Revenues) in the Playground. Twin stacked bars (Spending vs Revenues) sit center stage; the gap equals deficit/surplus.
-  - Bottom‑Up “How”: specify concrete levers in the Policy Workshop (e.g., Carbon tax rate/base/recycling; Pensions age/indexation; Defense procurement/personnel/operations). A progress bar shows how much of a mass goal is specified.
+  - Bottom‑Up “How”: specify concrete, fixed-impact levers in the Policy Workshop (e.g., Repeal 2023 Pension Reform, Lower VAT on Energy). A progress bar shows how much of a mass goal is specified.
   - Resolution Meter: HUD indicator “Specified 0–100%” quantifying how much of mass goals are explained by policies. Unspecified remains visible (pending stripes on masses; watermark on share cards).
   - Lens Switch: above the charts toggle By Mass ⇄ By Reform Family ⇄ By Named Reform to see the same scenario through three lenses.
   - Permalink & Share Card: every state has a shareable permalink and a stamped image card with methods/version and “Specified X%” if partially resolved.

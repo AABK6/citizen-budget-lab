@@ -1031,18 +1031,36 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
             if clash:
                 other = sorted(list(clash))[0]
                 raise ValueError(f"Conflicting levers applied: '{lid}' conflicts with '{other}'")
+        # --- NEW: Apply fixed impact from levers ---
+        for lid in applied_ids:
+            lever_def = levers_by_id_map[lid]
+            impact = lever_def.get("fixed_impact_eur")
+            if not isinstance(impact, (int, float)):
+                continue
+            
+            # A positive impact is a saving (reduces deficit), a negative one is a cost (increases deficit)
+            delta = -impact
+            # Levers are always recurring over the horizon
+            for i in range(horizon_years):
+                deltas_by_year[i] += delta
+
+            # Attribute to macro shocks and resolution
+            mass_mapping = lever_def.get("mass_mapping", {})
+            for mass_code, weight in mass_mapping.items():
+                major = str(mass_code).split(".")[0][:2]
+                shock_eur = delta * float(weight)
+                for i in range(horizon_years):
+                    shocks_pct_gdp.setdefault(major, [0.0] * horizon_years)[i] += 100.0 * shock_eur / gdp_series[i]
+                
+                # Attribute to specified resolution
+                resolution_specified_by_mass[major] = resolution_specified_by_mass.get(major, 0.0) - impact * float(weight)
+
 
     for act in actions:
         op = (act.get("op") or "").lower()
         recurring = bool(act.get("recurring", False))
-        dim = (act.get("dimension") or "cp").lower()
-        target = str(act.get("target", ""))
-        role = str(act.get("role", "")).lower()  # optional extension: 'target' marks mass target only
-        if dim not in ("cp", "ae", "tax"):
-            continue
-        amount = 0.0
-        # Generic administrative actions (exclude piece.* which are handled below)
-        if "amount_eur" in act and dim in ("cp", "ae") and not target.startswith("piece."):
+        # Generic administrative actions (targets on cofog or missions)
+        if "amount_eur" in act and (target.startswith("cofog.") or target.startswith("mission.")):
             amount = float(act["amount_eur"]) * (1 if op == "increase" else -1 if op == "decrease" else 0)
             if amount != 0.0:
                 # If action is a target-only marker, do NOT change deltas; only attribute to resolution targets
@@ -1054,6 +1072,7 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
                     except Exception:
                         pass
                 else:
+                    # This is an "unresolved" action. It has a budget impact but isn't explained by a lever.
                     if recurring:
                         for i in range(horizon_years):
                             deltas_by_year[i] += amount

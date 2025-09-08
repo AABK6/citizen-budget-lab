@@ -15,7 +15,7 @@ Core Concepts
   - Target (role: target): contributes to resolution but does not alter accounting/macro.
   - Change: alters accounting/macro and contributes to “specified” in resolution.
 - Resolution Meter: overallPct = |specified| / |target|; per mass progress bars show specified vs target; pending = target − specified.
-- Levers: Named reforms organized by family; each has a params schema (min/max/step). Conflicts are detected server‑side.
+- Levers: Named reforms organized by family; each has a fixed, pre-estimated budgetary impact. Conflicts are detected server‑side.
 
 User Journeys
 
@@ -55,10 +55,6 @@ Key Algorithms
 
 - Resolution (server): overallPct = sum(|specified_by_mass|)/sum(|target_by_mass|); byMass provided for progress bars.
 - Pending stripes (client): width% = clamp((|target|−|specified|)/max(base_mass_amount, 1e-9)).
-- Lever Δ€ derivation (client heuristic):
-  - Any param name containing ‘pct’ or ‘cut_pct’: amount = base_mass_amount × pct/100.
-  - ‘delay_months’: amount ≈ base_mass_amount × (months/12) × 0.2 (stub: configurable factor).
-  - Otherwise fallback to manual amount.
 - DSL serialization: includes both mass and piece actions; id is required by schema.
   - piece.<id> with role target for targets
   - piece.<id> without role for changes

@@ -8,7 +8,7 @@
 
 **Problem.** Public debate on budgets is polarized and opaque. Citizens rarely see who spends what, for what outcomes, and what trade‑offs reforms imply.
 
-**Solution.** Citizen Budget Lab is a web app that aggregates open French public‑finance data (État, Sécu, collectivités), procurement flows, and outcomes; lets users start either from the **Budget Playground** (turn dials on big masses) or the **Policy Workshop** (configure named reforms) with both views kept in sync; and instantly shows **accounting**, **distributional (microsim)**, and **macro (growth/jobs/deficit/debt)** impacts—with uncertainty and rule‑checks. A **Resolution Meter** makes unspecified changes visible until explained by concrete policies.
+**Solution.** Citizen Budget Lab is a web app that aggregates open French public‑finance data (État, Sécu, collectivités), procurement flows, and outcomes; lets users start either from the **Budget Playground** (turn dials on big masses) or the **Policy Workshop** (select named, fixed-impact reforms) with both views kept in sync; and instantly shows **accounting**, **distributional (microsim)**, and **macro (growth/jobs/deficit/debt)** impacts—with uncertainty and rule‑checks. A **Resolution Meter** makes unspecified changes visible until explained by concrete policies.
 
 **Impact.** Improve understanding and trust by making trade‑offs tangible and sourced. Enable better media coverage and civic education; give policymakers a neutral, auditable sandbox.
 
@@ -338,7 +338,7 @@ Persistent Budget HUD (bottom): balance (€/ %GDP), debt path sparkline (fan on
 **What‑if? (Scenario builder)**
 
 * Left: LEGO Shelf — search with synonyms, filters, and Spending/Revenue tabs; functional (COFOG) ⇄ administrative (missions/programmes) lens.
-* Center: Building Canvas with twin bars — Total Revenues vs Total Spending; the animated gap is the deficit/surplus (also as %GDP). Drag pieces onto the canvas; edit via sliders/inputs (simple mode) or advanced editors (tax rates/brackets/base; spending coverage/price/volume). Chips above the bars show scheduled changes by year.
+* Center: Building Canvas with twin bars — Total Revenues vs Total Spending; the animated gap is the deficit/surplus (also as %GDP). Drag pieces onto the canvas; add fixed-impact reforms from the Workshop. Chips above the bars show scheduled changes by year.
 * Right: Consequence Dashboard — Accounting (big balance readout, debt path mini‑chart), EU rule lights (tooltips with formulas), Distribution (deciles/households), Macro (lite) with uncertainty bands. A Share bar sits at the bottom: Share card, Permalink, Export PNG/SVG, Embed.
 * **Sources & assumptions drawer** lists data vintage, mappings, and model priors; one‑click copy of DSL JSON.
 * **Share**: permalinks use deterministic scenario IDs (stable hash). Social card schema includes: `title`, mini twin‑bars, `deficit` (€/ %GDP), `debtDeltaPct`, one `highlight` fact, and source/methods badge. Exports include PNG/SVG and an embed with “Remix this”.
