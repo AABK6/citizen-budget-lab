@@ -43,7 +43,7 @@
         "required": ["id", "pool", "amount_eur"],
         "properties": {
           "id": { "type": "string" },
-          "pool": { "type": "string", "enum": ["spending", "revenue"] },
+          "pool": { "type": "string", "enum": ["spending", "revenue", "local_spending", "local_revenue"] },
           "amount_eur": { "type": "number" },
           "recurring": { "type": "boolean" },
           "exclude": { "type": "array", "items": { "type": "string" } }

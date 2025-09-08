@@ -52,6 +52,7 @@ type ScenarioResult = {
 
 import { ErrorDisplay } from '@/components/ErrorDisplay';
 import { BuildPageSkeleton } from '@/components/BuildPageSkeleton';
+import { buildPageQuery, suggestLeversQuery, runScenarioMutation } from '@/lib/queries';
 
 import { useHistory } from '@/lib/useHistory';
 
@@ -100,26 +101,31 @@ export default function BuildPage() {
   } = useHistory<any>(INITIAL_DSL_OBJECT);
   const dslString = serializeDsl(dslObject);
   const [isPanelExpanded, setIsPanelExpanded] = useState(false);
+  const [isRevenuePanelExpanded, setIsRevenuePanelExpanded] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<any | null>(null);
+  const [selectedRevenueCategory, setSelectedRevenueCategory] = useState<any | null>(null);
   const [suggestedLevers, setSuggestedLevers] = useState<PolicyLever[]>([]);
   const [targetInput, setTargetInput] = useState('');
+  const [revenueTargetInput, setRevenueTargetInput] = useState('');
+  const [appliedLevers, setAppliedLevers] = useState(new Set<string>());
+  const [lens, setLens] = useState<'mass' | 'family' | 'reform'>('mass');
+  const [expandedFamilies, setExpandedFamilies] = useState(new Set<string>());
+
+  useEffect(() => {
+    const newAppliedLevers = new Set<string>();
+    dslObject.actions.forEach(a => {
+      if (a.target.startsWith('piece.')) {
+        newAppliedLevers.add(a.id);
+      }
+    });
+    setAppliedLevers(newAppliedLevers);
+  }, [dslObject]);
 
   const runScenario = useCallback(async () => {
     setScenarioLoading(true);
     setScenarioError(null);
     try {
-      const mutation = `
-        mutation Run($dsl: String!) {
-          runScenario(input: { dsl: $dsl }) {
-            id
-            accounting { deficitPath debtPath }
-            compliance { eu3pct eu60pct netExpenditure localBalance }
-            macro { deltaGDP deltaEmployment deltaDeficit assumptions }
-            resolution { overallPct byMass { massId targetDeltaEur specifiedDeltaEur } }
-          }
-        }
-      `;
-      const result = await gqlRequest(mutation, { dsl: toBase64(dslString) });
+      const result = await gqlRequest(runScenarioMutation, { dsl: toBase64(dslString) });
       setScenarioResult(result.runScenario);
     } catch (err: any) {
       setScenarioError(err.message || "Failed to run scenario");
@@ -132,41 +138,7 @@ export default function BuildPage() {
     setError(null);
     setScenarioError(null);
     try {
-      const query = `
-        query BuildPageData($year: Int!) {
-          legoBaseline(year: $year) {
-            pieces {
-              id
-              amountEur
-            }
-          }
-          legoPieces(year: $year) {
-            id
-            label
-            type
-            cofogMajors
-          }
-          massLabels {
-            id
-            displayLabel
-          }
-          policyLevers {
-            id
-            family
-            label
-            description
-            fixedImpactEur
-          }
-          popularIntents {
-            id
-            label
-            emoji
-            massId
-            seed
-          }
-        }
-      `;
-      const data = await gqlRequest(query, { year });
+      const data = await gqlRequest(buildPageQuery, { year });
 
       const baselineAmounts: { [key: string]: number } = {};
       data.legoBaseline.pieces.forEach((p: any) => {
@@ -228,17 +200,7 @@ export default function BuildPage() {
     }
 
     try {
-      const query = `
-        query SuggestLevers($massId: String!) {
-          suggestLevers(massId: $massId) {
-            id
-            label
-            description
-            fixedImpactEur
-          }
-        }
-      `;
-      const data = await gqlRequest(query, { massId });
+      const data = await gqlRequest(suggestLeversQuery, { massId });
       setSuggestedLevers(data.suggestLevers);
     } catch (err: any) {
       setError(err.message || "Failed to fetch suggestions");
@@ -247,10 +209,15 @@ export default function BuildPage() {
 
   const addLeverToDsl = (lever: PolicyLever) => {
     setDslObject(currentDslObject => {
+      const isRevenue = lever.family === 'TAXES';
+      const op = isRevenue
+        ? ((lever.fixedImpactEur || 0) >= 0 ? 'increase' : 'decrease')
+        : ((lever.fixedImpactEur || 0) >= 0 ? 'decrease' : 'increase');
+
       const newAction = {
         id: lever.id,
         target: `piece.${lever.id}`,
-        op: (lever.fixedImpactEur || 0) >= 0 ? 'decrease' : 'increase', // Savings decrease deficit, costs increase
+        op: op,
         amount_eur: Math.abs(lever.fixedImpactEur || 0),
         recurring: true, // Assuming reforms are recurring
       };
@@ -259,6 +226,19 @@ export default function BuildPage() {
         actions: [...currentDslObject.actions, newAction],
       };
     });
+  };
+
+  const removeLeverFromDsl = (leverId: string) => {
+    setDslObject(currentDslObject => {
+      return {
+        ...currentDslObject,
+        actions: currentDslObject.actions.filter(a => a.id !== leverId),
+      };
+    });
+  };
+
+  const isLeverInDsl = (leverId: string) => {
+    return dslObject.actions.some(a => a.id === leverId);
   };
 
   const handleApplyTarget = () => {
@@ -294,9 +274,77 @@ export default function BuildPage() {
     });
   };
 
+  const handleApplyRevenueTarget = () => {
+    if (!selectedRevenueCategory) return;
+
+    const parseCurrency = (input: string): number => {
+        const value = parseFloat(input.replace(/,/g, ''));
+        if (isNaN(value)) return 0;
+        const multiplier = input.toUpperCase().includes('B') ? 1e9 : (input.toUpperCase().includes('M') ? 1e6 : 1);
+        return value * multiplier;
+    };
+
+    const amount = parseCurrency(revenueTargetInput);
+    const pieceId = selectedRevenueCategory.id;
+
+    setDslObject(currentDsl => {
+        const otherActions = currentDsl.actions.filter(a => a.id !== `target_${pieceId}`);
+        if (Math.abs(amount) < 1) { // Remove target if input is empty/zero
+            return { ...currentDsl, actions: otherActions };
+        }
+        const newAction = {
+            id: `target_${pieceId}`,
+            target: `piece.${pieceId}`,
+            op: amount > 0 ? 'increase' : 'decrease',
+            amount_eur: Math.abs(amount),
+            role: 'target',
+            recurring: true,
+        };
+        return {
+            ...currentDsl,
+            actions: [...otherActions, newAction],
+        };
+    });
+  };
+
+  const handleFamilyClick = (family: string) => {
+    setExpandedFamilies(current => {
+      const newSet = new Set(current);
+      if (newSet.has(family)) {
+        newSet.delete(family);
+      } else {
+        newSet.add(family);
+      }
+      return newSet;
+    });
+  };
+
+  const handleIntentClick = (intent: PopularIntent) => {
+    setDslObject(currentDsl => {
+      const newActions = intent.seed.actions.filter(action => !currentDsl.actions.some(a => a.id === action.id));
+      return {
+        ...currentDsl,
+        actions: [...currentDsl.actions, ...newActions],
+      };
+    });
+  };
+
   const handleBackClick = () => {
     setIsPanelExpanded(false);
     setSelectedCategory(null);
+  }
+
+  const handleRevenueCategoryClick = async (category: any) => {
+    setSelectedRevenueCategory(category);
+    setIsRevenuePanelExpanded(true);
+    
+    const revenueLevers = policyLevers.filter(lever => lever.family === 'TAXES');
+    setSuggestedLevers(revenueLevers);
+  };
+
+  const handleRevenueBackClick = () => {
+    setIsRevenuePanelExpanded(false);
+    setSelectedRevenueCategory(null);
   }
 
   const formatCurrency = (amount: number) => {
@@ -356,9 +404,9 @@ export default function BuildPage() {
             />
           </div>
           <div className="nav-controls">
-            <button className="nav-button" title="Undo" onClick={undo} disabled={!canUndo}><i className="material-icons" style={{ fontSize: '18px' }}>undo</i></button>
-            <button className="nav-button" title="Redo" onClick={redo} disabled={!canRedo}><i className="material-icons" style={{ fontSize: '18px' }}>redo</i></button>
-            <button className="nav-button" title="Reset" onClick={reset}><i className="material-icons" style={{ fontSize: '18px' }}>refresh</i></button>
+            <button className="fr-btn fr-btn--secondary" title="Undo" onClick={undo} disabled={!canUndo}><i className="material-icons" style={{ fontSize: '18px' }}>undo</i></button>
+            <button className="fr-btn fr-btn--secondary" title="Redo" onClick={redo} disabled={!canRedo}><i className="material-icons" style={{ fontSize: '18px' }}>redo</i></button>
+            <button className="fr-btn fr-btn--secondary" title="Reset" onClick={reset}><i className="material-icons" style={{ fontSize: '18px' }}>refresh</i></button>
           </div>
         </div>
       </div>
@@ -367,41 +415,7 @@ export default function BuildPage() {
       <div className="main-content">
         {/* Left Panel */}
         <div className="left-panel">
-          {isPanelExpanded && selectedCategory ? (
-            <>
-              <button className="fr-btn fr-btn--secondary fr-btn--sm" onClick={handleBackClick} style={{ marginBottom: '1rem', alignSelf: 'flex-start' }}>Back</button>
-              <div className="panel-header">{selectedCategory.name} Reforms & Targets</div>
-              <div className="selected-category">
-                <div className="category-header">
-                  <div className="category-name">{selectedCategory.name}</div>
-                  <div className="category-amount">{formatCurrency(selectedCategory.amount)}</div>
-                </div>
-                <div className="target-controls">
-                  <span className="target-label">Target:</span>
-                  <input type="text" className="target-input" value={targetInput} onChange={e => setTargetInput(e.target.value)} placeholder="+10B, -500M..." />
-                  <button className="target-button" onClick={handleApplyTarget}>Apply</button>
-                </div>
-                <div className="reforms-section">
-                  <div className="section-title">Available Reforms</div>
-                  {suggestedLevers.map((reform, index) => (
-                    <div key={index} className="reform-item" onClick={() => addLeverToDsl(reform)}>
-                      <div className="reform-name">{reform.label}</div>
-                      <div className="reform-description">{reform.description}</div>
-                      <div className="reform-impact">
-                        <span className={reform.fixedImpactEur && reform.fixedImpactEur > 0 ? 'impact-positive' : 'impact-negative'}>{formatCurrency(reform.fixedImpactEur || 0)}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="popular-reforms">
-                  <div className="section-title">Popular Reforms</div>
-                  {popularIntents.map((intent, index) => (
-                    <div key={index} className="reform-pill">{intent.emoji} {intent.label}</div>
-                  ))}
-                </div>
-              </div>
-            </>
-          ) : (
+          {lens === 'mass' && !isPanelExpanded && (
             <>
               <div className="panel-header">Spending Targets & Reforms</div>
               {masses.map((category, index) => (
@@ -418,14 +432,128 @@ export default function BuildPage() {
               ))}
             </>
           )}
+          {lens === 'mass' && isPanelExpanded && selectedCategory && (
+            <>
+              <button className="fr-btn fr-btn--secondary fr-btn--sm" onClick={handleBackClick} style={{ marginBottom: '1rem', alignSelf: 'flex-start' }}>Back</button>
+              <div className="panel-header">{selectedCategory.name} Reforms & Targets</div>
+              <div className="selected-category">
+                <div className="category-header">
+                  <div className="category-name">{selectedCategory.name}</div>
+                  <div className="category-amount">{formatCurrency(selectedCategory.amount)}</div>
+                </div>
+                <div className="target-controls">
+                  <span className="target-label">Target:</span>
+                  <input type="text" className="target-input" value={targetInput} onChange={e => setTargetInput(e.target.value)} placeholder="+10B, -500M..." />
+                  <button className="target-button" onClick={handleApplyTarget}>Apply</button>
+                  <button className="target-button fr-btn--secondary" onClick={() => setTargetInput('')}>Clear</button>
+                </div>
+                <div className="reforms-section">
+                  <div className="section-title">Available Reforms</div>
+                  {suggestedLevers.map((reform, index) => (
+                    <div key={index} className={`reform-item ${appliedLevers.has(reform.id) ? 'applied' : ''}`}>
+                      <div className="reform-details">
+                        <div className="reform-name">{reform.label}</div>
+                        <div className="reform-description">{reform.description}</div>
+                      </div>
+                      <div className="reform-actions">
+                        <div className="reform-impact">
+                          <span className={reform.fixedImpactEur && reform.fixedImpactEur > 0 ? 'impact-positive' : 'impact-negative'}>{formatCurrency(reform.fixedImpactEur || 0)}</span>
+                        </div>
+                        <button 
+                          className={`fr-btn fr-btn--${isLeverInDsl(reform.id) ? 'secondary' : 'primary'}`}
+                          onClick={() => isLeverInDsl(reform.id) ? removeLeverFromDsl(reform.id) : addLeverToDsl(reform)}
+                        >
+                          {isLeverInDsl(reform.id) ? 'Remove' : 'Add'}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="popular-reforms">
+                  <div className="section-title">Popular Reforms</div>
+                  {popularIntents.filter(intent => intent.massId === selectedCategory.id).map((intent, index) => (
+                    <div key={index} className="reform-pill" onClick={() => handleIntentClick(intent)}>{intent.emoji} {intent.label}</div>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+          {lens === 'family' && (
+            <>
+              <div className="panel-header">Reforms by Family</div>
+              {Object.entries(policyLevers.reduce((acc, lever) => {
+                const family = lever.family || 'Other';
+                if (!acc[family]) {
+                  acc[family] = [];
+                }
+                acc[family].push(lever);
+                return acc;
+              }, {} as Record<string, PolicyLever[]>)).map(([family, levers]) => (
+                <div key={family} className="spending-category">
+                  <div className="category-header" onClick={() => handleFamilyClick(family)}>
+                    <div className="category-name">{family}</div>
+                  </div>
+                  {expandedFamilies.has(family) && (
+                    <div className="reforms-section">
+                      {levers.map((reform, index) => (
+                        <div key={index} className={`reform-item ${appliedLevers.has(reform.id) ? 'applied' : ''}`}>
+                          <div className="reform-details">
+                            <div className="reform-name">{reform.label}</div>
+                            <div className="reform-description">{reform.description}</div>
+                          </div>
+                          <div className="reform-actions">
+                            <div className="reform-impact">
+                              <span className={reform.fixedImpactEur && reform.fixedImpactEur > 0 ? 'impact-positive' : 'impact-negative'}>{formatCurrency(reform.fixedImpactEur || 0)}</span>
+                            </div>
+                            <button 
+                              className={`fr-btn fr-btn--${isLeverInDsl(reform.id) ? 'secondary' : 'primary'}`}
+                              onClick={() => isLeverInDsl(reform.id) ? removeLeverFromDsl(reform.id) : addLeverToDsl(reform)}
+                            >
+                              {isLeverInDsl(reform.id) ? 'Remove' : 'Add'}
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </>
+          )}
+          {lens === 'reform' && (
+            <>
+              <div className="panel-header">All Reforms</div>
+              <div className="reforms-section">
+                {policyLevers.map((reform, index) => (
+                  <div key={index} className={`reform-item ${appliedLevers.has(reform.id) ? 'applied' : ''}`}>
+                    <div className="reform-details">
+                      <div className="reform-name">{reform.label}</div>
+                      <div className="reform-description">{reform.description}</div>
+                    </div>
+                    <div className="reform-actions">
+                      <div className="reform-impact">
+                        <span className={reform.fixedImpactEur && reform.fixedImpactEur > 0 ? 'impact-positive' : 'impact-negative'}>{formatCurrency(reform.fixedImpactEur || 0)}</span>
+                      </div>
+                      <button 
+                        className={`fr-btn fr-btn--${isLeverInDsl(reform.id) ? 'secondary' : 'primary'}`}
+                        onClick={() => isLeverInDsl(reform.id) ? removeLeverFromDsl(reform.id) : addLeverToDsl(reform)}
+                      >
+                        {isLeverInDsl(reform.id) ? 'Remove' : 'Add'}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
         </div>
 
         {/* Center Panel */}
         <div className="center-panel">
           <div className="lens-switcher">
-            <div className="lens-option active">By Mass</div>
-            <div className="lens-option">By Family</div>
-            <div className="lens-option">By Reform</div>
+            <div className={`lens-option ${lens === 'mass' ? 'active' : ''}`} onClick={() => setLens('mass')}>By Mass</div>
+            <div className={`lens-option ${lens === 'family' ? 'active' : ''}`} onClick={() => setLens('family')}>By Family</div>
+            <div className={`lens-option ${lens === 'reform' ? 'active' : ''}`} onClick={() => setLens('reform')}>By Reform</div>
           </div>
           <div className="treemap-container">
              <div className="treemap">
@@ -456,21 +584,69 @@ export default function BuildPage() {
           </div>
         </div>
 
-        {/* Right Panel */}
         <div className="right-panel">
-          <div className="panel-header">Revenues</div>
-          {revenuePieces.map((piece, index) => (
-            <div key={index} className="revenue-category">
-              <div className="category-header">
-                <div className="category-name">{piece.label}</div>
-                <div className="category-amount">{formatCurrency(piece.amountEur || 0)}</div>
+          {isRevenuePanelExpanded && selectedRevenueCategory ? (
+            <>
+              <button className="fr-btn fr-btn--secondary fr-btn--sm" onClick={handleRevenueBackClick} style={{ marginBottom: '1rem', alignSelf: 'flex-start' }}>Back</button>
+              <div className="panel-header">{selectedRevenueCategory.label} Reforms & Targets</div>
+              <div className="selected-category">
+                <div className="category-header">
+                  <div className="category-name">{selectedRevenueCategory.label}</div>
+                  <div className="category-amount">{formatCurrency(selectedRevenueCategory.amountEur || 0)}</div>
+                </div>
+                <div className="target-controls">
+                  <span className="target-label">Target:</span>
+                  <input type="text" className="target-input" value={revenueTargetInput} onChange={e => setRevenueTargetInput(e.target.value)} placeholder="+10B, -500M..." />
+                  <button className="target-button" onClick={handleApplyRevenueTarget}>Apply</button>
+                  <button className="target-button fr-btn--secondary" onClick={() => setRevenueTargetInput('')}>Clear</button>
+                </div>
+                <div className="reforms-section">
+                  <div className="section-title">Available Reforms</div>
+                  {suggestedLevers.map((reform, index) => (
+                    <div key={index} className={`reform-item ${appliedLevers.has(reform.id) ? 'applied' : ''}`}>
+                      <div className="reform-details">
+                        <div className="reform-name">{reform.label}</div>
+                        <div className="reform-description">{reform.description}</div>
+                      </div>
+                      <div className="reform-actions">
+                        <div className="reform-impact">
+                          <span className={reform.fixedImpactEur && reform.fixedImpactEur > 0 ? 'impact-positive' : 'impact-negative'}>{formatCurrency(reform.fixedImpactEur || 0)}</span>
+                        </div>
+                        <button 
+                          className={`fr-btn fr-btn--${isLeverInDsl(reform.id) ? 'secondary' : 'primary'}`}
+                          onClick={() => isLeverInDsl(reform.id) ? removeLeverFromDsl(reform.id) : addLeverToDsl(reform)}
+                        >
+                          {isLeverInDsl(reform.id) ? 'Remove' : 'Add'}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="popular-reforms">
+                  <div className="section-title">Popular Reforms</div>
+                  {popularIntents.filter(intent => intent.seed.actions.some(a => a.target.startsWith('piece.rev_'))).map((intent, index) => (
+                    <div key={index} className="reform-pill" onClick={() => handleIntentClick(intent)}>{intent.emoji} {intent.label}</div>
+                  ))}
+                </div>
               </div>
-              <div className="category-controls">
-                <div className="control-button">Adjust Rate</div>
-                <div className="control-button">View Reforms</div>
-              </div>
-            </div>
-          ))}
+            </>
+          ) : (
+            <>
+              <div className="panel-header">Revenues</div>
+              {revenuePieces.map((piece, index) => (
+                <div key={index} className="revenue-category" onClick={() => handleRevenueCategoryClick(piece)}>
+                  <div className="category-header">
+                    <div className="category-name">{piece.label}</div>
+                    <div className="category-amount">{formatCurrency(piece.amountEur || 0)}</div>
+                  </div>
+                  <div className="category-controls">
+                    <div className="control-button">Adjust Rate</div>
+                    <div className="control-button">View Reforms</div>
+                  </div>
+                </div>
+              ))}
+            </>
+          )}
         </div>
       </div>
     </div>

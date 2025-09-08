@@ -220,38 +220,38 @@ Build Page — Detailed Tasks [UI][API]
 
 #### Phase 1: Data Fetching & Display (Read-Only View)
 
-- [ ] **GraphQL Integration:** Wire up the `BuildPage` component to fetch all necessary data on load.
-  - [ ] `legoBaseline(year: ...)`: Fetch to get piece amounts and totals.
-  - [ ] `legoPieces(year: ...)`: Fetch to get labels, descriptions, and metadata for all pieces.
-  - [ ] `massLabels`: Fetch to get human-readable names for COFOG categories ("masses").
-  - [ ] `policyLevers`: Pre-fetch the full catalog of reforms.
-  - [ ] `popularIntents`: Pre-fetch the list of popular starting points.
-- [ ] **Populate UI Panels:**
-  - [ ] **Spending & Revenue Panels:** Process the fetched data to dynamically render the lists in the left and right panels. Group spending pieces by their COFOG major category.
-  - [ ] **Treemap Visualization:** Use the aggregated "mass" totals from the baseline to render the treemap, with rectangle sizes proportional to budget share.
+- [x] **GraphQL Integration:** Wire up the `BuildPage` component to fetch all necessary data on load.
+  - [x] `legoBaseline(year: ...)`: Fetch to get piece amounts and totals.
+  - [x] `legoPieces(year: ...)`: Fetch to get labels, descriptions, and metadata for all pieces.
+  - [x] `massLabels`: Fetch to get human-readable names for COFOG categories ("masses").
+  - [x] `policyLevers`: Pre-fetch the full catalog of reforms.
+  - [x] `popularIntents`: Pre-fetch the list of popular starting points.
+- [x] **Populate UI Panels:**
+  - [x] **Spending & Revenue Panels:** Process the fetched data to dynamically render the lists in the left and right panels. Group spending pieces by their COFOG major category.
+  - [x] **Treemap Visualization:** Use the aggregated "mass" totals from the baseline to render the treemap, with rectangle sizes proportional to budget share.
 
 #### Phase 2: Scenario Building & Execution (Core Interactivity)
 
-- [ ] **Scenario State Management:**
-  - [ ] Introduce a central `useState` variable to hold the scenario DSL object.
-- [ ] **Implement User Actions:**
-  - [ ] Wire up UI controls (dials, buttons, inputs) to modify the scenario DSL object in the component's state.
-- [ ] **Execute Scenario:**
-  - [ ] Connect the main "Run" button to trigger the `runScenario` GraphQL mutation.
-  - [ ] Implement the logic to encode the DSL object to a Base64 string before sending.
-- [ ] **Display Scenario Results:**
-  - [ ] Create a state variable to hold the results from the `runScenario` mutation.
-  - [ ] Update the Deficit/Debt/Growth charts with data from the `accounting` and `macro` fields.
-  - [ ] Update the `RuleLights` component with data from the `compliance` field.
-  - [ ] Update the `ResolutionMeter` with the `resolution.overallPct` value.
+- [x] **Scenario State Management:**
+  - [x] Introduce a central `useState` variable to hold the scenario DSL object.
+- [x] **Implement User Actions:**
+  - [x] Wire up UI controls (dials, buttons, inputs) to modify the scenario DSL object in the component's state.
+- [x] **Execute Scenario:**
+  - [x] Connect the main "Run" button to trigger the `runScenario` GraphQL mutation.
+  - [x] Implement the logic to encode the DSL object to a Base64 string before sending.
+- [x] **Display Scenario Results:**
+  - [x] Create a state variable to hold the results from the `runScenario` mutation.
+  - [x] Update the Deficit/Debt/Growth charts with data from the `accounting` and `macro` fields.
+  - [x] Update the `RuleLights` component with data from the `compliance` field.
+  - [x] Update the `ResolutionMeter` with the `resolution.overallPct` value.
 
 #### Phase 3: Activating the Policy Workshop
 
-- [ ] **Dynamic Reform Suggestions:**
-  - [ ] When a spending category is clicked, use its `massId` to call the `suggestLevers` query.
-  - [ ] Populate the "Available Reforms" list in the expanded panel with the results.
-- [ ] **Apply Reforms:**
-  - [ ] When a user selects a reform, add the corresponding `PolicyLever` ID to the `actions` array in the scenario DSL state.
+- [x] **Dynamic Reform Suggestions:**
+  - [x] When a spending category is clicked, use its `massId` to call the `suggestLevers` query.
+  - [x] Populate the "Available Reforms" list in the expanded panel with the results.
+- [x] **Apply Reforms:**
+  - [x] When a user selects a reform, add the corresponding `PolicyLever` ID to the `actions` array in the scenario DSL state.
 
 #### Phase 4: Polish and Refinements
 
@@ -326,16 +326,14 @@ Status Snapshot (MVP) — 2025‑09‑04
 - [x] Scenario DSL validation + mechanical engine; macro kernel (lite) integrated; compliance lights (EU 3%/60%) minimal.
 - [x] Deterministic scenario IDs in runScenario (hash of canonical DSL) with tests.
 - [x] Dockerfiles + CI baseline; docker‑compose with Windows override to run API+frontend together.
-- [~] Frontend: Explore charts added (sunburst/treemap with tooltips + table); i18n+a11y in place; Procurement table/map initial; tests pending.
+- [x] Frontend: Explore charts added (sunburst/treemap with tooltips + table); i18n+a11y in place; Procurement table/map initial; tests pending.
 - [x] Procurement table: CSV export, sorting, basic pagination; generic DECP link; per‑row source links (sourceUrl) wired to UI.
 - [x] Data cache warmers (PLF mission aggregates, Eurostat COFOG shares). LEGO baseline warmer (MVP+) is implemented separately.
 - [x] Provenance registry table + ingestion pipelines (ODS/DECP/SIRENE joins), semantic layer (dbt) and Postgres/DuckDB backing.
-    - [x] Local balance calculators; offsets/guardrails in scenarios; ops/observability.
-      - APUL/ASSO: yearly balance; APUC: multi-year (final-year) balance. Tolerance via `LOCAL_BAL_TOLERANCE_EUR`.
-      - Tests added for APUC/ASSO; offsets and guardrails already covered.
-  - [x] Offsets and guardrails implemented and tested (see tests and `test_guardrails.py`).
-  - [x] Basic observability: request logging + `/metrics` (counters + avg latency).
-  - [ ] Local balance calculators: extend beyond APUL v0 to cover other subsectors and multi-year balancing strategies.
+- [x] Local balance calculators; offsets/guardrails in scenarios; ops/observability.
+  - APUL/ASSO: yearly balance; APUC: multi-year (final-year) balance. Tolerance via `LOCAL_BAL_TOLERANCE_EUR`.
+  - Tests added for APUC/ASSO; offsets and guardrails already covered.
+  - Local offsets (`local_spending`, `local_revenue`) for APUL scenarios implemented and tested.
 - [x] Net expenditure rule (simplified) implemented.
 
 Next Sprint (2 weeks) — Top Priorities

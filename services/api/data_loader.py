@@ -1059,6 +1059,9 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
     for act in actions:
         op = (act.get("op") or "").lower()
         recurring = bool(act.get("recurring", False))
+        target = str(act.get("target", ""))
+        role = str(act.get("role") or "")
+        dim = str(act.get("dimension") or "")
         # Generic administrative actions (targets on cofog or missions)
         if "amount_eur" in act and (target.startswith("cofog.") or target.startswith("mission.")):
             amount = float(act["amount_eur"]) * (1 if op == "increase" else -1 if op == "decrease" else 0)
@@ -1263,6 +1266,8 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
                                 pass
 
     # Apply offsets (pool-level v0)
+    local_deltas_by_year = list(deltas_by_year)
+    apu = str((data.get("assumptions") or {}).get("apu_subsector") or "").upper()
     for off in offsets:
         try:
             pool = str(off.get("pool", "")).lower()
@@ -1270,15 +1275,25 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
             recurring = bool(off.get("recurring", False))
         except Exception:
             continue
-        if not amt or pool not in ("spending", "revenue"):
-            continue
-        # For both pools, a positive amount means reducing the deficit (spending cuts or revenue increases)
-        delta = -amt
-        if recurring:
-            for i in range(horizon_years):
-                deltas_by_year[i] += delta
-        else:
-            deltas_by_year[0] += delta
+        
+        # Global offsets affect the main deficit path
+        if pool in ("spending", "revenue"):
+            delta = -amt
+            if recurring:
+                for i in range(horizon_years):
+                    deltas_by_year[i] += delta
+            else:
+                deltas_by_year[0] += delta
+        
+        # Local offsets only apply to APUL's balance rule and don't alter the main deficit
+        elif apu == "APUL" and pool in ("local_spending", "local_revenue"):
+            delta = -amt
+            if recurring:
+                for i in range(horizon_years):
+                    local_deltas_by_year[i] += delta
+            else:
+                local_deltas_by_year[0] += delta
+
 
     # Deficit path = sum of deltas (positive increases deficit)
     deficit_path = [float(x) for x in deltas_by_year]
@@ -1333,8 +1348,8 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
         tol = 0.0
     lb: List[str]
     if apu == "APUL":
-        # Local gov: balanced each year within tolerance
-        lb = ["ok" if abs(d) <= tol else "breach" for d in deltas_by_year]
+        # Local gov: balanced each year within tolerance, using local offsets
+        lb = ["ok" if abs(d) <= tol else "breach" for d in local_deltas_by_year]
     elif apu == "ASSO":
         # Social security funds: also aim for yearly balance
         lb = ["ok" if abs(d) <= tol else "breach" for d in deltas_by_year]

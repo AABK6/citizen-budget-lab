@@ -77,7 +77,7 @@ actions:
     recurring: false
 offsets:
   - id: off1
-    pool: spending
+    pool: local_spending
     amount_eur: 500000000
     recurring: false
 """
@@ -85,4 +85,70 @@ offsets:
     assert not res2.errors, res2.errors
     lb2 = res2.data["runScenario"]["compliance"]["localBalance"]
     assert lb2[0] == "ok"
+
+
+def test_offsets_revenue_pool_balances_deficit():
+    # Decrease revenue by 1bn recurring, then offset via revenue pool by 1bn recurring
+    sdl = """
+version: 0.1
+baseline_year: 2026
+assumptions: { horizon_years: 3 }
+actions:
+  - id: p1
+    target: piece.rev_vat_standard
+    op: decrease
+    amount_eur: 1000000000
+    recurring: true
+offsets:
+  - id: off1
+    pool: revenue
+    amount_eur: 1000000000
+    recurring: true
+"""
+    q = """
+      mutation Run($dsl: String!) {
+        runScenario(input: { dsl: $dsl }) { accounting { deficitPath } }
+      }
+    """
+    res = _exec_gql(q, {"dsl": _b64(sdl)})
+    assert not res.errors, res.errors
+    path = res.data["runScenario"]["accounting"]["deficitPath"]
+    # All years should be ~0 after offset
+    assert all(abs(v) < 1e-6 for v in path)
+
+
+def test_local_offset_pool_apul_only():
+    # Increase spending by 500m, creating a local breach but not changing the main deficit path
+    # Then, balance it with a local_spending offset
+    sdl = """
+version: 0.1
+baseline_year: 2026
+assumptions: { horizon_years: 2, apu_subsector: APUL }
+actions:
+  - id: p1
+    target: piece.ed_schools_staff_ops
+    op: increase
+    amount_eur: 500000000
+    recurring: false
+offsets:
+  - id: off1
+    pool: local_spending
+    amount_eur: 500000000
+    recurring: false
+"""
+    q = """
+      mutation Run($dsl: String!) {
+        runScenario(input: { dsl: $dsl }) {
+          accounting { deficitPath }
+          compliance { localBalance }
+        }
+      }
+    """
+    res = _exec_gql(q, {"dsl": _b64(sdl)})
+    assert not res.errors, res.errors
+    data = res.data["runScenario"]
+    # Local balance should be 'ok'
+    assert data["compliance"]["localBalance"][0] == "ok"
+    # Main deficit path should NOT be affected by the local offset
+    assert data["accounting"]["deficitPath"][0] == 500000000
 
