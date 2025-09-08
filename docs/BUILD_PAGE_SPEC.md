@@ -28,16 +28,11 @@ User Journeys
 
 Page Structure
 
-- Left: Shelf
-  - Tabs: Mass dials (COFOG majors) | Piece dials (Spending, Revenues)
-  - Controls: search, filters (locked, bounds, beneficiary class), sort by amount/share
-- Center: Canvas
-  - TwinBars: top masses “Baseline vs Scenario” with striped pending overlay
-  - Budget HUD: Balance (€/ %GDP), EU lights, Debt sparkline, Resolution meter (global), year, undo/redo, reset
-- Right: Consequences & Workshop
-  - Scoreboard: ΔExp (est), ΔRev (est), Deficit (y0), EU 3%, EU 60%, Resolution %, Distance
-  - Policy Workshop: Families → levers cards with parameter controls and “Apply as Target/Change to [Mass]”
-  - DSL Drawer: exact YAML of scenario
+- Top HUD Bar: Global controls and scenario feedback (Resolution Meter, Year Selector, EU Lights, Undo/Redo, Reset).
+- Main Content (Three-Column Layout):
+  - Left Panel (Spending): Lists spending categories. Users can select a category to view details, set targets, and explore related reforms.
+  - Center Panel (Canvas): An interactive treemap visualizes budget allocations. Below the treemap, charts display the impact of scenarios on debt, deficit, and growth.
+  - Right Panel (Revenues): Lists revenue categories with controls for adjustments.
 
 Data Contracts
 

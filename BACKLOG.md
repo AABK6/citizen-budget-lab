@@ -55,14 +55,14 @@ New Epics — Playground ↔ Workshop (MVP+ → V1)
     - Challenges enforce `Resolution ≥80%` before submit; share card includes a challenge badge.
     - Classroom: Room with live leaderboard (Balance, Equity, Compliance, Resolution) and auto‑debrief slides.
 
-Build Page — Two‑Column Architecture [UI]
+Build Page — Three-Column Architecture [UI]
   - AC:
-    - Cockpit HUD stays visible while scrolling and shows ΔExp/ΔRev, Net Δ, Resolution %, EU lights, Run/Reset.
-    - Controls column contains twin lists (Spending grouped by COFOG majors with collapsible headers; Revenue flat list).
-    - Each row renders label, amount, pin toggle, delta slider, target input, micro progress bar, and Explain button.
-    - Canvas column shows TwinBars; slim ScoreStrip under the chart mirrors HUD basics and remains sticky.
-    - Results Tray expands/collapses and contains Debt path, Macro/Distribution (stubs ok) + Workshop + DSL + Save. WaterfallDelta can appear in Canvas for immediate delta transparency.
-    - Mobile stacks columns under Canvas; HUD and ScoreStrip stay sticky; tray becomes a bottom drawer.
+    - A top HUD bar provides global controls and scenario feedback, including a resolution meter.
+    - The main content area is divided into three columns:
+      - Left Panel: Displays spending categories and allows users to set targets and view reforms.
+      - Center Panel: Features an interactive treemap for budget visualization and charts for scenario outcomes (Debt Path, Deficit, Growth).
+      - Right Panel: Shows revenue categories and controls for adjusting rates and viewing related reforms.
+    - The layout is responsive, stacking columns on smaller screens while keeping key information accessible.
 
 Milestone: MVP
 

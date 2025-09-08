@@ -51,3 +51,6 @@ warehouse/dbt_packages/
 
 # Miscellaneous
 cookies.txt
+
+.gemini/
+gha-creds-*.json

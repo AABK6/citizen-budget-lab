@@ -58,9 +58,9 @@ Success for all: **clarity + trust + shareability.**
 
 ## 4.1) Interaction Model — Playground ↔ Workshop
 
-- Playground center: **Twin stacked bars** (Spending vs Revenues) with an animated **gap** for the deficit/surplus (with %GDP badge). Big **mass blocks** compose the stacks.
-- Budget Dials: tapping a mass lifts it and reveals a **dial + slider** overlay with numeric entry. Adjustments create a striped **Pending** skin and a **Δ chip** (“Defense −€6B (Unspecified)”).
-- Policy Workshop: a hierarchical dashboard of **Reform Families → Levers** (e.g., Pensions: age, indexation; Taxes: VAT, carbon; Defense: procurement/personnel/operations) with a **Progress‑to‑Target** bar and **Feasibility tags** (Law/Admin/Lag). A **Path Compare** tray contrasts alternative mixes with distribution/EU lights/feasibility.
+- Playground center: An interactive **treemap** visualizes the budget. The three-column layout includes **Spending Controls** on the left and **Revenue Controls** on the right.
+- Budget Dials & Reforms: Clicking a category in the side panels reveals an expanded view for setting targets and applying reforms.
+- Policy Workshop: A hierarchical dashboard of **Reform Families → Levers** (e.g., Pensions: age, indexation; Taxes: VAT, carbon; Defense: procurement/personnel/operations) with a **Progress‑to‑Target** bar and **Feasibility tags** (Law/Admin/Lag). A **Path Compare** tray contrasts alternative mixes with distribution/EU lights/feasibility.
 - Resolution Meter: HUD indicator “**Specified X%**” (overall and by mass) reflecting how much of mass goals are explained by named reforms.
 - Lens Switch: toggle **By Mass ⇄ By Reform Family ⇄ By Named Reform**; ribbons show how a reform lands across multiple masses.
 - Share & Permalink: every state exports a stamped **Share Card** (methods/version; partials show “Specified X%”).

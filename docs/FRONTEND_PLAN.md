@@ -20,7 +20,7 @@ Routing & Pages
 - `/` Home: navigation + 10‑sec onboarding (two equal CTAs: Start with Budget · Start with Policy) and a quick explainer; carousel with weekly Challenges and trending public scenarios.
 - `/explore` Explore €1: lens toggle (ADMIN/COFOG), basis (CP/AE), year slider, sunburst/treemap, outcomes panel, export, source links.
 - `/procurement` Who gets paid?: map + table, filters (sector/size/geo), competition flags, export.
-- `/build` Budget Playground & Policy Workshop: two‑column command center with a cockpit HUD. Left = Controls (Spending vs Revenue twin columns, grouped lists, inline configurators); Right = Canvas (TwinBars, Waterfall) + slim Scoreboard and expandable Results Tray (Accounting, Debt path, Macro fan, Distribution, Workshop, DSL, Save). Scenario state persists to URL. See detailed spec in `docs/BUILD_PAGE_SPEC.md`.
+- `/build` Budget Playground & Policy Workshop: A three-column layout featuring spending controls on the left, an interactive treemap and scenario charts in the center, and revenue controls on the right. A top HUD provides global feedback and controls. Scenario state persists to the URL. See detailed spec in `docs/BUILD_PAGE_SPEC.md`.
 - `/compare-eu` Compare EU: country selector, COFOG shares, deficit/debt ratios (Eurostat-backed), export.
 - `/sources` Sources: dataset registry with license/vintage/cadence links and search.
 - V1: `/my-household` OpenFisca view (static synthetic grid first, optional local input).
