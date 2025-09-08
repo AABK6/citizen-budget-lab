@@ -13,10 +13,16 @@ type TreemapProps = {
 
 const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
+    const { name, pieces } = payload[0].payload;
     return (
       <div className="custom-tooltip">
-        <p className="label">{`${payload[0].payload.name}`}</p>
+        <p className="label">{`${name}`}</p>
         <p className="intro">{`€${(payload[0].value / 1e9).toFixed(1)}B`}</p>
+        <ul className="tooltip-pieces">
+          {pieces.slice(0, 3).map((piece: any) => (
+            <li key={piece.id}>{piece.label}</li>
+          ))}
+        </ul>
       </div>
     );
   }
