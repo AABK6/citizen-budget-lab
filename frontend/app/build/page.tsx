@@ -54,6 +54,7 @@ import { ErrorDisplay } from '@/components/ErrorDisplay';
 import { BuildPageSkeleton } from '@/components/BuildPageSkeleton';
 import { buildPageQuery, suggestLeversQuery, runScenarioMutation } from '@/lib/queries';
 
+import { TreemapChart } from '@/components/Treemap';
 import { useHistory } from '@/lib/useHistory';
 
 const treemapColors = ['#2563eb', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#ef4444', '#6366f1', '#14b8a6', '#a855f7', '#d946ef'];
@@ -556,18 +557,7 @@ export default function BuildPage() {
             <div className={`lens-option ${lens === 'reform' ? 'active' : ''}`} onClick={() => setLens('reform')}>By Reform</div>
           </div>
           <div className="treemap-container">
-             <div className="treemap">
-                {masses.map((item, index) => {
-                    const isPending = pendingMasses.has(item.id);
-                    const className = `treemap-item ${selectedCategory?.name === item.name ? 'selected' : ''} ${isPending ? 'pending' : ''}`;
-                    return (
-                        <div key={index} className={className} style={{ backgroundColor: treemapColors[index % treemapColors.length], flexGrow: item.amount }}>
-                        <div className="treemap-label">{item.name}</div>
-                        <div className="treemap-value">{formatCurrency(item.amount)}</div>
-                        </div>
-                    )
-                })}
-            </div>
+            <TreemapChart data={masses} />
           </div>
           <div className="scenario-charts">
             {scenarioLoading && <div className="fr-p-2w">Running scenario...</div>}
