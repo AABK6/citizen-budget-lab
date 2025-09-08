@@ -47,7 +47,7 @@ New Epics — Playground ↔ Workshop (MVP+ → V1)
     - Load a published plan (locked levers, “as proposed” badge) and show side‑by‑side twin bars + Δ waterfall.
     - `scenarioCompare(a,b)` returns ribbons/waterfall deltas JSON.
     - Duplicate & Edit forks a scenario preserving lineage; share card shows lineage tag.
-- Share Cards [UI][Ops]
+- [~] Share Cards [UI][Ops]
   - AC:
     - OG renderer outputs stamped image (title, mini twin‑bars, top reforms, deficit/debt, EU lights, Specified X% watermark when partial) with methods/version.
     - Cache invalidates on methods/version or `policy_catalog.version` changes.
