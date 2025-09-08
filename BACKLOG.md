@@ -255,10 +255,10 @@ Build Page — Detailed Tasks [UI][API]
 
 #### Phase 4: Polish and Refinements
 
-- [ ] **State Synchronization:** Ensure the UI correctly reflects the state of the DSL at all times (e.g., pending changes, resolution progress).
-- [ ] **Loading & Error States:** Implement loading skeletons and user-friendly error messages for all data-fetching and mutation operations.
-- [ ] **Undo/Redo:** Implement a history stack for the DSL state to enable undo/redo functionality.
-- [ ] **Final Verification:** Conduct a full review to ensure all functionality is working as expected and the UI is a pixel-perfect match of the mockups.
+- [x] **State Synchronization:** Ensure the UI correctly reflects the state of the DSL at all times (e.g., pending changes, resolution progress).
+- [x] **Loading & Error States:** Implement loading skeletons and user-friendly error messages for all data-fetching and mutation operations.
+- [x] **Undo/Redo:** Implement a history stack for the DSL state to enable undo/redo functionality.
+- [x] **Final Verification:** Conduct a full review to ensure all functionality is working as expected and the UI is a pixel-perfect match of the mockups.
 - LEGO Budget Builder — Documentation [Docs]
   - `docs/LEGO_METHOD.md`: sources, mapping, beneficiary rules, elasticities (v0), limitations, versioning; audit tables.
   - UPDATED: Reflect SDMX XML usage (expenditures via `gov_10a_exp`, taxes via `gov_10a_taxag`, sales via `gov_10a_main`), health `D.632`, social splits normalization, and interest proxy from COFOG 01.7.

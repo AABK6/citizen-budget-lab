@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useI18n } from '@/lib/i18n';
 import { gqlRequest } from '@/lib/graphql';
 import { parseDsl, serializeDsl } from '@/lib/dsl';
@@ -50,7 +50,13 @@ type ScenarioResult = {
   resolution: { overallPct: number; byMass: { massId: string; targetDeltaEur: number; specifiedDeltaEur: number; }[]; };
 };
 
+import { ErrorDisplay } from '@/components/ErrorDisplay';
+import { BuildPageSkeleton } from '@/components/BuildPageSkeleton';
+
+import { useHistory } from '@/lib/useHistory';
+
 const treemapColors = ['#2563eb', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#ef4444', '#6366f1', '#14b8a6', '#a855f7', '#d946ef'];
+
 
 const INITIAL_DSL_OBJECT = {
   version: 0.1,
@@ -58,16 +64,7 @@ const INITIAL_DSL_OBJECT = {
   assumptions: {
     horizon_years: 5,
   },
-  actions: [
-    {
-      id: 'ed_invest_boost',
-      target: 'mission.education',
-      dimension: 'cp',
-      op: 'increase',
-      amount_eur: 1000000000,
-      recurring: true,
-    },
-  ],
+  actions: [],
 };
 
 function toBase64(str: string) {
@@ -80,8 +77,10 @@ function toBase64(str: string) {
 export default function BuildPage() {
   const { t } = useI18n();
   const [year, setYear] = useState(2026);
-  const [loading, setLoading] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [scenarioLoading, setScenarioLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [scenarioError, setScenarioError] = useState<string | null>(null);
 
   // Data states
   const [spendingPieces, setSpendingPieces] = useState<LegoPiece[]>([]);
@@ -90,14 +89,24 @@ export default function BuildPage() {
   const [policyLevers, setPolicyLevers] = useState<PolicyLever[]>([]);
   const [popularIntents, setPopularIntents] = useState<PopularIntent[]>([]);
   const [scenarioResult, setScenarioResult] = useState<ScenarioResult | null>(null);
-  const [dslObject, setDslObject] = useState<any>(INITIAL_DSL_OBJECT);
+  const {
+    state: dslObject,
+    setState: setDslObject,
+    undo,
+    redo,
+    reset,
+    canUndo,
+    canRedo,
+  } = useHistory<any>(INITIAL_DSL_OBJECT);
   const dslString = serializeDsl(dslObject);
   const [isPanelExpanded, setIsPanelExpanded] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<any | null>(null);
   const [suggestedLevers, setSuggestedLevers] = useState<PolicyLever[]>([]);
+  const [targetInput, setTargetInput] = useState('');
 
   const runScenario = useCallback(async () => {
-    setLoading(true);
+    setScenarioLoading(true);
+    setScenarioError(null);
     try {
       const mutation = `
         mutation Run($dsl: String!) {
@@ -113,90 +122,91 @@ export default function BuildPage() {
       const result = await gqlRequest(mutation, { dsl: toBase64(dslString) });
       setScenarioResult(result.runScenario);
     } catch (err: any) {
-      setError(err.message || "Failed to run scenario");
+      setScenarioError(err.message || "Failed to run scenario");
     }
-    setLoading(false);
+    setScenarioLoading(false);
   }, [dslString]);
 
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-      setError(null);
-      try {
-        const query = `
-          query BuildPageData($year: Int!) {
-            legoBaseline(year: $year) {
-              pieces {
-                id
-                amountEur
-              }
-            }
-            legoPieces(year: $year) {
+  const fetchData = useCallback(async () => {
+    setInitialLoading(true);
+    setError(null);
+    setScenarioError(null);
+    try {
+      const query = `
+        query BuildPageData($year: Int!) {
+          legoBaseline(year: $year) {
+            pieces {
               id
-              label
-              type
-              cofogMajors
-            }
-            massLabels {
-              id
-              displayLabel
-            }
-            policyLevers {
-              id
-              family
-              label
-              description
-              fixedImpactEur
-            }
-            popularIntents {
-              id
-              label
-              emoji
-              massId
-              seed
+              amountEur
             }
           }
-        `;
-        const data = await gqlRequest(query, { year });
+          legoPieces(year: $year) {
+            id
+            label
+            type
+            cofogMajors
+          }
+          massLabels {
+            id
+            displayLabel
+          }
+          policyLevers {
+            id
+            family
+            label
+            description
+            fixedImpactEur
+          }
+          popularIntents {
+            id
+            label
+            emoji
+            massId
+            seed
+          }
+        }
+      `;
+      const data = await gqlRequest(query, { year });
 
-        const baselineAmounts: { [key: string]: number } = {};
-        data.legoBaseline.pieces.forEach((p: any) => {
-          baselineAmounts[p.id] = p.amountEur;
-        });
+      const baselineAmounts: { [key: string]: number } = {};
+      data.legoBaseline.pieces.forEach((p: any) => {
+        baselineAmounts[p.id] = p.amountEur;
+      });
 
-        const allPieces = data.legoPieces.map((p: any) => ({ ...p, amountEur: baselineAmounts[p.id] || 0 }));
+      const allPieces = data.legoPieces.map((p: any) => ({ ...p, amountEur: baselineAmounts[p.id] || 0 }));
 
-        setSpendingPieces(allPieces.filter((p: LegoPiece) => p.type === 'expenditure'));
-        setRevenuePieces(allPieces.filter((p: LegoPiece) => p.type === 'revenue'));
+      setSpendingPieces(allPieces.filter((p: LegoPiece) => p.type === 'expenditure'));
+      setRevenuePieces(allPieces.filter((p: LegoPiece) => p.type === 'revenue'));
 
-        const massLabels: { [key: string]: string } = {};
-        data.massLabels.forEach((m: MassLabel) => {
-          massLabels[m.id] = m.displayLabel;
-        });
+      const massLabels: { [key: string]: string } = {};
+      data.massLabels.forEach((m: MassLabel) => {
+        massLabels[m.id] = m.displayLabel;
+      });
 
-        const massData: { [key: string]: { name: string; amount: number, pieces: LegoPiece[] } } = {};
-        allPieces.filter((p: LegoPiece) => p.type === 'expenditure').forEach((p: LegoPiece) => {
-            const massId = p.cofogMajors[0] || 'unknown';
-            if (!massData[massId]) {
-                massData[massId] = { name: massLabels[massId] || `Mass ${massId}`, amount: 0, pieces: [] };
-            }
-            massData[massId].amount += p.amountEur || 0;
-            massData[massId].pieces.push(p);
-        });
-        
-        setMasses(Object.values(massData).sort((a, b) => b.amount - a.amount));
+      const massData: { [key: string]: { id: string; name: string; amount: number, pieces: LegoPiece[] } } = {};
+      allPieces.filter((p: LegoPiece) => p.type === 'expenditure').forEach((p: LegoPiece) => {
+          const massId = p.cofogMajors[0] || 'unknown';
+          if (!massData[massId]) {
+              massData[massId] = { id: massId, name: massLabels[massId] || `Mass ${massId}`, amount: 0, pieces: [] };
+          }
+          massData[massId].amount += p.amountEur || 0;
+          massData[massId].pieces.push(p);
+      });
+      
+      setMasses(Object.values(massData).sort((a, b) => b.amount - a.amount));
 
-        setPolicyLevers(data.policyLevers);
-        setPopularIntents(data.popularIntents);
+      setPolicyLevers(data.policyLevers);
+      setPopularIntents(data.popularIntents);
 
-      } catch (err: any) {
-        setError(err.message || "Failed to fetch data");
-      }
-      setLoading(false);
+    } catch (err: any) {
+      setError(err.message || "Failed to fetch data");
     }
-
-    fetchData();
+    setInitialLoading(false);
   }, [year]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   // Run scenario initially and whenever DSL changes
   useEffect(() => {
@@ -206,6 +216,17 @@ export default function BuildPage() {
   const handleCategoryClick = async (category: any) => {
     setSelectedCategory(category);
     setIsPanelExpanded(true);
+
+    // Set initial target input value from current DSL
+    const massId = category.id;
+    const targetAction = dslObject.actions.find(a => a.id === `target_${massId}`);
+    if (targetAction) {
+        const amount = targetAction.amount_eur * (targetAction.op === 'increase' ? 1 : -1);
+        setTargetInput(`${amount / 1e9}B`);
+    } else {
+        setTargetInput('');
+    }
+
     try {
       const query = `
         query SuggestLevers($massId: String!) {
@@ -217,7 +238,6 @@ export default function BuildPage() {
           }
         }
       `;
-      const massId = category.pieces[0]?.cofogMajors[0] || '01';
       const data = await gqlRequest(query, { massId });
       setSuggestedLevers(data.suggestLevers);
     } catch (err: any) {
@@ -226,16 +246,52 @@ export default function BuildPage() {
   };
 
   const addLeverToDsl = (lever: PolicyLever) => {
-    const currentDslObject = parseDsl(dslString);
-    const newAction = {
-      id: lever.id,
-      target: `piece.${lever.id}`,
-      op: (lever.fixedImpactEur || 0) >= 0 ? 'decrease' : 'increase', // Savings decrease deficit, costs increase
-      amount_eur: Math.abs(lever.fixedImpactEur || 0),
-      recurring: true, // Assuming reforms are recurring
+    setDslObject(currentDslObject => {
+      const newAction = {
+        id: lever.id,
+        target: `piece.${lever.id}`,
+        op: (lever.fixedImpactEur || 0) >= 0 ? 'decrease' : 'increase', // Savings decrease deficit, costs increase
+        amount_eur: Math.abs(lever.fixedImpactEur || 0),
+        recurring: true, // Assuming reforms are recurring
+      };
+      return {
+        ...currentDslObject,
+        actions: [...currentDslObject.actions, newAction],
+      };
+    });
+  };
+
+  const handleApplyTarget = () => {
+    if (!selectedCategory) return;
+
+    const parseCurrency = (input: string): number => {
+        const value = parseFloat(input.replace(/,/g, ''));
+        if (isNaN(value)) return 0;
+        const multiplier = input.toUpperCase().includes('B') ? 1e9 : (input.toUpperCase().includes('M') ? 1e6 : 1);
+        return value * multiplier;
     };
-    currentDslObject.actions.push(newAction);
-    setDslObject(currentDslObject);
+
+    const amount = parseCurrency(targetInput);
+    const massId = selectedCategory.id;
+
+    setDslObject(currentDsl => {
+        const otherActions = currentDsl.actions.filter(a => a.id !== `target_${massId}`);
+        if (Math.abs(amount) < 1) { // Remove target if input is empty/zero
+            return { ...currentDsl, actions: otherActions };
+        }
+        const newAction = {
+            id: `target_${massId}`,
+            target: `cofog.${massId}`,
+            op: amount > 0 ? 'increase' : 'decrease',
+            amount_eur: Math.abs(amount),
+            role: 'target',
+            recurring: true,
+        };
+        return {
+            ...currentDsl,
+            actions: [...otherActions, newAction],
+        };
+    });
   };
 
   const handleBackClick = () => {
@@ -247,6 +303,17 @@ export default function BuildPage() {
     return `€${(amount / 1e9).toFixed(1)}B`;
   };
 
+  const pendingMasses = useMemo(() => {
+    if (!scenarioResult) return new Set();
+    const pending = new Set<string>();
+    for (const mass of scenarioResult.resolution.byMass) {
+        if (Math.abs(mass.targetDeltaEur) > Math.abs(mass.specifiedDeltaEur)) {
+            pending.add(mass.massId);
+        }
+    }
+    return pending;
+  }, [scenarioResult]);
+
   const totalDeltaExpenditures = scenarioResult?.accounting.deficitPath[0] || 0;
   const totalDeltaRevenues = scenarioResult?.macro.deltaDeficit[0] || 0; // Placeholder for revenue impact
   const resolutionPct = scenarioResult?.resolution.overallPct || 0;
@@ -254,12 +321,12 @@ export default function BuildPage() {
   const deficitPath = scenarioResult?.accounting.deficitPath || [];
   const deltaGDP = scenarioResult?.macro.deltaGDP || [];
 
-  if (loading) {
-    return <div>Loading...</div>;
+  if (initialLoading) {
+    return <BuildPageSkeleton />;
   }
 
   if (error) {
-    return <div className="error">Error: {error}</div>;
+    return <ErrorDisplay message={error} onRetry={fetchData} />;
   }
 
   return (
@@ -275,7 +342,7 @@ export default function BuildPage() {
           </div>
         </div>
         <div className="hud-right">
-            <button className="fr-btn" onClick={runScenario} disabled={loading}>{loading ? 'Running...' : 'Run'}</button>
+            <button className="fr-btn" onClick={runScenario} disabled={scenarioLoading}>{scenarioLoading ? 'Running...' : 'Run'}</button>
           <div className="year-selector">
             <i className="material-icons" style={{ fontSize: '16px' }}>calendar_today</i>
             <span className="year-text">{year}</span>
@@ -289,9 +356,9 @@ export default function BuildPage() {
             />
           </div>
           <div className="nav-controls">
-            <button className="nav-button" title="Undo"><i className="material-icons" style={{ fontSize: '18px' }}>undo</i></button>
-            <button className="nav-button" title="Redo"><i className="material-icons" style={{ fontSize: '18px' }}>redo</i></button>
-            <button className="nav-button" title="Reset"><i className="material-icons" style={{ fontSize: '18px' }}>refresh</i></button>
+            <button className="nav-button" title="Undo" onClick={undo} disabled={!canUndo}><i className="material-icons" style={{ fontSize: '18px' }}>undo</i></button>
+            <button className="nav-button" title="Redo" onClick={redo} disabled={!canRedo}><i className="material-icons" style={{ fontSize: '18px' }}>redo</i></button>
+            <button className="nav-button" title="Reset" onClick={reset}><i className="material-icons" style={{ fontSize: '18px' }}>refresh</i></button>
           </div>
         </div>
       </div>
@@ -311,8 +378,8 @@ export default function BuildPage() {
                 </div>
                 <div className="target-controls">
                   <span className="target-label">Target:</span>
-                  <input type="text" className="target-input" defaultValue="+€10B" />
-                  <button className="target-button">Apply</button>
+                  <input type="text" className="target-input" value={targetInput} onChange={e => setTargetInput(e.target.value)} placeholder="+10B, -500M..." />
+                  <button className="target-button" onClick={handleApplyTarget}>Apply</button>
                 </div>
                 <div className="reforms-section">
                   <div className="section-title">Available Reforms</div>
@@ -362,16 +429,22 @@ export default function BuildPage() {
           </div>
           <div className="treemap-container">
              <div className="treemap">
-                {masses.map((item, index) => (
-                    <div key={index} className={`treemap-item ${selectedCategory?.name === item.name ? 'selected' : ''}`} style={{ backgroundColor: treemapColors[index % treemapColors.length], flexGrow: item.amount }}>
-                    <div className="treemap-label">{item.name}</div>
-                    <div className="treemap-value">{formatCurrency(item.amount)}</div>
-                    </div>
-                ))}
+                {masses.map((item, index) => {
+                    const isPending = pendingMasses.has(item.id);
+                    const className = `treemap-item ${selectedCategory?.name === item.name ? 'selected' : ''} ${isPending ? 'pending' : ''}`;
+                    return (
+                        <div key={index} className={className} style={{ backgroundColor: treemapColors[index % treemapColors.length], flexGrow: item.amount }}>
+                        <div className="treemap-label">{item.name}</div>
+                        <div className="treemap-value">{formatCurrency(item.amount)}</div>
+                        </div>
+                    )
+                })}
             </div>
           </div>
           <div className="scenario-charts">
-            {scenarioResult && (
+            {scenarioLoading && <div className="fr-p-2w">Running scenario...</div>}
+            {scenarioError && <div className="fr-p-2w error">{scenarioError}</div>}
+            {scenarioResult && !scenarioLoading && !scenarioError && (
                 <>
                     <StatCards items={[
                         { label: t('score.deficit_y0'), value: formatCurrency(scenarioResult.accounting.deficitPath[0]) },
