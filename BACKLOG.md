@@ -51,7 +51,7 @@ New Epics — Playground ↔ Workshop (MVP+ → V1)
   - AC:
     - OG renderer outputs stamped image (title, mini twin‑bars, top reforms, deficit/debt, EU lights, Specified X% watermark when partial) with methods/version.
     - Cache invalidates on methods/version or `policy_catalog.version` changes.
-- Challenges & Classroom [UI]
+- [~] Challenges & Classroom [UI]
   - AC:
     - Challenges enforce `Resolution ≥80%` before submit; share card includes a challenge badge.
     - Classroom: Room with live leaderboard (Balance, Equity, Compliance, Resolution) and auto‑debrief slides.
