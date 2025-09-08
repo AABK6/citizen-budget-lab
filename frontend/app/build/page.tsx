@@ -109,7 +109,6 @@ export default function BuildPage() {
   const [suggestedLevers, setSuggestedLevers] = useState<PolicyLever[]>([]);
   const [targetInput, setTargetInput] = useState('');
   const [revenueTargetInput, setRevenueTargetInput] = useState('');
-  const [appliedLevers, setAppliedLevers] = useState(new Set<string>());
   const [lens, setLens] = useState<'mass' | 'family' | 'reform'>('mass');
   const [expandedFamilies, setExpandedFamilies] = useState(new Set<string>());
   const searchParams = useSearchParams();
@@ -128,16 +127,6 @@ export default function BuildPage() {
       fetchDsl();
     }
   }, [searchParams, setDslObject]);
-
-  useEffect(() => {
-    const newAppliedLevers = new Set<string>();
-    dslObject.actions.forEach(a => {
-      if (a.target.startsWith('piece.')) {
-        newAppliedLevers.add(a.id);
-      }
-    });
-    setAppliedLevers(newAppliedLevers);
-  }, [dslObject]);
 
   const runScenario = useCallback(async () => {
     setScenarioLoading(true);
@@ -468,7 +457,7 @@ export default function BuildPage() {
                 <div className="reforms-section">
                   <div className="section-title">Available Reforms</div>
                   {suggestedLevers.map((reform, index) => (
-                    <div key={index} className={`reform-item ${appliedLevers.has(reform.id) ? 'applied' : ''}`}>
+                    <div key={index} className={`reform-item ${isLeverInDsl(reform.id) ? 'applied' : ''}`}>
                       <div className="reform-details">
                         <div className="reform-name">{reform.label}</div>
                         <div className="reform-description">{reform.description}</div>
@@ -514,7 +503,7 @@ export default function BuildPage() {
                   {expandedFamilies.has(family) && (
                     <div className="reforms-section">
                       {levers.map((reform, index) => (
-                        <div key={index} className={`reform-item ${appliedLevers.has(reform.id) ? 'applied' : ''}`}>
+                        <div key={index} className={`reform-item ${isLeverInDsl(reform.id) ? 'applied' : ''}`}>
                           <div className="reform-details">
                             <div className="reform-name">{reform.label}</div>
                             <div className="reform-description">{reform.description}</div>
@@ -543,7 +532,7 @@ export default function BuildPage() {
               <div className="panel-header">All Reforms</div>
               <div className="reforms-section">
                 {policyLevers.map((reform, index) => (
-                  <div key={index} className={`reform-item ${appliedLevers.has(reform.id) ? 'applied' : ''}`}>
+                  <div key={index} className={`reform-item ${isLeverInDsl(reform.id) ? 'applied' : ''}`}>
                     <div className="reform-details">
                       <div className="reform-name">{reform.label}</div>
                       <div className="reform-description">{reform.description}</div>
@@ -574,7 +563,11 @@ export default function BuildPage() {
             <div className={`lens-option ${lens === 'reform' ? 'active' : ''}`} onClick={() => setLens('reform')}>By Reform</div>
           </div>
           <div className="treemap-container">
-            <TreemapChart data={masses} colors={treemapColors} />
+            <TreemapChart 
+              data={masses} 
+              colors={treemapColors} 
+              resolutionData={scenarioResult?.resolution.byMass || []} 
+            />
           </div>
           <div className="scenario-charts">
             {scenarioLoading && <div className="fr-p-2w">Running scenario...</div>}
@@ -610,7 +603,7 @@ export default function BuildPage() {
                 <div className="reforms-section">
                   <div className="section-title">Available Reforms</div>
                   {suggestedLevers.map((reform, index) => (
-                    <div key={index} className={`reform-item ${appliedLevers.has(reform.id) ? 'applied' : ''}`}>
+                    <div key={index} className={`reform-item ${isLeverInDsl(reform.id) ? 'applied' : ''}`}>
                       <div className="reform-details">
                         <div className="reform-name">{reform.label}</div>
                         <div className="reform-description">{reform.description}</div>

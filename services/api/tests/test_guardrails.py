@@ -107,11 +107,11 @@ version: 0.1
 baseline_year: 2026
 assumptions: { horizon_years: 1 }
 actions:
-  - id: def_procurements_trim
+  - id: expand_overtime_exemption
     target: mission.defense
     op: increase
     amount_eur: 0
-  - id: def_fleet_delay
+  - id: end_overtime_exemption
     target: mission.defense
     op: increase
     amount_eur: 0

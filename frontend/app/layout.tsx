@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Script from 'next/script'
 import './globals.css'
 import { NavTabs } from '@/components/NavTabs'
 import { LangSwitcher } from '@/components/LangSwitcher'
@@ -26,8 +27,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.12.0/dist/utility/icons/icons.min.css"
         />
-        <script type="module" src="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.12.0/dist/dsfr.module.min.js"></script>
-        <script noModule src="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.12.0/dist/dsfr.nomodule.min.js"></script>
       </head>
       <body>
         {/* Skip links for accessibility */}
@@ -74,7 +73,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </div>
             </div>
           </header>
-          <main id="main-content" className="fr-container container">
+          <main id="main-content" className="fr-container">
             {children}
           </main>
           <footer className="fr-footer fr-footer--short" role="contentinfo">
@@ -101,6 +100,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
           </footer>
         </I18nProvider>
+        <Script type="module" src="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.12.0/dist/dsfr.module.min.js" strategy="lazyOnload" />
+        <Script noModule src="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.12.0/dist/dsfr.nomodule.min.js" strategy="lazyOnload" />
       </body>
     </html>
   )

@@ -1069,10 +1069,6 @@ class Query:
             massLabels=mass_labels
         )
 
-
-massLabels: JSON
-}
-
 @strawberry.type
 class ScenarioCompareResultType:
     a: RunScenarioPayload
@@ -1086,7 +1082,11 @@ class ScenarioCompareResultType:
 class Mutation:
     @strawberry.mutation
     def runScenario(self, input: RunScenarioInput) -> RunScenarioPayload:  # noqa: N802
-        sid, acc, comp, macro, reso = run_scenario(input.dsl)
+        try:
+            sid, acc, comp, macro, reso = run_scenario(input.dsl)
+        except ValueError as e:
+            raise ValueError(str(e)) from e
+
         # Store DSL for shareCard/permalinks
         try:
             from .store import scenario_dsl_store

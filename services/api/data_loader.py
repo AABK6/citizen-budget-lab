@@ -1115,6 +1115,8 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
         # piece.* handling
         if target.startswith("piece."):
             pid = target.split(".", 1)[1]
+            if levers_by_id_map and pid in levers_by_id_map:
+                continue
             # Guardrails: unknown piece id
             if pid not in lego_types:
                 raise ValueError(f"Unknown LEGO piece id: '{pid}'")

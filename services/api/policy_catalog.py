@@ -723,7 +723,7 @@ _LEVER_CATALOG: List[dict] = [
         "fixed_impact_eur": 500000000,  # Enhanced procurement practices might save on the order of a few hundred million euros per year
         "mass_mapping": {"02": 0.5, "07": 0.5},
         "feasibility": {"law": False, "adminLagMonths": 12, "notes": "Administrative and managerial reforms; requires investment in procurement systems and political will to enforce changes."},
-        "conflicts_with": [],
+        "conflicts_with": ["def_fleet_delay"],
         "sources": ["Cour des Comptes (2023)"],
         "params_schema": {}
     },
@@ -761,6 +761,17 @@ _LEVER_CATALOG: List[dict] = [
         "feasibility": {"law": True, "adminLagMonths": 12, "notes": "Implemented through education budget increases; very costly universal benefit approach championed by the left."},
         "conflicts_with": [],
         "sources": ["NFP platform (2024)"],
+        "params_schema": {}
+    },
+    {
+        "id": "pen_age_plus3m_per_year",
+        "family": "PENSIONS",
+        "label": "Retirement age +3m per year",
+        "description": "Increase the legal retirement age by 3 months each year until it reaches 65.",
+        "mass_mapping": {"10": 1.0},
+        "feasibility": {"law": True, "adminLagMonths": 12, "notes": "Requires a major pension reform law. Implementation would be gradual."},
+        "conflicts_with": ["pen_age_minus3m_per_year"],
+        "sources": [],
         "params_schema": {}
     }
 ]
