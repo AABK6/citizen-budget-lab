@@ -227,6 +227,9 @@ Phase D (UX Polish & A11y)
 - Phase E (Share & Compare)
   - Save scenario (title/description); OG image preview hook; Compare & Remix entrypoint.
 
+Design Inspirations
+- Static HTML mockups for a potential redesign of the `/build` page are located in `docs/design_mockups/`. These explore alternative layouts for the controls and canvas.
+
 Milestone AC tie‑in: See `docs/BUILD_PAGE_SPEC.md` for detailed ACs and `docs/PLAYGROUND_WORKSHOP_PLAN.md` for the complete dual‑path plan, backlog, and storyboard.
 
 See also: `docs/PLAYGROUND_WORKSHOP_PLAN.md` — Budget Playground ↔ Policy Workshop Plan (Detailed)

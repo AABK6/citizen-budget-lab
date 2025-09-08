@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Citizen Budget Lab - Interaction Flow</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+            color: #1f2937;
+            overflow: hidden;
+        }
+        
+        .slide {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Top HUD Bar */
+        .hud-bar {
+            background-color: #ffffff;
+            padding: 16px 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+        
+        .hud-left {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2563eb;
+        }
+        
+        .resolution-meter {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .meter-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #6b7280;
+        }
+        
+        .meter-bar {
+            width: 120px;
+            height: 8px;
+            background-color: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .meter-fill {
+            height: 100%;
+            width: 35%;
+            background-color: #f59e0b;
+            border-radius: 4px;
+        }
+        
+        .meter-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #f59e0b;
+        }
+        
+        .hud-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .year-selector {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background-color: #f3f4f6;
+            border-radius: 6px;
+        }
+        
+        .year-text {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .eu-lights {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .eu-light {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .eu-light.ok {
+            background-color: #16a34a;
+        }
+        
+        .eu-light.warn {
+            background-color: #f59e0b;
+        }
+        
+        .nav-controls {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .nav-button {
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            background-color: #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            padding: 24px;
+            gap: 24px;
+            overflow: hidden;
+        }
+        
+        /* Left Panel */
+        .left-panel {
+            width: 320px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        
+        .panel-header {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .selected-category {
+            margin-bottom: 20px;
+            padding: 16px;
+            background-color: #f0f9ff;
+            border-radius: 8px;
+            border-left: 4px solid #2563eb;
+        }
+        
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .category-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2563eb;
+        }
+        
+        .category-amount {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2563eb;
+        }
+        
+        .target-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .target-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #6b7280;
+        }
+        
+        .target-input {
+            width: 100px;
+            padding: 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .target-button {
+            padding: 8px 16px;
+            background-color: #2563eb;
+            color: white;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .reforms-section {
+            margin-top: 16px;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #4b5563;
+        }
+        
+        .reform-item {
+            padding: 12px;
+            background-color: #f9fafb;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border-left: 3px solid #8b5cf6;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .reform-item:hover {
+            transform: translateX(4px);
+        }
+        
+        .reform-name {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        
+        .reform-description {
+            font-size: 12px;
+            color: #6b7280;
+        }
+        
+        .reform-impact {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 12px;
+        }
+        
+        .impact-positive {
+            color: #16a34a;
+        }
+        
+        .impact-negative {
+            color: #dc2626;
+        }
+        
+        .popular-reforms {
+            margin-top: 16px;
+        }
+        
+        .reform-pill {
+            display: inline-block;
+            padding: 6px 12px;
+            background-color: #e0e7ff;
+            color: #4338ca;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        
+        /* Center Panel */
+        .center-panel {
+            flex: 1;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .treemap-container {
+            flex: 1;
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .treemap {
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 4px;
+        }
+        
+        .treemap-item {
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 12px;
+            color: white;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .treemap-item:hover {
+            transform: scale(1.02);
+            z-index: 5;
+        }
+        
+        .treemap-item.selected {
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.8), 0 0 0 6px #2563eb;
+            z-index: 10;
+        }
+        
+        .treemap-item.pending::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: repeating-linear-gradient(
+                45deg,
+                rgba(255, 255, 255, 0.2),
+                rgba(255, 255, 255, 0.2) 10px,
+                rgba(255, 255, 255, 0) 10px,
+                rgba(255, 255, 255, 0) 20px
+            );
+            animation: pending-animation 1s linear infinite;
+        }
+        
+        @keyframes pending-animation {
+            0% {
+                background-position: 0 0;
+            }
+            100% {
+                background-position: 20px 20px;
+            }
+        }
+        
+        .treemap-label {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            text-align: center;
+        }
+        
+        .treemap-value {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .scenario-charts {
+            height: 180px;
+            background-color: #f9fafb;
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            gap: 16px;
+        }
+        
+        .chart {
+            flex: 1;
+            background-color: #ffffff;
+            border-radius: 6px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chart-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+        
+        .chart-content {
+            flex: 1;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+        }
+        
+        .chart-bar {
+            width: 24px;
+            background-color: #d1d5db;
+            border-radius: 4px 4px 0 0;
+            position: relative;
+        }
+        
+        .chart-bar.primary {
+            background-color: #2563eb;
+        }
+        
+        .chart-bar.secondary {
+            background-color: #8b5cf6;
+        }
+        
+        .chart-bar.tertiary {
+            background-color: #ec4899;
+        }
+        
+        .chart-value {
+            position: absolute;
+            top: -20px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 10px;
+            font-weight: 600;
+        }
+        
+        /* Right Panel */
+        .right-panel {
+            width: 320px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        
+        .revenue-category {
+            margin-bottom: 16px;
+            padding: 12px;
+            background-color: #f9fafb;
+            border-radius: 8px;
+            border-left: 4px solid #8b5cf6;
+        }
+        
+        /* Lens Switcher */
+        .lens-switcher {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .lens-option {
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            background-color: #ffffff;
+            color: #6b7280;
+        }
+        
+        .lens-option.active {
+            background-color: #2563eb;
+            color: #ffffff;
+        }
+        
+        /* Interaction Flow Indicators */
+        .flow-indicator {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(37, 99, 235, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(37, 99, 235, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+            }
+        }
+        
+        .flow-arrow {
+            position: absolute;
+            width: 100px;
+            height: 2px;
+            background-color: #2563eb;
+            z-index: 15;
+        }
+        
+        .flow-arrow::after {
+            content: "";
+            position: absolute;
+            right: 0;
+            top: -4px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid #2563eb;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+        }
+        
+        .tooltip {
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 25;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <!-- Top HUD Bar -->
+        <div class="hud-bar">
+            <div class="hud-left">
+                <div class="logo">Citizen Budget Lab</div>
+                <div class="resolution-meter">
+                    <span class="meter-label">Resolution:</span>
+                    <div class="meter-bar">
+                        <div class="meter-fill"></div>
+                    </div>
+                    <span class="meter-value">35%</span>
+                </div>
+            </div>
+            <div class="hud-right">
+                <div class="year-selector">
+                    <i class="material-icons" style="font-size: 16px;">calendar_today</i>
+                    <span class="year-text">2026</span>
+                </div>
+                <div class="eu-lights">
+                    <div class="eu-light ok" title="EU 3% Rule: OK">
+                        <i class="material-icons" style="font-size: 14px; color: white;">check</i>
+                    </div>
+                    <div class="eu-light warn" title="EU 60% Rule: Warning">
+                        <i class="material-icons" style="font-size: 14px; color: white;">priority_high</i>
+                    </div>
+                </div>
+                <div class="nav-controls">
+                    <div class="nav-button" title="Undo">
+                        <i class="material-icons" style="font-size: 18px;">undo</i>
+                    </div>
+                    <div class="nav-button" title="Redo">
+                        <i class="material-icons" style="font-size: 18px;">redo</i>
+                    </div>
+                    <div class="nav-button" title="Reset">
+                        <i class="material-icons" style="font-size: 18px;">refresh</i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Panel -->
+            <div class="left-panel">
+                <div class="panel-header">Education Reforms & Targets</div>
+                
+                <div class="selected-category">
+                    <div class="category-header">
+                        <div class="category-name">Education</div>
+                        <div class="category-amount">€152B</div>
+                    </div>
+                    
+                    <div class="target-controls">
+                        <span class="target-label">Target:</span>
+                        <input type="text" class="target-input" value="+€10B">
+                        <button class="target-button">Apply</button>
+                    </div>
+                    
+                    <div class="reforms-section">
+                        <div class="section-title">Available Reforms</div>
+                        
+                        <div class="reform-item">
+                            <div class="reform-name">Hire more teachers</div>
+                            <div class="reform-description">Reduce class sizes by hiring 15,000 additional teachers</div>
+                            <div class="reform-impact">
+                                <span class="impact-positive">+€3.2B</span>
+                                <span class="impact-positive">+15K jobs</span>
+                            </div>
+                        </div>
+                        
+                        <div class="reform-item">
+                            <div class="reform-name">Digital equipment upgrade</div>
+                            <div class="reform-description">Modernize IT infrastructure in primary and secondary schools</div>
+                            <div class="reform-impact">
+                                <span class="impact-positive">+€1.8B</span>
+                                <span class="impact-negative">-€0.4B (energy)</span>
+                            </div>
+                        </div>
+                        
+                        <div class="reform-item">
+                            <div class="reform-name">School building renovation</div>
+                            <div class="reform-description">Renovate 500 school buildings for energy efficiency</div>
+                            <div class="reform-impact">
+                                <span class="impact-positive">+€4.5B</span>
+                                <span class="impact-positive">-€0.8B (energy)</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="popular-reforms">
+                        <div class="section-title">Popular Reforms</div>
+                        <div class="reform-pill">Teacher salary increase</div>
+                        <div class="reform-pill">Rural school support</div>
+                        <div class="reform-pill">Vocational training expansion</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Center Panel -->
+            <div class="center-panel">
+                <div class="lens-switcher">
+                    <div class="lens-option active">By Mass</div>
+                    <div class="lens-option">By Family</div>
+                    <div class="lens-option">By Reform</div>
+                </div>
+                
+                <div class="treemap-container">
+                    <div class="treemap">
+                        <div class="treemap-item" style="background-color: #2563eb; grid-column: span 2; grid-row: span 2;">
+                            <div class="treemap-label">Social Protection</div>
+                            <div class="treemap-value">€326B</div>
+                        </div>
+                        <div class="treemap-item" style="background-color: #8b5cf6; grid-column: span 2; grid-row: span 1;">
+                            <div class="treemap-label">Health</div>
+                            <div class="treemap-value">€218B</div>
+                        </div>
+                        <div class="treemap-item selected pending" style="background-color: #ec4899; grid-column: span 1; grid-row: span 1;">
+                            <div class="treemap-label">Education</div>
+                            <div class="treemap-value">€152B</div>
+                        </div>
+                        <div class="treemap-item" style="background-color: #10b981; grid-column: span 1; grid-row: span 1;">
+                            <div class="treemap-label">Defense</div>
+                            <div class="treemap-value">€58B</div>
+                        </div>
+                        <div class="treemap-item" style="background-color: #f59e0b; grid-column: span 1; grid-row: span 1;">
+                            <div class="treemap-label">Public Order</div>
+                            <div class="treemap-value">€42B</div>
+                        </div>
+                        <div class="treemap-item" style="background-color: #ef4444; grid-column: span 1; grid-row: span 1;">
+                            <div class="treemap-label">Environment</div>
+                            <div class="treemap-value">€28B</div>
+                        </div>
+                        <div class="treemap-item" style="background-color: #6366f1; grid-column: span 2; grid-row: span 1;">
+                            <div class="treemap-label">Economic Affairs</div>
+                            <div class="treemap-value">€86B</div>
+                        </div>
+                        <div class="treemap-item" style="background-color: #14b8a6; grid-column: span 1; grid-row: span 1;">
+                            <div class="treemap-label">Housing</div>
+                            <div class="treemap-value">€35B</div>
+                        </div>
+                        <div class="treemap-item" style="background-color: #a855f7; grid-column: span 1; grid-row: span 1;">
+                            <div class="treemap-label">Recreation</div>
+                            <div class="treemap-value">€22B</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Interaction Flow Indicators -->
+                    <div class="flow-indicator" style="top: 45%; left: 40%;">
+                        <i class="material-icons" style="color: #2563eb;">touch_app</i>
+                    </div>
+                    
+                    <div class="flow-arrow" style="top: 45%; left: 40%; transform: rotate(180deg);"></div>
+                    
+                    <div class="tooltip" style="top: 40%; left: 35%;">
+                        Click on a budget category
+                    </div>
+                </div>
+                
+                <div class="scenario-charts">
+                    <div class="chart">
+                        <div class="chart-title">Debt Path</div>
+                        <div class="chart-content">
+                            <div class="chart-bar primary" style="height: 60%;">
+                                <div class="chart-value">2026</div>
+                            </div>
+                            <div class="chart-bar primary" style="height: 72%;">
+                                <div class="chart-value">2027</div>
+                            </div>
+                            <div class="chart-bar primary" style="height: 82%;">
+                                <div class="chart-value">2028</div>
+                            </div>
+                            <div class="chart-bar primary" style="height: 88%;">
+                                <div class="chart-value">2029</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chart">
+                        <div class="chart-title">Deficit</div>
+                        <div class="chart-content">
+                            <div class="chart-bar secondary" style="height: 40%;">
+                                <div class="chart-value">2026</div>
+                            </div>
+                            <div class="chart-bar secondary" style="height: 45%;">
+                                <div class="chart-value">2027</div>
+                            </div>
+                            <div class="chart-bar secondary" style="height: 48%;">
+                                <div class="chart-value">2028</div>
+                            </div>
+                            <div class="chart-bar secondary" style="height: 50%;">
+                                <div class="chart-value">2029</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chart">
+                        <div class="chart-title">Growth</div>
+                        <div class="chart-content">
+                            <div class="chart-bar tertiary" style="height: 50%;">
+                                <div class="chart-value">2026</div>
+                            </div>
+                            <div class="chart-bar tertiary" style="height: 52%;">
+                                <div class="chart-value">2027</div>
+                            </div>
+                            <div class="chart-bar tertiary" style="height: 54%;">
+                                <div class="chart-value">2028</div>
+                            </div>
+                            <div class="chart-bar tertiary" style="height: 56%;">
+                                <div class="chart-value">2029</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Panel -->
+            <div class="right-panel">
+                <div class="panel-header">Revenues</div>
+                
+                <div class="revenue-category">
+                    <div class="category-header">
+                        <div class="category-name">Income Tax</div>
+                        <div class="category-amount">€98B</div>
+                    </div>
+                    <div class="category-controls">
+                        <div class="control-button">Adjust Rate</div>
+                        <div class="control-button">View Reforms</div>
+                    </div>
+                </div>
+                
+                <div class="revenue-category">
+                    <div class="category-header">
+                        <div class="category-name">VAT</div>
+                        <div class="category-amount">€142B</div>
+                    </div>
+                    <div class="category-controls">
+                        <div class="control-button">Adjust Rate</div>
+                        <div class="control-button">View Reforms</div>
+                    </div>
+                </div>
+                
+                <div class="revenue-category">
+                    <div class="category-header">
+                        <div class="category-name">Corporate Tax</div>
+                        <div class="category-amount">€65B</div>
+                    </div>
+                    <div class="category-controls">
+                        <div class="control-button">Adjust Rate</div>
+                        <div class="control-button">View Reforms</div>
+                    </div>
+                </div>
+                
+                <div class="revenue-category">
+                    <div class="category-header">
+                        <div class="category-name">Social Contributions</div>
+                        <div class="category-amount">€178B</div>
+                    </div>
+                    <div class="category-controls">
+                        <div class="control-button">Adjust Rate</div>
+                        <div class="control-button">View Reforms</div>
+                    </div>
+                </div>
+                
+                <div class="revenue-category">
+                    <div class="category-header">
+                        <div class="category-name">Other Revenues</div>
+                        <div class="category-amount">€42B</div>
+                    </div>
+                    <div class="category-controls">
+                        <div class="control-button">Adjust Rate</div>
+                        <div class="control-button">View Reforms</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

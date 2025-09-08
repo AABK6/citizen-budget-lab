@@ -28,6 +28,9 @@ Architecture Additions
 - UI: Mass Cards + Explain Panel; Reform Library with search; Waterfall + Sankey‑lite ribbons; HUD; Compare/Remix.
  - UI: Two‑column command center; Cockpit HUD; Slim ScoreStrip; Results Tray; Explain Overlay; inline configurators; pinned items; sticky headers.
 
+Design Inspirations
+- Static HTML mockups for a potential redesign of the `/build` page are located in `docs/design_mockups/`. These explore alternative layouts for the controls and canvas.
+
 Roadmap (Phased)
 
 Phase 0 — Alignment & Framing
