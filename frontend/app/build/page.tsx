@@ -557,7 +557,7 @@ export default function BuildPage() {
             <div className={`lens-option ${lens === 'reform' ? 'active' : ''}`} onClick={() => setLens('reform')}>By Reform</div>
           </div>
           <div className="treemap-container">
-            <TreemapChart data={masses} />
+            <TreemapChart data={masses} colors={treemapColors} />
           </div>
           <div className="scenario-charts">
             {scenarioLoading && <div className="fr-p-2w">Running scenario...</div>}
