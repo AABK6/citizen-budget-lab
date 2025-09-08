@@ -517,188 +517,174 @@ export default function BuildPage() {
         .build-dense .fr-badge{ transform:translateY(-1px) }
       `}</style>
       <h2 className="fr-h2">{t('build.title') || 'Build — Workshop'}</h2>
-      <div className="fr-grid-row fr-grid-row--gutters">
-        {/* Left column: Controls (Spending vs Revenue) */}
-        <div className="fr-col-12 fr-col-md-8">
-          <div className="fr-card fr-card--no-arrow">
-            <div className="fr-card__body">
-              <div className="fr-card__title">{t('build.controls') || 'Controls'}</div>
-              <div className="fr-card__desc">
-                <div className="fr-grid-row fr-grid-row--gutters" style={{ marginBottom: '.5rem' }}>
-                  <div className="fr-col-6">
-                    <label className="fr-label" htmlFor="year">{t('labels.year') || 'Year'}</label>
-                    <input id="year" className="fr-input" type="number" value={year} onChange={e => setYear(parseInt(e.target.value || '2026', 10))} />
-                  </div>
-                  <div className="fr-col-6">
-                    <div className="fr-hint-text">{t('hud.hints') || 'Hints: +/- to adjust; ⌘Z undo; ⇧⌘Z redo'}</div>
-                  </div>
-                </div>
-                {loading && <p>{t('loading') || 'Loading…'}</p>}
-                {error && <p className="fr-error-text">{t('error.generic') || error}</p>}
-                {!loading && !error && (
-                  <div className="fr-grid-row fr-grid-row--gutters">
-                    <div className="fr-col-12" style={{ marginBottom: '.5rem' }}>
-                        <div className="fr-card fr-card--no-arrow">
-                          <div className="fr-card__body">
-                            <div className="fr-card__title">{t('build.pinned_levers') || 'Selected Levers'}</div>
-                            <div className="fr-card__desc">
-                              <LeverWorkshop levers={levers} onToggle={toggleLever} selected={selectedLevers} t={t} />rs} t={t} />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    {/* Spending column */}
-                    <div className="fr-col-12 fr-col-md-6">
-                      <div style={{ position:'sticky', top: 48, zIndex: 1, background: 'var(--background-default-grey)', paddingBottom: '.25rem' }}>
-                        <h4 className="fr-h4" style={{ marginBottom: '.25rem' }}>{t('build.expenditures') || 'Spending'}</h4>
-                        <div className="fr-input-group">
-                          <input ref={(el)=> (searchRef.current = el)} className="fr-input" placeholder={t('labels.search') || 'Search…'} value={expFilter} onChange={(e)=> setExpFilter(e.target.value)} />
-                        </div>
-                        <MassJumpBar keys={groupedExp.map(g=> g.key)} onJump={(k)=> document.getElementById('mass_'+k)?.scrollIntoView({ behavior:'smooth', block:'start' })} />
-                        <div className="fr-tags-group" style={{ marginTop: '.25rem' }}>
-                          <button className={"fr-tag fr-tag--sm" + (expView==='all' ? ' fr-tag--dismiss':'')} onClick={()=> setExpView('all')}>All</button>
-                          <button className={"fr-tag fr-tag--sm" + (expView==='adjusted' ? ' fr-tag--dismiss':'')} onClick={()=> setExpView('adjusted')}>Adjusted</button>
-                          <button className={"fr-tag fr-tag--sm" + (expView==='favorites' ? ' fr-tag--dismiss':'')} onClick={()=> setExpView('favorites')}>Favorites</button>
-                          <button className={"fr-tag fr-tag--sm" + (expView==='unresolved' ? ' fr-tag--dismiss':'')} onClick={()=> setExpView('unresolved')}>Unresolved</button>
-                        </div>
-                        {favExp.length>0 && (
-                          <PinnedPieces pieces={pieces} ids={favExp} deltas={deltas} targets={targets} onDelta={updateDelta} onTarget={updateTarget} onUnpin={(id)=> setFavExp(v=> v.filter(x=> x!==id))} t={t} />
-                        )}
-                      </div>
-                      <GroupedPieceList2
-                        grouped={filteredGroupedExp}
-                        deltas={deltas}
-                        targets={targets}
-                        onDelta={updateDelta}
-                        onTarget={updateTarget}
-                        t={t}
-                        resByMass={resByMass}
-                        fav={favExp}
-                        onToggleFav={(id)=> setFavExp(arr => arr.includes(id) ? arr.filter(x=>x!==id) : [...arr, id])}
-                        onExplain={setExplainId}
-                        unresolved={unresolvedMasses}
-                        defaultView={(k)=> unresolvedMasses.has(k) ? 'unresolved' : expView}
-                      />
-                    </div>
-                    {/* Revenue column */}
-                    <div className="fr-col-12 fr-col-md-6">
-                      <div style={{ position:'sticky', top: 48, zIndex: 1, background: 'var(--background-default-grey)', paddingBottom: '.25rem' }}>
-                        <h4 className="fr-h4" style={{ marginBottom: '.25rem' }}>{t('build.revenues') || 'Revenue'}</h4>
-                        <div className="fr-input-group">
-                          <input className="fr-input" placeholder={t('labels.search') || 'Search…'} value={revFilter} onChange={(e)=> setRevFilter(e.target.value)} />
-                        </div>
-                        <div className="fr-tags-group" style={{ marginTop: '.25rem' }}>
-                          <button className={"fr-tag fr-tag--sm" + (revView==='all' ? ' fr-tag--dismiss':'')} onClick={()=> setRevView('all')}>All</button>
-                          <button className={"fr-tag fr-tag--sm" + (revView==='adjusted' ? ' fr-tag--dismiss':'')} onClick={()=> setRevView('adjusted')}>Adjusted</button>
-                          <button className={"fr-tag fr-tag--sm" + (revView==='favorites' ? ' fr-tag--dismiss':'')} onClick={()=> setRevView('favorites')}>Favorites</button>
-                          <button className={"fr-tag fr-tag--sm" + (revView==='unresolved' ? ' fr-tag--dismiss':'')} onClick={()=> setRevView('unresolved')}>Unresolved</button>
-                        </div>
-                        {favRev.length>0 && (
-                          <PinnedPieces pieces={pieces} ids={favRev} deltas={deltas} targets={targets} onDelta={updateDelta} onTarget={updateTarget} onUnpin={(id)=> setFavRev(v=> v.filter(x=> x!==id))} t={t} />
-                        )}
-                      </div>
-                      <PieceList2
-                        pieces={filteredRev}
-                        deltas={deltas}
-                        targets={targets}
-                        onDelta={updateDelta}
-                        onTarget={updateTarget}
-                        t={t}
-                        resByMass={resByMass}
-                        fav={favRev}
-                        onToggleFav={(id)=> setFavRev(arr => arr.includes(id) ? arr.filter(x=>x!==id) : [...arr, id])}
-                        onExplain={setExplainId}
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
+<div className="fr-card fr-card--no-arrow">
+  <div className="fr-card__body">
+    <div className="fr-card__title">{t('build.controls') || 'Controls'}</div>
+    <div className="fr-card__desc">
+      <div className="fr-grid-row fr-grid-row--gutters" style={{ marginBottom: '.5rem' }}>
+        <div className="fr-col-6">
+          <label className="fr-label" htmlFor="year">{t('labels.year') || 'Year'}</label>
+          <input id="year" className="fr-input" type="number" value={year} onChange={e => setYear(parseInt(e.target.value || '2026', 10))} />
+        </div>
+        <div className="fr-col-6">
+          <div className="fr-hint-text">{t('hud.hints') || 'Hints: +/- to adjust; ⌘Z undo; ⇧⌘Z redo'}</div>
+        </div>
+      </div>
+      {loading && <p>{t('loading') || 'Loading…'}</p>}
+      {error && <p className="fr-error-text">{t('error.generic') || error}</p>}
+      {!loading && !error && (
+        <div className="fr-card fr-card--no-arrow" style={{ marginBottom: '.5rem' }}>
+          <div className="fr-card__body">
+            <div className="fr-card__title">{t('build.pinned_levers') || 'Selected Levers'}</div>
+            <div className="fr-card__desc">
+              <LeverWorkshop levers={levers} onToggle={toggleLever} selected={selectedLevers} t={t} />
             </div>
           </div>
         </div>
-
-        {/* Right column: Canvas + Scoreboard */}
-        <div className="fr-col-12 fr-col-md-4">
-          <div className="stack" style={{ gap: '.75rem' }}>
-            <div className="fr-card fr-card--no-arrow">
-              <div className="fr-card__body">
-                <div className="fr-card__title" style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-                  <span>{t('build.canvas') || 'Canvas'}</span>
-                  <div className="fr-tags-group" aria-label="Lens">
-                    <button className={"fr-tag fr-tag--sm" + (lens==='mass' ? ' fr-tag--dismiss': '')} onClick={()=> setLens('mass')}>Mass</button>
-                    <button className={"fr-tag fr-tag--sm" + (lens==='family' ? ' fr-tag--dismiss': '')} onClick={()=> setLens('family')} disabled>Family</button>
-                    <button className={"fr-tag fr-tag--sm" + (lens==='reform' ? ' fr-tag--dismiss': '')} onClick={()=> setLens('reform')} disabled>Reform</button>
-                  </div>
-                </div>
-                <div className="fr-card__desc">
-                  {result?.masses && <TwinBars masses={result.masses} labels={massList.reduce((acc, m)=> (acc[m]=massUiLabel(m), acc), {} as Record<string,string>)} resolution={result.resolutionByMass} palette={COFOG_COLORS} />}
-                  {wfItems?.length>0 && <div style={{ marginTop: '.5rem' }}><WaterfallDelta items={wfItems} title={t('charts.waterfall') || 'Δ by Mass (Waterfall)'} /></div>}
-                </div>
+      )}
+    </div>
+  </div>
+</div>
+{!loading && !error && (
+  <div className="fr-grid-row fr-grid-row--gutters">
+    <div className="fr-col-12 fr-col-lg-3">
+      <div style={{ position:'sticky', top: 48, zIndex: 1, background: 'var(--background-default-grey)', paddingBottom: '.25rem' }}>
+        <h4 className="fr-h4" style={{ marginBottom: '.25rem' }}>{t('build.expenditures') || 'Spending'}</h4>
+        <div className="fr-input-group">
+          <input ref={(el)=> (searchRef.current = el)} className="fr-input" placeholder={t('labels.search') || 'Search…'} value={expFilter} onChange={(e)=> setExpFilter(e.target.value)} />
+        </div>
+        <MassJumpBar keys={groupedExp.map(g=> g.key)} onJump={(k)=> document.getElementById('mass_'+k)?.scrollIntoView({ behavior:'smooth', block:'start' })} />
+        <div className="fr-tags-group" style={{ marginTop: '.25rem' }}>
+          <button className={"fr-tag fr-tag--sm" + (expView==='all' ? ' fr-tag--dismiss':'')} onClick={()=> setExpView('all')}>All</button>
+          <button className={"fr-tag fr-tag--sm" + (expView==='adjusted' ? ' fr-tag--dismiss':'')} onClick={()=> setExpView('adjusted')}>Adjusted</button>
+          <button className={"fr-tag fr-tag--sm" + (expView==='favorites' ? ' fr-tag--dismiss':'')} onClick={()=> setExpView('favorites')}>Favorites</button>
+          <button className={"fr-tag fr-tag--sm" + (expView==='unresolved' ? ' fr-tag--dismiss':'')} onClick={()=> setExpView('unresolved')}>Unresolved</button>
+        </div>
+        {favExp.length>0 && (
+          <PinnedPieces pieces={pieces} ids={favExp} deltas={deltas} targets={targets} onDelta={updateDelta} onTarget={updateTarget} onUnpin={(id)=> setFavExp(v=> v.filter(x=> x!==id))} t={t} />
+        )}
+      </div>
+      <GroupedPieceList2
+        grouped={filteredGroupedExp}
+        deltas={deltas}
+        targets={targets}
+        onDelta={updateDelta}
+        onTarget={updateTarget}
+        t={t}
+        resByMass={resByMass}
+        fav={favExp}
+        onToggleFav={(id)=> setFavExp(arr => arr.includes(id) ? arr.filter(x=>x!==id) : [...arr, id])}
+        onExplain={setExplainId}
+        unresolved={unresolvedMasses}
+        defaultView={(k)=> unresolvedMasses.has(k) ? 'unresolved' : expView}
+      />
+    </div>
+    <div className="fr-col-12 fr-col-lg-6">
+      <div className="stack" style={{ gap: '.75rem' }}>
+        <div className="fr-card fr-card--no-arrow">
+          <div className="fr-card__body">
+            <div className="fr-card__title" style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+              <span>{t('build.canvas') || 'Canvas'}</span>
+              <div className="fr-tags-group" aria-label="Lens">
+                <button className={"fr-tag fr-tag--sm" + (lens==='mass' ? ' fr-tag--dismiss': '')} onClick={()=> setLens('mass')}>Mass</button>
+                <button className={"fr-tag fr-tag--sm" + (lens==='family' ? ' fr-tag--dismiss': '')} onClick={()=> setLens('family')} disabled>Family</button>
+                <button className={"fr-tag fr-tag--sm" + (lens==='reform' ? ' fr-tag--dismiss': '')} onClick={()=> setLens('reform')} disabled>Reform</button>
               </div>
             </div>
-            <ScoreStrip
-              estExp={estimateDeltaExp(exp, deltas)}
-              estRev={estimateDeltaRev(rev, deltas)}
-              result={result}
-              conflictNudge={conflictNudge}
-              currentDsl={dslB64}
-              lastDsl={lastDsl}
-            />
-            <div className="fr-card fr-card--no-arrow">
-              <div className="fr-card__body">
-                <button className="fr-btn fr-btn--secondary" onClick={()=> setShowTray(v=>!v)} aria-expanded={showTray} aria-controls="results_tray">
-                  {showTray ? (t('labels.hide_results') || 'Hide results') : (t('labels.show_results') || 'Show results')}
-                </button>
-                {showTray && (
-                  <div id="results_tray" className="stack" style={{ gap: '.75rem', marginTop: '.5rem' }}>
-                    {(result?.deficitPath?.length || result?.debtPath?.length) ? (
-                      <>
-                        <h4 className="fr-h4">{t('charts.deficit_path') || 'Deficit & Debt Path'}</h4>
-                        <DeficitPathChart deficit={result?.deficitPath || []} debt={result?.debtPath || []} />
-                      </>
-                    ) : null}
-                    {ribbons?.length>0 && <SankeyRibbons ribbons={ribbons} pieceLabels={ribbonLabels.piece} massLabels={ribbonLabels.mass} />}
-                    <div className="fr-card fr-card--no-arrow">
-                      <div className="fr-card__body">
-                        <div className="fr-card__title">{t('build.workshop') || 'Policy Workshop'}</div>
-                        <div className="fr-card__desc">
-                          <p className="fr-text--sm">{t('workshop.hint') || 'Select reforms to apply their fixed budgetary impact.'}</p>
-                          <LeverWorkshop levers={levers} onToggle={toggleLever} selected={selectedLevers} t={t} />
+            <div className="fr-card__desc">
+              {result?.masses && <TwinBars masses={result.masses} labels={massList.reduce((acc, m)=> (acc[m]=massUiLabel(m), acc), {} as Record<string,string>)} resolution={result.resolutionByMass} palette={COFOG_COLORS} />}
+              {wfItems?.length>0 && <div style={{ marginTop: '.5rem' }}><WaterfallDelta items={wfItems} title={t('charts.waterfall') || 'Δ by Mass (Waterfall)'} /></div>}
+            </div>
+          </div>
+        </div>
+        <ScoreStrip
+          estExp={estimateDeltaExp(exp, deltas)}
+          estRev={estimateDeltaRev(rev, deltas)}
+          result={result}
+          conflictNudge={conflictNudge}
+          currentDsl={dslB64}
+          lastDsl={lastDsl}
+        />
+        <div className="fr-card fr-card--no-arrow">
+          <div className="fr-card__body">
+            <button className="fr-btn fr-btn--secondary" onClick={()=> setShowTray(v=>!v)} aria-expanded={showTray} aria-controls="results_tray">
+              {showTray ? (t('labels.hide_results') || 'Hide results') : (t('labels.show_results') || 'Show results')}
+            </button>
+            {showTray && (
+              <div id="results_tray" className="stack" style={{ gap: '.75rem', marginTop: '.5rem' }}>
+                {(result?.deficitPath?.length || result?.debtPath?.length) ? (
+                  <>
+                    <h4 className="fr-h4">{t('charts.deficit_path') || 'Deficit & Debt Path'}</h4>
+                    <DeficitPathChart deficit={result?.deficitPath || []} debt={result?.debtPath || []} />
+                  </>
+                ) : null}
+                {ribbons?.length>0 && <SankeyRibbons ribbons={ribbons} pieceLabels={ribbonLabels.piece} massLabels={ribbonLabels.mass} />}
+                <div className="fr-card fr-card--no-arrow">
+                  <div className="fr-card__body">
+                    <div className="fr-card__title">{t('build.workshop') || 'Policy Workshop'}</div>
+                    <div className="fr-card__desc">
+                      <p className="fr-text--sm">{t('workshop.hint') || 'Select reforms to apply their fixed budgetary impact.'}</p>
+                      <LeverWorkshop levers={levers} onToggle={toggleLever} selected={selectedLevers} t={t} />
+                    </div>
+                  </div>
+                </div>
+                {result?.id && (
+                  <div className="fr-card fr-card--no-arrow">
+                    <div className="fr-card__body">
+                      <div className="fr-card__title">{t('build.dsl') || 'Scenario DSL'}</div>
+                      <div className="fr-card__desc">
+                        <pre style={{ whiteSpace: 'pre-wrap' }}><code>{dsl}</code></pre>
+                      </div>
+                      <div className="fr-card__title" style={{ marginTop: '.5rem' }}>{t('scenario.save_title') || 'Scenario title'}</div>
+                      <div className="fr-card__desc">
+                        <div className="fr-input-group">
+                          <input id="save_title" className="fr-input" value={saveTitle} onChange={e=> setSaveTitle(e.target.value)} placeholder="My plan" />
+                        </div>
+                        <div className="fr-btns-group fr-btns-group--inline" style={{ marginTop: '.25rem' }}>
+                          <button className="fr-btn fr-btn--secondary" onClick={async()=>{ try { const q = `mutation($id:ID!,$title:String){ saveScenario(id:$id, title:$title) }`; await gqlRequest(q, { id: result.id, title: saveTitle || 'My plan' }) } catch {} }}>{t('scenario.save') || 'Save'}</button>
+                          <a className="fr-link" href={`/api/og?scenarioId=${result.id}`} target="_blank" rel="noopener noreferrer">OG preview</a>
                         </div>
                       </div>
                     </div>
-                    {result?.id && (
-                      <div className="fr-card fr-card--no-arrow">
-                        <div className="fr-card__body">
-                          <div className="fr-card__title">{t('build.dsl') || 'Scenario DSL'}</div>
-                          <div className="fr-card__desc">
-                            <pre style={{ whiteSpace: 'pre-wrap' }}><code>{dsl}</code></pre>
-                          </div>
-                          <div className="fr-card__title" style={{ marginTop: '.5rem' }}>{t('scenario.save_title') || 'Scenario title'}</div>
-                          <div className="fr-card__desc">
-                            <div className="fr-input-group">
-                              <input id="save_title" className="fr-input" value={saveTitle} onChange={e=> setSaveTitle(e.target.value)} placeholder="My plan" />
-                            </div>
-                            <div className="fr-btns-group fr-btns-group--inline" style={{ marginTop: '.25rem' }}>
-                              <button className="fr-btn fr-btn--secondary" onClick={async()=>{
-                                try {
-                                  const q = `mutation($id:ID!,$title:String){ saveScenario(id:$id, title:$title) }`
-                                  await gqlRequest(q, { id: result.id, title: saveTitle || 'My plan' })
-                                } catch {}
-                              }}>{t('scenario.save') || 'Save'}</button>
-                              <a className="fr-link" href={`/api/og?scenarioId=${result.id}`} target="_blank" rel="noopener noreferrer">OG preview</a>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
                   </div>
                 )}
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
+    </div>
+    <div className="fr-col-12 fr-col-lg-3">
+      <div style={{ position:'sticky', top: 48, zIndex: 1, background: 'var(--background-default-grey)', paddingBottom: '.25rem' }}>
+        <h4 className="fr-h4" style={{ marginBottom: '.25rem' }}>{t('build.revenues') || 'Revenue'}</h4>
+        <div className="fr-input-group">
+          <input className="fr-input" placeholder={t('labels.search') || 'Search…'} value={revFilter} onChange={(e)=> setRevFilter(e.target.value)} />
+        </div>
+        <div className="fr-tags-group" style={{ marginTop: '.25rem' }}>
+          <button className={"fr-tag fr-tag--sm" + (revView==='all' ? ' fr-tag--dismiss':'')} onClick={()=> setRevView('all')}>All</button>
+          <button className={"fr-tag fr-tag--sm" + (revView==='adjusted' ? ' fr-tag--dismiss':'')} onClick={()=> setRevView('adjusted')}>Adjusted</button>
+          <button className={"fr-tag fr-tag--sm" + (revView==='favorites' ? ' fr-tag--dismiss':'')} onClick={()=> setRevView('favorites')}>Favorites</button>
+          <button className={"fr-tag fr-tag--sm" + (revView==='unresolved' ? ' fr-tag--dismiss':'')} onClick={()=> setRevView('unresolved')}>Unresolved</button>
+        </div>
+        {favRev.length>0 && (
+          <PinnedPieces pieces={pieces} ids={favRev} deltas={deltas} targets={targets} onDelta={updateDelta} onTarget={updateTarget} onUnpin={(id)=> setFavRev(v=> v.filter(x=> x!==id))} t={t} />
+        )}
+      </div>
+      <PieceList2
+        pieces={filteredRev}
+        deltas={deltas}
+        targets={targets}
+        onDelta={updateDelta}
+        onTarget={updateTarget}
+        t={t}
+        resByMass={resByMass}
+        fav={favRev}
+        onToggleFav={(id)=> setFavRev(arr => arr.includes(id) ? arr.filter(x=>x!==id) : [...arr, id])}
+        onExplain={setExplainId}
+      />
+    </div>
+  </div>
+)}
       {/* DSL Drawer */}
       {showDsl && (
         <div style={{ position:'fixed', right: '1rem', bottom: '1rem', width: '380px', maxHeight: '60vh', overflow:'auto', border: '1px solid var(--border-default-grey)', background: 'var(--background-default-grey)', zIndex: 200, borderRadius: 6 }}>
