@@ -188,14 +188,16 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
 
 .main-content {
     flex: 1;
-    display: flex;
+    display: grid;
+    grid-template-columns: 320px 1fr 320px;
+    grid-template-areas: "left-panel center-panel right-panel";
     padding: 24px;
     gap: 24px;
     overflow: hidden;
 }
 
 .left-panel, .right-panel {
-    width: 320px;
+    width: 100%;
     background-color: #ffffff;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -203,6 +205,14 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+}
+
+.left-panel {
+    grid-area: left-panel;
+}
+
+.right-panel {
+    grid-area: right-panel;
 }
 
 .panel-header {
@@ -268,6 +278,7 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
 }
 
 .center-panel {
+    grid-area: center-panel;
     flex: 1;
     background-color: #ffffff;
     border-radius: 12px;
