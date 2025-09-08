@@ -37,7 +37,7 @@ type PopularIntent = {
   seed: any; // DSL snippet
 };
 
-type ScenarioResult = {
+export type ScenarioResult = {
   id: string;
   accounting: { deficitPath: number[]; debtPath: number[]; };
   compliance: {

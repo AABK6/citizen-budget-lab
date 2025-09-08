@@ -211,7 +211,7 @@ Epics
       - Implemented/resolved in GraphQL with tests covering suggestions, mass labels/intents, and specifyMass validation + DSL update.
     - [x] WaterfallDelta in Canvas; Sankey‑lite ribbons in Results Tray; Lens Switch recolorings
     - [x] One‑line rows with steppers (Δ and 🎯); Δ€ chips; default Adjusted‑only filters; MassJumpBar navigation; compact density mode.
-    - [ ] Compare & Remix view; save/publish with lineage
+    - [~] Compare & Remix view; save/publish with lineage
     - [ ] A11y polish; FR/EN copy; performance budget checks
 
   - Detailed plan & storyboard: see `docs/PLAYGROUND_WORKSHOP_PLAN.md`.
