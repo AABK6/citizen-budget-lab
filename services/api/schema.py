@@ -284,6 +284,7 @@ class PolicyLeverType:
     sources: list[str]
     shortLabel: str | None = None
     popularity: float | None = None
+    massMapping: JSON | None = None
 
 
 @strawberry.type
@@ -709,6 +710,7 @@ class Query:
                     sources=[str(x) for x in (it.get("sources") or [])],
                     shortLabel=str(it.get("short_label") or ""),
                     popularity=float(it.get("popularity", 0.0)),
+                    massMapping=it.get("mass_mapping") or {},
                 )
             )
         return out
@@ -784,6 +786,7 @@ class Query:
                     sources=[str(x) for x in (it.get("sources") or [])],
                     shortLabel=str(it.get("short_label") or ""),
                     popularity=float(it.get("popularity", 0.0)),
+                    massMapping=it.get("mass_mapping") or {},
                 )
             )
         return out

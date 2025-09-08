@@ -34,11 +34,61 @@ type Distribution { decile: [DecileImpact!]!, giniDelta: Float!, povertyRateDelt
 type Source { id: ID!, datasetName: String!, url: String!, license: String!, refreshCadence: String!, vintage: String! }
 
 input RunScenarioInput { dsl: String! }
-type ShareSummary { title: String!, deficit: Float!, debtDeltaPct: Float, highlight: String }
-type RunScenarioPayload { id: ID!, scenarioId: ID!, accounting: Accounting!, compliance: Compliance!, macro: Macro!, distribution: Distribution, distanceScore: Float, shareSummary: ShareSummary }
+type ShareSummary { title: String!, deficit: Float!, debtDeltaPct: Float, highlight: String, resolutionPct: Float, masses: JSON, eu3: String, eu60: String }
+type RunScenarioPayload { id: ID!, scenarioId: ID!, accounting: Accounting!, compliance: Compliance!, macro: Macro!, distribution: Distribution, distanceScore: Float, shareSummary: ShareSummary, resolution: ResolutionType }
 
 type EUCountryCofog { country: String!, code: String!, label: String!, amountEur: Float!, share: Float! }
 type FiscalPath { years: [Int!]!, deficitRatio: [Float!]!, debtRatio: [Float!]! }
+
+type MassTargetType { massId: String!, targetDeltaEur: Float!, specifiedDeltaEur: Float! }
+type ResolutionType { overallPct: Float!, byMass: [MassTargetType!]! }
+
+enum PolicyFamilyEnum {
+    PENSIONS
+    TAXES
+    HEALTH
+    DEFENSE
+    STAFFING
+    SUBSIDIES
+    CLIMATE
+    SOCIAL_SECURITY
+    PROCUREMENT
+    OPERATIONS
+    OTHER
+}
+
+type PolicyLeverType {
+    id: ID!
+    family: PolicyFamilyEnum!
+    label: String!
+    description: String
+    paramsSchema: JSON!
+    fixedImpactEur: Float
+    feasibility: JSON!
+    conflictsWith: [ID!]!
+    sources: [String!]!
+    shortLabel: String
+    popularity: Float
+    massMapping: JSON
+}
+
+type MassLabelType {
+    id: ID!
+    displayLabel: String!
+    description: String
+    examples: [String!]!
+    synonyms: [String!]!
+}
+
+type IntentType {
+    id: ID!
+    label: String!
+    emoji: String
+    massId: String!
+    seed: JSON!
+    popularity: Float!
+    tags: [String!]!
+}
 
 type Query {
   allocation(year: Int!, basis: BasisEnum = CP, lens: LensEnum = ADMIN): Allocation!
@@ -56,6 +106,10 @@ type Query {
   legoBaseline(year: Int!, scope: ScopeEnum = S13): LegoBaseline!
   legoDistance(year: Int!, dsl: String!, scope: ScopeEnum = S13): Distance!
   shareCard(scenarioId: ID!): ShareSummary!
+  policyLevers(family: PolicyFamilyEnum, search: String): [PolicyLeverType!]!
+  massLabels: [MassLabelType!]!
+  popularIntents(limit: Int = 6): [IntentType!]!
+  suggestLevers(massId: String!, limit: Int = 5): [PolicyLeverType!]!
 }
 
 type Mutation {

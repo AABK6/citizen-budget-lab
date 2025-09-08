@@ -2,7 +2,8 @@ Citizen Budget Lab — Backlog (MVP → MVP+ → V1 → V2)
 
 Purpose
 
-- Single source of truth for scope, grouped by milestones. Each epic links to concrete acceptance criteria (AC) and maps to the product brief in readme.md. Use labels [MVP], [MVP+], [V1], [V2], [Tech], [Data], [API], [UI], [Ops], [Docs], [QA].
+  - Single source of truth for scope, grouped by milestones. Each epic links to concrete acceptance criteria (AC) and maps to the product brief in readme.md. Use labels [MVP], [MVP+], [V1], [V2], [Tech], [Data], [API], [UI], [Ops], [Docs], [QA].
+  - For a detailed inventory of data sources and schemas, see `docs/DATA_MANIFEST.md`.
 
 Legend & Verification
 
@@ -217,49 +218,47 @@ Epics
 
 Build Page — Detailed Tasks [UI][API]
 
- A) Scaffold & Data Wiring
-  - [x] Create `/build` page and wire GraphQL for `legoPieces`, `legoBaseline`, `policyLevers`, `legoDistance`.
-  - [x] Serialize DSL; `runScenario`; HUD + ScoreStrip (Deficit/Resolution/EU lights/Distance).
-  - [x] DSL restore (yaml‑lite → state): piece targets/changes, mass targets/changes, lever ids.
+#### Phase 1: Data Fetching & Display (Read-Only View)
 
- B) Controls & Grouping
-  - [x] Twin lists (Spending grouped; Revenue flat) with search, segmented filters (All/Adjusted/Favorites/Unresolved) default All, pinned items.
-  - [x] Per‑mass progress chips in group headers.
-  - [ ] Human labels/emoji for masses/pieces; tooltips with examples; synonyms in search.
-  - [~] PinnedLevers inline configurator scaffold (selected levers list + apply buttons).
-  - [ ] Segmented filters per group (All/Adjusted/Favorites/Unresolved).
+- [ ] **GraphQL Integration:** Wire up the `BuildPage` component to fetch all necessary data on load.
+  - [ ] `legoBaseline(year: ...)`: Fetch to get piece amounts and totals.
+  - [ ] `legoPieces(year: ...)`: Fetch to get labels, descriptions, and metadata for all pieces.
+  - [ ] `massLabels`: Fetch to get human-readable names for COFOG categories ("masses").
+  - [ ] `policyLevers`: Pre-fetch the full catalog of reforms.
+  - [ ] `popularIntents`: Pre-fetch the list of popular starting points.
+- [ ] **Populate UI Panels:**
+  - [ ] **Spending & Revenue Panels:** Process the fetched data to dynamically render the lists in the left and right panels. Group spending pieces by their COFOG major category.
+  - [ ] **Treemap Visualization:** Use the aggregated "mass" totals from the baseline to render the treemap, with rectangle sizes proportional to budget share.
 
- C) Workshop & Resolution
-  - [x] Render lever params from `paramsSchema` (min/max/step); derive Δ€ heuristics.
-  - [x] Apply lever as Target/Change to selected mass; conflict nudge on server error.
-  - [ ] Per‑mass progress bars from API `resolution.byMass`; link rows to mass progress; pending stripes.
-  - [ ] Explain Overlay: scoped panel with suggestions and sum‑constrained sliders; focus management.
+#### Phase 2: Scenario Building & Execution (Core Interactivity)
 
- D) Canvas & Consequences
-  - [x] TwinBars (baseline vs scenario) with pending stripes; WaterfallDelta in Canvas; mass palette applied.
-  - [x] Slim ScoreStrip under Canvas (sticky); Results Tray with Debt path; Workshop/DSL/Save in tray; Sankey ribbons remain in tray.
-  - [ ] Lens recolorings; export image; lazy‑load charts.
+- [ ] **Scenario State Management:**
+  - [ ] Introduce a central `useState` variable to hold the scenario DSL object.
+- [ ] **Implement User Actions:**
+  - [ ] Wire up UI controls (dials, buttons, inputs) to modify the scenario DSL object in the component's state.
+- [ ] **Execute Scenario:**
+  - [ ] Connect the main "Run" button to trigger the `runScenario` GraphQL mutation.
+  - [ ] Implement the logic to encode the DSL object to a Base64 string before sending.
+- [ ] **Display Scenario Results:**
+  - [ ] Create a state variable to hold the results from the `runScenario` mutation.
+  - [ ] Update the Deficit/Debt/Growth charts with data from the `accounting` and `macro` fields.
+  - [ ] Update the `RuleLights` component with data from the `compliance` field.
+  - [ ] Update the `ResolutionMeter` with the `resolution.overallPct` value.
 
- E) HUD & Shortcuts
-  - [x] Cockpit HUD (ΔExp/ΔRev, Net Δ, Resolution %, EU lights, Run/Reset).
-  - [~] Debt sparkline in HUD; %GDP badge on Net Δ (approx using baseline total until GDP wired).
-  - [x] Undo/Redo stack (Cmd/Ctrl+Z and Shift+Z); '/' focuses search; '+'/'-' adjust; 'f' pin/unpin; Esc closes overlays. Next: Shift for ±5.
+#### Phase 3: Activating the Policy Workshop
 
- F) A11y, i18n, Perf
-  - [ ] ARIA roles/labels for progress, alerts, dialogs; visible focus; skip links remain usable.
-  - [ ] FR/EN for all Build labels; Axe CI check for `/build`.
-  - [ ] Code‑split heavy charts; throttle slider rerenders; memoize filters; meet P95 budgets.
+- [ ] **Dynamic Reform Suggestions:**
+  - [ ] When a spending category is clicked, use its `massId` to call the `suggestLevers` query.
+  - [ ] Populate the "Available Reforms" list in the expanded panel with the results.
+- [ ] **Apply Reforms:**
+  - [ ] When a user selects a reform, add the corresponding `PolicyLever` ID to the `actions` array in the scenario DSL state.
 
- G) Share & Compare
-  - [ ] Save scenario (title/description); OG preview link; partial watermark when Specified < 100%.
-  - [ ] Compare & Remix entrypoint.
+#### Phase 4: Polish and Refinements
 
- H) Undo / Redo & Outdated Results
-  - [ ] Maintain an operation stack (pieceDeltaSet, pieceTargetSet, massTargetSet, massChangeSet, leverToggle) with timestamps.
-  - [ ] Keyboard: Cmd/Ctrl+Z undo; Cmd/Ctrl+Shift+Z redo; disabled when stack empty.
-  - [ ] Show an “Outdated results” chip when controls changed since last run; clicking Run clears chip.
-  - [ ] Persist last run timestamp and scenario id in URL (optional) for sharing reproducible states.
-  - Accessibility & i18n: full FR/EN, keyboard, contrast; “show the table”.
+- [ ] **State Synchronization:** Ensure the UI correctly reflects the state of the DSL at all times (e.g., pending changes, resolution progress).
+- [ ] **Loading & Error States:** Implement loading skeletons and user-friendly error messages for all data-fetching and mutation operations.
+- [ ] **Undo/Redo:** Implement a history stack for the DSL state to enable undo/redo functionality.
+- [ ] **Final Verification:** Conduct a full review to ensure all functionality is working as expected and the UI is a pixel-perfect match of the mockups.
 - LEGO Budget Builder — Documentation [Docs]
   - `docs/LEGO_METHOD.md`: sources, mapping, beneficiary rules, elasticities (v0), limitations, versioning; audit tables.
   - UPDATED: Reflect SDMX XML usage (expenditures via `gov_10a_exp`, taxes via `gov_10a_taxag`, sales via `gov_10a_main`), health `D.632`, social splits normalization, and interest proxy from COFOG 01.7.
