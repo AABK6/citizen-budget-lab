@@ -304,7 +304,7 @@ Epics
 - Local Finance Module [Data][API][UI]
   - Ingest DGFiP/OFGL balances; Équilibre réel validation; local entity views + rule feedback.
 
-Milestone‑Wide Conventions
+Milestone-Wide Conventions
 
 - Definitions
   - AE/CP: Authorisations d’engagement / Crédits de paiement (commitment vs payment authorizations).
@@ -316,6 +316,23 @@ Milestone‑Wide Conventions
   - Performance targets refer to P95 measured locally against warmed caches.
 - Out of scope
   - Legal determinations on compliance; personal data; non‑public datasets.
+
+## Milestone: Technical Debt & Refactoring
+
+This special milestone tracks the work required to address architectural inconsistencies and repair the simulation engine, ensuring a robust foundation for V1.
+
+- **Epic: Unify Data Flow and Repair Simulation Engine** [Tech][Data][API]
+  - **Problem:** The application currently suffers from data inconsistencies (especially in COFOG mapping) and a logically flawed simulation engine that produces incorrect results.
+  - **Solution:** A two-phase refactoring effort will make the dbt warehouse the single source of truth for all reporting data and repair the simulation engine's core logic.
+  - **Detailed Plan:** For a full breakdown of the analysis and step-by-step tasks, see the canonical plan at [**docs/REFACTOR_PLAN.md**](./docs/REFACTOR_PLAN.md).
+  - **Acceptance Criteria (AC):**
+    - [ ] A new `tools/build_seeds.py` script correctly generates a comprehensive COFOG mapping seed from `data/cofog_mapping.json`.
+    - [ ] dbt models are updated to use the new seed and produce consistent COFOG aggregations.
+    - [ ] The `allocation_by_cofog` API resolver is refactored to use the warehouse exclusively.
+    - [ ] LEGO baseline and piece data are ingested into the dbt warehouse.
+    - [ ] The `run_scenario` engine is refactored to consume its baseline data from the warehouse.
+    - [ ] The `run_scenario` engine's calculation logic is repaired to prevent double-counting and handle hierarchical inputs correctly.
+    - [ ] New unit tests are added to validate the corrected simulation logic.
 
 Tracking & Ownership
 

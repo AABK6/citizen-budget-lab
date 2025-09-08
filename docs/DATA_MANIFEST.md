@@ -55,7 +55,7 @@ This document provides a central inventory of all data sources, configuration fi
 *   **Purpose:** Maps French administrative budget codes (missions, programmes) to the international COFOG classification.
 *   **Source File:** `data/cofog_mapping.json`
 *   **Status:** **Exists and is functional.**
-*   **Pipeline:** Used by the `dbt` project (`tools/build_seeds.py`) to create the `dim_cofog_mapping` seed for the data warehouse, and by the API as a fallback.
+*   **Pipeline:** The canonical mapping logic resides in this JSON file. However, the current data pipeline has a known inconsistency. The API's fallback logic reads this file directly, while the dbt warehouse relies on a simplified, incomplete CSV seed. This will be resolved by a planned refactor that generates a complete seed from this file. See [Refactoring Plan](./REFACTOR_PLAN.md) for details.
 
 ### 3.2. Macroeconomic Assumptions (IRFs)
 
