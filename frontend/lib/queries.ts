@@ -56,3 +56,11 @@ export const runScenarioMutation = `
     }
   }
 `;
+
+export const getScenarioDslQuery = `
+  query GetScenarioDsl($id: ID!) {
+    scenario(id: $id) {
+      dsl
+    }
+  }
+`;

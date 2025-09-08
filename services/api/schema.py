@@ -867,7 +867,47 @@ class Query:
             return {}
 
     @strawberry.field
-    def scenarioCompare(self, a: strawberry.ID, b: strawberry.ID | None = None) -> JSON:  # noqa: N802
+    def scenario(self, id: strawberry.ID) -> RunScenarioPayload:
+        from .store import scenario_dsl_store
+        from .data_loader import run_scenario as _run
+
+        dsl = scenario_dsl_store.get(id)
+        if not dsl:
+            raise ValueError(f"Scenario {id} not found")
+
+        sid, acc, comp, macro, reso = _run(dsl)
+        
+        return RunScenarioPayload(
+            id=strawberry.ID(sid),
+            scenarioId=strawberry.ID(sid),
+            accounting=AccountingType(deficitPath=acc.deficit_path, debtPath=acc.debt_path),
+            compliance=ComplianceType(
+                eu3pct=comp.eu3pct,
+                eu60pct=comp.eu60pct,
+                netExpenditure=comp.net_expenditure,
+                localBalance=comp.local_balance,
+            ),
+            macro=MacroType(
+                deltaGDP=macro.delta_gdp,
+                deltaEmployment=macro.delta_employment,
+                deltaDeficit=macro.delta_deficit,
+                assumptions={k: v for k, v in macro.assumptions.items()},
+            ),
+            resolution=ResolutionType(
+                overallPct=float(reso.get("overallPct", 0.0)),
+                byMass=[
+                    MassTargetType(
+                        massId=str(e.get("massId")),
+                        targetDeltaEur=float(e.get("targetDeltaEur", 0.0)),
+                        specifiedDeltaEur=float(e.get("specifiedDeltaEur", 0.0)),
+                    )
+                    for e in reso.get("byMass", [])
+                ],
+            ),
+        )
+
+    @strawberry.field
+    def scenarioCompare(self, a: strawberry.ID, b: strawberry.ID | None = None) -> "ScenarioCompareResultType":  # noqa: N802
         """Return ribbons and waterfall deltas between two scenarios (or vs baseline if b is None).
 
         Output shape (JSON):
@@ -880,14 +920,20 @@ class Query:
         """
         import json as _json
         from .store import scenario_dsl_store
-        from .data_loader import _piece_amounts_after_dsl as _pad, load_lego_config as _cfg
+        from .data_loader import _piece_amounts_after_dsl as _pad, load_lego_config as _cfg, run_scenario as _run
 
         dsl_a = scenario_dsl_store.get(a)
         if not dsl_a:
-            return {}
+            raise ValueError(f"Scenario {a} not found")
+
+        sid_a, acc_a, comp_a, macro_a, reso_a = _run(dsl_a)
+        
         # If b is missing, compare against baseline (no actions)
         if b:
             dsl_b = scenario_dsl_store.get(b)
+            if not dsl_b:
+                raise ValueError(f"Scenario {b} not found")
+            sid_b, acc_b, comp_b, macro_b, reso_b = _run(dsl_b)
         else:
             # Create empty scenario with same baseline_year
             try:
@@ -897,6 +943,7 @@ class Query:
                 year = 2026
             empty = _json.dumps({"version": 0.1, "baseline_year": year, "assumptions": {"horizon_years": 3}, "actions": []})
             dsl_b = base64.b64encode(empty.encode("utf-8")).decode("ascii")
+            sid_b, acc_b, comp_b, macro_b, reso_b = _run(dsl_b)
 
         # Year from a
         try:
@@ -954,8 +1001,86 @@ class Query:
             "09": "Education",
             "10": "Social protection",
         }
-        return {"waterfall": waterfall, "ribbons": ribbons, "pieceLabels": piece_labels, "massLabels": mass_labels}
+        
+        scenario_a_payload = RunScenarioPayload(
+            id=strawberry.ID(sid_a),
+            scenarioId=strawberry.ID(sid_a),
+            accounting=AccountingType(deficitPath=acc_a.deficit_path, debtPath=acc_a.debt_path),
+            compliance=ComplianceType(
+                eu3pct=comp_a.eu3pct,
+                eu60pct=comp_a.eu60pct,
+                netExpenditure=comp_a.net_expenditure,
+                localBalance=comp_a.local_balance,
+            ),
+            macro=MacroType(
+                deltaGDP=macro_a.delta_gdp,
+                deltaEmployment=macro_a.delta_employment,
+                deltaDeficit=macro_a.delta_deficit,
+                assumptions={k: v for k, v in macro_a.assumptions.items()},
+            ),
+            resolution=ResolutionType(
+                overallPct=float(reso_a.get("overallPct", 0.0)),
+                byMass=[
+                    MassTargetType(
+                        massId=str(e.get("massId")),
+                        targetDeltaEur=float(e.get("targetDeltaEur", 0.0)),
+                        specifiedDeltaEur=float(e.get("specifiedDeltaEur", 0.0)),
+                    )
+                    for e in reso_a.get("byMass", [])
+                ],
+            ),
+        )
 
+        scenario_b_payload = RunScenarioPayload(
+            id=strawberry.ID(sid_b),
+            scenarioId=strawberry.ID(sid_b),
+            accounting=AccountingType(deficitPath=acc_b.deficit_path, debtPath=acc_b.debt_path),
+            compliance=ComplianceType(
+                eu3pct=comp_b.eu3pct,
+                eu60pct=comp_b.eu60pct,
+                netExpenditure=comp_b.net_expenditure,
+                localBalance=comp_b.local_balance,
+            ),
+            macro=MacroType(
+                deltaGDP=macro_b.delta_gdp,
+                deltaEmployment=macro_b.delta_employment,
+                deltaDeficit=macro_b.delta_deficit,
+                assumptions={k: v for k, v in macro_b.assumptions.items()},
+            ),
+            resolution=ResolutionType(
+                overallPct=float(reso_b.get("overallPct", 0.0)),
+                byMass=[
+                    MassTargetType(
+                        massId=str(e.get("massId")),
+                        targetDeltaEur=float(e.get("targetDeltaEur", 0.0)),
+                        specifiedDeltaEur=float(e.get("specifiedDeltaEur", 0.0)),
+                    )
+                    for e in reso_b.get("byMass", [])
+                ],
+            ),
+        )
+
+        return ScenarioCompareResultType(
+            a=scenario_a_payload,
+            b=scenario_b_payload,
+            waterfall=waterfall, 
+            ribbons=ribbons, 
+            pieceLabels=piece_labels, 
+            massLabels=mass_labels
+        )
+
+
+massLabels: JSON
+}
+
+@strawberry.type
+class ScenarioCompareResultType:
+    a: RunScenarioPayload
+    b: RunScenarioPayload | None = None
+    waterfall: JSON
+    ribbons: JSON
+    pieceLabels: JSON
+    massLabels: JSON
 
 @strawberry.type
 class Mutation:

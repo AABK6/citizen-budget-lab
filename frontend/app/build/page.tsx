@@ -52,10 +52,11 @@ export type ScenarioResult = {
 
 import { ErrorDisplay } from '@/components/ErrorDisplay';
 import { BuildPageSkeleton } from '@/components/BuildPageSkeleton';
-import { buildPageQuery, suggestLeversQuery, runScenarioMutation } from '@/lib/queries';
+import { buildPageQuery, suggestLeversQuery, runScenarioMutation, getScenarioDslQuery } from '@/lib/queries';
 
 import { TreemapChart } from '@/components/Treemap';
 import { useHistory } from '@/lib/useHistory';
+import { useSearchParams } from 'next/navigation';
 
 const treemapColors = ['#2563eb', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#ef4444', '#6366f1', '#14b8a6', '#a855f7', '#d946ef'];
 
@@ -111,6 +112,22 @@ export default function BuildPage() {
   const [appliedLevers, setAppliedLevers] = useState(new Set<string>());
   const [lens, setLens] = useState<'mass' | 'family' | 'reform'>('mass');
   const [expandedFamilies, setExpandedFamilies] = useState(new Set<string>());
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const scenarioId = searchParams.get('scenarioId');
+    if (scenarioId) {
+      const fetchDsl = async () => {
+        try {
+          const { scenario } = await gqlRequest(getScenarioDslQuery, { id: scenarioId });
+          setDslObject(parseDsl(atob(scenario.dsl)));
+        } catch (err) {
+          setError('Failed to load scenario');
+        }
+      };
+      fetchDsl();
+    }
+  }, [searchParams, setDslObject]);
 
   useEffect(() => {
     const newAppliedLevers = new Set<string>();
