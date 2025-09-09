@@ -6,11 +6,12 @@ import { LangSwitcher } from '@/components/LangSwitcher'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { I18nProvider } from '@/lib/i18n'
 import { HealthBadge } from '@/components/HealthBadge'
+import { Dsfr } from '@/components/Dsfr';
 
 export const metadata: Metadata = {
   title: 'Citizen Budget Lab',
   description: 'Explore, analyze, and simulate the public budget.'
-}
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -100,9 +101,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
           </footer>
         </I18nProvider>
-        <Script type="module" src="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.12.0/dist/dsfr.module.min.js" strategy="lazyOnload" />
-        <Script noModule src="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.12.0/dist/dsfr.nomodule.min.js" strategy="lazyOnload" />
+        <Dsfr />
       </body>
     </html>
   )
 }
+

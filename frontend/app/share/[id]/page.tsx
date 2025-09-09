@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { gqlRequest } from '@/lib/graphql';
-import { ScenarioResult } from '@/app/build/page'; // Assuming this type is exported
+import { ScenarioResult } from '@/lib/types';
 
 const getScenarioQuery = `
   query GetScenario($id: ID!) {

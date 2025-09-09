@@ -65,3 +65,43 @@ This creates a clean, reliable boundary between the two engines, ensuring the si
         *   Add a warning to the API response if a `piece` is used in a simulation but is missing its required COFOG mapping, making the macro model's failure explicit.
     4.  **Write Targeted Unit Tests:**
         *   Add new `pytest` tests to verify the corrected logic, including cases for hierarchical inputs and missing mappings.
+
+### Implementation notes, invariants & risks
+
+These notes capture important constraints and a minimal contract to avoid regressions while implementing the plan.
+
+- Extend, don't duplicate: the repository already contains `tools/build_seeds.py`. Extend that script to emit the richer `mapping_state_to_cofog.csv` seed (add columns such as `source`, `year`, `programme_code`, `mission_code`, `cofog_code`, `weight`) instead of creating a second, separate script.
+- Seed vs runtime JSON: prefer generating deterministic, testable CSV seeds (from `data/cofog_mapping.json` and warmed LEGO outputs) which dbt can version/control, rather than relying on ad-hoc JSON parsing at runtime.
+- Invariants for the simulation "resolution" logic (must be enforced by tests):
+  1. Baseline mission totals are authoritative: mission_total == sum(all pieces under mission) (allow small epsilon for rounding).
+ 2. Specified piece changes only affect those pieces.
+ 3. Unspecified mission mass = mission_change - sum(specified_piece_changes_for_that_mission).
+ 4. Final change = sum(specified_piece_changes) + sum(unspecified_masses). This prevents double-counting.
+- Missing mapping behaviour: when a `piece` lacks a COFOG mapping the API must:
+  - still compute budget deltas where possible,
+  - include a clear warning in the simulation response describing which pieces lack mappings,
+  - treat macro impact as "unknown" for that piece (do not silently report zero impact).
+- Schema/qualifier brittleness: make `warehouse_client._qual_name()` tolerant (try plain schema names `staging`, `dim`, `fact`, `vw` as well as `main_*`) and add unit tests that mock `information_schema` rows.
+
+### Prioritized, actionable next steps (small, testable increments)
+
+1) Quick wins (1–2 days):
+    - Update `tools/build_seeds.py` to emit the richer mapping seed and add a unit test asserting produced columns.
+    - Make the warmer write `produced_columns` into each `.meta.json` sidecar so downstream code can assert the contract.
+    - Add a unit test for `warehouse_client.table_counts()` and for `_qual_name()` (we already fixed a bug here; codify it).
+
+2) Medium tasks (3–7 days):
+    - Update dbt `dim_cofog_mapping` and `fct_admin_by_cofog` to consume the new seed and implement year/programme/mission fallback logic. Run dbt compile and update tests if necessary.
+    - Refactor `services/api/data_loader.allocation_by_cofog` to query the warehouse only. Keep a short-lived comparison test that validates parity between old fallback logic and the new warehouse-backed implementation on warmed caches.
+
+3) Simulation engine (5–10 days, with tests):
+    - Implement the resolution algorithm in `run_scenario` following the invariants above. Add unit tests for hierarchical inputs, piece-only inputs, mission-only inputs, and missing mappings.
+    - Replace any direct JSON/CSV reads in the engine with `warehouse_client` queries to `fct_lego_baseline` / `dim_lego_pieces` (created in Phase 1).
+
+4) CI and docs (1–2 days):
+    - Ensure CI runs seed generation (or a warmed minimal dataset) before dbt compile/tests. Add a lightweight smoke check that asserts required warmed seeds exist or are generated.
+    - Add a short developer doc (`docs/DEVELOPER_DATA_CONTRACT.md`) listing required standardized columns for each warmed artifact and how to regenerate them locally.
+
+---
+
+End of plan updates.

@@ -290,3 +290,43 @@ def cofog_mapping_reliable(year: int, basis: Basis) -> bool:
         return False
     ratio = abs(tm - tc) / tm
     return ratio <= 0.005 and int(k or 0) >= 8
+
+
+def lego_baseline(year: int) -> Optional[Dict[str, Any]]:
+    """Return LEGO baseline data for a given year from the warehouse."""
+    if not warehouse_available():
+        return None
+    try:
+        con = _connect_duckdb()
+    except Exception:
+        return None
+    bl_rel = _qual_name(con, "fct_lego_baseline")
+    p_rel = _qual_name(con, "dim_lego_pieces")
+    sql = f"""
+        select
+            b.piece_id,
+            p.piece_type,
+            p.piece_label,
+            b.amount_eur,
+            b.share
+        from {bl_rel} b
+        join {p_rel} p on b.piece_id = p.piece_id
+        where b.year = ?
+    """
+    try:
+        rows = con.execute(sql, [year]).fetchall()
+    except Exception:
+        return None
+    if not rows:
+        return None
+
+    pieces = []
+    for pid, ptype, plabel, amount, share in rows:
+        pieces.append({
+            "id": pid,
+            "type": ptype,
+            "label": plabel,
+            "amount_eur": amount,
+            "share": share,
+        })
+    return {"year": year, "pieces": pieces}

@@ -11,15 +11,20 @@
     "test:smoke": "node -e \"fetch('http://localhost:3000').then(r=>{if(!r.ok)process.exit(2); else process.exit(0)}).catch(()=>process.exit(2))\" || (echo 'Start app to run smoke test' && exit 0)"
   },
   "dependencies": {
+    "@codegouvfr/react-dsfr": "^1.26.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@types/recharts": "^1.8.29",
     "cross-fetch": "4.0.0",
     "echarts": "^5.5.0",
     "echarts-for-react": "^3.0.2",
     "js-yaml": "^4.1.0",
     "leaflet": "^1.9.4",
-    "next": "14.2.5",
+    "next": "^14.2.32",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "react-leaflet": "^4.2.1"
+    "react-leaflet": "^4.2.1",
+    "recharts": "^3.2.0"
   },
   "devDependencies": {
     "@axe-core/cli": "^4.7.3",

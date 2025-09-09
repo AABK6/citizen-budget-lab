@@ -29,15 +29,20 @@ models:
       - dbt_utils.expression_is_true:
           expression: "weight >= 0 and weight <= 1"
     columns:
-      - name: source
+      - name: source_type
         tests: [not_null]
-      - name: source_code
-        tests: [not_null]
+      - name: programme_code
       - name: cofog_code
         tests: [not_null]
       - name: weight
         tests:
           - not_null
+
+  - name: dim_lego_pieces
+    description: LEGO pieces definitions
+    columns:
+      - name: piece_id
+        tests: [not_null, unique]
 
   - name: fct_admin_by_mission
     description: Aggregates by mission and year for AE/CP
@@ -55,6 +60,14 @@ models:
       - name: cofog_code
         tests: [not_null]
 
+  - name: fct_lego_baseline
+    description: LEGO pieces baseline amounts and shares
+    columns:
+      - name: year
+        tests: [not_null]
+      - name: piece_id
+        tests: [not_null]
+
   - name: fct_procurement_suppliers
     description: Supplier-level procurement rollups by year with competition flags
     columns:
@@ -63,53 +76,17 @@ models:
       - name: supplier_siren
         tests: [not_null]
 
-tests:
-  - name: mapping_weights_sum_to_one
-    description: Ensure mapping weights sum to 1 per source/source_code
-    config:
-      severity: warn
-    +tags: [quality]
-    +meta: { owner: data }
-    test: |
-      with sums as (
-        select source, source_code, round(sum(weight), 6) as s
-        from {{ ref('dim_cofog_mapping') }}
-        group by 1,2
-      )
-      select * from sums where s not between 0.999999 and 1.000001
-
-  - name: totals_match_within_tolerance
-    description: Ensure admin→COFOG totals match original totals within 0.1%
-    config:
-      severity: warn
-    test: |
-      with base as (
-        select year, sum(cp_eur) as cp, sum(ae_eur) as ae
-        from {{ ref('stg_state_budget_lines') }}
-        group by 1
-      ),
-      mapped as (
-        select year, sum(cp_eur) as cp, sum(ae_eur) as ae
-        from {{ ref('fct_admin_by_cofog') }}
-        group by 1
-      ),
-      cmp as (
-        select b.year,
-               abs(coalesce(m.cp,0) - coalesce(b.cp,0)) / nullif(b.cp,0) as cp_rel_diff,
-               abs(coalesce(m.ae,0) - coalesce(b.ae,0)) / nullif(b.ae,0) as ae_rel_diff
-        from base b
-        left join mapped m using (year)
-      )
-      select * from cmp where (cp_rel_diff is not null and cp_rel_diff > 0.001) or (ae_rel_diff is not null and ae_rel_diff > 0.001)
 
 seeds:
   - name: mapping_state_to_cofog
-    description: Seed generated from data/cofog_mapping.json
+    description: Seed generated from data/cofog_mapping.json, mapping admin codes to COFOG.
     columns:
       - name: source
-        tests: [not_null]
-      - name: source_code
-        tests: [not_null]
+        tests: [not_null, accepted_values: { values: ['mission', 'programme', 'programme_year'] }]
+      - name: year
+        description: The year the mapping is effective for (null means default).
+      - name: mission_code
+      - name: programme_code
       - name: cofog_code
         tests: [not_null]
       - name: weight

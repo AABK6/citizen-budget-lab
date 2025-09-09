@@ -22,11 +22,22 @@ models:
       +schema: vw
 
 seeds:
-  citizen_budget_lab:
-    +schema: seeds
+  citizen-budget-lab:
+    mapping_state_to_cofog:
+      +column_types:
+        source: varchar
+        year: integer
+        mission_code: varchar
+        programme_code: varchar
+        cofog_code: varchar
+        weight: double
 
 vars:
-  state_budget_glob: "data/cache/state_budget_mission_*.csv"
-  state_budget_sample: "data/sample_state_budget.csv"
-  procurement_glob: "data/cache/procurement_contracts_*.csv"
-  procurement_sample: "data/sample_procurement.csv"
+  'dbt_date:time_zone': 'UTC'
+  state_budget_sample: 'data/sample_state_budget.csv'
+  state_budget_glob: 'data/cache/state_budget_mission_*.csv'
+  procurement_sample: 'data/sample_procurement.csv'
+  procurement_glob: 'data/cache/procurement_contracts_*.csv'
+  lego_pieces_json: 'data/lego_pieces.json'
+  lego_baseline_glob: 'data/cache/lego_baseline_*.json'
+

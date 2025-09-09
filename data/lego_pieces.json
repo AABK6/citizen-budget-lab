@@ -134,6 +134,13 @@
     {"id": "rev_public_income", "type": "revenue", "label": "Dividendes & intérêts publics", "description": "Revenus d’actifs publics.", "examples": ["Dividendes", "Intérêts reçus"], "mapping": {"esa": [{"code": "D.4", "weight": 1.0}]}, "payers": {"households": 0.0, "enterprises": 0.0}, "elasticity": {"method": "none"}},
     {"id": "rev_sales_fees", "type": "revenue", "label": "Services payants & redevances", "description": "Titres, concessions, péages.", "examples": ["Titres", "Péages"], "mapping": {"esa": [{"code": "P.11", "weight": 0.6}, {"code": "P.12", "weight": 0.4}]}, "payers": {"households": 0.6, "enterprises": 0.4}, "elasticity": {"method": "none"}},
     {"id": "rev_fines", "type": "revenue", "label": "Amendes & pénalités", "description": "Amendes routières et autres.", "examples": ["PV routiers"], "mapping": {"esa": [{"code": "D.29_fines", "weight": 1.0}]}, "payers": {"households": 0.9, "enterprises": 0.1}, "elasticity": {"method": "none"}},
-    {"id": "rev_transfers_in", "type": "revenue", "label": "Aides reçues (UE & autres APU)", "description": "Transferts nets entrants.", "examples": ["Fonds UE"], "mapping": {"esa": [{"code": "D.7_res", "weight": 1.0}]}, "payers": {"households": 0.0, "enterprises": 0.0}, "elasticity": {"method": "none"}}
+    {"id": "rev_transfers_in", "type": "revenue", "label": "Aides reçues (UE & autres APU)", "description": "Transferts nets entrants.", "examples": ["Fonds UE"], "mapping": {"esa": [{"code": "D.7_res", "weight": 1.0}]}, "payers": {"households": 0.0, "enterprises": 0.0}, "elasticity": {"method": "none"}},
+    {
+      "id": "test_piece_no_cofog",
+      "type": "expenditure",
+      "label": "Test Piece No COFOG",
+      "description": "A test piece without a COFOG mapping.",
+      "mapping": {"na_item": [{"code": "P.2", "weight": 1.0}]}
+    }
   ]
 }

@@ -86,6 +86,7 @@ class RunScenarioPayload:
     compliance: ComplianceType
     macro: "MacroType"
     resolution: "ResolutionType | None" = None
+    warnings: List[str] | None = None
 
 
 @strawberry.type
@@ -1083,7 +1084,7 @@ class Mutation:
     @strawberry.mutation
     def runScenario(self, input: RunScenarioInput) -> RunScenarioPayload:  # noqa: N802
         try:
-            sid, acc, comp, macro, reso = run_scenario(input.dsl)
+            sid, acc, comp, macro, reso, warnings = run_scenario(input.dsl)
         except ValueError as e:
             raise ValueError(str(e)) from e
 
@@ -1121,6 +1122,7 @@ class Mutation:
                     for e in reso.get("byMass", [])
                 ],
             ),
+            warnings=warnings,
         )
 
     # In-memory scenario metadata store
