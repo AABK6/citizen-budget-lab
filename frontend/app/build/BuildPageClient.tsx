@@ -631,7 +631,7 @@ export default function BuildPageClient() {
                 </div>
                 <div className="popular-reforms">
                   <div className="section-title">Popular Reforms</div>
-                  {popularIntents.filter(intent => intent.seed.actions.some((a: DslAction) => a.target.startsWith('piece.rev_'))).map((intent, index) => (
+                  {popularIntents.filter(intent => intent.seed && intent.seed.actions && intent.seed.actions.some((a: DslAction) => a.target.startsWith('piece.rev_'))).map((intent, index) => (
                     <div key={index} className="reform-pill" onClick={() => handleIntentClick(intent)}>{intent.emoji} {intent.label}</div>
                   ))}
                 </div>
