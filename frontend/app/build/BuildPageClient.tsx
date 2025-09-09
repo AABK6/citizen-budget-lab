@@ -11,9 +11,11 @@ import { ScenarioResult } from '@/lib/types';
 import { ErrorDisplay } from '@/components/ErrorDisplay';
 import { BuildPageSkeleton } from '@/components/BuildPageSkeleton';
 import { buildPageQuery, suggestLeversQuery, runScenarioMutation, getScenarioDslQuery } from '@/lib/queries';
-import { Treemap } from 'recharts';
+import { TreemapChart } from '@/components/Treemap';
 import { useHistory } from '@/lib/useHistory';
 import { useSearchParams } from 'next/navigation';
+
+const treemapColors = ['#2563eb', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#ef4444', '#6366f1', '#14b8a6', '#a855f7', '#d946ef'];
 
 // Define types for the data we expect from the GraphQL API
 type LegoPiece = {
@@ -568,11 +570,11 @@ export default function BuildPageClient() {
             <div className={`lens-option ${lens === 'reform' ? 'active' : ''}`} onClick={() => setLens('reform')}>By Reform</div>
           </div>
           <div className="treemap-container">
-            {/* <TreemapChart 
+            <TreemapChart 
               data={masses} 
               colors={treemapColors} 
               resolutionData={scenarioResult?.resolution.byMass || []} 
-            /> */}
+            />
           </div>
           <div className="scenario-charts">
             {scenarioLoading && <div className="fr-p-2w">Running scenario...</div>}

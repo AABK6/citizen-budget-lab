@@ -279,16 +279,17 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     padding: 20px;
-    display: flex;
-    flex-direction: column;
+    display: grid; /* Changed to grid */
+    grid-template-rows: 1fr auto; /* Treemap gets remaining space, charts get auto height */
+    gap: 20px;
     position: relative;
 }
 
 .treemap-container {
-    flex: 1;
     position: relative;
-    margin-bottom: 20px;
+    min-height: 300px; /* Set a minimum height for robustness */
 }
+
 
 .scenario-charts {
     height: 180px;
