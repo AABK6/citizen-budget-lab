@@ -37,35 +37,35 @@ jobs:
           python tools/build_seeds.py
           # Prepare warmed cache placeholders from samples to avoid missing-glob errors in DuckDB
           python - <<'PY'
-import os, json, shutil, datetime as dt
-os.makedirs('data/cache', exist_ok=True)
-# State budget (mission)
-bud_csv = 'data/cache/state_budget_mission_2026.csv'
-if not os.path.exists(bud_csv):
-    shutil.copyfile('data/sample_state_budget.csv', bud_csv)
-    with open('data/cache/state_budget_mission_2026.meta.json', 'w', encoding='utf-8') as f:
-        json.dump({
-            'extraction_ts': dt.datetime.now(dt.timezone.utc).isoformat(),
-            'base': 'local:sample', 'dataset': 'sample_state_budget', 'year': 2026,
-            'where': None, 'method': 'sample_copy', 'row_count': 9,
-            'cp_field': 'cp_eur', 'ae_field': 'ae_eur', 'mission_code_field': 'mission_code', 'mission_label_field': 'mission_label'
-        }, f)
-# Procurement
-proc_csv = 'data/cache/procurement_contracts_2024.csv'
-if not os.path.exists(proc_csv):
-    shutil.copyfile('data/sample_procurement.csv', proc_csv)
-    with open('data/cache/procurement_contracts_2024.meta.json', 'w', encoding='utf-8') as f:
-        json.dump({
-            'extraction_ts': dt.datetime.now(dt.timezone.utc).isoformat(),
-            'year': 2024, 'source': 'local:sample', 'row_count': 6,
-            'note': 'sample copy', 'sirene_enriched': False, 'sirene_enriched_count': 0
-        }, f)
-# Macro series sidecar
-macro_meta = 'data/cache/macro_series_FR.meta.json'
-if not os.path.exists(macro_meta):
-    with open(macro_meta, 'w', encoding='utf-8') as f:
-        json.dump({'extraction_ts': dt.datetime.now(dt.timezone.utc).isoformat(), 'country': 'FR', 'items': [], 'config': 'data/macro_series_config.json'}, f)
-PY
+          import os, json, shutil, datetime as dt
+          os.makedirs('data/cache', exist_ok=True)
+          # State budget (mission)
+          bud_csv = 'data/cache/state_budget_mission_2026.csv'
+          if not os.path.exists(bud_csv):
+              shutil.copyfile('data/sample_state_budget.csv', bud_csv)
+              with open('data/cache/state_budget_mission_2026.meta.json', 'w', encoding='utf-8') as f:
+                  json.dump({
+                      'extraction_ts': dt.datetime.now(dt.timezone.utc).isoformat(),
+                      'base': 'local:sample', 'dataset': 'sample_state_budget', 'year': 2026,
+                      'where': None, 'method': 'sample_copy', 'row_count': 9,
+                      'cp_field': 'cp_eur', 'ae_field': 'ae_eur', 'mission_code_field': 'mission_code', 'mission_label_field': 'mission_label'
+                  }, f)
+          # Procurement
+          proc_csv = 'data/cache/procurement_contracts_2024.csv'
+          if not os.path.exists(proc_csv):
+              shutil.copyfile('data/sample_procurement.csv', proc_csv)
+              with open('data/cache/procurement_contracts_2024.meta.json', 'w', encoding='utf-8') as f:
+                  json.dump({
+                      'extraction_ts': dt.datetime.now(dt.timezone.utc).isoformat(),
+                      'year': 2024, 'source': 'local:sample', 'row_count': 6,
+                      'note': 'sample copy', 'sirene_enriched': False, 'sirene_enriched_count': 0
+                  }, f)
+          # Macro series sidecar
+          macro_meta = 'data/cache/macro_series_FR.meta.json'
+          if not os.path.exists(macro_meta):
+              with open(macro_meta, 'w', encoding='utf-8') as f:
+                  json.dump({'extraction_ts': dt.datetime.now(dt.timezone.utc).isoformat(), 'country': 'FR', 'items': [], 'config': 'data/macro_series_config.json'}, f)
+          PY
           dbt deps --project-dir warehouse || true
           dbt build --project-dir warehouse
       - name: Test semantic layer (dbt)
