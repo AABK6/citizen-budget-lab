@@ -2,6 +2,9 @@ from services.api.data_loader import allocation_by_cofog, Basis
 
 
 def test_programme_mapping_precedence_and_year(monkeypatch):
+    # Disable warehouse to exercise fallback mapping on sample CSV
+    import services.api.warehouse_client as wh
+    monkeypatch.setattr(wh, "warehouse_available", lambda: False)
     # Provide a synthetic mapping where mission 150 would be misclassified to 03 (Public order),
     # but programme-level mapping corrects to 09 (Education). Also override programme 2041 to COFOG 04 for 2026.
     def fake_load_json(path: str):  # noqa: ANN001
@@ -40,4 +43,3 @@ def test_programme_mapping_precedence_and_year(monkeypatch):
 
     # Year-aware override: 2041 CP is 12e9 and maps to 04 instead of 05 for 2026
     assert 11_000_000_000.0 <= m.get("04", 0.0) <= 13_000_000_000.0
-

@@ -35,7 +35,7 @@ type Source { id: ID!, datasetName: String!, url: String!, license: String!, ref
 
 input RunScenarioInput { dsl: String! }
 type ShareSummary { title: String!, deficit: Float!, debtDeltaPct: Float, highlight: String, resolutionPct: Float, masses: JSON, eu3: String, eu60: String }
-type RunScenarioPayload { id: ID!, scenarioId: ID!, accounting: Accounting!, compliance: Compliance!, macro: Macro!, distribution: Distribution, distanceScore: Float, shareSummary: ShareSummary, resolution: ResolutionType, warnings: [String!] }
+type RunScenarioPayload { id: ID!, scenarioId: ID!, accounting: Accounting!, compliance: Compliance!, macro: Macro!, distribution: Distribution, distanceScore: Float, shareSummary: ShareSummary, resolution: ResolutionType, warnings: [String!], dsl: String }
 
 type EUCountryCofog { country: String!, code: String!, label: String!, amountEur: Float!, share: Float! }
 type FiscalPath { years: [Int!]!, deficitRatio: [Float!]!, debtRatio: [Float!]! }
@@ -110,6 +110,9 @@ type Query {
   massLabels: [MassLabelType!]!
   popularIntents(limit: Int = 6): [IntentType!]!
   suggestLevers(massId: String!, limit: Int = 5): [PolicyLeverType!]!
+
+  # Runtime additions for permalinks and comparisons
+  scenario(id: ID!): RunScenarioPayload!
 }
 
 type Mutation {

@@ -30,6 +30,9 @@ actions:
 
 
 def test_piece_delta_pct_uses_baseline_amount(monkeypatch, tmp_path):
+    # Ensure fallback baseline path is used (disable warehouse if present)
+    from services.api import warehouse_client as wh
+    monkeypatch.setattr(wh, "warehouse_available", lambda: False)
     import json
     from services.api import data_loader
 

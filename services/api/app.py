@@ -44,12 +44,14 @@ def create_app() -> FastAPI:
     @app.middleware("http")
     async def _log_requests(request: Request, call_next):  # noqa: ANN001
         start = time.perf_counter()
+        response = None
         try:
             response = await call_next(request)
             return response
         finally:
             dur_ms = (time.perf_counter() - start) * 1000.0
-            logger.info("%s %s -> %s in %.1fms", request.method, request.url.path, getattr(request, 'state', {}), dur_ms)
+            status = getattr(response, "status_code", None)
+            logger.info("%s %s -> %s in %.1fms", request.method, request.url.path, status, dur_ms)
             try:
                 path = str(request.url.path)
                 mc = app.state.metrics["req_count"]

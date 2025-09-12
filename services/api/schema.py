@@ -87,6 +87,8 @@ class RunScenarioPayload:
     macro: "MacroType"
     resolution: "ResolutionType | None" = None
     warnings: List[str] | None = None
+    # Expose the canonical DSL (base64) for permalink retrieval in UI
+    dsl: Optional[str] = None
 
 
 @strawberry.type
@@ -806,15 +808,26 @@ class Query:
             # Return placeholder summary
             return ShareSummaryType(title=f"Scenario {scenarioId[:8]}", deficit=0.0, debtDeltaPct=0.0, highlight="", resolutionPct=0.0, masses={}, eu3="info", eu60="info")
         # Run with 1-year horizon if not specified to get fast summary
-        sid, acc, comp, macro, reso = _run(dsl)
+        sid, acc, comp, macro, reso, _warnings = _run(dsl)
         title = scenario_store.get(sid, {}).get("title") or f"Scenario {sid[:8]}"
         deficit = float(acc.deficit_path[0]) if acc.deficit_path else 0.0
-        # Approximate debt delta ratio in % of GDP at horizon end
+        # Debt delta ratio (pp) at horizon end vs baseline
+        debt_delta_pct = 0.0
         try:
-            last_debt = float(acc.debt_path[-1]) if acc.debt_path else 0.0
-            # Use macro gdp series proxy: macro.deltaGDP holds deltas; use first-year GDP proxy as |deltaGDP|/|pct| fallback
-            # More robust: recompute with _read_gdp_series? Keep simple here; return 0 if unavailable
-            debt_delta_pct = 0.0
+            import json as _json
+            from .data_loader import _read_gdp_series as _rg, _read_baseline_def_debt as _rb  # type: ignore
+            data = _json.loads(base64.b64decode(dsl).decode("utf-8"))
+            baseline_year = int(data.get("baseline_year", 2026))
+            horizon_years = int((data.get("assumptions") or {}).get("horizon_years", 5))
+            gdp = _rg()
+            base = _rb()
+            end_year = baseline_year + max(0, horizon_years - 1)
+            base_def, base_debt = base.get(end_year, (0.0, 0.0))
+            g = float(gdp.get(end_year, 0.0) or 0.0)
+            scen_debt = float(base_debt) + float(acc.debt_path[-1] if acc.debt_path else 0.0)
+            base_ratio = (float(base_debt) / g) if g else 0.0
+            scen_ratio = (scen_debt / g) if g else 0.0
+            debt_delta_pct = (scen_ratio - base_ratio) * 100.0
         except Exception:
             debt_delta_pct = 0.0
         # Mass shares baseline vs scenario
@@ -876,7 +889,7 @@ class Query:
         if not dsl:
             raise ValueError(f"Scenario {id} not found")
 
-        sid, acc, comp, macro, reso = _run(dsl)
+        sid, acc, comp, macro, reso, warnings = _run(dsl)
         
         return RunScenarioPayload(
             id=strawberry.ID(sid),
@@ -905,6 +918,8 @@ class Query:
                     for e in reso.get("byMass", [])
                 ],
             ),
+            warnings=warnings,
+            dsl=dsl,
         )
 
     @strawberry.field
@@ -927,14 +942,14 @@ class Query:
         if not dsl_a:
             raise ValueError(f"Scenario {a} not found")
 
-        sid_a, acc_a, comp_a, macro_a, reso_a = _run(dsl_a)
+        sid_a, acc_a, comp_a, macro_a, reso_a, _warn_a = _run(dsl_a)
         
         # If b is missing, compare against baseline (no actions)
         if b:
             dsl_b = scenario_dsl_store.get(b)
             if not dsl_b:
                 raise ValueError(f"Scenario {b} not found")
-            sid_b, acc_b, comp_b, macro_b, reso_b = _run(dsl_b)
+            sid_b, acc_b, comp_b, macro_b, reso_b, _warn_b = _run(dsl_b)
         else:
             # Create empty scenario with same baseline_year
             try:
@@ -1123,6 +1138,7 @@ class Mutation:
                 ],
             ),
             warnings=warnings,
+            dsl=input.dsl,
         )
 
     # In-memory scenario metadata store
@@ -1156,7 +1172,7 @@ class Mutation:
         from .data_loader import run_scenario as _run, load_lego_config as _cfg
 
         # Current resolution to compute pending
-        _, _, _, _, reso = _run(input.dsl)
+        _, _, _, _, reso, _warnings = _run(input.dsl)
         by_mass = {str(e.get("massId")): (float(e.get("targetDeltaEur", 0.0)), float(e.get("specifiedDeltaEur", 0.0))) for e in reso.get("byMass", [])}
         t, s = by_mass.get(str(input.massId), (float(input.targetDeltaEur), 0.0))
         # Prefer explicit target from input if non-zero
@@ -1244,7 +1260,7 @@ class Mutation:
         new_dsl = _b64.b64encode(yaml_text.encode("utf-8")).decode("ascii")
 
         # Recompute resolution
-        _, _, _, _, reso2 = _run(new_dsl)
+        _, _, _, _, reso2, _warnings2 = _run(new_dsl)
         return SpecifyMassPayload(
             ok=True,
             errors=[],

@@ -622,7 +622,7 @@ def _val_mio(js: Dict[str, Any], year: int, country: str, sector: str, unit: str
         c2 = c
         if "cofog99" in dims:
             coords["cofog99"] = c2
-        v = eu.value_at(js, coords)
+        v = eu_client.value_at(js, coords)
         if v is not None:
             return float(v)
     return 0.0

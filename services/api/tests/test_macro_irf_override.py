@@ -34,6 +34,10 @@ actions:
     amount_eur: 1000000000
     recurring: true
 """
-    sid, acc, comp, macro, reso = run_scenario(_b64(sdl))
+    vals = run_scenario(_b64(sdl))
+    if isinstance(vals, tuple) and len(vals) == 5:
+        sid, acc, comp, macro, reso = vals
+    else:
+        sid, acc, comp, macro, reso, _warnings = vals
     assert abs(float(macro.assumptions["revenue_elasticity"]) - 0.9) < 1e-9
     assert any(abs(float(x)) > 0 for x in macro.delta_deficit)

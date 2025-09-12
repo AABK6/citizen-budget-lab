@@ -160,7 +160,66 @@ def allocation_by_cofog(year: int, basis: Basis) -> List[MissionAllocation]:
     except Exception:
         # Fallback to empty list if warehouse fails
         return []
-    return []
+    # Fallback: derive COFOG majors from sample mission/programme CSV using mapping JSON
+    try:
+        rows = [r for r in _read_csv(_state_budget_path(year)) if int(r.get("year", 0)) == int(year)]
+        if not rows:
+            return []
+        mapping = _load_json(COFOG_MAP_JSON)
+        mission_map = mapping.get("mission_to_cofog", {}) or {}
+        prog_map = mapping.get("programme_to_cofog", {}) or {}
+        prog_years = mapping.get("programme_to_cofog_years", {}) or {}
+        totals: Dict[str, float] = defaultdict(float)
+        total_amt = 0.0
+        for r in rows:
+            try:
+                amt = float(r["cp_eur"]) if basis == Basis.CP else float(r["ae_eur"])
+            except Exception:
+                continue
+            total_amt += amt
+            mcode = str(r.get("mission_code") or "")
+            pcode = str(r.get("programme_code") or "")
+            weights = None
+            # Programme-year specific mapping
+            if pcode and pcode in prog_years:
+                obj = prog_years.get(pcode) or {}
+                by_year = obj.get("by_year") or obj.get("byYear") or {}
+                y_arr = by_year.get(str(year))
+                if y_arr:
+                    weights = y_arr
+                elif obj.get("default"):
+                    weights = obj.get("default")
+            # No stdout debug in production; tests validate precedence via assertions
+            # Programme default mapping
+            if weights is None and pcode and pcode in prog_map:
+                weights = prog_map.get(pcode)
+            # Mission mapping
+            if weights is None and mcode and mcode in mission_map:
+                weights = mission_map.get(mcode)
+            if not weights:
+                continue
+            for ent in weights:
+                code = str(ent.get("code") or "")
+                try:
+                    w = float(ent.get("weight", 0.0))
+                except Exception:
+                    w = 0.0
+                if w <= 0.0 or not code:
+                    continue
+                major = code.split(".")[0][:2]
+                totals[major] += amt * w
+        if not totals:
+            return []
+        items: List[MissionAllocation] = []
+        sum_amt = sum(totals.values())
+        for major, v in totals.items():
+            label = _COFOG_LABELS.get(major, major)
+            share = (v / sum_amt) if sum_amt > 0 else 0.0
+            items.append(MissionAllocation(code=major, label=label, amount_eur=float(v), share=share))
+        items.sort(key=lambda x: x.amount_eur, reverse=True)
+        return items
+    except Exception:
+        return []
 
 
 def allocation_by_cofog_s13(year: int) -> List[MissionAllocation]:
@@ -1046,10 +1105,27 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
                         major = str(c_code).split(".")[0][:2]
                         resolution_target_by_mass[major] = resolution_target_by_mass.get(major, 0.0) + val * (1.0 if ptype == "expenditure" else -1.0) * float(w)
             else: # A specified change
+                # Enforce absolute amount bounds if configured
+                bounds_amt = pol.get("bounds_amount_eur") or {}
+                try:
+                    amin = float(bounds_amt.get("min")) if bounds_amt.get("min") is not None else None
+                    amax = float(bounds_amt.get("max")) if bounds_amt.get("max") is not None else None
+                except Exception:
+                    amin = amax = None
                 if ptype == "expenditure":
-                    delta = val if op == "increase" else -val if op == "decrease" else (val - base_amt) if op == "set" else 0.0
+                    new_val = base_amt + (val if op == "increase" else -val if op == "decrease" else (val - base_amt) if op == "set" else 0.0)
+                    if amin is not None and new_val < amin - 1e-9:
+                        raise ValueError(f"Change exceeds bounds: amount {new_val:,.0f}€ below min {amin:,.0f}€")
+                    if amax is not None and new_val > amax + 1e-9:
+                        raise ValueError(f"Change exceeds bounds: amount {new_val:,.0f}€ above max {amax:,.0f}€")
+                    delta = new_val - base_amt
                 else: # revenue
-                    delta = -val if op == "increase" else val if op == "decrease" else -(val - base_amt) if op == "set" else 0.0
+                    new_val = base_amt - (val if op == "increase" else -val if op == "decrease" else (val - base_amt) if op == "set" else 0.0)
+                    if amin is not None and new_val < amin - 1e-9:
+                        raise ValueError(f"Change exceeds bounds: amount {new_val:,.0f}€ below min {amin:,.0f}€")
+                    if amax is not None and new_val > amax + 1e-9:
+                        raise ValueError(f"Change exceeds bounds: amount {new_val:,.0f}€ above max {amax:,.0f}€")
+                    delta = new_val - base_amt
         elif dp is not None:
             pct = float(dp)
             sign = 1.0 if op != "decrease" else -1.0
@@ -1062,11 +1138,25 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
                         major = str(c_code).split(".")[0][:2]
                         resolution_target_by_mass[major] = resolution_target_by_mass.get(major, 0.0) + eff_sign * eff * float(w)
             else: # A specified change
+                # Enforce percent bounds if configured
+                bounds_pct = pol.get("bounds_pct") or {}
+                try:
+                    pmin = float(bounds_pct.get("min")) if bounds_pct.get("min") is not None else None
+                    pmax = float(bounds_pct.get("max")) if bounds_pct.get("max") is not None else None
+                except Exception:
+                    pmin = pmax = None
+                eff_signed = sign * eff
+                # Effective percent change relative to base
+                pct_eff = (eff_signed / base_amt * 100.0) if base_amt != 0 else 0.0
+                if pmin is not None and pct_eff < pmin - 1e-9:
+                    raise ValueError(f"Percent change {pct_eff:.2f}% below min bound {pmin:.2f}%")
+                if pmax is not None and pct_eff > pmax + 1e-9:
+                    raise ValueError(f"Percent change {pct_eff:.2f}% above max bound {pmax:.2f}%")
                 if ptype == "expenditure":
-                    delta = sign * eff
+                    delta = eff_signed
                 else:
                     e = lego_elast.get(pid, 1.0)
-                    delta = -sign * eff * e
+                    delta = -eff_signed * e
 
         if delta != 0.0:
             if recurring:
