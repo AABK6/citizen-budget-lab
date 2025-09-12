@@ -370,6 +370,15 @@ def warm_plf_state_budget(
         "ae_field": ae_col,
         "mission_code_field": code_col,
         "mission_label_field": label_col,
+        "produced_columns": [
+            "year",
+            "mission_code",
+            "mission_label",
+            "programme_code",
+            "programme_label",
+            "cp_eur",
+            "ae_eur",
+        ],
     }
     with open(out_csv.replace('.csv', '.meta.json'), 'w', encoding='utf-8') as f:
         json.dump(sidecar, f, ensure_ascii=False, indent=2)
@@ -1171,6 +1180,22 @@ def warm_decp_procurement(
         "note": "Deduplicated by (contract_id, signed_date); lots rolled up by summing amounts and lot_count",
         "sirene_enriched": bool(enrich_sirene and supplier_meta),
         "sirene_enriched_count": len(supplier_meta),
+        "produced_columns": [
+            "year",
+            "contract_id",
+            "buyer_org_id",
+            "supplier_siren",
+            "supplier_name",
+            "signed_date",
+            "amount_eur",
+            "cpv_code",
+            "procedure_type",
+            "lot_count",
+            "location_code",
+            "amount_quality",
+            "supplier_naf",
+            "supplier_company_size",
+        ],
     }
     with open(out_csv.replace(".csv", ".meta.json"), "w", encoding="utf-8") as f:
         json.dump(sidecar, f, ensure_ascii=False, indent=2)

@@ -632,10 +632,19 @@ def load_lego_baseline(year: int) -> dict | None:
 
 def lego_pieces_with_baseline(year: int, scope: str = "S13") -> List[dict]:
     cfg = load_lego_config()
-    baseline = load_lego_baseline(year)
+    # Prefer warehouse baseline if available; fallback to warmed JSON
+    baseline = None
+    try:
+        if wh.warehouse_available():
+            baseline = wh.lego_baseline(year)
+    except Exception:
+        baseline = None
+    if not baseline:
+        baseline = load_lego_baseline(year)
     amounts: dict[str, float | None] = {}
     shares: dict[str, float | None] = {}
-    if baseline and str(baseline.get("scope", "")).upper() == scope.upper():
+    # Warehouse baseline does not carry a scope attribute; accept by default
+    if baseline and (baseline.get("scope") is None or str(baseline.get("scope", "")).upper() == scope.upper()):
         for ent in baseline.get("pieces", []):
             pid = str(ent.get("id"))
             amounts[pid] = ent.get("amount_eur")
