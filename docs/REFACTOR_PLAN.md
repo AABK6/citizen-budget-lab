@@ -17,12 +17,13 @@ This has led to a critical **data inconsistency**:
 
 *   **COFOG Mapping Divergence:** The dbt models use a simplified, mission-level CSV for mapping budgets to the COFOG classification. The API fallback uses a much more complex, year-and-programme-aware logic from a `cofog_mapping.json` file. This means the application will report **different numbers for the same query**, depending on whether the warehouse is available or not.
 
-### Finding 2: The Simulation Engine is Logically Flawed
+### Finding 2 (RESOLVED): The Simulation Engine was Logically Flawed
 
-The core simulation engine in `run_scenario` is not currently fit for a V1 release. Even when all data inputs are present, its calculations are incorrect.
+#### **Finding 2 (RESOLVED): The Simulation Engine was Logically Flawed**
 
-*   **Double-Counting Flaw:** The engine cannot handle hierarchical user inputs. If a user adjusts a high-level "mass" (e.g., `mission.education`) and also a specific "piece" within it (e.g., `piece.ed_schools_staff_ops`), the engine incorrectly adds the two changes together, leading to an inflated final number.
-*   **Silent Macro Failures:** The macroeconomic model fails silently if a budget "piece" is missing its required COFOG mapping in the configuration files. This results in a simulation that correctly changes the budget but shows zero economic impact, confusing the user.
+The initial analysis for this refactoring plan identified a critical flaw in the `run_scenario` engine, where hierarchical user inputs (e.g., adjusting a "mass" and a "piece" within it) would be double-counted.
+
+**Status:** This issue has been **fixed**. The engine's core logic in `services/api/data_loader.py` was re-architected to correctly implement "Resolution," distinguishing between high-level "unspecified" targets and "specified" changes. The corrected logic is validated by unit tests in `services/api/tests/test_resolution.py`.
 
 ### Finding 3: Brittle Data Dependencies
 
@@ -45,11 +46,11 @@ This creates a clean, reliable boundary between the two engines, ensuring the si
 
 *   **Tasks:**
     1.  **Fix COFOG Inconsistency:**
-        *   Create a new script at `tools/build_seeds.py` that reads `data/cofog_mapping.json` and generates a comprehensive CSV seed (`warehouse/seeds/mapping_state_to_cofog.csv`) that includes `source`, `year`, and `programme_code` columns.
+        *   `[COMPLETED]` **Fix COFOG Inconsistency:** (The `tools/build_seeds.py` script and updated dbt models exist). Create a new script at `tools/build_seeds.py` that reads `data/cofog_mapping.json` and generates a comprehensive CSV seed (`warehouse/seeds/mapping_state_to_cofog.csv`) that includes `source`, `year`, and `programme_code` columns.
         *   Update the dbt models (`dim_cofog_mapping`, `fct_admin_by_cofog`) to use this rich seed data and correctly implement the year/programme/mission fallback logic.
-        *   Refactor the `allocation_by_cofog` function in `data_loader.py` to *only* query the warehouse, removing the inconsistent fallback logic.
+        *   `[PLANNED]` **Refactor `allocation_by_cofog`:** (The API fallback logic still exists and needs to be removed). Refactor the `allocation_by_cofog` function in `data_loader.py` to *only* query the warehouse, removing the inconsistent fallback logic.
     2.  **Bring LEGO Data into the Warehouse:**
-        *   Create new dbt sources and models to ingest `lego_pieces.json` and the `lego_baseline_{year}.json` cache files.
+        *   `[COMPLETED]` **Bring LEGO Data into the Warehouse:** (The `fct_lego_baseline` and `dim_lego_pieces` dbt models exist). Create new dbt sources and models to ingest `lego_pieces.json` and the `lego_baseline_{year}.json` cache files.
         *   This will produce `dim_lego_pieces` and `fct_lego_baseline` models, making the core simulation dataset a queryable, versioned, and tested part of the semantic layer.
 
 ### Phase 2: Repair and Refactor the Simulation Engine in Python
@@ -57,8 +58,8 @@ This creates a clean, reliable boundary between the two engines, ensuring the si
 *   **Objective:** Re-architect the core of `run_scenario` to correctly handle hierarchical changes and provide robust feedback.
 
 *   **Tasks:**
-    1.  **Connect Engine to Foundation:** Modify `run_scenario` to source all its baseline data (LEGO amounts, GDP, etc.) exclusively from the new dbt models built in Phase 1 via the `warehouse_client`.
-    2.  **Implement "Resolution" Logic (Simplified):**
+    1.  `[PLANNED]` **Connect Engine to Foundation:** Modify `run_scenario` to source all its baseline data (LEGO amounts, GDP, etc.) exclusively from the new dbt models built in Phase 1 via the `warehouse_client`.
+    2.  `[COMPLETED]` **Implement "Resolution" Logic (Simplified):**
         *   Re-architect the core calculation loop in `run_scenario` to distinguish between high-level "unspecified" changes (from `mission.*` targets) and "specified" changes (from `piece.*` or policy lever targets).
         *   The final deficit impact will be the sum of these two buckets, preventing the double-counting error and aligning the engine with the product specification's "Resolution Meter" concept.
     3.  **Add Explicit Validation and Warnings:**

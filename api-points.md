@@ -125,9 +125,11 @@ Reform inputs (for Policy Workshop)
 * **Use**: GDP, deflators, employment/unemployment, prices, sector accounts incl. **APU S13**.
 * **Notes**: annual benchmark updates (late May/June) can revise levels; version outputs by extraction date.
 
-2. **Eurostat SDMX‑JSON**
+2. **Eurostat (SDMX)**
 
-* **Use**: EU‑harmonised fiscal series (e.g., **gov\_10dd\_edpt1** for deficit/debt; **gov\_10a\_exp** for **COFOG** functions) to benchmark France and to obtain COFOG splits not readily in national budget nomenclature.
+* **Primary Access Method:** The application prioritizes the **SDMX 2.1 XML dissemination API** for reliability, as it is not subject to the same gating issues as the JSON API. The base URL for this is configured via the `EUROSTAT_SDMX_BASE` environment variable.
+**Fallback Method (JSON):** The older SDMX-JSON API is used as a fallback. Access may require a `EUROSTAT_COOKIE` to be set in the environment.
+**Use:** EU-harmonised fiscal series (e.g., **gov_10dd_edpt1** for deficit/debt; **gov_10a_exp** for **COFOG** functions) to benchmark France and to obtain COFOG splits not readily in national budget nomenclature.
 * **Auth**: none.
 
 3. **Banque de France – Webstat**
@@ -247,41 +249,24 @@ Reform inputs (for Policy Workshop)
   GET https://api.insee.fr/series/BDM/V1/data/{DATASET}/{FILTERS}?firstNObservations=1
   Authorization: Bearer {token}
   ```
-* **Eurostat — SDMX XML examples**
 
-  - Expenditure bucket (COFOG × NA_ITEM)
+* **Eurostat — SDMX XML examples (Primary Method)**
 
-  ```
-  GET https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/GOV_10A_EXP/A.MIO_EUR.S13.GF07.D632.FR?time=2026
-  Accept: application/xml
-  ```
+*   Expenditure bucket (COFOG × NA_ITEM)
+     ```
+     GET https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/GOV_10A_EXP/A.MIO_EUR.S13.GF07.D632.FR?time=2026
+     Accept: application/xml
+     ```
 
-  - VAT (taxes)
+ *   Interest proxy (COFOG 01.7 total)
+     ```
+     GET https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/GOV_10A_EXP/A.MIO_EUR.S13.GF0107.TE.FR?time=2026
+     Accept: application/xml
+     ```
 
-  ```
-  GET https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/GOV_10A_TAXAG/A.MIO_EUR.S13.D211.FR?time=2026
-  Accept: application/xml
-  ```
+ **Eurostat — LEGO baseline flow map (reference)**
 
-  - Sales/fees (P.11)
-
-  ```
-  GET https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/GOV_10A_MAIN/A.MIO_EUR.S13.P11.FR?time=2026
-  Accept: application/xml
-  ```
-
-  - Interest proxy (COFOG 01.7 total)
-
-  ```
-  GET https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/GOV_10A_EXP/A.MIO_EUR.S13.GF0107.TE.FR?time=2026
-  Accept: application/xml
-  ```
-
-* **Eurostat — LEGO baseline flow map (reference)**
-
-  - Expenditures: `GOV_10A_EXP` → `A.MIO_EUR.S13.GF{MAJOR}.{NA_ITEM}.FR`
-  - Revenues: `GOV_10A_TAXAG` → `A.MIO_EUR.S13.{NA_ITEM}.FR` and `GOV_10A_MAIN` → `A.MIO_EUR.S13.{P11|P12}.FR`
-  - Known caveats: `D.41` not exposed for ESA mapping here; use COFOG 01.7 TE proxy. Citycare uses `D.632`. Some `D.4`/`D.7` series may need other flows. See `docs/LEGO_METHOD.md` (Known Limitations).
+ For more details on the exact data flows and keys used for the LEGO baseline, see `docs/LEGO_METHOD.md`.
 
 ---
 
