@@ -176,7 +176,7 @@ type Source { id: ID!, datasetName: String!, url: String!, license: String!, ref
 
 input RunScenarioInput { dsl: String! }
 type ShareSummary { title: String!, deficit: Float!, debtDeltaPct: Float, highlight: String, resolutionPct: Float, masses: JSON, eu3: String, eu60: String }
-type RunScenarioPayload { id: ID!, scenarioId: ID!, accounting: Accounting!, compliance: Compliance!, macro: Macro!, distribution: Distribution, distanceScore: Float, shareSummary: ShareSummary, resolution: ResolutionType, warnings: [String!] }
+  type RunScenarioPayload { id: ID!, scenarioId: ID!, accounting: Accounting!, compliance: Compliance!, macro: Macro!, distribution: Distribution, distanceScore: Float, shareSummary: ShareSummary, resolution: ResolutionType, warnings: [String!], dsl: String }
 
 type EUCountryCofog { country: String!, code: String!, label: String!, amountEur: Float!, share: Float! }
 type FiscalPath { years: [Int!]!, deficitRatio: [Float!]!, debtRatio: [Float!]! }
@@ -231,27 +231,28 @@ type IntentType {
     tags: [String!]!
 }
 
-type Query {
-  allocation(year: Int!, basis: BasisEnum = CP, lens: LensEnum = ADMIN): Allocation!
-  procurement(year: Int!, region: String!, cpvPrefix: String, procedureType: String, minAmountEur: Float, maxAmountEur: Float): [ProcurementItem!]!
-  sources: [Source!]!
-  sirene(siren: String!): JSON!
-  inseeSeries(dataset: String!, series: [String!]!, sinceYear: Int): JSON!
-  dataGouvSearch(query: String!, pageSize: Int = 5): JSON!
-  communes(department: String!): JSON!
-  euCofogCompare(year: Int!, countries: [String!]!, level: Int = 1): [EUCountryCofog!]!
-  euFiscalPath(country: String!, years: [Int!]!): FiscalPath!
+  type Query {
+    allocation(year: Int!, basis: BasisEnum = CP, lens: LensEnum = ADMIN): Allocation!
+    procurement(year: Int!, region: String!, cpvPrefix: String, procedureType: String, minAmountEur: Float, maxAmountEur: Float): [ProcurementItem!]!
+    sources: [Source!]!
+    sirene(siren: String!): JSON!
+    inseeSeries(dataset: String!, series: [String!]!, sinceYear: Int): JSON!
+    dataGouvSearch(query: String!, pageSize: Int = 5): JSON!
+    communes(department: String!): JSON!
+    euCofogCompare(year: Int!, countries: [String!]!, level: Int = 1): [EUCountryCofog!]!
+    euFiscalPath(country: String!, years: [Int!]!): FiscalPath!
 
-  # MVP+: LEGO Builder
-  legoPieces(year: Int!, scope: ScopeEnum = S13): [LegoPiece!]!
-  legoBaseline(year: Int!, scope: ScopeEnum = S13): LegoBaseline!
-  legoDistance(year: Int!, dsl: String!, scope: ScopeEnum = S13): Distance!
-  shareCard(scenarioId: ID!): ShareSummary!
-  policyLevers(family: PolicyFamilyEnum, search: String): [PolicyLeverType!]!
-  massLabels: [MassLabelType!]!
-  popularIntents(limit: Int = 6): [IntentType!]!
-  suggestLevers(massId: String!, limit: Int = 5): [PolicyLeverType!]!
-}
+    # MVP+: LEGO Builder
+    legoPieces(year: Int!, scope: ScopeEnum = S13): [LegoPiece!]!
+    legoBaseline(year: Int!, scope: ScopeEnum = S13): LegoBaseline!
+    legoDistance(year: Int!, dsl: String!, scope: ScopeEnum = S13): Distance!
+    shareCard(scenarioId: ID!): ShareSummary!
+    policyLevers(family: PolicyFamilyEnum, search: String): [PolicyLeverType!]!
+    massLabels: [MassLabelType!]!
+    popularIntents(limit: Int = 6): [IntentType!]!
+    suggestLevers(massId: String!, limit: Int = 5): [PolicyLeverType!]!
+    scenario(id: ID!): RunScenarioPayload!
+  }
 
 type Mutation {
   runScenario(input: RunScenarioInput!): RunScenarioPayload!
@@ -272,6 +273,13 @@ For codegen, prefer the SDL and feature‑flag the additions if needed.
 Macro baselines
 
  - Macro baselines (GDP and baseline deficit/debt) are accessed via `services/api/baselines.py`. Both `runScenario` and `shareCard` use this provider. When the warehouse is enabled, this provider reads from dbt staging views (`stg_macro_gdp`, `stg_baseline_def_debt`); otherwise it falls back to warmed CSV files.
+
+#### 3.3. Parity Tools
+
+- COFOG parity helper: `services/api/data_loader.mapping_cofog_aggregate(year, basis)` computes COFOG totals from the JSON mapping and the sample CSV. Use this for local debugging and parity checks when the warehouse is unavailable.
+- Parity tests:
+  - `services/api/tests/test_cofog_mapping_parity.py` compares warehouse COFOG totals with the mapping helper when the mapping is marked reliable.
+  - `services/api/tests/test_warehouse_parity.py` asserts parity between ADMIN and COFOG totals when the warehouse is used, and validates the `WAREHOUSE_COFOG_OVERRIDE` flag.
 
 ---
 
