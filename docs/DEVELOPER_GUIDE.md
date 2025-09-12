@@ -321,3 +321,8 @@ The test `services/api/tests/test_schema_contract.py` asserts that the runtime G
 
 - In CI, prefer running against warmed data (no network), then `make dbt-build && make dbt-test`. Add lightweight checks to ensure `row_count > 0` and required columns are present.
 Note: Settings are resolved at instantiation time. To change feature flags like `WAREHOUSE_COFOG_OVERRIDE`, set the environment variable before starting the API process. In unit tests, prefer monkeypatching `services.api.settings.get_settings()` to return a shim object exposing the needed attributes.
+
+#### 5.3. COFOG Parity (Warehouse vs Mapping)
+
+- The test `services/api/tests/test_cofog_mapping_parity.py` compares warehouse COFOG totals with the JSON mapping‑based aggregation from the sample CSV. It only runs when the warehouse is available and `cofog_mapping_reliable(...)` is `True` (skipped otherwise).
+- Additional parity tests (`services/api/tests/test_warehouse_parity.py`) assert ADMIN vs COFOG totals match when the warehouse is used, and verify that the `WAREHOUSE_COFOG_OVERRIDE` flag forces GraphQL to use the warehouse mapping.

@@ -221,6 +221,62 @@ def allocation_by_cofog(year: int, basis: Basis) -> List[MissionAllocation]:
     except Exception:
         return []
 
+def mapping_cofog_aggregate(year: int, basis: Basis) -> List[MissionAllocation]:
+    """Aggregate by COFOG major using the JSON mapping and sample mission/programme CSV.
+
+    Independent of warehouse availability; usable for parity checks.
+    """
+    rows = [r for r in _read_csv(_state_budget_path(year)) if int(r.get("year", 0)) == int(year)]
+    if not rows:
+        return []
+    mapping = _load_json(COFOG_MAP_JSON)
+    mission_map = mapping.get("mission_to_cofog", {}) or {}
+    prog_map = mapping.get("programme_to_cofog", {}) or {}
+    prog_years = mapping.get("programme_to_cofog_years", {}) or {}
+    totals: Dict[str, float] = defaultdict(float)
+    for r in rows:
+        try:
+            amt = float(r["cp_eur"]) if basis == Basis.CP else float(r["ae_eur"])
+        except Exception:
+            continue
+        mcode = str(r.get("mission_code") or "")
+        pcode = str(r.get("programme_code") or "")
+        weights = None
+        if pcode and pcode in prog_years:
+            obj = prog_years.get(pcode) or {}
+            by_year = obj.get("by_year") or obj.get("byYear") or {}
+            y_arr = by_year.get(str(year))
+            if y_arr:
+                weights = y_arr
+            elif obj.get("default"):
+                weights = obj.get("default")
+        if weights is None and pcode and pcode in prog_map:
+            weights = prog_map.get(pcode)
+        if weights is None and mcode and mcode in mission_map:
+            weights = mission_map.get(mcode)
+        if not weights:
+            continue
+        for ent in weights:
+            code = str(ent.get("code") or "")
+            try:
+                w = float(ent.get("weight", 0.0))
+            except Exception:
+                w = 0.0
+            if w <= 0.0 or not code:
+                continue
+            major = code.split(".")[0][:2]
+            totals[major] += amt * w
+    if not totals:
+        return []
+    items: List[MissionAllocation] = []
+    sum_amt = sum(totals.values())
+    for major, v in totals.items():
+        label = _COFOG_LABELS.get(major, major)
+        share = (v / sum_amt) if sum_amt > 0 else 0.0
+        items.append(MissionAllocation(code=major, label=label, amount_eur=float(v), share=share))
+    items.sort(key=lambda x: x.amount_eur, reverse=True)
+    return items
+
 
 def allocation_by_cofog_s13(year: int) -> List[MissionAllocation]:
     """Prefer warmed Eurostat S13 COFOG shares and scale by warmed LEGO baseline total expenditures.
