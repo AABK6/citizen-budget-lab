@@ -351,4 +351,4 @@ Note: Settings are resolved at instantiation time. To change feature flags like 
   npx graphql-code-generator --config graphql/codegen.yml
   ```
 
-  Add your GraphQL documents under `graphql/queries/*.graphql` and `graphql/mutations/*.graphql` to generate typed operations.
+  Add your GraphQL documents under `graphql/queries/*.graphql` and `graphql/mutations/*.graphql` to generate typed operations. The frontend has an npm script `npm run codegen` wired to the root config.

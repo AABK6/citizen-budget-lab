@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "codegen": "graphql-codegen --config ../graphql/codegen.yml",
     "test:a11y": "axe http://localhost:3000 --exit 1 || (echo 'Run frontend with npm run dev in another terminal' && exit 0)",
     "test:smoke": "node -e \"fetch('http://localhost:3000').then(r=>{if(!r.ok)process.exit(2); else process.exit(0)}).catch(()=>process.exit(2))\" || (echo 'Start app to run smoke test' && exit 0)"
   },
@@ -27,6 +28,11 @@
     "recharts": "^3.2.0"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.3",
+    "@graphql-codegen/typescript": "^4.0.6",
+    "@graphql-codegen/typescript-operations": "^4.2.1",
+    "@graphql-codegen/typescript-react-apollo": "^4.3.1",
+    "graphql": "^16.9.0",
     "@axe-core/cli": "^4.7.3",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "20.12.12",

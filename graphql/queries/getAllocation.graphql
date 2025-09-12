@@ -1,0 +1,7 @@
+query GetAllocation($year: Int!, $basis: BasisEnum!, $lens: LensEnum!) {
+  allocation(year: $year, basis: $basis, lens: $lens) {
+    mission { code label amountEur share }
+    cofog { code label amountEur share }
+    beneficiary { code label amountEur share }
+  }
+}
