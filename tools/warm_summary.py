@@ -52,7 +52,39 @@ def main() -> None:
         for name, amt in top(rev, 5):
             print(f"    - {name}: €{amt:,.0f}")
 
+    # Optional: validate PLF mission snapshot sidecar
+    plf_csv = os.path.join("data", "cache", f"state_budget_mission_{year}.csv")
+    plf_meta = plf_csv.replace(".csv", ".meta.json")
+    if os.path.exists(plf_meta):
+        try:
+            with open(plf_meta, "r", encoding="utf-8") as f:
+                meta = json.load(f)
+            print("\nPLF mission snapshot:")
+            print(f"  Dataset: {meta.get('dataset')}  Base: {meta.get('base')}")
+            print(f"  Rows:    {meta.get('row_count')}  Where: {meta.get('where')}")
+            cols = meta.get("produced_columns") or []
+            if cols:
+                print(f"  Columns: {', '.join(cols)}")
+        except Exception as e:
+            print(f"  Warning: failed to read PLF sidecar: {e}")
+
+    # Optional: validate DECP contracts sidecar
+    decp_csv = os.path.join("data", "cache", f"procurement_contracts_{year}.csv")
+    decp_meta = decp_csv.replace(".csv", ".meta.json")
+    if os.path.exists(decp_meta):
+        try:
+            with open(decp_meta, "r", encoding="utf-8") as f:
+                meta = json.load(f)
+            print("\nDECP contracts snapshot:")
+            print(f"  Source:  {meta.get('source')}  Rows: {meta.get('row_count')}")
+            if meta.get("sirene_enriched"):
+                print(f"  SIRENE enriched records: {meta.get('sirene_enriched_count')}")
+            cols = meta.get("produced_columns") or []
+            if cols:
+                print(f"  Columns: {', '.join(cols)}")
+        except Exception as e:
+            print(f"  Warning: failed to read DECP sidecar: {e}")
+
 
 if __name__ == "__main__":
     main()
-
