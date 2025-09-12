@@ -269,6 +269,10 @@ The runtime schema includes a couple of additions for usability that will be fol
 
 For codegen, prefer the SDL and feature‑flag the additions if needed.
 
+Macro baselines
+
+- Macro baselines (GDP and baseline deficit/debt) are accessed via `services/api/baselines.py`. Both `runScenario` and `shareCard` use this provider, simplifying future migration to a warehouse model for macro series.
+
 ---
 
 ### **4. Secrets & Environment Variables**

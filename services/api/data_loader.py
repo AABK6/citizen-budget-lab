@@ -974,7 +974,12 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
     # Simple mechanical layer: sum CP deltas by year; recurring applies each year
     deltas_by_year = [0.0 for _ in range(horizon_years)]
     # Macro shocks accumulator by COFOG/tax category in % of GDP
-    gdp_series_map = _read_gdp_series()
+    # Baseline GDP series via common provider
+    try:
+        from . import baselines as _bl  # lazy to avoid cycles
+        gdp_series_map = _bl.gdp_series()
+    except Exception:
+        gdp_series_map = _read_gdp_series()
     gdp_series = [gdp_series_map.get(baseline_year + i, list(gdp_series_map.values())[-1]) for i in range(horizon_years)]
     shocks_pct_gdp: Dict[str, List[float]] = {}
     # Resolution accumulators (MVP+): target by mass (from mission.*), specified by mass (from piece.*)
@@ -1310,7 +1315,11 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
         net_exp_status.append("ok" if growth <= ref + 1e-9 else "breach")
 
     # Baseline series for compliance
-    base_map = _read_baseline_def_debt()
+    try:
+        from . import baselines as _bl  # lazy to avoid cycles
+        base_map = _bl.def_debt_series()
+    except Exception:
+        base_map = _read_baseline_def_debt()
     eu3 = []
     debt_ratio = []
     for i in range(horizon_years):
