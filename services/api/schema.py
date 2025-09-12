@@ -815,15 +815,13 @@ class Query:
         debt_delta_pct = 0.0
         try:
             import json as _json
-            from .data_loader import _read_gdp_series as _rg, _read_baseline_def_debt as _rb  # type: ignore
+            from . import baselines as _bl
             data = _json.loads(base64.b64decode(dsl).decode("utf-8"))
             baseline_year = int(data.get("baseline_year", 2026))
             horizon_years = int((data.get("assumptions") or {}).get("horizon_years", 5))
-            gdp = _rg()
-            base = _rb()
             end_year = baseline_year + max(0, horizon_years - 1)
-            base_def, base_debt = base.get(end_year, (0.0, 0.0))
-            g = float(gdp.get(end_year, 0.0) or 0.0)
+            base_def, base_debt = _bl.year_def_debt(end_year)
+            g = _bl.year_gdp(end_year)
             scen_debt = float(base_debt) + float(acc.debt_path[-1] if acc.debt_path else 0.0)
             base_ratio = (float(base_debt) / g) if g else 0.0
             scen_ratio = (scen_debt / g) if g else 0.0

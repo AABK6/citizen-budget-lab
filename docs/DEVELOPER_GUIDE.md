@@ -304,3 +304,15 @@ For codegen, prefer the SDL and feature‑flag the additions if needed.
     2.  **Semantic Layer:** Generates dbt seeds, builds all dbt models, and runs dbt tests.
     3.  **Frontend:** Installs dependencies, builds the Next.js application, starts a server, and runs `axe` accessibility checks against the key pages (`/`, `/explore`, `/procurement`, etc.).
     4.  **Docker:** Builds both the backend and frontend Docker images to ensure they are valid.
+
+#### 5.1. Schema Contract Test
+
+The test `services/api/tests/test_schema_contract.py` asserts that the runtime GraphQL schema contains all types/fields defined in `graphql/schema.sdl.graphql` (allowing a small, documented allowlist for planned fields). This helps prevent contract drift.
+
+#### 5.2. Data Warmers & Determinism
+
+- Warmers emit sidecar `.meta.json` files including `produced_columns` and basic provenance. The summary tool prints these sidecar details:
+
+  `python tools/warm_summary.py <YEAR>`
+
+- In CI, prefer running against warmed data (no network), then `make dbt-build && make dbt-test`. Add lightweight checks to ensure `row_count > 0` and required columns are present.
