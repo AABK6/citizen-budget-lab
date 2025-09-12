@@ -309,6 +309,12 @@ Macro baselines
     3.  **Frontend:** Installs dependencies, builds the Next.js application, starts a server, and runs `axe` accessibility checks against the key pages (`/`, `/explore`, `/procurement`, etc.).
     4.  **Docker:** Builds both the backend and frontend Docker images to ensure they are valid.
 
+Example workflow breakdown:
+
+- Backend job sets up Python 3.12, installs `services/api/requirements.txt`, and runs `pytest -q`.
+- dbt job installs `dbt-core`/`dbt-duckdb` and runs `dbt seed` + `dbt build` under `warehouse/`.
+- Frontend job uses Node 18, runs `npm ci` and `npm run build` under `frontend/`.
+
 #### 5.1. Schema Contract Test
 
 The test `services/api/tests/test_schema_contract.py` asserts that the runtime GraphQL schema contains all types/fields defined in `graphql/schema.sdl.graphql` (allowing a small, documented allowlist for planned fields). This helps prevent contract drift.

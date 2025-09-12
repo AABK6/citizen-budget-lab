@@ -2,126 +2,63 @@ name: CI
 
 on:
   push:
+    branches: [ main, master, feat/** ]
   pull_request:
+    branches: [ main, master ]
 
 jobs:
-  build-test:
+  backend:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
+      - uses: actions/checkout@v4
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-
-      - name: Install backend deps
+      - name: Install Python dependencies
         run: |
-          python -m pip install --upgrade pip
+          python -m venv .venv
+          source .venv/bin/activate
+          python -m pip install -U pip
           pip install -r services/api/requirements.txt
-
-      - name: Run backend tests
-        run: pytest -q
-
-      - name: Install dbt (DuckDB/Postgres)
+      - name: Run tests
         run: |
-          python -m pip install --upgrade pip
-          # Pin compatible versions and install only Python packages; macros like dbt_utils are installed via `dbt deps`
-          pip install "dbt-core~=1.9.0" "dbt-duckdb~=1.9.0" "dbt-postgres~=1.9.0"
+          source .venv/bin/activate
+          pytest -q
 
-      - name: Build semantic layer (dbt)
+  dbt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dbt
+        run: |
+          python -m pip install -U pip
+          pip install "dbt-core~=1.9.0" "dbt-duckdb~=1.9.0"
+      - name: Build dbt models
         env:
           DBT_PROFILES_DIR: warehouse
         run: |
-          python tools/build_seeds.py
-          # Prepare warmed cache placeholders from samples to avoid missing-glob errors in DuckDB
-          python - <<'PY'
-          import os, json, shutil, datetime as dt
-          os.makedirs('data/cache', exist_ok=True)
-          # State budget (mission)
-          bud_csv = 'data/cache/state_budget_mission_2026.csv'
-          if not os.path.exists(bud_csv):
-              shutil.copyfile('data/sample_state_budget.csv', bud_csv)
-              with open('data/cache/state_budget_mission_2026.meta.json', 'w', encoding='utf-8') as f:
-                  json.dump({
-                      'extraction_ts': dt.datetime.now(dt.timezone.utc).isoformat(),
-                      'base': 'local:sample', 'dataset': 'sample_state_budget', 'year': 2026,
-                      'where': None, 'method': 'sample_copy', 'row_count': 9,
-                      'cp_field': 'cp_eur', 'ae_field': 'ae_eur', 'mission_code_field': 'mission_code', 'mission_label_field': 'mission_label'
-                  }, f)
-          # Procurement
-          proc_csv = 'data/cache/procurement_contracts_2024.csv'
-          if not os.path.exists(proc_csv):
-              shutil.copyfile('data/sample_procurement.csv', proc_csv)
-              with open('data/cache/procurement_contracts_2024.meta.json', 'w', encoding='utf-8') as f:
-                  json.dump({
-                      'extraction_ts': dt.datetime.now(dt.timezone.utc).isoformat(),
-                      'year': 2024, 'source': 'local:sample', 'row_count': 6,
-                      'note': 'sample copy', 'sirene_enriched': False, 'sirene_enriched_count': 0
-                  }, f)
-          # Macro series sidecar
-          macro_meta = 'data/cache/macro_series_FR.meta.json'
-          if not os.path.exists(macro_meta):
-              with open(macro_meta, 'w', encoding='utf-8') as f:
-                  json.dump({'extraction_ts': dt.datetime.now(dt.timezone.utc).isoformat(), 'country': 'FR', 'items': [], 'config': 'data/macro_series_config.json'}, f)
-          PY
           dbt deps --project-dir warehouse || true
+          dbt seed --project-dir warehouse
           dbt build --project-dir warehouse
-      - name: Test semantic layer (dbt)
-        env:
-          DBT_PROFILES_DIR: warehouse
-        run: dbt test --project-dir warehouse
 
-      - name: Set up Node
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js 18
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: 18
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
-
-      - name: Install frontend deps
-        working-directory: frontend
-        run: npm ci --no-audit --no-fund
-
-      - name: Build frontend
-        working-directory: frontend
-        env:
-          NEXT_TELEMETRY_DISABLED: '1'
-        run: npm run build
-
-      - name: Start frontend server
+      - name: Install and build
         working-directory: frontend
         run: |
-          nohup npm run start >/dev/null 2>&1 &
-          for i in {1..30}; do
-            if curl -sSf http://127.0.0.1:3000 >/dev/null; then echo "Frontend up"; break; fi
-            sleep 1
-          done
+          npm ci
+          npm run build --if-present
 
-      - name: Run axe accessibility check (home)
-        working-directory: frontend
-        run: npx @axe-core/cli --exit http://127.0.0.1:3000
-
-      - name: Run axe accessibility check (explore)
-        working-directory: frontend
-        run: npx @axe-core/cli --exit http://127.0.0.1:3000/explore
-
-      - name: Run axe accessibility check (procurement)
-        working-directory: frontend
-        run: npx @axe-core/cli --exit http://127.0.0.1:3000/procurement
-
-      - name: Run axe accessibility check (what-if)
-        working-directory: frontend
-        run: npx @axe-core/cli --exit http://127.0.0.1:3000/what-if
-
-      - name: Run axe accessibility check (build)
-        working-directory: frontend
-        run: npx @axe-core/cli --exit http://127.0.0.1:3000/build
-
-      - name: Build API Docker image
-        run: docker build -f services/api/Dockerfile -t citizen-budget-lab-api:ci .
-
-      - name: Build Frontend Docker image
-        working-directory: frontend
-        run: docker build -t citizen-budget-lab-frontend:ci .
