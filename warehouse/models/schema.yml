@@ -76,6 +76,42 @@ models:
       - name: supplier_siren
         tests: [not_null]
 
+  - name: stg_macro_gdp
+    description: Staging GDP series (EUR) by year from warmed CSV
+    columns:
+      - name: year
+        tests: [not_null]
+      - name: gdp_eur
+        tests: [not_null]
+
+  - name: stg_baseline_def_debt
+    description: Staging baseline deficit and debt (EUR) by year from warmed CSV
+    columns:
+      - name: year
+        tests: [not_null]
+      - name: deficit_eur
+        tests: [not_null]
+      - name: debt_eur
+        tests: [not_null]
+
+  - name: dim_macro_gdp
+    description: GDP series (EUR) by year
+    columns:
+      - name: year
+        tests: [not_null]
+      - name: gdp_eur
+        tests: [not_null]
+
+  - name: fct_baseline_deficit_debt
+    description: Baseline deficit and debt (EUR) by year
+    columns:
+      - name: year
+        tests: [not_null]
+      - name: deficit_eur
+        tests: [not_null]
+      - name: debt_eur
+        tests: [not_null]
+
 
 seeds:
   - name: mapping_state_to_cofog
@@ -91,4 +127,3 @@ seeds:
         tests: [not_null]
       - name: weight
         tests: [not_null]
-

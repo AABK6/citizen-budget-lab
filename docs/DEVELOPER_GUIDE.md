@@ -128,6 +128,7 @@ The API includes two caching layers:
     make dbt-test
     ```
 -   **API Integration:** The FastAPI/GraphQL layer automatically prefers dbt models when `WAREHOUSE_ENABLED=1` (the default) and the DuckDB file (`data/warehouse.duckdb`) exists.
+    -   **Macro baselines:** Staging views `stg_macro_gdp` and `stg_baseline_def_debt` expose GDP and baseline deficit/debt series based on warmed CSVs. Derived views `dim_macro_gdp` and `fct_baseline_deficit_debt` are provided for convenience. The Python provider `services/api/baselines.py` reads from these when the warehouse is enabled, otherwise it falls back to CSV.
 
 ---
 
