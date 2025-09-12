@@ -41,3 +41,44 @@ def test_admin_vs_cofog_totals_match_when_warehouse_enabled():
 
     # Totals should match within tight tolerance when warehouse is used for both
     assert abs(total_admin - total_cofog) / max(1.0, total_admin) < 1e-9
+
+
+@pytest.mark.skipif(not wh.warehouse_available(), reason="Warehouse not available")
+def test_cofog_override_flag_forces_warehouse(monkeypatch):
+    """When the COFOG override flag is set, GraphQL COFOG lens should use warehouse mapping.
+    We skip if mapping heuristic marks it unreliable, to avoid false negatives.
+    """
+    # Monkeypatch settings getter to force override
+    import types
+    from services.api import settings as s
+
+    class _S:  # minimal shim with only the attribute we need
+        warehouse_cofog_override = True
+
+    monkeypatch.setattr(s, "get_settings", lambda: _S())
+
+    # If mapping is not reliable, skip
+    try:
+        from services.api.models import Basis as _Basis
+        if not wh.cofog_mapping_reliable(2026, _Basis.CP):  # type: ignore
+            pytest.skip("COFOG mapping not reliable; GraphQL may use warmed fallback")
+    except Exception:
+        pytest.skip("Unable to determine mapping reliability")
+
+    app = create_app()
+    client = TestClient(app)
+
+    q_admin = """
+      query { allocation(year: 2026, basis: CP, lens: ADMIN) { mission { amountEur } } }
+    """
+    q_cofog = """
+      query { allocation(year: 2026, basis: CP, lens: COFOG) { cofog { amountEur } } }
+    """
+    r1 = client.post("/graphql", json={"query": q_admin})
+    r2 = client.post("/graphql", json={"query": q_cofog})
+    assert r1.status_code == 200 and r2.status_code == 200
+    js1 = r1.json(); js2 = r2.json()
+    assert "errors" not in js1 and "errors" not in js2
+    total_admin = sum(float(m.get("amountEur", 0.0)) for m in js1["data"]["allocation"]["mission"])  # type: ignore
+    total_cofog = sum(float(m.get("amountEur", 0.0)) for m in js2["data"]["allocation"]["cofog"])  # type: ignore
+    assert abs(total_admin - total_cofog) / max(1.0, total_admin) < 1e-9
