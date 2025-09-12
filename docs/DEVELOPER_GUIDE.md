@@ -341,3 +341,14 @@ Note: Settings are resolved at instantiation time. To change feature flags like 
 
 - The test `services/api/tests/test_cofog_mapping_parity.py` compares warehouse COFOG totals with the JSON mapping‑based aggregation from the sample CSV. It only runs when the warehouse is available and `cofog_mapping_reliable(...)` is `True` (skipped otherwise).
 - Additional parity tests (`services/api/tests/test_warehouse_parity.py`) assert ADMIN vs COFOG totals match when the warehouse is used, and verify that the `WAREHOUSE_COFOG_OVERRIDE` flag forces GraphQL to use the warehouse mapping.
+#### 3.4. Frontend Codegen
+
+- A `graphql/codegen.yml` is provided to generate TypeScript types and hooks from the canonical SDL and `.graphql` documents. It references the local SDL file (`graphql/schema.sdl.graphql`) so a running backend is not required.
+- Usage:
+
+  ```bash
+  # from repo root
+  npx graphql-code-generator --config graphql/codegen.yml
+  ```
+
+  Add your GraphQL documents under `graphql/queries/*.graphql` and `graphql/mutations/*.graphql` to generate typed operations.

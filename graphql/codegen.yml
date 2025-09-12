@@ -1,4 +1,4 @@
-schema: http://localhost:8000/graphql
+schema: ./schema.sdl.graphql
 documents:
   - ./graphql/queries/**/*.graphql
   - ./graphql/mutations/**/*.graphql
@@ -18,4 +18,3 @@ hooks:
 # Usage:
 #   npx graphql-code-generator --config graphql/codegen.yml
 # Ensure dev server is running at localhost:8000
-

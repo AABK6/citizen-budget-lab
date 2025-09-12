@@ -1147,11 +1147,10 @@ class Mutation:
         except ValueError as e:
             raise ValueError(str(e)) from e
 
-        # Store DSL for shareCard/permalinks
+        # Store DSL for shareCard/permalinks (persistent store)
         try:
-            from .store import scenario_dsl_store
-
-            scenario_dsl_store[sid] = input.dsl
+            from .store import set_dsl
+            set_dsl(str(sid), input.dsl)
         except Exception:
             pass
         return RunScenarioPayload(
@@ -1188,19 +1187,20 @@ class Mutation:
     # In-memory scenario metadata store
     @strawberry.mutation
     def saveScenario(self, id: strawberry.ID, title: Optional[str] = None, description: Optional[str] = None) -> bool:  # noqa: N802
-        from .store import scenario_store
-
-        scenario_store[id] = {"title": title or "", "description": description or ""}
-        return True
+        try:
+            from .store import set_meta
+            set_meta(str(id), title, description)
+            return True
+        except Exception:
+            return False
 
     @strawberry.mutation
     def deleteScenario(self, id: strawberry.ID) -> bool:  # noqa: N802
-        from .store import scenario_store
-
-        if id in scenario_store:
-            del scenario_store[id]
-            return True
-        return False
+        try:
+            from .store import delete as _del
+            return bool(_del(str(id)))
+        except Exception:
+            return False
 
     @strawberry.mutation
     def specifyMass(self, input: SpecifyMassInput) -> SpecifyMassPayload:  # noqa: N802
