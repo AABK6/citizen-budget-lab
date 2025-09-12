@@ -271,7 +271,7 @@ For codegen, prefer the SDL and feature‑flag the additions if needed.
 
 Macro baselines
 
-- Macro baselines (GDP and baseline deficit/debt) are accessed via `services/api/baselines.py`. Both `runScenario` and `shareCard` use this provider, simplifying future migration to a warehouse model for macro series.
+ - Macro baselines (GDP and baseline deficit/debt) are accessed via `services/api/baselines.py`. Both `runScenario` and `shareCard` use this provider. When the warehouse is enabled, this provider reads from dbt staging views (`stg_macro_gdp`, `stg_baseline_def_debt`); otherwise it falls back to warmed CSV files.
 
 ---
 
