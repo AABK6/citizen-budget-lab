@@ -654,6 +654,52 @@ class Query:
 
     @strawberry.field
     def legoBaseline(self, year: int, scope: ScopeEnum = ScopeEnum.S13) -> LegoBaselineType:  # noqa: N802
+        # Prefer warehouse, fallback to warmed JSON
+        bl: dict
+        try:
+            from . import warehouse_client as _wh
+
+            if _wh.warehouse_available():
+                wh_bl = _wh.lego_baseline(year)
+                if isinstance(wh_bl, dict) and wh_bl.get("pieces"):
+                    # Compute totals by type
+                    dep = 0.0
+                    rec = 0.0
+                    pieces = []
+                    for ent in wh_bl.get("pieces", []):
+                        pid = str(ent.get("id"))
+                        typ = str(ent.get("type") or "expenditure")
+                        amt = ent.get("amount_eur")
+                        if isinstance(amt, (int, float)):
+                            if typ == "expenditure":
+                                dep += float(amt)
+                            elif typ == "revenue":
+                                rec += float(amt)
+                        pieces.append(
+                            LegoPieceType(
+                                id=pid,
+                                label=str(ent.get("label") or pid),
+                                type=typ,
+                                amountEur=(float(amt) if isinstance(amt, (int, float)) else None),
+                                share=(float(ent.get("share")) if isinstance(ent.get("share"), (int, float)) else None),
+                                cofogMajors=[],
+                                beneficiaries={},
+                                examples=[],
+                                sources=[],
+                                locked=False,
+                            )
+                        )
+                    return LegoBaselineType(
+                        year=int(wh_bl.get("year", year)),
+                        scope=scope,  # warehouse baseline does not carry scope; assume requested
+                        pib=0.0,
+                        depensesTotal=float(dep),
+                        recettesTotal=float(rec),
+                        pieces=pieces,
+                    )
+        except Exception:
+            pass
+
         bl = load_lego_baseline(year) or {}
         # If scope mismatches, we still return what we have; clients can detect gaps
         pieces = [
