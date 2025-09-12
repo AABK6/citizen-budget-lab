@@ -8,8 +8,8 @@ from services.api.app import create_app
 from services.api import schema as gql_schema
 from services.api.data_loader import (
     allocation_by_mission,
-    allocation_by_cofog,
     procurement_top_suppliers,
+    mapping_cofog_aggregate,
 )
 from services.api.models import Basis
 
@@ -38,7 +38,7 @@ def test_allocation_by_mission_and_cofog_sample_data():
     assert top.label.lower().startswith("education")
     assert top.amount_eur > 1e10
 
-    cofog = allocation_by_cofog(2026, Basis.CP)
+    cofog = mapping_cofog_aggregate(2026, Basis.CP)
     assert cofog, "Expected non-empty COFOG allocations"
     # Education maps to COFOG 09 with the largest share in sample
     assert cofog[0].code == "09"

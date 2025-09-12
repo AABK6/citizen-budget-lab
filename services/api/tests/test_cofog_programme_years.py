@@ -1,4 +1,4 @@
-from services.api.data_loader import allocation_by_cofog, Basis
+from services.api.data_loader import mapping_cofog_aggregate, Basis
 
 
 def test_programme_mapping_precedence_and_year(monkeypatch):
@@ -31,7 +31,7 @@ def test_programme_mapping_precedence_and_year(monkeypatch):
 
     monkeypatch.setattr(dl, "_load_json", fake_load_json)
 
-    items = allocation_by_cofog(2026, Basis.CP)
+    items = mapping_cofog_aggregate(2026, Basis.CP)
     # Turn into a map code -> amount
     m = {i.code: i.amount_eur for i in items}
 

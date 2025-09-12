@@ -1,7 +1,7 @@
 import json
 import os
 
-from services.api.data_loader import allocation_by_cofog, Basis
+from services.api.data_loader import mapping_cofog_aggregate, Basis
 
 
 def _load_mapping() -> dict:
@@ -36,8 +36,7 @@ def test_programme_weights_sum_to_one_default_and_years():
 def test_year_override_affects_major_shares_with_sample_data():
     # In mapping, programme 2041 has a 2026 override: 70% to 05.x, 30% to 04.x
     # Sample CP for 2041 is 12e9 → expect ~3.6e9 showing up under major '04'.
-    items = allocation_by_cofog(2026, Basis.CP)
+    items = mapping_cofog_aggregate(2026, Basis.CP)
     m = {i.code: i.amount_eur for i in items}
     # Allow some tolerance; other programmes should not contribute to '04' in sample
     assert 3_500_000_000.0 <= m.get("04", 0.0) <= 3_700_000_000.0
-

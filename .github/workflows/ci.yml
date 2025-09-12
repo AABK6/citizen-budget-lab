@@ -46,6 +46,19 @@ jobs:
           dbt seed --project-dir warehouse
           dbt build --project-dir warehouse
 
+  data-summary:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Summary of warmed data (best-effort)
+        run: |
+          python -m pip install -U pip
+          python tools/warm_summary.py 2026 || true
+
   frontend:
     runs-on: ubuntu-latest
     steps:
@@ -61,4 +74,3 @@ jobs:
         run: |
           npm ci
           npm run build --if-present
-

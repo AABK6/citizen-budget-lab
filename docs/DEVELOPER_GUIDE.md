@@ -325,7 +325,7 @@ The test `services/api/tests/test_schema_contract.py` asserts that the runtime G
 
   `python tools/warm_summary.py <YEAR>`
 
-- In CI, prefer running against warmed data (no network), then `make dbt-build && make dbt-test`. Add lightweight checks to ensure `row_count > 0` and required columns are present.
+- In CI, prefer running against warmed data (no network), then `make dbt-build && make dbt-test`. Add lightweight checks to ensure `row_count > 0` and required columns are present. The `data-summary` job in the example workflow runs `tools/warm_summary.py` in best-effort mode to print any available warmed data.
 Note: Settings are resolved at instantiation time. To change feature flags like `WAREHOUSE_COFOG_OVERRIDE`, set the environment variable before starting the API process. In unit tests, prefer monkeypatching `services.api.settings.get_settings()` to return a shim object exposing the needed attributes.
 
 #### 5.3. COFOG Parity (Warehouse vs Mapping)
