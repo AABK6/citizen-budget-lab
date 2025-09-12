@@ -260,6 +260,15 @@ type Mutation {
 }
 ```
 
+#### 3.2. Current Runtime Additions
+
+The runtime schema includes a couple of additions for usability that will be folded into the SDL in future iterations:
+
+- `RunScenarioPayload.dsl: String` — the canonical base64 DSL is echoed back to support permalinks and `Share` pages.
+- `Query.scenario(id: ID!): RunScenarioPayload!` — resolves a previously run scenario by id using the in‑memory store and replays it to produce the payload.
+
+For codegen, prefer the SDL and feature‑flag the additions if needed.
+
 ---
 
 ### **4. Secrets & Environment Variables**
