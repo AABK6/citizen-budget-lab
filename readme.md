@@ -23,7 +23,8 @@ This repository contains extensive documentation to help users and developers un
 
 *   **For Developers:**
     *   [**Developer Guide**](./docs/DEVELOPER_GUIDE.md): A comprehensive guide for setting up the development environment, running the application, and understanding the technical architecture.
-    *   [**Backlog**](./BACKLOG.md): The detailed project backlog, tracking epics, and milestones.
+    *   [**Current Development Plan**](./current_dev_plan.md): The authoritative roadmap describing open architectural work.
+    *   [**Backlog**](./BACKLOG.md): Task-by-task tracking aligned with the current plan.
 
 ## 3. Quick Start
 
