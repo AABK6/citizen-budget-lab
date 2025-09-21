@@ -2,58 +2,64 @@
 
 _Last updated: 2025-09-08_
 
-This document tracks the engineering work required to resolve the "two-engine" architecture and to deliver a trustworthy 2026 simulation baseline. It mirrors the canonical roadmap in `current_dev_plan.md` and should be kept in lockstep with the backlog (`BACKLOG.md`).
+This document mirrors the canonical roadmap in `current_dev_plan.md`. It exists so engineers have a single place to track the remediation work that will eliminate the "two-engine" architecture, ingest PLF 2026 data, and finish the outstanding UX features.
 
-## 1. Executive Summary
+## 1. Executive Summary & Strategic Imperative
 
-- **Confirmed Diagnosis – A Project Divided.** The application still ships with two conflicting data paths: the dbt warehouse (intended single source of truth) and legacy Python fallbacks that read warmed CSV/JSON files in `services/api/data_loader.py`. These paths drift, especially for COFOG mappings and LEGO baselines, producing unverifiable answers.
-- **Quality Assurance Gap.** The current CI pipeline (`.github/workflows/ci.yml`) runs backend tests, dbt builds, and the frontend build independently. It does not exercise the fully integrated data flow, so regressions in cross-engine consistency slip through.
-- **Strategic Imperative.** All feature work remains paused until the warehouse refactor is complete. Phases below describe the blocking work to unify data flow, ingest PLF 2026 data, and finish the UI/UX debt.
+### 1.1 Confirmed Diagnosis: A Project Divided
 
-## 2. Phase Plan
+A granular, line-by-line audit of the Citizen Budget Lab codebase confirms the central finding of the "Strategic Analysis for the 2026 French Budget Simulation" report: the project is fundamentally compromised by a critical architectural flaw. This **two-engine problem** stems from an incomplete data warehouse refactor, resulting in two parallel and inconsistent data pipelines operating simultaneously.
 
-### Phase 1 — Foundational Refactoring & Data Integrity (**Immediate priority**)
+- The **first engine** is the intended single source of truth: a modern data warehouse managed by dbt.
+- The **second engine** is a legacy, file-based fallback system located within `services/api/data_loader.py`, which reads directly from warmed flat files in `data/cache/`, bypassing the warehouse entirely.
 
-| Task ID | Description | Key Assets | Acceptance Criteria | Status |
-| --- | --- | --- | --- | --- |
-| **BE-01** | Refactor `allocation_by_cofog` to query warehouse only | `services/api/data_loader.py`, `fct_admin_by_cofog` | Remove JSON fallbacks; rely solely on warehouse client; add regression tests | Not Started |
-| **BE-02** | Refactor `run_scenario` baseline loader | `services/api/data_loader.py`, `fct_lego_baseline` | Eliminate reads from `data/cache/lego_baseline_{year}.json`; rewire through warehouse client; tests updated | Not Started |
-| **DBT-01** | Implement APU subsector tagging | `warehouse/seeds/`, `dim_apu_entities` (new), `fct_admin_by_mission` | Seed generated from maintained rules; models join subsector; API can group by APUC/APUL/ASSO | Not Started |
-| **DBT-02** | Finalise COFOG mapping logic | `tools/build_seeds.py`, `dim_cofog_mapping`, `fct_admin_by_cofog` | Seed covers mission/programme/year hierarchy; dbt tests cover edge cases; manual QA matches expected totals | Not Started |
+These systems are not in sync. They produce divergent results, particularly in the complex, year-aware logic for mapping administrative budget codes to COFOG classifications. This means the application can report different figures for the same query depending on the path taken, rendering any output unverifiable. Both `BACKLOG.md` and this plan label the inconsistency a **CRITICAL GAP**.
 
-**Goals:** remove the dual-engine behaviour, ensure dbt models are authoritative, and guarantee parity through automated tests.
+### 1.2 Quality Assurance Blind Spot
 
-### Phase 2 — 2026 Baseline Implementation & Data Ingestion
+The CI pipeline (`.github/workflows/ci.yml`) currently gives a false sense of security. Backend tests, dbt builds, and the frontend build all pass, but the checks run in isolation. The suite cannot detect the cross-engine data divergence described above, which is why a fundamental integrity flaw can coexist with a green CI badge.
 
-| Task ID | Description | Key Assets | Acceptance Criteria | Status |
-| --- | --- | --- | --- | --- |
-| **DI-01** | Extend `cache_warm.py` for PLF PDF/XLS parsing | `services/api/cache_warm.py`, new deps (`pdfplumber`, `openpyxl`) | Warmer downloads & parses PLF 2026 ceilings; outputs normalized CSV + `.meta.json`; robust error handling | Not Started |
-| **DI-02** | Add dbt models for PLF 2026 ceilings | `warehouse/models/staging/`, `stg_plf_2026_ceilings` (new) | Source + staging models ingest CSV; downstream marts can reference the ceilings; `dbt build/test` green | Not Started |
-| **BL-01** | Build 2026 simulation baseline mart | `warehouse/models/marts/fct_simulation_baseline_2026.sql` (new) | Model joins LFI 2025, PLF ceilings, macro forecasts; dbt tests validate totals & joins | Not Started |
-| **BL-02** | Surface baseline disclaimer in UI | `frontend/app/build/BuildPageClient.tsx` | Prominent banner clarifies baseline ≠ enacted law; copy approved with product | Not Started |
+### 1.3 Strategic Imperative: Halt and Refactor
 
-### Phase 3 — Feature Development & UI/UX Completion
+Given the severity of the architectural flaw, all net-new feature development is paused. Building atop a bifurcated foundation would add technical debt, surface contradictory numbers to users, and undermine trust. The sole focus of the engineering team is to complete the data warehouse refactor described below. This is a non-negotiable prerequisite for future shipping work.
 
-| Task ID | Description | Key Assets | Acceptance Criteria | Status |
-| --- | --- | --- | --- | --- |
-| **BE-03** | Implement AE/CP arithmetic differentiation | `services/api/data_loader.py` | `run_scenario` evaluates `dimension` field, maintaining separate AE and CP ledgers; unit tests cover both | Not Started |
-| **BE-04** | Model key PLF 2026 policy levers | `services/api/policy_catalog.py`, `services/api/data_loader.py` | Levers for "année blanche" and targeted ministry cuts exist; fiscal impacts validated by tests | Not Started |
-| **FE-01** | Refactor build-page state management | `frontend/app/build/BuildPageClient.tsx` | State handled via reducer/custom hooks, extracted sub-components, functionality unchanged | Not Started |
-| **FE-02** | Unify permalink generation/parsing | `frontend/app/challenges/page.tsx`, `frontend/app/build/BuildPageClient.tsx`, `frontend/lib/` | Single `scenarioId` query parameter across app; shared helper functions; regression tests/sample links | Not Started |
-| **FE-03** | Implement "Compare & Remix" UI | `frontend/app/compare/ComparePageClient.tsx` | Page allows selecting two scenario IDs, renders fiscal/macro comparison using `scenarioCompare` | Not Started |
+### 1.4 Critical Path (Three Phases)
+
+1. **Phase 1 – Foundational Refactoring & Data Integrity.** Eliminate the "two-engine" problem by completing the dbt integration and removing file-based fallbacks from the backend API.
+2. **Phase 2 – 2026 Baseline Implementation & Data Ingestion.** Once the foundation is stable, ingest the official PLF 2026 documents and assemble the authoritative simulation baseline inside the warehouse.
+3. **Phase 3 – Feature Development & UI/UX Completion.** With a reliable data pipeline in place, resume backend engine enhancements and deliver the remaining UX features (`/compare`, permalink hygiene, builder refactor, etc.).
+
+## 2. Task Ledger
+
+All tasks are currently **Not Started**.
+
+| Task ID | Description | Phase | Priority | Key Files & Components | Acceptance Criteria |
+| --- | --- | --- | --- | --- | --- |
+| **BE-01** | Refactor `allocation_by_cofog` to query `fct_admin_by_cofog` exclusively (remove JSON fallback; add regression tests). | 1 | Critical | `services/api/data_loader.py`, `fct_admin_by_cofog` | Resolver only talks to warehouse; unit tests ensure parity. |
+| **BE-02** | Refactor `run_scenario` to source LEGO baselines through `warehouse_client` (drop reads from `data/cache/lego_baseline_{year}.json`). | 1 | Critical | `services/api/data_loader.py`, `fct_lego_baseline` | JSON file reads removed; scenario baseline comes from warehouse; tests updated. |
+| **DBT-01** | Implement APU subsector tagging (`dim_apu_entities`, joins into fact tables, engine wiring). | 1 | High | `warehouse/models/`, new seed of APU rules | Mission/procurement rows tagged with APUC/APUL/ASSO; dbt tests cover new fields. |
+| **DBT-02** | Finalise COFOG mapping logic (seed generation, dbt tests for year/programme hierarchy, manual QA). | 1 | High | `tools/build_seeds.py`, `dim_cofog_mapping`, `fct_admin_by_cofog` | Seed reflects mission/programme/year hierarchy; dbt tests guard edge cases; manual parity verified. |
+| **DI-01** | Extend `cache_warm.py` with PDF/XLS parsing for PLF ceilings (dependencies added, errors handled, CSV emitted). | 2 | High | `services/api/cache_warm.py`, new deps (`pdfplumber`, `openpyxl`, optionally `pandas`) | Warmer downloads & normalises PLF 2026 mission ceilings; outputs CSV + `.meta.json`. |
+| **DI-02** | Create dbt source/staging models for PLF ceilings and integrate into semantic layer (`stg_plf_2026_ceilings`, downstream marts). | 2 | High | `warehouse/models/staging/`, new source config | dbt ingest succeeds; downstream marts can reference PLF ceilings; `dbt build/test` stays green. |
+| **BL-01** | Build `fct_simulation_baseline_2026` (joins LFI 2025, PLF 2026, macro forecasts; dbt tests for totals). | 2 | High | `warehouse/models/marts/fct_simulation_baseline_2026.sql` (new) | Baseline mart combines inputs and passes dbt tests for totals/consistency. |
+| **BL-02** | Surface baseline disclaimer in `/build` explaining PLF proposal assumptions. | 2 | Medium | `frontend/app/build/BuildPageClient.tsx` | Prominent UI disclaimer clarifies baseline is a proposal that may change. |
+| **BE-03** | Implement AE/CP arithmetic differentiation (dimension-aware deltas, unit tests). | 3 | Medium | `services/api/data_loader.py`, tests | Scenario actions respect `dimension` flag, maintaining separate AE and CP ledgers. |
+| **BE-04** | Model PLF 2026 policy levers ("année blanche", targeted ministry cuts) with verified fiscal impacts. | 3 | Medium | `services/api/policy_catalog.py`, `services/api/data_loader.py`, tests | Levers defined, applied correctly in `run_scenario`, unit tests cover impacts. |
+| **FE-01** | Refactor `BuildPageClient.tsx` state management (introduce reducer/custom hooks, modular components). | 3 | Medium | `frontend/app/build/BuildPageClient.tsx` | Component decomposed; state handled via reducer/custom hooks; behaviour unchanged. |
+| **FE-02** | Unify permalink generation/parsing (`scenarioId` everywhere; shared utility for `/challenges`, `/build`, share links). | 3 | Low | `frontend/lib/`, `frontend/app/challenges/page.tsx`, `frontend/app/build/BuildPageClient.tsx` | Single query parameter format; shared helpers; manual QA on permalinks. |
+| **FE-03** | Implement the "Compare & Remix" UI (fully interactive `/compare` powered by `scenarioCompare`). | 3 | Low | `frontend/app/compare/ComparePageClient.tsx`, GraphQL schema | `/compare` loads two scenario IDs, renders comparison using `scenarioCompare`. |
 
 ## 3. Risks & Dependencies
 
-1. **Warehouse Availability:** Until BE-01/BE-02 land, disabling the warehouse causes API fallbacks to resurface, masking divergences. Enforce a hard failure when the warehouse is missing once the refactor completes.
-2. **Static Document Formats:** PLF ingestion (DI-01) depends on PDF/XLS structure that may change. Mitigate with robust parsing, metadata sidecars, and manual QA playbooks.
-3. **Macro Scenario Accuracy:** AE/CP differentiation and new policy levers must include clear documentation of assumptions to avoid misinterpretation.
-4. **CI Coverage:** Update CI to run seed generation + dbt build + integration smoke tests once Phase 1 closes, otherwise regressions will persist.
+- **Two-engine divergence remains** until BE-01 and BE-02 land. We expect continued inconsistencies in user-visible numbers until the fallbacks are removed.
+- **Static document formats** for PLF datasets may change unexpectedly; DI-01 should include robust parsing and validation.
+- **CI blind spots** will persist; once Phase 1 closes we must extend CI to run seed generation + dbt builds + integration smoke tests.
 
-## 4. Immediate Next Steps (Sprint Checklist)
+## 4. Immediate Next Actions
 
-1. Finish design notes for `allocation_by_cofog` refactor (warehouse query structure, error handling).
-2. Draft APU subsector rules JSON and validate against sample missions before wiring into dbt.
-3. Prototype PLF PDF parsing locally, documenting dependencies and edge cases.
-4. Prepare frontend instrumentation for scenario permalinks so QA can verify once FE-02 ships.
+1. Draft implementation notes for BE-01 (warehouse query, error handling) and BE-02 (baseline loading contract).
+2. Assemble initial APU subsector rule draft to feed DBT-01.
+3. Prototype PLF PDF parsing locally to de-risk DI-01.
+4. Establish test harness for future AE/CP dimension checks before BE-03 work begins.
 
-Progress is tracked in `BACKLOG.md`; update statuses there and in this document whenever a task moves from `[ ]` to `[~]` or `[x]`.
+Progress should always be reflected in both this document and `BACKLOG.md`.
