@@ -48,6 +48,7 @@ This phase addresses the core technical debt that currently blocks all other pro
   - `run_scenario` no longer opens or parses `data/cache/lego_baseline_{year}.json`.
   - The initial budget baseline for a simulation is populated via a query to the `fct_lego_baseline` dbt model.
   - Simulation logic tests in `services/api/tests/test_resolution.py` are updated and continue to pass.
+- **Status (2025-09-21):** Completed — scenario execution consumes `warehouse_client.lego_baseline` directly; tests now stub the warehouse client and JSON fallbacks have been removed.
 
 ### 2.2 Epic: Solidify the Semantic Layer (The Single Source of Truth)
 
@@ -164,12 +165,12 @@ With the foundational data architecture stabilized and the 2026 baseline impleme
 
 ## 5.0 Consolidated Action Plan: Prioritized Task Ledger
 
-All tasks are currently **Not Started**.
+Task statuses below reflect the latest progress.
 
 | Task ID | Description | Epic | Phase | Priority | Key Files & Components | Acceptance Criteria | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | **BE-01** | Refactor `allocation_by_cofog` to use warehouse exclusively | Unify Backend Data Flow | 1 | **Critical** | `services/api/data_loader.py`, `fct_admin_by_cofog` | All file-based fallback logic is removed; resolver queries dbt model only; unit tests pass. | Completed |
-| **BE-02** | Refactor `run_scenario` engine to source baseline from warehouse | Unify Backend Data Flow | 1 | **Critical** | `services/api/data_loader.py`, `fct_lego_baseline` | Direct reads from `lego_baseline_{year}.json` are removed; baseline is populated from dbt model query. | Not Started |
+| **BE-02** | Refactor `run_scenario` engine to source baseline from warehouse | Unify Backend Data Flow | 1 | **Critical** | `services/api/data_loader.py`, `fct_lego_baseline` | Direct reads from `lego_baseline_{year}.json` are removed; baseline is populated from dbt model query. | Completed |
 | **DBT-01** | Implement APU subsector tagging in dbt models | Solidify the Semantic Layer | 1 | **High** | `warehouse/models/` | New dbt models for APU tagging exist; warehouse can group data by APUC/APUL/ASSO tags. | Completed |
 | **DBT-02** | Verify and finalize COFOG mapping logic in dbt | Solidify the Semantic Layer | 1 | **High** | `warehouse/models/marts/fct_admin_by_cofog.sql`, `tools/build_seeds.py` | dbt tests are expanded to cover year-aware logic; manual validation of edge cases passes. | Not Started |
 | **DI-01** | Enhance `cache_warm.py` with PDF/Excel parsing | Develop 2026 Data Ingestion | 2 | **High** | `services/api/cache_warm.py`, `services/api/requirements.txt` | New command successfully parses PLF 2026 documents and outputs a structured CSV. | Not Started |

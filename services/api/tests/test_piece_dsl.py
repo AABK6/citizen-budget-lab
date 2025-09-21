@@ -12,7 +12,6 @@ def _stub_baseline(monkeypatch, pieces):
     baseline = {"year": 2026, "pieces": pieces}
     monkeypatch.setattr(wh, "warehouse_available", lambda: True)
     monkeypatch.setattr(wh, "lego_baseline", lambda year: baseline)
-    monkeypatch.setattr(data_loader, "load_lego_baseline", lambda year: baseline)
 
 
 def _b64(yaml_text: str) -> str:
@@ -76,7 +75,6 @@ def test_run_scenario_without_warehouse_raises(monkeypatch):
     import pytest
 
     monkeypatch.setattr(wh, "warehouse_available", lambda: False)
-    monkeypatch.setattr(data_loader, "load_lego_baseline", lambda year: None)
 
     sdl = """
 version: 0.1

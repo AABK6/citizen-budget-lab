@@ -16,7 +16,7 @@ For verification guidance (tests, commands, datasets), refer to `docs/REFACTOR_P
 
 ### Epic BE: Unify Backend Data Flow (Eliminate the Second Engine)
 - `[x]` **BE-01** Refactor `allocation_by_cofog` to query `fct_admin_by_cofog` exclusively (remove JSON fallback; add regression tests).
-- `[ ]` **BE-02** Refactor `run_scenario` to source LEGO baselines via `warehouse_client` (drop reads from `data/cache/lego_baseline_{year}.json`).
+- `[x]` **BE-02** Refactor `run_scenario` to source LEGO baselines via `warehouse_client` (drop reads from `data/cache/lego_baseline_{year}.json`).
 
 ### Epic DBT: Solidify the Semantic Layer
 - `[x]` **DBT-01** Implement APU subsector tagging (`dim_apu_entities`, joins into fact tables, engine wiring).

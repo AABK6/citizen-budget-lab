@@ -993,7 +993,7 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
     # Preload LEGO baseline/config to support piece.* targets
     if not wh.warehouse_available():
         raise RuntimeError("Warehouse LEGO baseline unavailable; ensure warehouse is enabled and seeded.")
-    lego_bl = load_lego_baseline(baseline_year)
+    lego_bl = wh.lego_baseline(baseline_year)
     if not lego_bl:
         raise RuntimeError(f"Missing LEGO baseline for {baseline_year} in warehouse")
     lego_types: Dict[str, str] = {}

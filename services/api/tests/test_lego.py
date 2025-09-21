@@ -19,7 +19,6 @@ def _patch_warehouse_baseline(monkeypatch, baseline):
 
     monkeypatch.setattr(wh, "warehouse_available", lambda: True)
     monkeypatch.setattr(wh, "lego_baseline", lambda year: baseline)
-    monkeypatch.setattr("services.api.data_loader.load_lego_baseline", lambda year: baseline)
 
 
 def test_warm_lego_baseline_expenditures_monkeypatched(monkeypatch, tmp_path):
@@ -141,7 +140,7 @@ def test_lego_queries_absent_snapshot(monkeypatch):
     from fastapi.testclient import TestClient
 
     monkeypatch.setattr(wh, "warehouse_available", lambda: False)
-    monkeypatch.setattr("services.api.data_loader.load_lego_baseline", lambda year: None)
+    monkeypatch.setattr(wh, "lego_baseline", lambda year: None)
 
     app = create_app()
     client = TestClient(app)
