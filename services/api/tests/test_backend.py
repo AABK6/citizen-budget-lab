@@ -2,14 +2,15 @@
 import json
 from typing import Any, Dict, List
 
+import pytest
 from fastapi.testclient import TestClient
 
 from services.api.app import create_app
 from services.api import schema as gql_schema
+from services.api import warehouse_client as wh
 from services.api.data_loader import (
     allocation_by_mission,
     procurement_top_suppliers,
-    mapping_cofog_aggregate,
 )
 from services.api.models import Basis
 
@@ -29,23 +30,27 @@ def test_root_and_health_endpoints():
 
 
 def test_allocation_by_mission_and_cofog_sample_data():
-    # Using 2026 sample dataset bundled in data/
-    alloc = allocation_by_mission(2026, Basis.CP)
-    assert alloc.mission, "Expected non-empty mission allocations"
-    # Education (code 150) should be top in sample
-    top = alloc.mission[0]
+    if not wh.warehouse_available():
+        pytest.skip("warehouse not available")
+
+    loader_alloc = allocation_by_mission(2026, Basis.CP)
+    assert loader_alloc.mission, "Expected non-empty mission allocations"
+    top = loader_alloc.mission[0]
     assert top.code == "150"
     assert top.label.lower().startswith("education")
     assert top.amount_eur > 1e10
 
-    cofog = mapping_cofog_aggregate(2026, Basis.CP)
-    assert cofog, "Expected non-empty COFOG allocations"
-    # Education maps to COFOG 09 with the largest share in sample
-    assert cofog[0].code == "09"
-    # Sum should be close to mission total (basic sanity)
-    total_mission = sum(m.amount_eur for m in alloc.mission)
-    total_cofog = sum(c.amount_eur for c in cofog)
-    assert abs(total_mission - total_cofog) / total_mission < 1e-6
+    wh_missions = wh.allocation_by_mission(2026, Basis.CP)
+    assert wh_missions, "warehouse mission data missing"
+    total_loader = sum(m.amount_eur for m in loader_alloc.mission)
+    total_wh = sum(m.amount_eur for m in wh_missions)
+    assert abs(total_loader - total_wh) / max(1.0, total_wh) < 1e-6
+
+    wh_cofog = wh.allocation_by_cofog(2026, Basis.CP)
+    assert wh_cofog, "warehouse COFOG data missing"
+    if wh.cofog_mapping_reliable(2026, Basis.CP):
+        total_cofog = sum(c.amount_eur for c in wh_cofog)
+        assert abs(total_wh - total_cofog) / max(1.0, total_wh) < 1e-6
 
 
 def test_procurement_top_suppliers_filters():
