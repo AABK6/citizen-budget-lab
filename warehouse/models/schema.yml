@@ -61,6 +61,11 @@ models:
         tests: [not_null]
       - name: mission_code
         tests: [not_null]
+      - name: apu_subsector
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['APUC', 'APUL', 'ASSO']
 
   - name: fct_admin_by_cofog
     description: Aggregates by COFOG major using weighted mapping
@@ -102,6 +107,49 @@ models:
         tests: [not_null]
       - name: supplier_siren
         tests: [not_null]
+
+  - name: dim_apu_entities
+    description: Classification of administrative and procurement identifiers into APU subsectors.
+    columns:
+      - name: domain
+        tests: [not_null]
+      - name: key_type
+        tests: [not_null]
+      - name: key_value
+        tests: [not_null]
+      - name: apu_subsector
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['APUC', 'APUL', 'ASSO']
+
+  - name: dim_apu_subsector
+    description: Reference table for APU subsectors with labels and descriptions.
+    columns:
+      - name: apu_subsector
+        tests: [not_null, unique]
+
+  - name: fct_admin_by_apu
+    description: Aggregated administrative spending by APU subsector
+    columns:
+      - name: year
+        tests: [not_null]
+      - name: apu_subsector
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['APUC', 'APUL', 'ASSO']
+
+  - name: fct_procurement_by_apu
+    description: Procurement aggregates by buyer APU subsector
+    columns:
+      - name: year
+        tests: [not_null]
+      - name: apu_subsector
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['APUC', 'APUL', 'ASSO']
 
   - name: stg_macro_gdp
     description: Staging GDP series (EUR) by year from warmed CSV

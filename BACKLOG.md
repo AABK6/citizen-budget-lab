@@ -19,7 +19,7 @@ For verification guidance (tests, commands, datasets), refer to `docs/REFACTOR_P
 - `[ ]` **BE-02** Refactor `run_scenario` to source LEGO baselines via `warehouse_client` (drop reads from `data/cache/lego_baseline_{year}.json`).
 
 ### Epic DBT: Solidify the Semantic Layer
-- `[ ]` **DBT-01** Implement APU subsector tagging (`dim_apu_entities`, joins into fact tables, engine wiring).
+- `[x]` **DBT-01** Implement APU subsector tagging (`dim_apu_entities`, joins into fact tables, engine wiring).
 - `[ ]` **DBT-02** Finalise COFOG mapping logic (seed generation, dbt tests for year/programme hierarchy, manual QA).
 
 ## Phase 2 — 2026 Baseline Implementation & Data Ingestion
@@ -50,4 +50,3 @@ For verification guidance (tests, commands, datasets), refer to `docs/REFACTOR_P
 - **CI Reliability:** continue to treat `.github/workflows/ci.yml` as insufficient for detecting dual-engine regressions until Phase 1 tasks are complete.
 - **Warm Data Contracts:** ensure every warmed artefact emits a `.meta.json` with `produced_columns`; add validation scripts once DI-01 lands.
 - **Documentation Sync:** keep `docs/REFACTOR_PLAN.md` and `current_dev_plan.md` updated whenever a task transitions to `[~]` or `[x]`.
-

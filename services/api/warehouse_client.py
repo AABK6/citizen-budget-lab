@@ -49,6 +49,7 @@ def warehouse_status() -> dict:
     required = [
         "stg_state_budget_lines",
         "fct_admin_by_mission",
+        "fct_admin_by_apu",
         "fct_admin_by_cofog",
         "vw_procurement_contracts",
     ]
@@ -184,6 +185,36 @@ def allocation_by_cofog(year: int, basis: Basis) -> List[MissionAllocation]:
         share = (amt / total) if total else 0.0
         out.append(MissionAllocation(code=str(code), label=str(label), amount_eur=amt, share=share))
     return out
+
+
+def allocation_by_apu(year: int, basis: Basis) -> List[MissionAllocation]:
+    if not warehouse_available():
+        return []
+    try:
+        con = _connect_duckdb()
+    except Exception:
+        return []
+    metric = "cp_eur" if basis == Basis.CP else "ae_eur"
+    fact = _qual_name(con, "fct_admin_by_apu")
+    dim = _qual_name(con, "dim_apu_subsector")
+    sql = (
+        f"select f.apu_subsector, any_value(coalesce(d.label, f.apu_subsector)) as label, "
+        f"sum({metric}) as amount "
+        f"from {fact} f "
+        f"left join {dim} d on d.apu_subsector = f.apu_subsector "
+        "where f.year = ? group by f.apu_subsector, label order by amount desc"
+    )
+    try:
+        rows = con.execute(sql, [year]).fetchall()
+    except Exception:
+        return []
+    total = sum(float(r[2] or 0.0) for r in rows)
+    items: List[MissionAllocation] = []
+    for code, label, amount in rows:
+        amt = float(amount or 0.0)
+        share = (amt / total) if total else 0.0
+        items.append(MissionAllocation(code=str(code), label=str(label), amount_eur=amt, share=share))
+    return items
 
 
 def procurement_top_suppliers(

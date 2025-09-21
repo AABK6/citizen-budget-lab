@@ -37,7 +37,7 @@ All tasks are currently **Not Started**.
 | --- | --- | --- | --- | --- | --- |
 | **BE-01** | Refactor `allocation_by_cofog` to query `fct_admin_by_cofog` exclusively (remove JSON fallback; add regression tests). | 1 | Critical | `services/api/data_loader.py`, `fct_admin_by_cofog` | Resolver only talks to warehouse; unit tests ensure parity. |
 | **BE-02** | Refactor `run_scenario` to source LEGO baselines through `warehouse_client` (drop reads from `data/cache/lego_baseline_{year}.json`). | 1 | Critical | `services/api/data_loader.py`, `fct_lego_baseline` | JSON file reads removed; scenario baseline comes from warehouse; tests updated. |
-| **DBT-01** | Implement APU subsector tagging (`dim_apu_entities`, joins into fact tables, engine wiring). | 1 | High | `warehouse/models/`, new seed of APU rules | Mission/procurement rows tagged with APUC/APUL/ASSO; dbt tests cover new fields. |
+| **DBT-01** | Implement APU subsector tagging (`dim_apu_entities`, joins into fact tables, engine wiring). | 1 | High | `warehouse/models/`, new dimension rules | Mission/procurement rows tagged with APUC/APUL/ASSO; dbt tests cover new fields. | Completed |
 | **DBT-02** | Finalise COFOG mapping logic (seed generation, dbt tests for year/programme hierarchy, manual QA). | 1 | High | `tools/build_seeds.py`, `dim_cofog_mapping`, `fct_admin_by_cofog` | Seed reflects mission/programme/year hierarchy; dbt tests guard edge cases; manual parity verified. |
 | **DI-01** | Extend `cache_warm.py` with PDF/XLS parsing for PLF ceilings (dependencies added, errors handled, CSV emitted). | 2 | High | `services/api/cache_warm.py`, new deps (`pdfplumber`, `openpyxl`, optionally `pandas`) | Warmer downloads & normalises PLF 2026 mission ceilings; outputs CSV + `.meta.json`. |
 | **DI-02** | Create dbt source/staging models for PLF ceilings and integrate into semantic layer (`stg_plf_2026_ceilings`, downstream marts). | 2 | High | `warehouse/models/staging/`, new source config | dbt ingest succeeds; downstream marts can reference PLF ceilings; `dbt build/test` stays green. |
@@ -58,7 +58,7 @@ All tasks are currently **Not Started**.
 ## 4. Immediate Next Actions
 
 1. Draft implementation notes for BE-01 (warehouse query, error handling) and BE-02 (baseline loading contract).
-2. Assemble initial APU subsector rule draft to feed DBT-01.
+2. ✅ 2025-09-21 — APU subsector rules codified in `dim_apu_entities` (DBT-01 delivered).
 3. Prototype PLF PDF parsing locally to de-risk DI-01.
 4. Establish test harness for future AE/CP dimension checks before BE-03 work begins.
 

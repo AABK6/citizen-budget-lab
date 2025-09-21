@@ -162,6 +162,18 @@ def allocation_by_cofog(year: int, basis: Basis) -> List[MissionAllocation]:
     # No Python fallback: call mapping_cofog_aggregate directly if you need mapping parity without warehouse.
     return []
 
+
+def allocation_by_apu(year: int, basis: Basis) -> List[MissionAllocation]:
+    """Return allocation aggregated by APU subsector (APUC/APUL/ASSO)."""
+    try:
+        if wh.warehouse_available():
+            items = wh.allocation_by_apu(year, basis)
+            if items:
+                return items
+    except Exception:
+        return []
+    return []
+
 def mapping_cofog_aggregate(year: int, basis: Basis) -> List[MissionAllocation]:
     """Aggregate by COFOG major using the JSON mapping and sample mission/programme CSV.
 

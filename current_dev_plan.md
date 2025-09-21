@@ -54,12 +54,13 @@ This epic focuses on completing the dbt warehouse models to ensure they are feat
 
 #### Task DBT-01: Implement APU Subsector Tagging
 
-- **Context:** The "Code-to-Documentation Consistency Audit" and `BACKLOG.md` correctly identify APU (public administration unit) subsector tagging (APUC/APUL/ASSO) as a missing feature (`[ ]`), noting there is "no visible implementation" in any dbt models. This functionality is a prerequisite for the local government balance compliance checks performed by the simulation engine.
+- **Context:** Previously identified as a critical gap in the "Code-to-Documentation Consistency Audit" and `BACKLOG.md`; lack of APU tagging blocked local balance compliance checks.
 - **Action Required:** Develop new dbt models to ingest the necessary source data for identifying and classifying public administration units. Create a new dimension model, `dim_apu_entities`, to store this classification. Join the final fact tables with this dimension to enable filtering and aggregation by APU subsector.
 - **Acceptance Criteria:**
   - New dbt models for APU subsector tagging are created and tested.
   - The warehouse can correctly answer queries grouped by APUC, APUL, and ASSO tags.
   - The local balance check logic in `run_scenario` can be wired to this new data source.
+- **Status (2025-09-21):** Completed via new `dim_apu_entities` view, `fct_admin_by_apu` mart, GraphQL `APU` lens, and dedicated dbt tests; procurement aggregation now handled in `fct_procurement_by_apu` with inline rules.
 
 #### Task DBT-02: Verify and Finalize COFOG Mapping Logic
 
@@ -168,7 +169,7 @@ All tasks are currently **Not Started**.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | **BE-01** | Refactor `allocation_by_cofog` to use warehouse exclusively | Unify Backend Data Flow | 1 | **Critical** | `services/api/data_loader.py`, `fct_admin_by_cofog` | All file-based fallback logic is removed; resolver queries dbt model only; unit tests pass. | Not Started |
 | **BE-02** | Refactor `run_scenario` engine to source baseline from warehouse | Unify Backend Data Flow | 1 | **Critical** | `services/api/data_loader.py`, `fct_lego_baseline` | Direct reads from `lego_baseline_{year}.json` are removed; baseline is populated from dbt model query. | Not Started |
-| **DBT-01** | Implement APU subsector tagging in dbt models | Solidify the Semantic Layer | 1 | **High** | `warehouse/models/` | New dbt models for APU tagging exist; warehouse can group data by APUC/APUL/ASSO tags. | Not Started |
+| **DBT-01** | Implement APU subsector tagging in dbt models | Solidify the Semantic Layer | 1 | **High** | `warehouse/models/` | New dbt models for APU tagging exist; warehouse can group data by APUC/APUL/ASSO tags. | Completed |
 | **DBT-02** | Verify and finalize COFOG mapping logic in dbt | Solidify the Semantic Layer | 1 | **High** | `warehouse/models/marts/fct_admin_by_cofog.sql`, `tools/build_seeds.py` | dbt tests are expanded to cover year-aware logic; manual validation of edge cases passes. | Not Started |
 | **DI-01** | Enhance `cache_warm.py` with PDF/Excel parsing | Develop 2026 Data Ingestion | 2 | **High** | `services/api/cache_warm.py`, `services/api/requirements.txt` | New command successfully parses PLF 2026 documents and outputs a structured CSV. | Not Started |
 | **DI-02** | Create dbt models for ingested PLF 2026 data | Develop 2026 Data Ingestion | 2 | **High** | `warehouse/models/staging/` | New dbt source and models for PLF 2026 ceilings are created and tested. | Not Started |

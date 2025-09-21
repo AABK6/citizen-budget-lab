@@ -52,6 +52,11 @@ def test_allocation_by_mission_and_cofog_sample_data():
         total_cofog = sum(c.amount_eur for c in wh_cofog)
         assert abs(total_wh - total_cofog) / max(1.0, total_wh) < 1e-6
 
+    wh_apu = wh.allocation_by_apu(2026, Basis.CP)
+    assert wh_apu, "warehouse APU data missing"
+    total_apu = sum(a.amount_eur for a in wh_apu)
+    assert abs(total_wh - total_apu) / max(1.0, total_wh) < 1e-6
+
 
 def test_procurement_top_suppliers_filters():
     # Ensure test uses sample by removing any warmed 2024 cache
@@ -176,6 +181,12 @@ def test_graphql_queries_without_network(monkeypatch):
       query { allocation(year: 2026, basis: CP, lens: COFOG) { cofog { code label amountEur share } } }
     """)
     assert data["allocation"]["cofog"]
+
+    # allocation APU lens
+    data = gql("""
+      query { allocation(year: 2026, basis: CP, lens: APU) { apu { code label amountEur share } } }
+    """)
+    assert data["allocation"]["apu"]
 
     # procurement (filters exercise the path)
     data = gql(
