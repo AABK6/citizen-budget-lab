@@ -2,6 +2,8 @@
 
 ---
 
+> **Roadmap Source of Truth:** See `current_dev_plan.md` and `BACKLOG.md` for the latest architectural tasks. This guide documents the environment as it exists today (legacy fallbacks included) until the Phase 1 refactor lands.
+
 ### **1. Local Development Setup**
 
 #### **1.1. Prerequisites**

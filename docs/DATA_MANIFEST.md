@@ -1,6 +1,6 @@
 # Data Manifest
 
-This document provides a central inventory of all data sources, configuration files, and data pipelines used in the Citizen Budget Lab application.
+This document provides a central inventory of all data sources, configuration files, and data pipelines used in the Citizen Budget Lab application. For the remedial roadmap that governs upcoming changes, consult `current_dev_plan.md` and `docs/REFACTOR_PLAN.md`.
 
 ## 1. Core Budget & Policy Data
 

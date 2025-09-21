@@ -2,7 +2,7 @@ LEGO Budget Methodology
 
 Overview
 
-This note documents how the LEGO “pieces” for expenditures and revenues are mapped to official aggregates, how beneficiary categories are derived, and how simple elasticities are used for revenue simulations in v0.1. It is intentionally transparent and conservative; parameters are versioned and easy to audit.
+This note documents how the LEGO “pieces” for expenditures and revenues are mapped to official aggregates, how beneficiary categories are derived, and how simple elasticities are used for revenue simulations in v0.1. It reflects the current implementation before the Phase 1 refactor described in `current_dev_plan.md`.
 
 From MVP+ onward, the LEGO layer powers two synchronized lenses:
 - Masses (Budget Playground): big functional/admin blocks with Budget Dials and pending state.
