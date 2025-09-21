@@ -22,6 +22,7 @@ import csv
 import json
 import logging
 import os
+import re
 import tempfile
 import time
 from pathlib import Path
@@ -391,6 +392,153 @@ def warm_plf_state_budget(
     return out_csv
 
 
+def _normalize_mission_code(raw: Any) -> str:
+    if raw is None:
+        return ""
+    code = str(raw).strip()
+    if not code:
+        return ""
+    code = code.split()[0]
+    code = re.sub(r"[^A-Za-z0-9]", "", code)
+    return code.upper()
+
+
+def _sanitize_label(raw: Any) -> str:
+    if raw is None:
+        return ""
+    return str(raw).strip()
+
+
+def _coerce_plafond_amount(raw: Any, header_hint: str | None = None) -> float | None:
+    if raw is None:
+        return None
+    if isinstance(raw, (int, float)):
+        amount = float(raw)
+    else:
+        text = str(raw)
+        if not text:
+            return None
+        cleaned = (
+            text.replace("\u202f", "")
+            .replace("\xa0", "")
+            .replace(" ", "")
+            .replace("€", "")
+        )
+        cleaned = cleaned.replace(",", ".")
+        cleaned = re.sub(r"[^0-9.\-]", "", cleaned)
+        if not cleaned or cleaned in {"-", ""}:
+            return None
+        try:
+            amount = float(cleaned)
+        except Exception:
+            return None
+    hint = (header_hint or "").lower()
+    assumes_millions = "m€" in hint or "mill" in hint
+    if assumes_millions or abs(amount) < 1_000_000:
+        amount *= 1_000_000.0
+    return amount
+
+
+def _parse_plf_2026_xlsx(path: str) -> List[tuple[str, str, float]]:
+    wb = load_workbook(path, data_only=True, read_only=True)
+    sheet = wb.active
+    code_idx: int | None = None
+    label_idx: int | None = None
+    amount_idx: int | None = None
+    amount_header: str | None = None
+    entries: dict[str, tuple[str, float]] = {}
+    for row in sheet.iter_rows(values_only=True):
+        values = [str(v).strip() if v is not None else "" for v in row]
+        lowered = [v.lower() for v in values]
+        if not any(values):
+            continue
+        if code_idx is None or amount_idx is None:
+            if any("mission" in v for v in lowered) and any(
+                any(key in v for key in ("plafond", "ceiling", "montant")) for v in lowered
+            ):
+                for idx, token in enumerate(lowered):
+                    if "code" in token and "mission" in token:
+                        code_idx = idx
+                    elif "mission" in token and label_idx is None:
+                        label_idx = idx
+                    elif any(key in token for key in ("plafond", "ceiling", "montant")):
+                        amount_idx = idx
+                        amount_header = values[idx]
+                continue
+        # After header is identified parse data rows
+        if amount_idx is None:
+            continue
+        raw_code = values[code_idx] if code_idx is not None and code_idx < len(values) else ""
+        raw_label = values[label_idx] if label_idx is not None and label_idx < len(values) else ""
+        # Skip subtotal or header repeat lines
+        if not raw_code and not raw_label:
+            continue
+        if raw_label.lower().startswith("total"):
+            continue
+        amount_cell = row[amount_idx]
+        amount = _coerce_plafond_amount(amount_cell, amount_header)
+        if amount is None:
+            continue
+        code = _normalize_mission_code(raw_code or raw_label)
+        if not code:
+            continue
+        label = _sanitize_label(raw_label or raw_code)
+        if code in entries:
+            existing_label, existing_amount = entries[code]
+            label = existing_label if existing_label else label
+            entries[code] = (label, existing_amount + amount)
+        else:
+            entries[code] = (label, amount)
+    return [(code, label, amount) for code, (label, amount) in entries.items()]
+
+
+def _parse_plf_2026_pdf(path: str) -> List[tuple[str, str, float]]:
+    try:
+        import pdfplumber  # type: ignore
+    except Exception as exc:  # pragma: no cover - dependency missing should raise upstream
+        raise RuntimeError("pdfplumber is required to parse PLF 2026 PDF sources") from exc
+
+    entries: dict[str, tuple[str, float]] = {}
+    with pdfplumber.open(path) as pdf:
+        for page in pdf.pages:
+            try:
+                tables = page.extract_tables()
+            except Exception:
+                continue
+            for table in tables or []:
+                if not table:
+                    continue
+                for row in table:
+                    if not row:
+                        continue
+                    cells = [str(cell).strip() if cell is not None else "" for cell in row]
+                    lowered = [c.lower() for c in cells]
+                    if any("mission" in c for c in lowered) and any(
+                        any(key in c for key in ("plafond", "ceiling", "montant")) for c in lowered
+                    ):
+                        continue  # header row
+                    code = _normalize_mission_code(cells[0] if cells else "")
+                    if not code:
+                        continue
+                    label = _sanitize_label(cells[1] if len(cells) > 1 else code)
+                    if label.lower().startswith("total"):
+                        continue
+                    amount_val = None
+                    for cell in reversed(cells):
+                        amount_val = _coerce_plafond_amount(cell)
+                        if amount_val is not None:
+                            break
+                    if amount_val is None:
+                        continue
+                    if code in entries:
+                        existing_label, existing_amount = entries[code]
+                        label = existing_label if existing_label else label
+                        entries[code] = (label, existing_amount + amount_val)
+                    else:
+                        entries[code] = (label, amount_val)
+    return [(code, label, amount) for code, (label, amount) in entries.items()]
+
+
 def warm_plf_2026_plafonds(source: str | None = None, output_csv: str | None = None) -> str:
     """Download and normalize the PLF 2026 spending ceilings by mission.
 
@@ -441,59 +589,31 @@ def warm_plf_2026_plafonds(source: str | None = None, output_csv: str | None = N
             tmp_path = sample
 
         rows: List[dict[str, Any]] = []
-        wb = load_workbook(tmp_path, data_only=True, read_only=True)
-        sheet = wb.active
-        header_row_idx = None
-        col_map: dict[str, int] = {}
-        for idx, row in enumerate(sheet.iter_rows(values_only=True), start=1):
-            values = [str(v).strip() if v is not None else "" for v in row]
-            tokens = [v.lower() for v in values]
-            if not any(tokens):
-                continue
-            if header_row_idx is None:
-                if any("mission" in t for t in tokens) and any(
-                    token for token in tokens if any(k in token for k in ("plafond", "ceiling", "montant"))
-                ):
-                    for col_idx, token in enumerate(tokens):
-                        if "code" in token and "mission" in token:
-                            col_map["code"] = col_idx
-                        elif "mission" in token and "code" not in token:
-                            col_map.setdefault("label", col_idx)
-                        elif any(k in token for k in ("plafond", "ceiling", "montant")):
-                            col_map["amount"] = col_idx
-                    header_row_idx = idx
-            else:
-                code_idx = col_map.get("code")
-                label_idx = col_map.get("label")
-                amount_idx = col_map.get("amount")
-                if amount_idx is None or (code_idx is None and label_idx is None):
-                    continue
-                raw_code = str(row[code_idx]).strip() if code_idx is not None and row[code_idx] is not None else ""
-                raw_label = str(row[label_idx]).strip() if label_idx is not None and row[label_idx] is not None else ""
-                raw_amount = row[amount_idx] if amount_idx is not None else None
-                if not raw_code and not raw_label:
-                    continue
-                # Skip subtotal rows that are clearly aggregates
-                if raw_label.lower().startswith("total"):
-                    continue
+        suffix = Path(tmp_path).suffix.lower()
+        if suffix in {".xlsx", ".xlsm", ".xls"}:
+            entries = _parse_plf_2026_xlsx(tmp_path)
+        elif suffix in {".pdf"}:
+            entries = _parse_plf_2026_pdf(tmp_path)
+        else:
+            # Try Excel first, fallback to PDF heuristics
+            try:
+                entries = _parse_plf_2026_xlsx(tmp_path)
+            except Exception:
+                entries = _parse_plf_2026_pdf(tmp_path)
 
-                code = raw_code or ""
-                label = raw_label or raw_code
-                amount_eur = _parse_plafond_amount(raw_amount)
-                if amount_eur is None:
-                    continue
-                rows.append(
-                    {
-                        "year": 2026,
-                        "mission_code": code,
-                        "mission_label": label,
-                        "plf_ceiling_eur": amount_eur,
-                        "source": url if (url.startswith("http")) else "local",
-                    }
-                )
+        rows = [
+            {
+                "year": 2026,
+                "mission_code": code,
+                "mission_label": label,
+                "plf_ceiling_eur": amount,
+                "source": url if (url.startswith("http")) else "local",
+            }
+            for code, label, amount in entries
+        ]
 
         if not rows:
-            raise ValueError("No mission rows parsed from PLF 2026 workbook")
+            raise ValueError("No mission rows parsed from PLF 2026 source")
 
         with open(out_path, "w", newline="", encoding="utf-8") as fh:
             writer = csv.DictWriter(
@@ -510,26 +630,16 @@ def warm_plf_2026_plafonds(source: str | None = None, output_csv: str | None = N
                 pass
 
     LOG.info("[PLF2026] Wrote %d mission ceilings to %s", len(rows), out_path)
+    sidecar = {
+        "extraction_ts": dt.datetime.now(dt.timezone.utc).isoformat(),
+        "source": url if (url.startswith("http")) else os.path.abspath(url),
+        "rows": len(rows),
+        "produced_columns": ["year", "mission_code", "mission_label", "plf_ceiling_eur", "source"],
+        "amount_unit": "EUR",
+    }
+    with open(out_path.replace('.csv', '.meta.json'), 'w', encoding='utf-8') as meta_fh:
+        json.dump(sidecar, meta_fh, ensure_ascii=False, indent=2)
     return out_path
-
-
-def _parse_plafond_amount(raw: Any) -> float | None:
-    if raw is None:
-        return None
-    if isinstance(raw, (int, float)):
-        val = float(raw)
-    else:
-        s = str(raw)
-        if not s.strip():
-            return None
-        s_norm = s.replace("\u202f", "").replace(" ", "").replace(" ", "").replace(",", ".")
-        try:
-            val = float(s_norm)
-        except ValueError:
-            return None
-    # Official tables report millions of euros; convert to euros
-    return val * 1_000_000.0
-
 
 def warm_eurostat_cofog(year: int, countries: List[str]) -> str:
     """Fetch Eurostat COFOG aggregates and compute shares per country.

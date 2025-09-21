@@ -25,12 +25,12 @@ For verification guidance (tests, commands, datasets), refer to `docs/REFACTOR_P
 ## Phase 2 — 2026 Baseline Implementation & Data Ingestion
 
 ### Epic DI: Develop PLF 2026 Data Ingestion Pipeline
-- `[ ]` **DI-01** Extend `cache_warm.py` with PDF/XLS parsing for PLF ceilings (dependencies added, errors handled, CSV emitted).
-- `[ ]` **DI-02** Create dbt source/staging models for PLF ceilings and integrate into the semantic layer (`stg_plf_2026_ceilings`, downstream marts).
+- `[x]` **DI-01** Extend `cache_warm.py` with PDF/XLS parsing for PLF ceilings (dependencies added, errors handled, CSV emitted).
+- `[x]` **DI-02** Create dbt source/staging models for PLF ceilings and integrate into the semantic layer (`stg_plf_2026_ceilings`, downstream marts).
 
 ### Epic BL: Construct and Validate the 2026 Simulation Baseline
-- `[ ]` **BL-01** Build `fct_simulation_baseline_2026` (joins LFI 2025, PLF 2026, macro forecasts; dbt tests for totals).
-- `[ ]` **BL-02** Surface baseline disclaimer in `/build` explaining PLF proposal assumptions.
+- `[x]` **BL-01** Build `fct_simulation_baseline_2026` (joins LFI 2025, PLF 2026, macro forecasts; dbt tests for totals).
+- `[x]` **BL-02** Surface baseline disclaimer in `/build` explaining PLF proposal assumptions.
 
 ## Phase 3 — Feature Development & UI/UX Completion
 
@@ -48,5 +48,5 @@ For verification guidance (tests, commands, datasets), refer to `docs/REFACTOR_P
 ### Standing Items & Reference
 
 - **CI Reliability:** continue to treat `.github/workflows/ci.yml` as insufficient for detecting dual-engine regressions until Phase 1 tasks are complete.
-- **Warm Data Contracts:** ensure every warmed artefact emits a `.meta.json` with `produced_columns`; add validation scripts once DI-01 lands.
+- **Warm Data Contracts:** warmed artefacts now emit `.meta.json` manifests; keep extending validation scripts as new datasets are added.
 - **Documentation Sync:** keep `docs/REFACTOR_PLAN.md` and `current_dev_plan.md` updated whenever a task transitions to `[~]` or `[x]`.
