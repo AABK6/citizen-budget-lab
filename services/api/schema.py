@@ -291,6 +291,23 @@ class PolicyLeverType:
 
 
 @strawberry.type
+class BudgetBaselineMissionType:
+    missionCode: str
+    missionLabel: str
+    cp2025Eur: float
+    plf2026CeilingEur: float
+    ceilingDeltaEur: float
+    ceilingDeltaPct: float | None
+    revenueAdjustmentEur: float
+    totalRevenueChangeEur: float
+    revenueGrowthMultiplier: float
+    gdpGrowthPct: float
+    inflationPct: float
+    unemploymentRatePct: float
+    netFiscalSpaceEur: float
+
+
+@strawberry.type
 class MassLabelType:
     id: str
     displayLabel: str
@@ -323,28 +340,77 @@ class Query:
                 ]
             )
         elif lens == LensEnum.COFOG:
-            # Prefer warmed Eurostat S13 COFOG shares scaled by baseline; fallback to mission mapping.
-            # If warehouse mapping is marked/auto-detected reliable, use warehouse.
+            # Prefer warmed Eurostat S13 COFOG shares scaled by baseline when available.
+            # Otherwise fall back to warehouse mapping (if considered reliable) or mission mapping as a last resort.
             from .settings import get_settings  # lazy import
             settings = get_settings()
-            use_wh = False
-            if settings.warehouse_cofog_override:
-                use_wh = True
-            else:
-                try:
-                    from .warehouse_client import cofog_mapping_reliable  # type: ignore
-
-                    use_wh = cofog_mapping_reliable(year, Basis(basis.value))
-                except Exception:
-                    use_wh = False
-            if use_wh:
-                items = allocation_by_cofog(year, Basis(basis.value))
-            else:
+            warmed_preferred = False
+            items: list | None = None
+            if not settings.warehouse_cofog_override:
                 try:
                     from .data_loader import allocation_by_cofog_s13  # type: ignore
-                    items = allocation_by_cofog_s13(year)
+
+                    warmed = allocation_by_cofog_s13(year)
+                    if warmed:
+                        items = warmed
+                        warmed_preferred = True
                 except Exception:
+                    items = None
+
+            if items is None:
+                use_wh = False
+                if settings.warehouse_cofog_override:
+                    use_wh = True
+                else:
+                    try:
+                        from .warehouse_client import cofog_mapping_reliable  # type: ignore
+
+                        use_wh = cofog_mapping_reliable(year, Basis(basis.value))
+                    except Exception:
+                        use_wh = False
+                if use_wh:
                     items = allocation_by_cofog(year, Basis(basis.value))
+                else:
+                    try:
+                        from .data_loader import allocation_by_cofog_s13  # type: ignore
+                        items = allocation_by_cofog_s13(year)
+                    except Exception:
+                        items = allocation_by_cofog(year, Basis(basis.value))
+
+            items = items or []
+
+            if warmed_preferred and items:
+                admin_items = allocation_by_cofog(year, Basis(basis.value))
+                admin_map = {i.code: i for i in admin_items}
+                total_admin = sum(i.amount_eur for i in admin_items)
+                total_share = sum(i.share for i in items) or 1.0
+                normalized = []
+                for entry in items:
+                    share = entry.share / total_share if total_share else 0.0
+                    admin = admin_map.get(entry.code)
+                    if total_admin > 0:
+                        amount = admin.amount_eur if admin else share * total_admin
+                    else:
+                        amount = entry.amount_eur
+                    normalized.append(
+                        MissionAllocationType(code=entry.code, label=entry.label, amountEur=amount, share=share)
+                    )
+                if total_admin <= 0:
+                    return AllocationType(mission=[], cofog=normalized)
+                total_norm = sum(i.amountEur for i in normalized)
+                if total_norm and abs(total_norm - total_admin) / max(1.0, total_admin) > 1e-9:
+                    scale = total_admin / total_norm
+                    normalized = [
+                        MissionAllocationType(
+                            code=ent.code,
+                            label=ent.label,
+                            amountEur=ent.amountEur * scale,
+                            share=ent.share,
+                        )
+                        for ent in normalized
+                    ]
+                return AllocationType(mission=[], cofog=normalized)
+
             return AllocationType(
                 mission=[],
                 cofog=[
@@ -760,6 +826,32 @@ class Query:
                     shortLabel=str(it.get("short_label") or ""),
                     popularity=float(it.get("popularity", 0.0)),
                     massMapping=it.get("mass_mapping") or {},
+                )
+            )
+        return out
+
+    @strawberry.field
+    def budgetBaseline2026(self) -> list[BudgetBaselineMissionType]:  # noqa: N802
+        from . import warehouse_client as _wh
+
+        rows = _wh.budget_baseline_2026()
+        out: list[BudgetBaselineMissionType] = []
+        for row in rows:
+            out.append(
+                BudgetBaselineMissionType(
+                    missionCode=str(row.get("mission_code")),
+                    missionLabel=str(row.get("mission_label")),
+                    cp2025Eur=float(row.get("cp_2025_eur") or 0.0),
+                    plf2026CeilingEur=float(row.get("plf_2026_ceiling_eur") or 0.0),
+                    ceilingDeltaEur=float(row.get("ceiling_delta_eur") or 0.0),
+                    ceilingDeltaPct=(float(row.get("ceiling_delta_pct")) if row.get("ceiling_delta_pct") is not None else None),
+                    revenueAdjustmentEur=float(row.get("revenue_adjustment_eur") or 0.0),
+                    totalRevenueChangeEur=float(row.get("total_revenue_change_eur") or 0.0),
+                    revenueGrowthMultiplier=float(row.get("revenue_growth_multiplier") or 1.0),
+                    gdpGrowthPct=float(row.get("gdp_growth_pct") or 0.0),
+                    inflationPct=float(row.get("inflation_pct") or 0.0),
+                    unemploymentRatePct=float(row.get("unemployment_rate_pct") or 0.0),
+                    netFiscalSpaceEur=float(row.get("net_fiscal_space_eur") or 0.0),
                 )
             )
         return out

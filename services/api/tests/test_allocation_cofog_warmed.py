@@ -21,14 +21,27 @@ def test_graphql_allocation_cofog_uses_warmed(monkeypatch):
     }
     with open(os.path.join(cache_dir, f"eu_cofog_shares_{year}.json"), "w", encoding="utf-8") as f:
         json.dump(shares, f)
-    baseline = {
+    from services.api import warehouse_client as wh
+
+    monkeypatch.setattr(wh, "warehouse_available", lambda: True)
+    monkeypatch.setattr(
+        wh,
+        "lego_baseline",
+        lambda _: {
+            "year": year,
+            "scope": "S13",
+            "depenses_total_eur": 1000.0,
+            "recettes_total_eur": 0.0,
+            "pieces": [],
+        },
+    )
+    monkeypatch.setattr("services.api.data_loader.load_lego_baseline", lambda _: {
         "year": year,
         "scope": "S13",
         "depenses_total_eur": 1000.0,
+        "recettes_total_eur": 0.0,
         "pieces": [],
-    }
-    with open(os.path.join(cache_dir, f"lego_baseline_{year}.json"), "w", encoding="utf-8") as f:
-        json.dump(baseline, f)
+    })
 
     # Query via GraphQL
     q = """
@@ -41,4 +54,3 @@ def test_graphql_allocation_cofog_uses_warmed(monkeypatch):
     m = {i["code"]: (i["amountEur"], i["share"]) for i in items}
     assert abs(m["10"][0] - 350.0) < 1e-6
     assert abs(m["02"][1] - 0.05) < 1e-9
-

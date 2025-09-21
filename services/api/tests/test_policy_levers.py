@@ -39,3 +39,10 @@ def test_policy_levers_search_filter():
     assert "errors" not in js
     arr = js["data"]["policyLevers"]
     assert any(x["id"] == "pen_age_plus3m_per_year" for x in arr)
+
+    res2 = client.post("/graphql", json={"query": q, "variables": {"q": "blanche"}})
+    assert res2.status_code == 200
+    js2 = res2.json()
+    assert "errors" not in js2
+    arr2 = js2["data"]["policyLevers"]
+    assert any(x["id"] == "annee_blanche_indexation" for x in arr2)

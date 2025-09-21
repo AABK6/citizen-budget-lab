@@ -8,7 +8,10 @@ from services.api.cache_warm import warm_eurostat_cofog, warm_lego_baseline, war
 
 
 def _network_ready() -> bool:
-    return os.getenv("RUN_NETWORK_TESTS") in ("1", "true", "True")
+    flag = os.getenv("RUN_NETWORK_TESTS")
+    if flag is None:
+        return True
+    return flag in ("1", "true", "True")
 
 
 @pytest.mark.network
@@ -57,10 +60,17 @@ def test_plf_mission_snapshot_optional(monkeypatch, tmp_path):
     dataset = os.getenv("ODS_TEST_DATASET")
     year = os.getenv("ODS_TEST_YEAR")
     if not dataset or not year:
-        pytest.skip("Set ODS_TEST_DATASET and ODS_TEST_YEAR to exercise PLF warmer against real ODS")
-    path = warm_plf_state_budget(base, dataset, int(year))
-    assert os.path.exists(path)
-    # Basic CSV shape check
-    with open(path, "r", encoding="utf-8") as f:
-        head = f.readline().strip().split(",")
-    assert head[:3] == ["year", "mission_code", "mission_label"]
+        from services.api.cache_warm import warm_plf_2026_plafonds
+
+        path = warm_plf_2026_plafonds(output_csv=os.path.join(tmp_path, "plf_2026_plafonds.csv"))
+        assert os.path.exists(path)
+        with open(path, "r", encoding="utf-8") as f:
+            head = f.readline().strip().split(",")
+        assert head[:3] == ["year", "mission_code", "mission_label"]
+    else:
+        path = warm_plf_state_budget(base, dataset, int(year))
+        assert os.path.exists(path)
+        # Basic CSV shape check
+        with open(path, "r", encoding="utf-8") as f:
+            head = f.readline().strip().split(",")
+        assert head[:3] == ["year", "mission_code", "mission_label"]

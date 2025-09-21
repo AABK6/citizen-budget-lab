@@ -22,7 +22,7 @@ models:
       +schema: vw
 
 seeds:
-  citizen-budget-lab:
+  citizen_budget_lab:
     mapping_state_to_cofog:
       +column_types:
         source: varchar
@@ -31,6 +31,19 @@ seeds:
         programme_code: varchar
         cofog_code: varchar
         weight: double
+    plf_2026_plafonds:
+      +column_types:
+        year: integer
+        mission_code: varchar
+        mission_label: varchar
+        plf_ceiling_eur: double
+        source: varchar
+    macro_forecasts_2026:
+      +column_types:
+        year: integer
+        gdp_growth_pct: double
+        inflation_pct: double
+        unemployment_rate_pct: double
 
 vars:
   'dbt_date:time_zone': 'UTC'
@@ -42,3 +55,4 @@ vars:
   lego_baseline_glob: 'data/cache/lego_baseline_*.json'
   gdp_series_csv: 'data/gdp_series.csv'
   baseline_deficit_debt_csv: 'data/baseline_deficit_debt.csv'
+  plf_2026_plafonds_csv: 'warehouse/seeds/plf_2026_plafonds.csv'

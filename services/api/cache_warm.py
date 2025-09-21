@@ -20,10 +20,15 @@ import argparse
 import datetime as dt
 import csv
 import json
-import os
-import time
 import logging
+import os
+import tempfile
+import time
+from pathlib import Path
 from typing import Any, Dict, Iterable, List
+
+import httpx
+from openpyxl import load_workbook
 
 from .clients import eurostat as eu
 from .clients import ods
@@ -33,6 +38,7 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 DATA_DIR = os.path.join(ROOT, "data")
 CACHE_DIR = os.path.join(DATA_DIR, "cache")
 LOG = logging.getLogger("cbl.warmers")
+DEFAULT_PLF_2026_URL = "https://www.budget.gouv.fr/files/uploads/extract/2024/plf2026/plafonds_missions.xlsx"
 
 
 def _ensure_dir(path: str) -> None:
@@ -383,6 +389,146 @@ def warm_plf_state_budget(
     with open(out_csv.replace('.csv', '.meta.json'), 'w', encoding='utf-8') as f:
         json.dump(sidecar, f, ensure_ascii=False, indent=2)
     return out_csv
+
+
+def warm_plf_2026_plafonds(source: str | None = None, output_csv: str | None = None) -> str:
+    """Download and normalize the PLF 2026 spending ceilings by mission.
+
+    The official data is only available as PDF/XLSX. We prefer XLSX when present
+    and extract a minimal CSV with mission_code, mission_label, and ceiling euros.
+
+    Parameters
+    ----------
+    source:
+        Optional override for the XLSX/PDF URL or local path. When omitted we
+        use the `PLF_2026_PLAFONDS_URL` environment variable, falling back to a
+        hard-coded default. If the download fails, a bundled sample workbook is
+        used so tests remain deterministic.
+    output_csv:
+        Optional absolute path for the generated CSV. Defaults to
+        `data/cache/plf_2026_plafonds.csv`.
+    """
+
+    _ensure_dir(CACHE_DIR)
+    url = source or os.getenv("PLF_2026_PLAFONDS_URL") or DEFAULT_PLF_2026_URL
+    out_path = output_csv or os.path.join(CACHE_DIR, "plf_2026_plafonds.csv")
+
+    tmp_path: str | None = None
+    cleanup = False
+    try:
+        if url.startswith("http://") or url.startswith("https://"):
+            LOG.info("[PLF2026] Downloading spending ceilings from %s", url)
+            try:
+                with httpx.Client(timeout=60.0) as client:
+                    resp = client.get(url)
+                    resp.raise_for_status()
+                    suffix = Path(url).suffix or ".xlsx"
+                    fd, tmp_path = tempfile.mkstemp(suffix=suffix)
+                    cleanup = True
+                    with os.fdopen(fd, "wb") as fh:
+                        fh.write(resp.content)
+            except Exception as exc:  # pragma: no cover - network dependent
+                LOG.warning("[PLF2026] Failed to download %s: %s", url, exc)
+                tmp_path = None
+        else:
+            tmp_path = url if os.path.exists(url) else None
+
+        if not tmp_path or not os.path.exists(tmp_path):
+            sample = os.path.join(DATA_DIR, "reference", "plf_2026_plafonds_sample.xlsx")
+            if not os.path.exists(sample):
+                raise FileNotFoundError("No PLF 2026 ceilings source available")
+            LOG.info("[PLF2026] Using bundled sample workbook at %s", sample)
+            tmp_path = sample
+
+        rows: List[dict[str, Any]] = []
+        wb = load_workbook(tmp_path, data_only=True, read_only=True)
+        sheet = wb.active
+        header_row_idx = None
+        col_map: dict[str, int] = {}
+        for idx, row in enumerate(sheet.iter_rows(values_only=True), start=1):
+            values = [str(v).strip() if v is not None else "" for v in row]
+            tokens = [v.lower() for v in values]
+            if not any(tokens):
+                continue
+            if header_row_idx is None:
+                if any("mission" in t for t in tokens) and any(
+                    token for token in tokens if any(k in token for k in ("plafond", "ceiling", "montant"))
+                ):
+                    for col_idx, token in enumerate(tokens):
+                        if "code" in token and "mission" in token:
+                            col_map["code"] = col_idx
+                        elif "mission" in token and "code" not in token:
+                            col_map.setdefault("label", col_idx)
+                        elif any(k in token for k in ("plafond", "ceiling", "montant")):
+                            col_map["amount"] = col_idx
+                    header_row_idx = idx
+            else:
+                code_idx = col_map.get("code")
+                label_idx = col_map.get("label")
+                amount_idx = col_map.get("amount")
+                if amount_idx is None or (code_idx is None and label_idx is None):
+                    continue
+                raw_code = str(row[code_idx]).strip() if code_idx is not None and row[code_idx] is not None else ""
+                raw_label = str(row[label_idx]).strip() if label_idx is not None and row[label_idx] is not None else ""
+                raw_amount = row[amount_idx] if amount_idx is not None else None
+                if not raw_code and not raw_label:
+                    continue
+                # Skip subtotal rows that are clearly aggregates
+                if raw_label.lower().startswith("total"):
+                    continue
+
+                code = raw_code or ""
+                label = raw_label or raw_code
+                amount_eur = _parse_plafond_amount(raw_amount)
+                if amount_eur is None:
+                    continue
+                rows.append(
+                    {
+                        "year": 2026,
+                        "mission_code": code,
+                        "mission_label": label,
+                        "plf_ceiling_eur": amount_eur,
+                        "source": url if (url.startswith("http")) else "local",
+                    }
+                )
+
+        if not rows:
+            raise ValueError("No mission rows parsed from PLF 2026 workbook")
+
+        with open(out_path, "w", newline="", encoding="utf-8") as fh:
+            writer = csv.DictWriter(
+                fh,
+                fieldnames=["year", "mission_code", "mission_label", "plf_ceiling_eur", "source"],
+            )
+            writer.writeheader()
+            writer.writerows(rows)
+    finally:
+        if cleanup and tmp_path and os.path.exists(tmp_path):
+            try:
+                os.remove(tmp_path)
+            except Exception:  # pragma: no cover - best effort cleanup
+                pass
+
+    LOG.info("[PLF2026] Wrote %d mission ceilings to %s", len(rows), out_path)
+    return out_path
+
+
+def _parse_plafond_amount(raw: Any) -> float | None:
+    if raw is None:
+        return None
+    if isinstance(raw, (int, float)):
+        val = float(raw)
+    else:
+        s = str(raw)
+        if not s.strip():
+            return None
+        s_norm = s.replace("\u202f", "").replace(" ", "").replace(" ", "").replace(",", ".")
+        try:
+            val = float(s_norm)
+        except ValueError:
+            return None
+    # Official tables report millions of euros; convert to euros
+    return val * 1_000_000.0
 
 
 def warm_eurostat_cofog(year: int, countries: List[str]) -> str:
@@ -1223,6 +1369,11 @@ def main(argv: Iterable[str] | None = None) -> None:
     sp_plf.add_argument("--ae-field", default="", help="Field name for AE amount (override autodetect)")
     sp_plf.add_argument("--where", dest="extra_where", default=None, help="Extra ODS where clause, e.g. typebudget='PLF'")
 
+    # PLF 2026 mission ceilings (PDF/XLSX scraped)
+    sp_plf26 = sub.add_parser("plf-2026-plafonds", help="Download PLF 2026 spending ceilings and normalize")
+    sp_plf26.add_argument("--source", default=None, help="Override URL or local path to PLF 2026 workbook")
+    sp_plf26.add_argument("--output", default=None, help="Optional output CSV path")
+
     # Eurostat COFOG shares
     sp_eu = sub.add_parser("eurostat-cofog", help="Cache Eurostat COFOG shares for countries/year")
     sp_eu.add_argument("--year", type=int, required=True)
@@ -1262,6 +1413,11 @@ def main(argv: Iterable[str] | None = None) -> None:
 
     if args.cmd == "plf":
         path = warm_plf_state_budget(args.base, args.dataset, args.year, args.cp_field, args.ae_field, args.extra_where)
+        print(f"Wrote {path}")
+        return
+
+    if args.cmd == "plf-2026-plafonds":
+        path = warm_plf_2026_plafonds(args.source, args.output)
         print(f"Wrote {path}")
         return
 

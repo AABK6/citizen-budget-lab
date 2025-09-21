@@ -289,7 +289,9 @@ def cofog_mapping_reliable(year: int, basis: Basis) -> bool:
     if tm <= 0 or tc <= 0:
         return False
     ratio = abs(tm - tc) / tm
-    return ratio <= 0.005 and int(k or 0) >= 8
+    distinct = int(k or 0)
+    min_required = 8 if tm >= 1_000_000_000_000 else 5
+    return ratio <= 0.005 and distinct >= min_required
 
 
 def lego_baseline(year: int) -> Optional[Dict[str, Any]]:
@@ -308,7 +310,8 @@ def lego_baseline(year: int) -> Optional[Dict[str, Any]]:
             p.piece_type,
             p.piece_label,
             b.amount_eur,
-            b.share
+            b.share,
+            b.scope
         from {bl_rel} b
         join {p_rel} p on b.piece_id = p.piece_id
         where b.year = ?
@@ -321,12 +324,68 @@ def lego_baseline(year: int) -> Optional[Dict[str, Any]]:
         return None
 
     pieces = []
-    for pid, ptype, plabel, amount, share in rows:
+    dep_total = 0.0
+    rev_total = 0.0
+    scope_val = None
+    for pid, ptype, plabel, amount, share, scope in rows:
+        amt = float(amount or 0.0)
         pieces.append({
             "id": pid,
             "type": ptype,
             "label": plabel,
-            "amount_eur": amount,
+            "amount_eur": amt,
             "share": share,
         })
-    return {"year": year, "pieces": pieces}
+        if isinstance(scope, str) and not scope_val:
+            scope_val = scope
+        if str(ptype) == "expenditure":
+            dep_total += amt
+        elif str(ptype) == "revenue":
+            rev_total += amt
+
+    return {
+        "year": year,
+        "scope": scope_val,
+        "pieces": pieces,
+        "depenses_total_eur": dep_total,
+        "recettes_total_eur": rev_total,
+    }
+
+
+def budget_baseline_2026() -> List[Dict[str, Any]]:
+    """Return mission-level PLF 2026 baseline rows from the warehouse."""
+    if not warehouse_available():
+        return []
+    try:
+        con = _connect_duckdb()
+    except Exception:
+        return []
+    rel = _qual_name(con, "fct_budget_baseline_2026")
+    sql = f"""
+        select
+            mission_code,
+            mission_label,
+            cp_2025_eur,
+            plf_2026_ceiling_eur,
+            ceiling_delta_eur,
+            ceiling_delta_pct,
+            revenue_adjustment_eur,
+            total_revenue_change_eur,
+            revenue_growth_multiplier,
+            gdp_growth_pct,
+            inflation_pct,
+            unemployment_rate_pct,
+            net_fiscal_space_eur
+        from {rel}
+        order by mission_code
+    """
+    try:
+        rows = con.execute(sql).fetchall()
+        cols = [c[0] for c in con.description]
+    except Exception:
+        return []
+    out: List[Dict[str, Any]] = []
+    for row in rows:
+        rec = {cols[idx]: row[idx] for idx in range(len(cols))}
+        out.append(rec)
+    return out

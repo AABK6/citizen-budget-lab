@@ -609,20 +609,16 @@ def _read_file_json(path: str) -> dict | list:
         return _json.load(f)
 
 
-def _lego_baseline_path(year: int) -> str:
-    return os.path.join(CACHE_DIR, f"lego_baseline_{year}.json")
-
 
 def load_lego_config() -> dict:
     return _read_file_json(LEGO_PIECES_JSON)
 
 
 def load_lego_baseline(year: int) -> dict | None:
-    path = _lego_baseline_path(year)
-    if not os.path.exists(path):
-        return None
     try:
-        return _read_file_json(path)
+        if not wh.warehouse_available():
+            return None
+        return wh.lego_baseline(year)
     except Exception:
         return None
 
@@ -983,16 +979,13 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
     resolution_target_by_mass: Dict[str, float] = {}
     resolution_specified_by_mass: Dict[str, float] = {}
     # Preload LEGO baseline/config to support piece.* targets
-    lego_bl = None
+    if not wh.warehouse_available():
+        raise RuntimeError("Warehouse LEGO baseline unavailable; ensure warehouse is enabled and seeded.")
+    lego_bl = load_lego_baseline(baseline_year)
+    if not lego_bl:
+        raise RuntimeError(f"Missing LEGO baseline for {baseline_year} in warehouse")
     lego_types: Dict[str, str] = {}
     lego_cofog_map: Dict[str, List[Tuple[str, float]]] = {}
-    try:
-        if wh.warehouse_available():
-            lego_bl = wh.lego_baseline(baseline_year)
-        else:
-            lego_bl = load_lego_baseline(baseline_year)
-    except Exception:
-        lego_bl = None
     try:
         lego_cfg = load_lego_config()
         for p in lego_cfg.get("pieces", []):

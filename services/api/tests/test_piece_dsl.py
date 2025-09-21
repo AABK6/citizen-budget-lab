@@ -1,13 +1,30 @@
 import base64
 
+import pytest
+
 from services.api import schema as gql_schema
+
+
+def _stub_baseline(monkeypatch, pieces):
+    from services.api import data_loader
+    from services.api import warehouse_client as wh
+
+    baseline = {"year": 2026, "pieces": pieces}
+    monkeypatch.setattr(wh, "warehouse_available", lambda: True)
+    monkeypatch.setattr(wh, "lego_baseline", lambda year: baseline)
+    monkeypatch.setattr(data_loader, "load_lego_baseline", lambda year: baseline)
 
 
 def _b64(yaml_text: str) -> str:
     return base64.b64encode(yaml_text.encode("utf-8")).decode("utf-8")
 
 
-def test_piece_amount_increase_affects_deficit_path(tmp_path):
+def test_piece_amount_increase_affects_deficit_path(monkeypatch, tmp_path):
+    pieces = [
+        {"id": "ed_schools_staff_ops", "type": "expenditure", "amount_eur": 10_000_000_000.0, "share": 0.1},
+        {"id": "income_tax", "type": "revenue", "amount_eur": 5_000_000_000.0, "share": 0.05},
+    ]
+    _stub_baseline(monkeypatch, pieces)
     sdl = """
 version: 0.1
 baseline_year: 2026
@@ -30,29 +47,10 @@ actions:
 
 
 def test_piece_delta_pct_uses_baseline_amount(monkeypatch, tmp_path):
-    # Ensure fallback baseline path is used (disable warehouse if present)
-    from services.api import warehouse_client as wh
-    monkeypatch.setattr(wh, "warehouse_available", lambda: False)
-    import json
-    from services.api import data_loader
-
-    # Redirect baseline path to a temp file so we don't clobber real warmed data
-    path = tmp_path / "lego_baseline_2026.json"
-    monkeypatch.setattr(data_loader, "_lego_baseline_path", lambda year: str(path))
-
-    snap = {
-        "year": 2026,
-        "scope": "S13",
-        "country": "FR",
-        "pib_eur": 3_000_000_000_000,
-        "depenses_total_eur": 0.0,
-        "pieces": [
-            {"id": "ed_schools_staff_ops", "type": "expenditure", "amount_eur": 10_000_000_000.0, "share": 0.0}
-        ],
-        "meta": {"source": "test"},
-    }
-    path.write_text(json.dumps(snap), encoding="utf-8")
-
+    pieces = [
+        {"id": "ed_schools_staff_ops", "type": "expenditure", "amount_eur": 10_000_000_000.0, "share": 0.1}
+    ]
+    _stub_baseline(monkeypatch, pieces)
     sdl = """
 version: 0.1
 baseline_year: 2026
@@ -70,3 +68,22 @@ actions:
     assert not res.errors
     path = res.data["runScenario"]["accounting"]["deficitPath"]
     assert abs(path[0] - 1_000_000_000.0) < 1e-3
+
+
+def test_run_scenario_without_warehouse_raises(monkeypatch):
+    from services.api import data_loader
+    from services.api import warehouse_client as wh
+    import pytest
+
+    monkeypatch.setattr(wh, "warehouse_available", lambda: False)
+    monkeypatch.setattr(data_loader, "load_lego_baseline", lambda year: None)
+
+    sdl = """
+version: 0.1
+baseline_year: 2026
+assumptions: { horizon_years: 1 }
+actions: []
+"""
+
+    with pytest.raises(RuntimeError):
+        data_loader.run_scenario(_b64(sdl))

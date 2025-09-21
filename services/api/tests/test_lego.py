@@ -14,6 +14,14 @@ from services.api.data_loader import (
 )
 
 
+def _patch_warehouse_baseline(monkeypatch, baseline):
+    from services.api import warehouse_client as wh
+
+    monkeypatch.setattr(wh, "warehouse_available", lambda: True)
+    monkeypatch.setattr(wh, "lego_baseline", lambda year: baseline)
+    monkeypatch.setattr("services.api.data_loader.load_lego_baseline", lambda year: baseline)
+
+
 def test_warm_lego_baseline_expenditures_monkeypatched(monkeypatch, tmp_path):
     """Warmer should aggregate some expenditure pieces and write snapshot JSON.
 
@@ -58,57 +66,37 @@ def test_warm_lego_baseline_expenditures_monkeypatched(monkeypatch, tmp_path):
     assert has_non_zero
 
 
-def test_lego_pieces_with_baseline_reads_snapshot(tmp_path):
-    # Write a minimal baseline snapshot
-    here = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
-    cache_dir = os.path.join(here, "data", "cache")
-    os.makedirs(cache_dir, exist_ok=True)
+def test_lego_pieces_with_baseline_reads_snapshot(monkeypatch):
     year = 2096
-    snap = {
+    baseline = {
         "year": year,
-        "scope": "S13",
-        "country": "FR",
-        "pib_eur": 3000000000000.0,
-        "depenses_total_eur": 100.0,
         "pieces": [
             {"id": "ed_schools_staff_ops", "type": "expenditure", "amount_eur": 60.0, "share": 0.6},
             {"id": "debt_interest", "type": "expenditure", "amount_eur": 40.0, "share": 0.4},
         ],
-        "meta": {"source": "test"},
     }
-    path = os.path.join(cache_dir, f"lego_baseline_{year}.json")
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(snap, f)
+    _patch_warehouse_baseline(monkeypatch, baseline)
 
     items = lego_pieces_with_baseline(year)
     # Should include config piece ids and merge amounts/shares for those present
     found = {i["id"]: i for i in items}
     assert "ed_schools_staff_ops" in found
     assert isinstance(found["ed_schools_staff_ops"].get("amount_eur"), (int, float))
-    # Clean up
-    os.remove(path)
 
 
 def test_graphql_lego_queries_smoke(monkeypatch):
     app = create_app()
     client = TestClient(app)
 
-    # Ensure baseline exists (write a tiny snapshot)
-    here = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
-    cache_dir = os.path.join(here, "data", "cache")
-    os.makedirs(cache_dir, exist_ok=True)
     year = 2095
-    with open(os.path.join(cache_dir, f"lego_baseline_{year}.json"), "w", encoding="utf-8") as f:
-        json.dump({
-            "year": year,
-            "scope": "S13",
-            "country": "FR",
-            "pib_eur": 0.0,
-            "depenses_total_eur": 0.0,
-            "recettes_total_eur": 123.0,
-            "pieces": [],
-            "meta": {"source": "test"},
-        }, f)
+    baseline = {
+        "year": year,
+        "pieces": [
+            {"id": "ed_schools_staff_ops", "type": "expenditure", "label": "Schools", "amount_eur": 60.0, "share": 0.6},
+            {"id": "income_tax", "type": "revenue", "label": "IR", "amount_eur": 123.0, "share": 0.4},
+        ],
+    }
+    _patch_warehouse_baseline(monkeypatch, baseline)
 
     def gql(q: str, variables: Dict[str, Any] | None = None) -> Dict[str, Any]:
         r = client.post("/graphql", json={"query": q, "variables": variables or {}})
@@ -148,19 +136,17 @@ actions:
 def test_lego_queries_absent_snapshot(monkeypatch):
     """When the snapshot is absent, legoBaseline should fallback gracefully and legoPieces should still return config ids.
     """
+    from services.api import warehouse_client as wh
     from services.api.app import create_app
     from fastapi.testclient import TestClient
+
+    monkeypatch.setattr(wh, "warehouse_available", lambda: False)
+    monkeypatch.setattr("services.api.data_loader.load_lego_baseline", lambda year: None)
 
     app = create_app()
     client = TestClient(app)
 
-    year = 2094  # synthetic year; ensure we point to a non-existent temp path
-    # Redirect baseline path to a unique temp file that does not exist
-    import tempfile
-    import os
-    from services.api import data_loader
-    tmp_dir = tempfile.mkdtemp()
-    monkeypatch.setattr(data_loader, "_lego_baseline_path", lambda y: os.path.join(tmp_dir, f"lego_baseline_{y}.json"))
+    year = 2094
 
     def gql(q: str, variables: Dict[str, Any] | None = None) -> Dict[str, Any]:
         r = client.post("/graphql", json={"query": q, "variables": variables or {}})
@@ -173,13 +159,11 @@ def test_lego_queries_absent_snapshot(monkeypatch):
       query($y:Int!){ legoBaseline(year:$y){ year scope pib depensesTotal recettesTotal pieces{ id } } }
     """, {"y": year})
     assert data["legoBaseline"]["year"] == year
-    # No snapshot -> totals 0 and empty pieces
     assert data["legoBaseline"]["depensesTotal"] == 0.0
     assert data["legoBaseline"]["pieces"] == []
 
     data2 = gql("""
       query($y:Int!){ legoPieces(year:$y){ id type amountEur share } }
     """, {"y": year})
-    # legoPieces should still return config-driven ids
     assert isinstance(data2["legoPieces"], list)
     assert any(isinstance(ent.get("id"), str) for ent in data2["legoPieces"])

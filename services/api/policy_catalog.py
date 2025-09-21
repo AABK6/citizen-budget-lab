@@ -8,6 +8,22 @@ from typing import Dict, List, Optional
 # The impact is sourced from official reports or widely cited analyses.
 _LEVER_CATALOG: List[dict] = [
     {
+        "id": "annee_blanche_indexation",
+        "family": "SOCIAL_SECURITY",
+        "label": "Année Blanche (Freeze Benefit Indexation)",
+        "description": "Suspend the annual inflation indexation of social benefits and pensions for one fiscal year.",
+        "fixed_impact_eur": 6500000000,  # Approximate savings from freezing benefit indexation for one year
+        "mass_mapping": {"10": 1.0},
+        "feasibility": {
+            "law": True,
+            "adminLagMonths": 2,
+            "notes": "Requires finance bill amendment; politically sensitive due to impact on households."
+        },
+        "conflicts_with": [],
+        "sources": ["Cour des comptes 2023", "PLF 2026 orientation documents"],
+        "params_schema": {}
+    },
+    {
         "id": "wealth_tax",
         "family": "TAXES",
         "label": "Reintroduce Wealth Tax (ISF)",

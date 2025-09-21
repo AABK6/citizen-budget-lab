@@ -23,6 +23,16 @@ models:
       - name: amount_eur
         tests: [not_null]
 
+  - name: stg_plf_2026_plafonds
+    description: Mission-level PLF 2026 spending ceilings sourced from the cache warmer output.
+    columns:
+      - name: year
+        tests: [not_null]
+      - name: mission_code
+        tests: [not_null]
+      - name: plafond_eur
+        tests: [not_null]
+
   - name: dim_cofog_mapping
     description: Mapping admin codes to COFOG functions with weights
     tests:
@@ -58,6 +68,23 @@ models:
       - name: year
         tests: [not_null]
       - name: cofog_code
+        tests: [not_null]
+
+  - name: fct_budget_baseline_2026
+    description: |
+      Mission-level baseline for PLF 2026.
+      - Starts from enacted 2025 mission CP totals (`fct_admin_by_mission`).
+      - Overlays PLF 2026 spending ceilings parsed from the official XLS workbook (`stg_plf_2026_plafonds`).
+      - Applies aggregate revenue adjustments derived from consensus macro forecasts (`macro_forecasts_2026`) by
+        scaling the 2026 revenue slice of the LEGO baseline (`fct_lego_baseline`).
+      - Revenue adjustments are allocated back to missions in proportion to their 2025 CP weight to estimate the
+        net fiscal space at constant policy.
+    columns:
+      - name: mission_code
+        tests: [not_null]
+      - name: plf_2026_ceiling_eur
+        tests: [not_null]
+      - name: revenue_adjustment_eur
         tests: [not_null]
 
   - name: fct_lego_baseline
@@ -126,4 +153,26 @@ seeds:
       - name: cofog_code
         tests: [not_null]
       - name: weight
+        tests: [not_null]
+
+  - name: plf_2026_plafonds
+    description: Reference PLF 2026 mission ceilings used for development and tests (millions converted to euros).
+    columns:
+      - name: year
+        tests: [not_null]
+      - name: mission_code
+        tests: [not_null]
+      - name: plf_ceiling_eur
+        tests: [not_null]
+
+  - name: macro_forecasts_2026
+    description: Consensus macroeconomic parameters (growth, inflation, unemployment) underpinning PLF 2026 baseline adjustments.
+    columns:
+      - name: year
+        tests: [not_null]
+      - name: gdp_growth_pct
+        tests: [not_null]
+      - name: inflation_pct
+        tests: [not_null]
+      - name: unemployment_rate_pct
         tests: [not_null]
