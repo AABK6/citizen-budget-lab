@@ -180,7 +180,17 @@ def test_graphql_queries_without_network(monkeypatch):
     data = gql("""
       query { allocation(year: 2026, basis: CP, lens: COFOG) { cofog { code label amountEur share } } }
     """)
-    assert data["allocation"]["cofog"]
+    cofog_nodes = data["allocation"]["cofog"]
+    assert cofog_nodes
+    wh_cofog = wh.allocation_by_cofog(2026, Basis.CP)
+    if wh_cofog:
+        total_wh = sum(item.amount_eur for item in wh_cofog)
+        total_graph = sum(node["amountEur"] for node in cofog_nodes)
+        assert total_wh > 0
+        assert abs(total_graph - total_wh) / total_wh < 1e-6
+        wh_codes = {item.code for item in wh_cofog}
+        gql_codes = {node["code"] for node in cofog_nodes}
+        assert wh_codes == gql_codes
 
     # allocation APU lens
     data = gql("""

@@ -18,7 +18,7 @@ from .data_loader import (
     load_lego_baseline,
     lego_distance_from_dsl,
 )
-from .models import Basis
+from .models import Basis, MissionAllocation
 from .clients import insee as insee_client
 from .clients import data_gouv as datagouv_client
 from .clients import geo as geo_client
@@ -343,84 +343,62 @@ class Query:
                 ]
             )
         elif lens == LensEnum.COFOG:
-            # Prefer warmed Eurostat S13 COFOG shares scaled by baseline when available.
-            # Otherwise fall back to warehouse mapping (if considered reliable) or mission mapping as a last resort.
             from .settings import get_settings  # lazy import
+            from . import warehouse_client as _wh  # lazy import to avoid cycles
+
             settings = get_settings()
-            warmed_preferred = False
-            items: list | None = None
-            if not settings.warehouse_cofog_override:
+            wh_items = allocation_by_cofog(year, Basis(basis.value))
+            reliable = False
+            if wh_items:
                 try:
-                    from .data_loader import allocation_by_cofog_s13  # type: ignore
-
-                    warmed = allocation_by_cofog_s13(year)
-                    if warmed:
-                        items = warmed
-                        warmed_preferred = True
+                    reliable = _wh.cofog_mapping_reliable(year, Basis(basis.value))
                 except Exception:
-                    items = None
+                    reliable = False
 
-            if items is None:
-                use_wh = False
-                if settings.warehouse_cofog_override:
-                    use_wh = True
-                else:
-                    try:
-                        from .warehouse_client import cofog_mapping_reliable  # type: ignore
+            use_wh = bool(wh_items) and (settings.warehouse_cofog_override or reliable)
 
-                        use_wh = cofog_mapping_reliable(year, Basis(basis.value))
-                    except Exception:
-                        use_wh = False
-                if use_wh:
-                    items = allocation_by_cofog(year, Basis(basis.value))
-                else:
-                    try:
-                        from .data_loader import allocation_by_cofog_s13  # type: ignore
-                        items = allocation_by_cofog_s13(year)
-                    except Exception:
-                        items = allocation_by_cofog(year, Basis(basis.value))
-
-            items = items or []
-
-            if warmed_preferred and items:
-                admin_items = allocation_by_cofog(year, Basis(basis.value))
-                admin_map = {i.code: i for i in admin_items}
-                total_admin = sum(i.amount_eur for i in admin_items)
-                total_share = sum(i.share for i in items) or 1.0
-                normalized = []
-                for entry in items:
-                    share = entry.share / total_share if total_share else 0.0
-                    admin = admin_map.get(entry.code)
-                    if total_admin > 0:
-                        amount = admin.amount_eur if admin else share * total_admin
-                    else:
-                        amount = entry.amount_eur
-                    normalized.append(
-                        MissionAllocationType(code=entry.code, label=entry.label, amountEur=amount, share=share)
-                    )
-                if total_admin <= 0:
-                    return AllocationType(mission=[], cofog=normalized)
-                total_norm = sum(i.amountEur for i in normalized)
-                if total_norm and abs(total_norm - total_admin) / max(1.0, total_admin) > 1e-9:
-                    scale = total_admin / total_norm
-                    normalized = [
-                        MissionAllocationType(
-                            code=ent.code,
-                            label=ent.label,
-                            amountEur=ent.amountEur * scale,
-                            share=ent.share,
-                        )
-                        for ent in normalized
-                    ]
-                return AllocationType(mission=[], cofog=normalized)
-
+            if use_wh:
                 return AllocationType(
                     mission=[],
                     cofog=[
                         MissionAllocationType(code=i.code, label=i.label, amountEur=i.amount_eur, share=i.share)
-                        for i in items
+                        for i in wh_items
                     ],
                 )
+
+            warmed: list[MissionAllocation] = []
+            try:
+                from .data_loader import allocation_by_cofog_s13  # type: ignore
+
+                warmed = allocation_by_cofog_s13(year)
+            except Exception:
+                warmed = []
+
+            if warmed:
+                total_share = sum(i.share for i in warmed) or 1.0
+                total_admin = sum(i.amount_eur for i in wh_items) if wh_items else 0.0
+                normalized = []
+                for entry in warmed:
+                    share = entry.share / total_share if total_share else 0.0
+                    amount = entry.amount_eur
+                    if wh_items and total_admin > 0:
+                        amount = share * total_admin
+                    normalized.append(
+                        MissionAllocationType(code=entry.code, label=entry.label, amountEur=amount, share=share)
+                    )
+                return AllocationType(mission=[], cofog=normalized)
+
+            # Fall back to whatever warehouse returned, even if marked unreliable (better than empty)
+            if wh_items:
+                return AllocationType(
+                    mission=[],
+                    cofog=[
+                        MissionAllocationType(code=i.code, label=i.label, amountEur=i.amount_eur, share=i.share)
+                        for i in wh_items
+                    ],
+                )
+
+            return AllocationType(mission=[], cofog=[])
         elif lens == LensEnum.APU:
             items = allocation_by_apu(year, Basis(basis.value))
             return AllocationType(

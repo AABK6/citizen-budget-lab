@@ -32,12 +32,13 @@ This phase addresses the core technical debt that currently blocks all other pro
 
 #### Task BE-01: Refactor `allocation_by_cofog` Resolver
 
-- **Context:** The `BACKLOG.md` file correctly identifies this task as "Not Implemented" (`[ ]`). A direct inspection of `services/api/data_loader.py` confirms that the `allocation_by_cofog` function contains extensive fallback logic. This logic reads directly from `data/cofog_mapping.json` and performs in-memory aggregations, which `docs/REFACTOR_PLAN.md` explicitly states is inconsistent with the dbt models that are intended to be the source of truth.
+- **Context:** This resolver previously relied on JSON fallbacks (`data/cofog_mapping.json`) that bypassed the warehouse, creating the "two-engine" divergence highlighted in the audit.
 - **Action Required:** Completely remove the fallback logic within the `allocation_by_cofog` function. The function must issue a clean, direct query to the `fct_admin_by_cofog` dbt model (or a derivative view) via the warehouse client.
 - **Acceptance Criteria:**
   - The function no longer reads from `data/cofog_mapping.json`.
   - The function's data source is exclusively a query to the dbt warehouse.
   - Existing unit tests pass, and new tests verify the warehouse-based output.
+- **Status (2025-09-21):** Completed — GraphQL COFOG lens now drives off `fct_admin_by_cofog`, with Eurostat fallback only when warehouse data are unavailable, and regression tests cover the warehouse path.
 
 #### Task BE-02: Refactor `run_scenario` Engine Data Source
 
@@ -167,7 +168,7 @@ All tasks are currently **Not Started**.
 
 | Task ID | Description | Epic | Phase | Priority | Key Files & Components | Acceptance Criteria | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| **BE-01** | Refactor `allocation_by_cofog` to use warehouse exclusively | Unify Backend Data Flow | 1 | **Critical** | `services/api/data_loader.py`, `fct_admin_by_cofog` | All file-based fallback logic is removed; resolver queries dbt model only; unit tests pass. | Not Started |
+| **BE-01** | Refactor `allocation_by_cofog` to use warehouse exclusively | Unify Backend Data Flow | 1 | **Critical** | `services/api/data_loader.py`, `fct_admin_by_cofog` | All file-based fallback logic is removed; resolver queries dbt model only; unit tests pass. | Completed |
 | **BE-02** | Refactor `run_scenario` engine to source baseline from warehouse | Unify Backend Data Flow | 1 | **Critical** | `services/api/data_loader.py`, `fct_lego_baseline` | Direct reads from `lego_baseline_{year}.json` are removed; baseline is populated from dbt model query. | Not Started |
 | **DBT-01** | Implement APU subsector tagging in dbt models | Solidify the Semantic Layer | 1 | **High** | `warehouse/models/` | New dbt models for APU tagging exist; warehouse can group data by APUC/APUL/ASSO tags. | Completed |
 | **DBT-02** | Verify and finalize COFOG mapping logic in dbt | Solidify the Semantic Layer | 1 | **High** | `warehouse/models/marts/fct_admin_by_cofog.sql`, `tools/build_seeds.py` | dbt tests are expanded to cover year-aware logic; manual validation of edge cases passes. | Not Started |

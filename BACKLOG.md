@@ -15,7 +15,7 @@ For verification guidance (tests, commands, datasets), refer to `docs/REFACTOR_P
 ## Phase 1 — Foundational Refactoring & Data Integrity (**Critical Path**)
 
 ### Epic BE: Unify Backend Data Flow (Eliminate the Second Engine)
-- `[ ]` **BE-01** Refactor `allocation_by_cofog` to query `fct_admin_by_cofog` exclusively (remove JSON fallback; add regression tests).
+- `[x]` **BE-01** Refactor `allocation_by_cofog` to query `fct_admin_by_cofog` exclusively (remove JSON fallback; add regression tests).
 - `[ ]` **BE-02** Refactor `run_scenario` to source LEGO baselines via `warehouse_client` (drop reads from `data/cache/lego_baseline_{year}.json`).
 
 ### Epic DBT: Solidify the Semantic Layer
