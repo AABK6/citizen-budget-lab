@@ -72,6 +72,7 @@ This epic focuses on completing the dbt warehouse models to ensure they are feat
   - dbt tests for `fct_admin_by_cofog` cover year-specific mapping logic.
   - A manual query of the warehouse for a known complex case matches a manually calculated value.
   - The entire dbt project builds and tests successfully (`dbt build`).
+- **Status (2025-09-21):** Completed — new dbt data tests enforce programme-year weight totals and COFOG totals parity; `dbt build` now fails if mappings regress.
 
 ## 3.0 Phase 2: 2026 Baseline Implementation & Data Ingestion
 
@@ -172,7 +173,7 @@ Task statuses below reflect the latest progress.
 | **BE-01** | Refactor `allocation_by_cofog` to use warehouse exclusively | Unify Backend Data Flow | 1 | **Critical** | `services/api/data_loader.py`, `fct_admin_by_cofog` | All file-based fallback logic is removed; resolver queries dbt model only; unit tests pass. | Completed |
 | **BE-02** | Refactor `run_scenario` engine to source baseline from warehouse | Unify Backend Data Flow | 1 | **Critical** | `services/api/data_loader.py`, `fct_lego_baseline` | Direct reads from `lego_baseline_{year}.json` are removed; baseline is populated from dbt model query. | Completed |
 | **DBT-01** | Implement APU subsector tagging in dbt models | Solidify the Semantic Layer | 1 | **High** | `warehouse/models/` | New dbt models for APU tagging exist; warehouse can group data by APUC/APUL/ASSO tags. | Completed |
-| **DBT-02** | Verify and finalize COFOG mapping logic in dbt | Solidify the Semantic Layer | 1 | **High** | `warehouse/models/marts/fct_admin_by_cofog.sql`, `tools/build_seeds.py` | dbt tests are expanded to cover year-aware logic; manual validation of edge cases passes. | Not Started |
+| **DBT-02** | Verify and finalize COFOG mapping logic in dbt | Solidify the Semantic Layer | 1 | **High** | `warehouse/models/marts/fct_admin_by_cofog.sql`, `tools/build_seeds.py` | dbt tests are expanded to cover year-aware logic; manual validation of edge cases passes. | Completed |
 | **DI-01** | Enhance `cache_warm.py` with PDF/Excel parsing | Develop 2026 Data Ingestion | 2 | **High** | `services/api/cache_warm.py`, `services/api/requirements.txt` | New command successfully parses PLF 2026 documents and outputs a structured CSV. | Not Started |
 | **DI-02** | Create dbt models for ingested PLF 2026 data | Develop 2026 Data Ingestion | 2 | **High** | `warehouse/models/staging/` | New dbt source and models for PLF 2026 ceilings are created and tested. | Not Started |
 | **BL-01** | Construct 2026 simulation baseline in dbt | Construct 2026 Baseline | 2 | **High** | `warehouse/models/marts/fct_simulation_baseline_2026.sql` | New dbt model combines LFI 2025, PLF 2026, and macro data into a final baseline view. | Not Started |

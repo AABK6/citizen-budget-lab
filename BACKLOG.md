@@ -20,7 +20,7 @@ For verification guidance (tests, commands, datasets), refer to `docs/REFACTOR_P
 
 ### Epic DBT: Solidify the Semantic Layer
 - `[x]` **DBT-01** Implement APU subsector tagging (`dim_apu_entities`, joins into fact tables, engine wiring).
-- `[ ]` **DBT-02** Finalise COFOG mapping logic (seed generation, dbt tests for year/programme hierarchy, manual QA).
+- `[x]` **DBT-02** Finalise COFOG mapping logic (seed generation, dbt tests for year/programme hierarchy, manual QA).
 
 ## Phase 2 — 2026 Baseline Implementation & Data Ingestion
 
