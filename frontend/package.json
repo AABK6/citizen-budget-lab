@@ -28,18 +28,19 @@
     "recharts": "^3.2.0"
   },
   "devDependencies": {
+    "@axe-core/cli": "^4.7.3",
     "@graphql-codegen/cli": "^5.0.3",
     "@graphql-codegen/typescript": "^4.0.6",
     "@graphql-codegen/typescript-operations": "^4.2.1",
     "@graphql-codegen/typescript-react-apollo": "^4.3.1",
-    "graphql": "^16.9.0",
-    "@axe-core/cli": "^4.7.3",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "20.12.12",
     "@types/react": "18.2.66",
     "@types/react-dom": "18.2.22",
     "eslint": "8.57.0",
     "eslint-config-next": "14.2.5",
+    "graphql": "^16.9.0",
+    "prettier": "^3.6.2",
     "typescript": "5.4.5"
   }
 }

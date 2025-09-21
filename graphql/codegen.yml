@@ -1,7 +1,7 @@
-schema: ./schema.sdl.graphql
+schema: ../graphql/schema.sdl.graphql
 documents:
-  - ./graphql/queries/**/*.graphql
-  - ./graphql/mutations/**/*.graphql
+  - ../graphql/queries/**/*.graphql
+  - ../graphql/mutations/**/*.graphql
 generates:
   ./graphql/generated/types.ts:
     plugins:

@@ -140,7 +140,7 @@ The API includes two caching layers:
 #### **3.1. Verified Schema (SDL)**
 
 ```graphql
-# Canonical SDL for codegen. Update with docs/GRAPHQL_CONTRACT.md
+# Canonical SDL for codegen. Keep in sync with graphql/schema.sdl.graphql
 
 schema { query: Query, mutation: Mutation }
 
@@ -178,6 +178,15 @@ type Source { id: ID!, datasetName: String!, url: String!, license: String!, ref
 input RunScenarioInput { dsl: String! }
 type ShareSummary { title: String!, deficit: Float!, debtDeltaPct: Float, highlight: String, resolutionPct: Float, masses: JSON, eu3: String, eu60: String }
   type RunScenarioPayload { id: ID!, scenarioId: ID!, accounting: Accounting!, compliance: Compliance!, macro: Macro!, distribution: Distribution, distanceScore: Float, shareSummary: ShareSummary, resolution: ResolutionType, warnings: [String!], dsl: String }
+
+type ScenarioCompareResult {
+    a: RunScenarioPayload!
+    b: RunScenarioPayload
+    waterfall: JSON!
+    ribbons: JSON!
+    pieceLabels: JSON!
+    massLabels: JSON!
+}
 
 type EUCountryCofog { country: String!, code: String!, label: String!, amountEur: Float!, share: Float! }
 type FiscalPath { years: [Int!]!, deficitRatio: [Float!]!, debtRatio: [Float!]! }
@@ -248,6 +257,7 @@ type IntentType {
     legoBaseline(year: Int!, scope: ScopeEnum = S13): LegoBaseline!
     legoDistance(year: Int!, dsl: String!, scope: ScopeEnum = S13): Distance!
     shareCard(scenarioId: ID!): ShareSummary!
+    scenarioCompare(a: ID!, b: ID): ScenarioCompareResult!
     policyLevers(family: PolicyFamilyEnum, search: String): [PolicyLeverType!]!
     massLabels: [MassLabelType!]!
     popularIntents(limit: Int = 6): [IntentType!]!
@@ -264,12 +274,12 @@ type Mutation {
 
 #### 3.2. Current Runtime Additions
 
-The runtime schema includes a couple of additions for usability that will be folded into the SDL in future iterations:
+The runtime schema exposes a small set of fields tailored to permalink workflows:
 
-- `RunScenarioPayload.dsl: String` — the canonical base64 DSL is echoed back to support permalinks and `Share` pages.
-- `Query.scenario(id: ID!): RunScenarioPayload!` — resolves a previously run scenario by id using the in‑memory store and replays it to produce the payload.
+- `RunScenarioPayload.dsl: String` — the canonical base64 DSL is echoed back to support permalinks and share pages.
+- `Query.scenario(id: ID!): RunScenarioPayload!` — resolves a previously run scenario by id using the in-memory store and replays it to produce the payload.
 
-For codegen, prefer the SDL and feature‑flag the additions if needed.
+These entries are reflected in the SDL snippet above so that code generation stays in sync with the running API.
 
 Macro baselines
 
