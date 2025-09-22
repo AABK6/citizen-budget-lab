@@ -11,6 +11,7 @@ from services.api import warehouse_client as wh
 from services.api.data_loader import (
     allocation_by_mission,
     procurement_top_suppliers,
+    run_scenario,
 )
 from services.api.models import Basis
 
@@ -109,7 +110,7 @@ actions:
       mutation Run($dsl: String!) {
         runScenario(input: { dsl: $dsl }) {
           id
-          accounting { deficitPath debtPath }
+          accounting { deficitPath debtPath commitmentsPath }
           compliance { eu3pct eu60pct netExpenditure }
           macro { deltaGDP deltaEmployment deltaDeficit assumptions }
         }
@@ -122,6 +123,7 @@ actions:
     # Check shapes/lengths
     assert len(data["accounting"]["deficitPath"]) == 5
     assert len(data["accounting"]["debtPath"]) == 5
+    assert len(data["accounting"]["commitmentsPath"]) == 5
     assert len(data["compliance"]["eu3pct"]) == 5
     assert len(data["compliance"]["eu60pct"]) == 5
     assert len(data["compliance"]["netExpenditure"]) == 5
@@ -129,6 +131,45 @@ actions:
     assert len(data["macro"]["deltaEmployment"]) == 5
     assert len(data["macro"]["deltaDeficit"]) == 5
     assert isinstance(data["macro"]["assumptions"], dict)
+
+
+def test_run_scenario_ae_dimension_tracks_commitments():
+    if not wh.warehouse_available():
+        pytest.skip("warehouse not available")
+
+    cp_sdl = """
+version: 0.1
+baseline_year: 2026
+assumptions: { horizon_years: 3 }
+actions:
+  - id: cp_boost
+    target: piece.ed_schools_staff_ops
+    dimension: cp
+    op: increase
+    amount_eur: 1000000000
+"""
+    ae_sdl = """
+version: 0.1
+baseline_year: 2026
+assumptions: { horizon_years: 3 }
+actions:
+  - id: ae_boost
+    target: piece.ed_schools_staff_ops
+    dimension: ae
+    op: increase
+    amount_eur: 1000000000
+"""
+
+    cp_sid, cp_acc, *_rest = run_scenario(_encode_scenario_yaml(cp_sdl))
+    assert cp_sid
+    assert cp_acc.deficit_path[0] > 0
+    assert cp_acc.commitments_path is not None
+    assert cp_acc.commitments_path[0] == pytest.approx(0.0, abs=1e-6)
+
+    _, ae_acc, *_ = run_scenario(_encode_scenario_yaml(ae_sdl))
+    assert ae_acc.deficit_path[0] == pytest.approx(0.0, abs=1e-6)
+    assert ae_acc.commitments_path is not None
+    assert ae_acc.commitments_path[0] > 0
 
 
 def test_net_expenditure_rule_lights():

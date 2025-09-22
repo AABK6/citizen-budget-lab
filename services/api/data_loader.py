@@ -977,7 +977,6 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
     warnings: List[str] = []
 
     # Simple mechanical layer: sum CP deltas by year; recurring applies each year
-    deltas_by_year = [0.0 for _ in range(horizon_years)]
     # Macro shocks accumulator by COFOG/tax category in % of GDP
     # Baseline GDP series via common provider
     try:
@@ -987,9 +986,6 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
         gdp_series_map = _read_gdp_series()
     gdp_series = [gdp_series_map.get(baseline_year + i, list(gdp_series_map.values())[-1]) for i in range(horizon_years)]
     shocks_pct_gdp: Dict[str, List[float]] = {}
-    # Resolution accumulators (MVP+): target by mass (from mission.*), specified by mass (from piece.*)
-    resolution_target_by_mass: Dict[str, float] = {}
-    resolution_specified_by_mass: Dict[str, float] = {}
     # Preload LEGO baseline/config to support piece.* targets
     if not wh.warehouse_available():
         raise RuntimeError("Warehouse LEGO baseline unavailable; ensure warehouse is enabled and seeded.")
@@ -1036,11 +1032,22 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
         pass
 
     # --- Resolution & Delta Calculation ---
-    # This new logic implements the "Resolution" algorithm to prevent double-counting.
-    # It separates specified changes (from pieces and levers) from unspecified changes (from mass targets).
-    
-    specified_deltas_by_year = [0.0] * horizon_years
-    
+    # This logic keeps separate ledgers for CP (cash) and AE (commitments) so that
+    # downstream consumers can reason about which dimension each action affected.
+    dimensions = ("cp", "ae")
+    specified_deltas: dict[str, List[float]] = {dim: [0.0] * horizon_years for dim in dimensions}
+    unspecified_deltas: dict[str, List[float]] = {dim: [0.0] * horizon_years for dim in dimensions}
+    resolution_specified_by_mass_dim: dict[str, Dict[str, float]] = {dim: defaultdict(float) for dim in dimensions}
+    resolution_target_by_mass_dim: dict[str, Dict[str, float]] = {dim: defaultdict(float) for dim in dimensions}
+    resolution_specified_by_mass_total: Dict[str, float] = defaultdict(float)
+    resolution_target_by_mass_total: Dict[str, float] = defaultdict(float)
+
+    def _dimension_for_action(obj: dict, *, default: str = "cp") -> str:
+        dim = str((obj or {}).get("dimension", default)).lower()
+        if dim in {"cp", "ae", "tax"}:
+            return dim
+        return default
+
     # 1. First pass: Process specified changes (levers and pieces)
     # These have a direct, specified impact on the budget.
     
@@ -1069,34 +1076,42 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
             
             # A positive impact is a saving (reduces deficit), a negative one is a cost (increases deficit)
             delta = -impact
+            lever_dim = _dimension_for_action(lever_def)
+            if lever_dim == "tax":
+                lever_dim = "cp"
+            ledger = specified_deltas["ae" if lever_dim == "ae" else "cp"]
             # Levers are always recurring over the horizon
             for i in range(horizon_years):
-                specified_deltas_by_year[i] += delta
+                ledger[i] += delta
 
             # Attribute to macro shocks and resolution
             mass_mapping = lever_def.get("mass_mapping", {})
             for mass_code, weight in mass_mapping.items():
                 major = str(mass_code).split(".")[0][:2]
                 shock_eur = delta * float(weight)
-                for i in range(horizon_years):
-                    shocks_pct_gdp.setdefault(major, [0.0] * horizon_years)[i] += 100.0 * shock_eur / gdp_series[i]
-                
-                # Attribute to specified resolution
-                resolution_specified_by_mass[major] = resolution_specified_by_mass.get(major, 0.0) - impact * float(weight)
+                if lever_dim != "ae":
+                    for i in range(horizon_years):
+                        shocks_pct_gdp.setdefault(major, [0.0] * horizon_years)[i] += 100.0 * shock_eur / gdp_series[i]
+
+                # Attribute to specified resolution (dimension + aggregate)
+                resolution_specified_by_mass_dim["ae" if lever_dim == "ae" else "cp"][major] += -impact * float(weight)
+                resolution_specified_by_mass_total[major] += -impact * float(weight)
 
     # Pieces
     for act in actions:
         target = str(act.get("target", ""))
         if not target.startswith("piece."):
             continue
-        
+
         pid = target.split(".", 1)[1]
         if levers_by_id_map and pid in levers_by_id_map:
-            continue # Handled above
-            
+            continue
+
         op = (act.get("op") or "").lower()
         recurring = bool(act.get("recurring", False))
         role = str(act.get("role") or "")
+        dim = _dimension_for_action(act)
+        ledger_key = "ae" if dim == "ae" else "cp"
 
         if pid not in lego_types:
             raise ValueError(f"Unknown LEGO piece id: '{pid}'")
@@ -1104,13 +1119,11 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
         pol = lego_policy.get(pid) or {}
         if bool(pol.get("locked_default", False)):
             raise ValueError(f"Piece '{pid}' is locked by default and cannot be modified")
-            
+
         base_amt = float(lego_amounts.get(pid, 0.0))
         amt_eur = act.get("amount_eur")
         dp = act.get("delta_pct")
         delta = 0.0
-        
-        # (Bounds enforcement helpers from original code are omitted for brevity but assumed to be here)
 
         if amt_eur is not None:
             val = float(amt_eur)
@@ -1119,9 +1132,10 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
                 if cof:
                     for c_code, w in cof:
                         major = str(c_code).split(".")[0][:2]
-                        resolution_target_by_mass[major] = resolution_target_by_mass.get(major, 0.0) + val * (1.0 if ptype == "expenditure" else -1.0) * float(w)
-            else: # A specified change
-                # Enforce absolute amount bounds if configured
+                        adjusted = val * (1.0 if ptype == "expenditure" else -1.0) * float(w)
+                        resolution_target_by_mass_dim[ledger_key][major] += adjusted
+                        resolution_target_by_mass_total[major] += adjusted
+            else:
                 bounds_amt = pol.get("bounds_amount_eur") or {}
                 try:
                     amin = float(bounds_amt.get("min")) if bounds_amt.get("min") is not None else None
@@ -1135,7 +1149,7 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
                     if amax is not None and new_val > amax + 1e-9:
                         raise ValueError(f"Change exceeds bounds: amount {new_val:,.0f}€ above max {amax:,.0f}€")
                     delta = new_val - base_amt
-                else: # revenue
+                else:
                     new_val = base_amt - (val if op == "increase" else -val if op == "decrease" else (val - base_amt) if op == "set" else 0.0)
                     if amin is not None and new_val < amin - 1e-9:
                         raise ValueError(f"Change exceeds bounds: amount {new_val:,.0f}€ below min {amin:,.0f}€")
@@ -1152,9 +1166,10 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
                 if cof:
                     for c_code, w in cof:
                         major = str(c_code).split(".")[0][:2]
-                        resolution_target_by_mass[major] = resolution_target_by_mass.get(major, 0.0) + eff_sign * eff * float(w)
-            else: # A specified change
-                # Enforce percent bounds if configured
+                        adjusted = eff_sign * eff * float(w)
+                        resolution_target_by_mass_dim[ledger_key][major] += adjusted
+                        resolution_target_by_mass_total[major] += adjusted
+            else:
                 bounds_pct = pol.get("bounds_pct") or {}
                 try:
                     pmin = float(bounds_pct.get("min")) if bounds_pct.get("min") is not None else None
@@ -1162,7 +1177,6 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
                 except Exception:
                     pmin = pmax = None
                 eff_signed = sign * eff
-                # Effective percent change relative to base
                 pct_eff = (eff_signed / base_amt * 100.0) if base_amt != 0 else 0.0
                 if pmin is not None and pct_eff < pmin - 1e-9:
                     raise ValueError(f"Percent change {pct_eff:.2f}% below min bound {pmin:.2f}%")
@@ -1175,32 +1189,32 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
                     delta = -eff_signed * e
 
         if delta != 0.0:
+            ledger = specified_deltas[ledger_key]
             if recurring:
                 for i in range(horizon_years):
-                    specified_deltas_by_year[i] += delta
+                    ledger[i] += delta
             else:
-                specified_deltas_by_year[0] += delta
-            
+                ledger[0] += delta
+
             if ptype == "expenditure":
                 cof = lego_cofog_map.get(pid) or []
                 if cof:
                     for c_code, w in cof:
                         major = str(c_code).split(".")[0][:2]
-                        # Attribute to specified resolution
-                        resolution_specified_by_mass[major] = resolution_specified_by_mass.get(major, 0.0) + delta * float(w)
-                        # Attribute to macro shocks
-                        path = shocks_pct_gdp.setdefault(major, [0.0] * horizon_years)
-                        shock_eur = delta * float(w)
-                        if recurring:
-                            for i in range(horizon_years):
-                                path[i] += 100.0 * shock_eur / gdp_series[i]
-                        else:
-                            path[0] += 100.0 * shock_eur / gdp_series[0]
+                        inc = delta * float(w)
+                        resolution_specified_by_mass_dim[ledger_key][major] += inc
+                        resolution_specified_by_mass_total[major] += inc
+                        if ledger_key == "cp":
+                            path = shocks_pct_gdp.setdefault(major, [0.0] * horizon_years)
+                            if recurring:
+                                for i in range(horizon_years):
+                                    path[i] += 100.0 * inc / gdp_series[i]
+                            else:
+                                path[0] += 100.0 * inc / gdp_series[0]
                 else:
                     warnings.append(f"Piece '{pid}' is missing a COFOG mapping; its macro impact will be ignored.")
 
     # 2. Second pass: Process mass targets and compute unspecified changes
-    unspecified_deltas_by_year = [0.0] * horizon_years
     for act in actions:
         target = str(act.get("target", ""))
         if not (target.startswith("mission.") or target.startswith("cofog.")):
@@ -1209,6 +1223,8 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
         op = (act.get("op") or "").lower()
         recurring = bool(act.get("recurring", False))
         role = str(act.get("role") or "")
+        dim = _dimension_for_action(act)
+        ledger_key = "ae" if dim == "ae" else "cp"
         
         if "amount_eur" in act:
             amount = float(act["amount_eur"]) * (1 if op == "increase" else -1 if op == "decrease" else 0)
@@ -1218,28 +1234,33 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
             for cat, w in _map_action_to_cofog(act, baseline_year):
                 major = str(cat).split(".")[0][:2]
                 target_delta = amount * float(w)
-                resolution_target_by_mass[major] = resolution_target_by_mass.get(major, 0.0) + target_delta
+                resolution_target_by_mass_dim[ledger_key][major] += target_delta
+                resolution_target_by_mass_total[major] += target_delta
                 
                 # If not just a target, it's an unresolved change. The unspecified portion is the target minus what's already specified.
                 if role != "target":
-                    unspecified_delta = target_delta - resolution_specified_by_mass.get(major, 0.0)
+                    specified_mass = resolution_specified_by_mass_dim[ledger_key].get(major, 0.0)
+                    unspecified_delta = target_delta - specified_mass
                     
                     if recurring:
                         for i in range(horizon_years):
-                            unspecified_deltas_by_year[i] += unspecified_delta
+                            unspecified_deltas[ledger_key][i] += unspecified_delta
                     else:
-                        unspecified_deltas_by_year[0] += unspecified_delta
+                        unspecified_deltas[ledger_key][0] += unspecified_delta
                         
                     # Attribute unspecified part to macro shocks
-                    path = shocks_pct_gdp.setdefault(major, [0.0] * horizon_years)
-                    if recurring:
-                        for i in range(horizon_years):
-                            path[i] += 100.0 * unspecified_delta / gdp_series[i]
-                    else:
-                        path[0] += 100.0 * unspecified_delta / gdp_series[0]
+                    if ledger_key == "cp":
+                        path = shocks_pct_gdp.setdefault(major, [0.0] * horizon_years)
+                        if recurring:
+                            for i in range(horizon_years):
+                                path[i] += 100.0 * unspecified_delta / gdp_series[i]
+                        else:
+                            path[0] += 100.0 * unspecified_delta / gdp_series[0]
 
-    # 3. Final combination
-    deltas_by_year = [s + u for s, u in zip(specified_deltas_by_year, unspecified_deltas_by_year)]
+    # 3. Final combination (CP + AE ledgers)
+    cp_deltas_by_year = [s + u for s, u in zip(specified_deltas["cp"], unspecified_deltas["cp"])]
+    ae_deltas_by_year = [s + u for s, u in zip(specified_deltas["ae"], unspecified_deltas["ae"])]
+    deltas_by_year = cp_deltas_by_year
     
     # Basic tax op handling (simplified, outside main resolution loop)
     for act in actions:
@@ -1362,16 +1383,20 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
         local_balance=lb,
     )
 
-    acc = Accounting(deficit_path=deficit_path, debt_path=debt_path)
+    acc = Accounting(
+        deficit_path=deficit_path,
+        debt_path=debt_path,
+        commitments_path=[float(v) for v in ae_deltas_by_year],
+    )
 
     # Build resolution payload (overallPct + byMass)
     by_mass: List[dict] = []
-    mass_ids = set(list(resolution_target_by_mass.keys()) + list(resolution_specified_by_mass.keys()))
+    mass_ids = set(list(resolution_target_by_mass_total.keys()) + list(resolution_specified_by_mass_total.keys()))
     total_target_abs = 0.0
     total_spec_abs = 0.0
     for mid in sorted(mass_ids):
-        t = float(resolution_target_by_mass.get(mid, 0.0))
-        s = float(resolution_specified_by_mass.get(mid, 0.0))
+        t = float(resolution_target_by_mass_total.get(mid, 0.0))
+        s = float(resolution_specified_by_mass_total.get(mid, 0.0))
         by_mass.append({
             "massId": mid,
             "targetDeltaEur": t,

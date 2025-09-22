@@ -12,7 +12,8 @@ def _gql(q: str, variables: dict | None = None):
     return res.data
 
 
-def test_allocation_cofog_prefers_warmed_shares(tmp_path, monkeypatch):
+def test_allocation_cofog_ignores_warmed_shares_when_warehouse_available(tmp_path, monkeypatch):
+    """Even if a warmed COFOG share file exists, the warehouse results should prevail."""
     # Prepare warmed COFOG shares file with a distinct top code (e.g., '05' biggest)
     cache_dir = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..")), "data", "cache")
     os.makedirs(cache_dir, exist_ok=True)
@@ -33,13 +34,15 @@ def test_allocation_cofog_prefers_warmed_shares(tmp_path, monkeypatch):
     """
     data = _gql(q)
     cofog = data["allocation"]["cofog"]
-    assert cofog[0]["code"] == "05"  # warmed file top share
+    # Warehouse aggregation should remain unchanged despite the warmed file
+    assert cofog[0]["code"] == "09"
 
     # Cleanup: remove warmed file and ensure fallback mapping yields Education ('09') as top
     os.remove(shares_path)
     data2 = _gql(q)
     cofog2 = data2["allocation"]["cofog"]
     assert cofog2[0]["code"] == "09"
+    assert cofog2 == cofog
 
 
 def test_macro_series_present_absent(monkeypatch):

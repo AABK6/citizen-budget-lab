@@ -7,98 +7,75 @@ import { parseDsl, serializeDsl } from '@/lib/dsl';
 import { RuleLights } from '@/components/RuleLights';
 import { StatCards } from '@/components/StatCards';
 import { DeficitPathChart } from '@/components/DeficitPathChart';
-import { ScenarioResult } from '@/lib/types';
 import { ErrorDisplay } from '@/components/ErrorDisplay';
 import { BuildPageSkeleton } from '@/components/BuildPageSkeleton';
-import { buildPageQuery, suggestLeversQuery, runScenarioMutation, getScenarioDslQuery } from '@/lib/queries';
+import { buildPageQuery, suggestLeversQuery, getScenarioDslQuery } from '@/lib/queries';
 import { TreemapChart } from '@/components/Treemap';
 import { useHistory } from '@/lib/useHistory';
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import {
+  DslObject,
+  INITIAL_DSL_OBJECT,
+  LegoPiece,
+  MassLabel,
+  PolicyLever,
+  PopularIntent,
+  BuildLens,
+  MassCategory,
+} from './types';
+import { useBuildState } from './useBuildState';
+import { runScenarioForDsl } from '@/lib/permalink';
+import { MassCategoryList } from './components/MassCategoryList';
+import { MassCategoryPanel } from './components/MassCategoryPanel';
 
 const treemapColors = ['#2563eb', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#ef4444', '#6366f1', '#14b8a6', '#a855f7', '#d946ef'];
 
-// Define types for the data we expect from the GraphQL API
-type LegoPiece = {
-  id: string;
-  label: string;
-  type: 'expenditure' | 'revenue';
-  cofogMajors: string[];
-  amountEur?: number;
-};
-
-type MassLabel = {
-  id: string;
-  displayLabel: string;
-};
-
-type PolicyLever = {
-  id: string;
-  label: string;
-  description?: string;
-  fixedImpactEur?: number;
-  family: string;
-  shortLabel?: string;
-  popularity?: number;
-  massMapping?: any;
-};
-
-type PopularIntent = {
-  id: string;
-  label: string;
-  emoji?: string;
-  massId: string;
-  seed: any; // DSL snippet
-};
-
-type DslAction = {
-  id: string;
-  target: string;
-  op: 'increase' | 'decrease' | 'set';
-  amount_eur: number;
-  role?: 'target';
-  recurring?: boolean;
-};
-
-type DslObject = {
-  version: number;
-  baseline_year: number;
-  assumptions: {
-    horizon_years: number;
-  };
-  actions: DslAction[];
-};
-
-const INITIAL_DSL_OBJECT: DslObject = {
-  version: 0.1,
-  baseline_year: 2026,
-  assumptions: {
-    horizon_years: 5,
-  },
-  actions: [],
-};
-
-function toBase64(str: string) {
-    if (typeof window === 'undefined') {
-        return Buffer.from(str).toString('base64');
-    }
-    return window.btoa(unescape(encodeURIComponent(str)));
-}
-
 export default function BuildPageClient() {
   const { t } = useI18n();
-  const [year, setYear] = useState(2026);
-  const [initialLoading, setInitialLoading] = useState(true);
-  const [scenarioLoading, setScenarioLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [scenarioError, setScenarioError] = useState<string | null>(null);
-
-  // Data states
-  const [spendingPieces, setSpendingPieces] = useState<LegoPiece[]>([]);
-  const [revenuePieces, setRevenuePieces] = useState<LegoPiece[]>([]);
-  const [masses, setMasses] = useState<any[]>([]);
-  const [policyLevers, setPolicyLevers] = useState<PolicyLever[]>([]);
-  const [popularIntents, setPopularIntents] = useState<PopularIntent[]>([]);
-  const [scenarioResult, setScenarioResult] = useState<ScenarioResult | null>(null);
+  const router = useRouter();
+  const pathname = usePathname();
+  const { state, actions } = useBuildState(INITIAL_DSL_OBJECT.baseline_year);
+  const {
+    year,
+    initialLoading,
+    scenarioLoading,
+    error,
+    scenarioError,
+    spendingPieces,
+    revenuePieces,
+    masses,
+    policyLevers,
+    popularIntents,
+    scenarioResult,
+    isPanelExpanded,
+    isRevenuePanelExpanded,
+    selectedCategory,
+    selectedRevenueCategory,
+    suggestedLevers,
+    targetInput,
+    revenueTargetInput,
+    lens,
+    expandedFamilies,
+    scenarioId,
+  } = state;
+  const {
+    setInitialLoading,
+    setScenarioLoading,
+    setError,
+    setScenarioError,
+    setScenarioResult,
+    setData,
+    setSuggestedLevers,
+    setTargetInput,
+    setRevenueTargetInput,
+    setSelectedCategory,
+    setSelectedRevenueCategory,
+    setLens,
+    togglePanel,
+    toggleRevenuePanel,
+    toggleFamily,
+    setScenarioId,
+  } = actions;
   const {
     state: dslObject,
     setState: setDslObject,
@@ -109,43 +86,48 @@ export default function BuildPageClient() {
     canRedo,
   } = useHistory<DslObject>(INITIAL_DSL_OBJECT);
   const dslString = serializeDsl(dslObject);
-  const [isPanelExpanded, setIsPanelExpanded] = useState(false);
-  const [isRevenuePanelExpanded, setIsRevenuePanelExpanded] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<any | null>(null);
-  const [selectedRevenueCategory, setSelectedRevenueCategory] = useState<any | null>(null);
-  const [suggestedLevers, setSuggestedLevers] = useState<PolicyLever[]>([]);
-  const [targetInput, setTargetInput] = useState('');
-  const [revenueTargetInput, setRevenueTargetInput] = useState('');
-  const [lens, setLens] = useState<'mass' | 'family' | 'reform'>('mass');
-  const [expandedFamilies, setExpandedFamilies] = useState(new Set<string>());
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    const scenarioId = searchParams.get('scenarioId');
-    if (scenarioId) {
-      const fetchDsl = async () => {
-        try {
-          const { scenario } = await gqlRequest(getScenarioDslQuery, { id: scenarioId });
-          setDslObject(parseDsl(atob(scenario.dsl)));
-        } catch (err) {
-          setError('Failed to load scenario');
-        }
-      };
-      fetchDsl();
+    const urlScenarioId = searchParams.get('scenarioId');
+    if (urlScenarioId) {
+      if (urlScenarioId !== scenarioId) {
+        setScenarioId(urlScenarioId);
+        const fetchDsl = async () => {
+          try {
+            const { scenario } = await gqlRequest(getScenarioDslQuery, { id: urlScenarioId });
+            setDslObject(parseDsl(atob(scenario.dsl)));
+          } catch (err) {
+            setError('Failed to load scenario');
+          }
+        };
+        fetchDsl();
+      }
+    } else if (scenarioId) {
+      setScenarioId(null);
     }
-  }, [searchParams, setDslObject]);
+  }, [scenarioId, searchParams, setDslObject, setError, setScenarioId]);
 
   const runScenario = useCallback(async () => {
     setScenarioLoading(true);
     setScenarioError(null);
     try {
-      const result = await gqlRequest(runScenarioMutation, { dsl: toBase64(dslString) });
-      setScenarioResult(result.runScenario);
+      const result = await runScenarioForDsl(dslString);
+      const scenarioData = result.runScenario;
+      setScenarioResult(scenarioData, scenarioData?.id ?? undefined);
+      if (scenarioData?.id && scenarioData.id !== scenarioId) {
+        const params = new URLSearchParams(searchParams.toString());
+        params.set('scenarioId', scenarioData.id);
+        const queryString = params.toString();
+        const href = queryString ? `${pathname}?${queryString}` : pathname;
+        router.replace(href, { scroll: false });
+      }
     } catch (err: any) {
-      setScenarioError(err.message || "Failed to run scenario");
+      setScenarioError(err.message || 'Failed to run scenario');
+    } finally {
+      setScenarioLoading(false);
     }
-    setScenarioLoading(false);
-  }, [dslString]);
+  }, [dslString, pathname, router, scenarioId, searchParams, setScenarioError, setScenarioLoading, setScenarioResult]);
 
   const fetchData = useCallback(async () => {
     setInitialLoading(true);
@@ -161,34 +143,43 @@ export default function BuildPageClient() {
 
       const allPieces = data.legoPieces.map((p: any) => ({ ...p, amountEur: baselineAmounts[p.id] || 0 }));
 
-      setSpendingPieces(allPieces.filter((p: LegoPiece) => p.type === 'expenditure'));
-      setRevenuePieces(allPieces.filter((p: LegoPiece) => p.type === 'revenue'));
+      const spending = allPieces.filter((p: LegoPiece) => p.type === 'expenditure');
+      const revenue = allPieces.filter((p: LegoPiece) => p.type === 'revenue');
 
       const massLabels: { [key: string]: string } = {};
       data.massLabels.forEach((m: MassLabel) => {
         massLabels[m.id] = m.displayLabel;
       });
 
-      const massData: { [key: string]: { id: string; name: string; amount: number, pieces: LegoPiece[] } } = {};
-      allPieces.filter((p: LegoPiece) => p.type === 'expenditure').forEach((p: LegoPiece) => {
+      const massData: Record<string, MassCategory> = {};
+      spending.forEach((p: LegoPiece) => {
           const massId = p.cofogMajors[0] || 'unknown';
           if (!massData[massId]) {
-              massData[massId] = { id: massId, name: massLabels[massId] || `Mass ${massId}`, amount: 0, pieces: [] };
+              massData[massId] = {
+                id: massId,
+                name: massLabels[massId] || `Mass ${massId}`,
+                amount: 0,
+                pieces: [],
+              };
           }
           massData[massId].amount += p.amountEur || 0;
           massData[massId].pieces.push(p);
       });
-      
-      setMasses(Object.values(massData).sort((a, b) => b.amount - a.amount));
+      const massList = Object.values(massData).sort((a, b) => b.amount - a.amount);
 
-      setPolicyLevers(data.policyLevers);
-      setPopularIntents(data.popularIntents);
+      setData({
+        spendingPieces: spending,
+        revenuePieces: revenue,
+        masses: massList,
+        policyLevers: data.policyLevers,
+        popularIntents: data.popularIntents,
+      });
 
     } catch (err: any) {
-      setError(err.message || "Failed to fetch data");
+      setError(err.message || 'Failed to fetch data');
+      setInitialLoading(false);
     }
-    setInitialLoading(false);
-  }, [year]);
+  }, [setData, setError, setInitialLoading, setScenarioError, year]);
 
   useEffect(() => {
     fetchData();
@@ -199,9 +190,9 @@ export default function BuildPageClient() {
     runScenario();
   }, [runScenario]);
 
-  const handleCategoryClick = async (category: any) => {
+  const handleCategoryClick = async (category: MassCategory) => {
     setSelectedCategory(category);
-    setIsPanelExpanded(true);
+    togglePanel(true);
 
     // Set initial target input value from current DSL
     const massId = category.id;
@@ -217,7 +208,7 @@ export default function BuildPageClient() {
       const data = await gqlRequest(suggestLeversQuery, { massId });
       setSuggestedLevers(data.suggestLevers);
     } catch (err: any) {
-      setError(err.message || "Failed to fetch suggestions");
+      setError(err.message || 'Failed to fetch suggestions');
     }
   };
 
@@ -322,15 +313,7 @@ export default function BuildPageClient() {
   };
 
   const handleFamilyClick = (family: string) => {
-    setExpandedFamilies(current => {
-      const newSet = new Set(current);
-      if (newSet.has(family)) {
-        newSet.delete(family);
-      } else {
-        newSet.add(family);
-      }
-      return newSet;
-    });
+    toggleFamily(family);
   };
 
   const handleIntentClick = (intent: PopularIntent) => {
@@ -344,22 +327,24 @@ export default function BuildPageClient() {
   };
 
   const handleBackClick = () => {
-    setIsPanelExpanded(false);
+    togglePanel(false);
     setSelectedCategory(null);
-  }
+    setTargetInput('');
+  };
 
-  const handleRevenueCategoryClick = async (category: any) => {
+  const handleRevenueCategoryClick = async (category: LegoPiece) => {
     setSelectedRevenueCategory(category);
-    setIsRevenuePanelExpanded(true);
-    
+    toggleRevenuePanel(true);
+
     const revenueLevers = policyLevers.filter(lever => lever.family === 'TAXES');
     setSuggestedLevers(revenueLevers);
   };
 
   const handleRevenueBackClick = () => {
-    setIsRevenuePanelExpanded(false);
+    toggleRevenuePanel(false);
     setSelectedRevenueCategory(null);
-  }
+    setRevenueTargetInput('');
+  };
 
   const formatCurrency = (amount: number) => {
     return `€${(amount / 1e9).toFixed(1)}B`;
@@ -425,72 +410,42 @@ export default function BuildPageClient() {
         </div>
       </div>
 
+      <div className="fr-alert fr-alert--info baseline-disclaimer" role="status" style={{ margin: '1.5rem 0' }}>
+        <p className="fr-alert__title">Baseline based on PLF 2026</p>
+        <p className="fr-alert__description">
+          The current baseline reflects the government&apos;s PLF 2026 proposal and may diverge from the final voted budget.
+          Re-run scenarios once the finance bill is enacted to refresh the reference path.
+        </p>
+      </div>
+
       {/* Main Content */}
       <div className="main-content">
         {/* Left Panel */}
         <div className="left-panel">
           {lens === 'mass' && !isPanelExpanded && (
-            <>
-              <div className="panel-header">Spending Targets & Reforms</div>
-              {masses.map((category, index) => (
-                <div key={index} className="spending-category" onClick={() => handleCategoryClick(category)}>
-                  <div className="category-header">
-                    <div className="category-name">{category.name}</div>
-                    <div className="category-amount">{formatCurrency(category.amount)}</div>
-                  </div>
-                  <div className="category-controls">
-                    <div className="control-button">Set Target</div>
-                    <div className="control-button">View Reforms</div>
-                  </div>
-                </div>
-              ))}
-            </>
+            <MassCategoryList
+              categories={masses}
+              onSelect={handleCategoryClick}
+              formatCurrency={formatCurrency}
+            />
           )}
           {lens === 'mass' && isPanelExpanded && selectedCategory && (
-            <>
-              <button className="fr-btn fr-btn--secondary fr-btn--sm" onClick={handleBackClick} style={{ marginBottom: '1rem', alignSelf: 'flex-start' }}>Back</button>
-              <div className="panel-header">{selectedCategory.name} Reforms & Targets</div>
-              <div className="selected-category">
-                <div className="category-header">
-                  <div className="category-name">{selectedCategory.name}</div>
-                  <div className="category-amount">{formatCurrency(selectedCategory.amount)}</div>
-                </div>
-                <div className="target-controls">
-                  <span className="target-label">Target:</span>
-                  <input type="text" className="target-input" value={targetInput} onChange={e => setTargetInput(e.target.value)} placeholder="+10B, -500M..." />
-                  <button className="target-button" onClick={handleApplyTarget}>Apply</button>
-                  <button className="target-button fr-btn--secondary" onClick={() => setTargetInput('')}>Clear</button>
-                </div>
-                <div className="reforms-section">
-                  <div className="section-title">Available Reforms</div>
-                  {suggestedLevers.map((reform, index) => (
-                    <div key={index} className={`reform-item ${isLeverInDsl(reform.id) ? 'applied' : ''}`}>
-                      <div className="reform-details">
-                        <div className="reform-name">{reform.label}</div>
-                        <div className="reform-description">{reform.description}</div>
-                      </div>
-                      <div className="reform-actions">
-                        <div className="reform-impact">
-                          <span className={reform.fixedImpactEur && reform.fixedImpactEur > 0 ? 'impact-positive' : 'impact-negative'}>{formatCurrency(reform.fixedImpactEur || 0)}</span>
-                        </div>
-                        <button 
-                          className={`fr-btn fr-btn--${isLeverInDsl(reform.id) ? 'secondary' : 'primary'}`}
-                          onClick={() => isLeverInDsl(reform.id) ? removeLeverFromDsl(reform.id) : addLeverToDsl(reform)}
-                        >
-                          {isLeverInDsl(reform.id) ? 'Remove' : 'Add'}
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="popular-reforms">
-                  <div className="section-title">Popular Reforms</div>
-                  {popularIntents.filter(intent => intent.massId === selectedCategory.id).map((intent, index) => (
-                    <div key={index} className="reform-pill" onClick={() => handleIntentClick(intent)}>{intent.emoji} {intent.label}</div>
-                  ))}
-                </div>
-              </div>
-            </>
+            <MassCategoryPanel
+              category={selectedCategory}
+              targetInput={targetInput}
+              onTargetChange={setTargetInput}
+              onApplyTarget={handleApplyTarget}
+              onClearTarget={() => setTargetInput('')}
+              onClose={handleBackClick}
+              suggestedLevers={suggestedLevers}
+              onLeverToggle={(lever) =>
+                isLeverInDsl(lever.id) ? removeLeverFromDsl(lever.id) : addLeverToDsl(lever)
+              }
+              isLeverSelected={isLeverInDsl}
+              popularIntents={popularIntents}
+              onIntentClick={handleIntentClick}
+              formatCurrency={formatCurrency}
+            />
           )}
           {lens === 'family' && (
             <>
@@ -507,7 +462,7 @@ export default function BuildPageClient() {
                   <div className="category-header" onClick={() => handleFamilyClick(family)}>
                     <div className="category-name">{family}</div>
                   </div>
-                  {expandedFamilies.has(family) && (
+                  {expandedFamilies.includes(family) && (
                     <div className="reforms-section">
                       {levers.map((reform, index) => (
                         <div key={index} className={`reform-item ${isLeverInDsl(reform.id) ? 'applied' : ''}`}>

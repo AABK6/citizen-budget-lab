@@ -1,7 +1,8 @@
 "use client"
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { ensureScenarioIdFromDsl } from '@/lib/permalink';
 
 type Challenge = {
   id: string;
@@ -28,8 +29,18 @@ const challenges: Challenge[] = [
 export default function ChallengesPage() {
   const router = useRouter();
 
-  const handleChallengeClick = (challenge: Challenge) => {
-    router.push(`/build?dsl=${btoa(challenge.dsl)}`);
+  const [loadingId, setLoadingId] = useState<string | null>(null);
+
+  const handleChallengeClick = async (challenge: Challenge) => {
+    try {
+      setLoadingId(challenge.id);
+      const scenarioId = await ensureScenarioIdFromDsl(challenge.dsl);
+      router.push(`/build?scenarioId=${scenarioId}`);
+    } catch (error) {
+      console.error('Failed to prepare challenge scenario', error);
+    } finally {
+      setLoadingId(null);
+    }
   };
 
   return (
@@ -37,9 +48,16 @@ export default function ChallengesPage() {
       <h1>Challenges</h1>
       <div className="stack">
         {challenges.map(challenge => (
-          <div key={challenge.id} className="card" onClick={() => handleChallengeClick(challenge)}>
+          <div
+            key={challenge.id}
+            className="card"
+            onClick={() => handleChallengeClick(challenge)}
+            aria-busy={loadingId === challenge.id}
+            style={loadingId === challenge.id ? { opacity: 0.6, pointerEvents: 'none' } : undefined}
+          >
             <h2>{challenge.title}</h2>
             <p>{challenge.description}</p>
+            {loadingId === challenge.id && <p className="loading-hint">Preparing scenario…</p>}
           </div>
         ))}
       </div>

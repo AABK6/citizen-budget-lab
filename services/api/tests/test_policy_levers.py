@@ -1,5 +1,16 @@
-from services.api.app import create_app
+import base64
+
+import pytest
 from fastapi.testclient import TestClient
+
+from services.api.app import create_app
+from services.api import policy_catalog as pol
+from services.api import warehouse_client as wh
+from services.api.data_loader import run_scenario
+
+
+def _encode(yaml_text: str) -> str:
+    return base64.b64encode(yaml_text.encode("utf-8")).decode("utf-8")
 
 
 def test_policy_levers_query_stub():
@@ -46,3 +57,24 @@ def test_policy_levers_search_filter():
     assert "errors" not in js2
     arr2 = js2["data"]["policyLevers"]
     assert any(x["id"] == "annee_blanche_indexation" for x in arr2)
+
+
+def test_plf2026_lever_reduces_deficit():
+    if not wh.warehouse_available():
+        pytest.skip("warehouse not available")
+
+    lever_id = "plf2026_mission_justice_efficiency"
+    lever = pol.levers_by_id()[lever_id]
+    sdl = f"""
+version: 0.1
+baseline_year: 2026
+assumptions: {{ horizon_years: 3 }}
+actions:
+  - id: {lever_id}
+    target: lever.{lever_id}
+    op: activate
+"""
+    _, acc, *_ = run_scenario(_encode(sdl))
+    assert acc.deficit_path[0] == pytest.approx(-lever["fixed_impact_eur"], abs=1e-6)
+    assert acc.commitments_path is not None
+    assert acc.commitments_path[0] == pytest.approx(0.0, abs=1e-6)

@@ -62,6 +62,7 @@ class ProcurementItemType:
 class AccountingType:
     deficitPath: List[float]
     debtPath: List[float]
+    commitmentsPath: Optional[List[float]] = None
 
 
 @strawberry.type
@@ -1020,7 +1021,11 @@ class Query:
         return RunScenarioPayload(
             id=strawberry.ID(sid),
             scenarioId=strawberry.ID(sid),
-            accounting=AccountingType(deficitPath=acc.deficit_path, debtPath=acc.debt_path),
+            accounting=AccountingType(
+                deficitPath=acc.deficit_path,
+                debtPath=acc.debt_path,
+                commitmentsPath=acc.commitments_path or [],
+            ),
             compliance=ComplianceType(
                 eu3pct=comp.eu3pct,
                 eu60pct=comp.eu60pct,
@@ -1147,7 +1152,11 @@ class Query:
         scenario_a_payload = RunScenarioPayload(
             id=strawberry.ID(sid_a),
             scenarioId=strawberry.ID(sid_a),
-            accounting=AccountingType(deficitPath=acc_a.deficit_path, debtPath=acc_a.debt_path),
+            accounting=AccountingType(
+                deficitPath=acc_a.deficit_path,
+                debtPath=acc_a.debt_path,
+                commitmentsPath=acc_a.commitments_path or [],
+            ),
             compliance=ComplianceType(
                 eu3pct=comp_a.eu3pct,
                 eu60pct=comp_a.eu60pct,
@@ -1176,7 +1185,11 @@ class Query:
         scenario_b_payload = RunScenarioPayload(
             id=strawberry.ID(sid_b),
             scenarioId=strawberry.ID(sid_b),
-            accounting=AccountingType(deficitPath=acc_b.deficit_path, debtPath=acc_b.debt_path),
+            accounting=AccountingType(
+                deficitPath=acc_b.deficit_path,
+                debtPath=acc_b.debt_path,
+                commitmentsPath=acc_b.commitments_path or [],
+            ),
             compliance=ComplianceType(
                 eu3pct=comp_b.eu3pct,
                 eu60pct=comp_b.eu60pct,
@@ -1238,7 +1251,11 @@ class Mutation:
         return RunScenarioPayload(
             id=strawberry.ID(sid),
             scenarioId=strawberry.ID(sid),
-            accounting=AccountingType(deficitPath=acc.deficit_path, debtPath=acc.debt_path),
+            accounting=AccountingType(
+                deficitPath=acc.deficit_path,
+                debtPath=acc.debt_path,
+                commitmentsPath=acc.commitments_path or [],
+            ),
             compliance=ComplianceType(
                 eu3pct=comp.eu3pct,
                 eu60pct=comp.eu60pct,

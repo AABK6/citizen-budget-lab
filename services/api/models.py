@@ -45,6 +45,7 @@ class ProcurementItem:
 class Accounting:
     deficit_path: List[float]
     debt_path: List[float]
+    commitments_path: Optional[List[float]] = None
 
 
 @dataclass

@@ -35,13 +35,12 @@ For verification guidance (tests, commands, datasets), refer to `docs/REFACTOR_P
 ## Phase 3 — Feature Development & UI/UX Completion
 
 ### Epic BE+: Enhance Simulation Engine Capabilities
-- `[ ]` **BE-03** Implement AE/CP arithmetic differentiation (dimension-aware deltas, unit tests).
-- `[ ]` **BE-04** Model PLF 2026 policy levers ("année blanche", targeted ministry cuts) with verified fiscal impacts.
+- `[x]` **BE-03** Implement AE/CP arithmetic differentiation (dimension-aware deltas, unit tests).
+- `[x]` **BE-04** Model PLF 2026 policy levers ("année blanche", targeted ministry cuts) with verified fiscal impacts.
 
 ### Epic FE: Frontend Refactoring & Feature Delivery
-- `[ ]` **FE-01** Refactor `BuildPageClient.tsx` state management (introduce reducer/custom hooks, modular components).
-- `[ ]` **FE-02** Unify permalink generation/parsing (`scenarioId` everywhere; shared utility used by `/challenges`, `/build`, share links).
-- `[ ]` **FE-03** Implement the "Compare & Remix" UI (fully interactive `/compare` powered by `scenarioCompare`).
+- `[x]` **FE-01** Refactor `BuildPageClient.tsx` state management (introduce reducer/custom hooks, modular components).
+- `[x]` **FE-02** Unify permalink generation/parsing (`scenarioId` everywhere; shared utility used by `/challenges`, `/build`, share links).
 
 ---
 
