@@ -50,3 +50,33 @@ For verification guidance (tests, commands, datasets), refer to `docs/REFACTOR_P
 - **Warm Data Contracts:** warmed artefacts now emit `.meta.json` manifests; keep extending validation scripts as new datasets are added.
 - **Documentation Sync:** keep `docs/REFACTOR_PLAN.md` and `current_dev_plan.md` updated whenever a task transitions to `[~]` or `[x]`.
 - **Scenario Outputs:** GraphQL `runScenario` now emits `baseline*` and `*Delta` paths for deficit and debt; ensure UI/analytics consumers use the absolute path unless a delta is explicitly desired.
+- **[Optional] Admin Lens in Builder:** Consider replacing the current COFOG-driven masses with administrative (mission/programme) groupings — see "Refactor Plan: Administrative Lens" below.
+
+---
+
+### Optional Refactor: Administrative Lens for Builder (Masses & Panels)
+
+**Goal:** Allow the `/build` treemap, mass targets, and reform panels to operate on the administrative (mission/programme) lens instead of — or in addition to — the current COFOG major categories.
+
+1. **Warehouse & API groundwork**
+   - Produce a mission-level baseline view parallel to existing COFOG outputs (e.g., `fct_admin_baseline_mission`).
+   - Extend `lego_baseline` snapshots (or the dbt mart feeding them) with mission/programme IDs so each LEGO piece can be aggregated by both lenses.
+   - Introduce an administrative `massLabels` source (`mission_code`, display name, colour) matching what the frontend expects.
+   - Update `services/api/data_loader.py` to accept a `lens` flag for scenario runs, emitting either COFOG or mission aggregates; ensure compliance/resolution structures carry the chosen IDs.
+
+2. **Policy lever attribution**
+   - Add mission-level weights to each lever (`policy_catalog.py`).
+   - Adjust resolution bookkeeping (`resolution_*` maps) to consume the new weights when the administrative lens is active.
+   - Decide how mixed levers (affecting multiple missions) display in the UI; document behaviour when a mapping is missing.
+
+3. **Frontend updates**
+   - Expand `buildPageQuery` so both `legoBaseline` and `legoPieces` include mission metadata; fetch the new `missionLabels` dictionary.
+   - Refactor `MassCategory` typing to support either lens; the builder state should track the active lens and populate treemap/panels accordingly.
+   - Provide a lens toggle (COFOG vs mission) or migrate existing controls to mission-only, depending on UX decision. Ensure filters, targets, and resolution meter stay in sync.
+
+4. **Testing & Migration**
+   - Add API tests covering both lenses (ensuring mission totals align with warehouse output).
+   - Create frontend regression checks (Storybook snapshot or Playwright script) for the mission view.
+   - If supporting dual lenses, ensure permalinks encode the chosen lens so shared scenarios remain reproducible.
+
+This refactor is optional and should be scheduled after confirming data availability and UX expectations.
