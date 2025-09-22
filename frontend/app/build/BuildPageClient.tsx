@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useEffect, useCallback, useMemo } from 'react';
 import { useI18n } from '@/lib/i18n';
 import { gqlRequest } from '@/lib/graphql';
 import { parseDsl, serializeDsl } from '@/lib/dsl';
@@ -14,6 +14,7 @@ import { TreemapChart } from '@/components/Treemap';
 import { useHistory } from '@/lib/useHistory';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
+  DslAction,
   DslObject,
   INITIAL_DSL_OBJECT,
   LegoPiece,

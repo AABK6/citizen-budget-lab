@@ -391,7 +391,7 @@ def budget_baseline_2026() -> List[Dict[str, Any]]:
         con = _connect_duckdb()
     except Exception:
         return []
-    rel = _qual_name(con, "fct_budget_baseline_2026")
+    rel = _qual_name(con, "fct_simulation_baseline_2026")
     sql = f"""
         select
             mission_code,

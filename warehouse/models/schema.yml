@@ -75,9 +75,9 @@ models:
       - name: cofog_code
         tests: [not_null]
 
-  - name: fct_budget_baseline_2026
+  - name: fct_simulation_baseline_2026
     description: |
-      Mission-level baseline for PLF 2026.
+      Mission-level simulation baseline for PLF 2026.
       - Starts from enacted 2025 mission CP totals (`fct_admin_by_mission`).
       - Overlays PLF 2026 spending ceilings parsed from the official XLS workbook (`stg_plf_2026_plafonds`).
       - Applies aggregate revenue adjustments derived from consensus macro forecasts (`macro_forecasts_2026`) by
