@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useCallback, useMemo } from 'react';
+import { useEffect, useCallback, useMemo, useRef } from 'react';
 import { useI18n } from '@/lib/i18n';
 import { gqlRequest } from '@/lib/graphql';
 import { parseDsl, serializeDsl } from '@/lib/dsl';
@@ -89,9 +89,16 @@ export default function BuildPageClient() {
   } = useHistory<DslObject>(INITIAL_DSL_OBJECT);
   const dslString = serializeDsl(dslObject);
   const searchParams = useSearchParams();
+  const searchParamsString = searchParams.toString();
+  const scenarioIdRef = useRef<string | null>(scenarioId);
+  const latestRunRef = useRef(0);
 
   useEffect(() => {
-    const urlScenarioId = searchParams.get('scenarioId');
+    scenarioIdRef.current = scenarioId;
+  }, [scenarioId]);
+
+  useEffect(() => {
+    const urlScenarioId = new URLSearchParams(searchParamsString).get('scenarioId');
     if (urlScenarioId) {
       if (urlScenarioId !== scenarioId) {
         setScenarioId(urlScenarioId);
@@ -108,28 +115,37 @@ export default function BuildPageClient() {
     } else if (scenarioId) {
       setScenarioId(null);
     }
-  }, [scenarioId, searchParams, setDslObject, setError, setScenarioId]);
+  }, [scenarioId, searchParamsString, setDslObject, setError, setScenarioId]);
 
   const runScenario = useCallback(async () => {
+    const runToken = latestRunRef.current + 1;
+    latestRunRef.current = runToken;
     setScenarioLoading(true);
     setScenarioError(null);
     try {
       const result = await runScenarioForDsl(dslString);
+      if (latestRunRef.current !== runToken) {
+        return;
+      }
       const scenarioData = result.runScenario;
       setScenarioResult(scenarioData, scenarioData?.id ?? undefined);
-      if (scenarioData?.id && scenarioData.id !== scenarioId) {
-        const params = new URLSearchParams(searchParams.toString());
+      const currentScenarioId = scenarioIdRef.current;
+      if (scenarioData?.id && scenarioData.id !== currentScenarioId) {
+        const params = new URLSearchParams(searchParamsString);
         params.set('scenarioId', scenarioData.id);
         const queryString = params.toString();
         const href = queryString ? `${pathname}?${queryString}` : pathname;
         router.replace(href, { scroll: false });
       }
+      scenarioIdRef.current = scenarioData?.id ?? null;
     } catch (err: any) {
       setScenarioError(err.message || 'Failed to run scenario');
     } finally {
-      setScenarioLoading(false);
+      if (latestRunRef.current === runToken) {
+        setScenarioLoading(false);
+      }
     }
-  }, [dslString, pathname, router, scenarioId, searchParams, setScenarioError, setScenarioLoading, setScenarioResult]);
+  }, [dslString, pathname, router, searchParamsString, setScenarioError, setScenarioLoading, setScenarioResult]);
 
   const fetchData = useCallback(async () => {
     setInitialLoading(true);

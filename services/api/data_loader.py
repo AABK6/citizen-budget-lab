@@ -1354,7 +1354,7 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
         base_def, base_debt = base_map.get(year, (0.0, 0.0))
         baseline_deficit_path.append(float(base_def))
         baseline_debt_path.append(float(base_debt))
-        total_def = base_def + deficit_delta_path[i] + macro.delta_deficit[i]
+        total_def = base_def - deficit_delta_path[i] - macro.delta_deficit[i]
         total_debt = base_debt + debt_delta_path[i]
         total_deficit_path.append(float(total_def))
         total_debt_path.append(float(total_debt))
