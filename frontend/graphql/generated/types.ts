@@ -30,8 +30,13 @@ export type Scalars = {
 
 export type Accounting = {
   __typename?: "Accounting";
+  baselineDebtPath?: Maybe<Array<Scalars["Float"]["output"]>>;
+  baselineDeficitPath?: Maybe<Array<Scalars["Float"]["output"]>>;
+  commitmentsPath?: Maybe<Array<Scalars["Float"]["output"]>>;
   debtPath: Array<Scalars["Float"]["output"]>;
+  debtDeltaPath?: Maybe<Array<Scalars["Float"]["output"]>>;
   deficitPath: Array<Scalars["Float"]["output"]>;
+  deficitDeltaPath?: Maybe<Array<Scalars["Float"]["output"]>>;
 };
 
 export type Allocation = {

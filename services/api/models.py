@@ -46,6 +46,10 @@ class Accounting:
     deficit_path: List[float]
     debt_path: List[float]
     commitments_path: Optional[List[float]] = None
+    deficit_delta_path: Optional[List[float]] = None
+    debt_delta_path: Optional[List[float]] = None
+    baseline_deficit_path: Optional[List[float]] = None
+    baseline_debt_path: Optional[List[float]] = None
 
 
 @dataclass

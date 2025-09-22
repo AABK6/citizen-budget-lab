@@ -49,3 +49,4 @@ For verification guidance (tests, commands, datasets), refer to `docs/REFACTOR_P
 - **CI Reliability:** continue to treat `.github/workflows/ci.yml` as insufficient for detecting dual-engine regressions until Phase 1 tasks are complete.
 - **Warm Data Contracts:** warmed artefacts now emit `.meta.json` manifests; keep extending validation scripts as new datasets are added.
 - **Documentation Sync:** keep `docs/REFACTOR_PLAN.md` and `current_dev_plan.md` updated whenever a task transitions to `[~]` or `[x]`.
+- **Scenario Outputs:** GraphQL `runScenario` now emits `baseline*` and `*Delta` paths for deficit and debt; ensure UI/analytics consumers use the absolute path unless a delta is explicitly desired.

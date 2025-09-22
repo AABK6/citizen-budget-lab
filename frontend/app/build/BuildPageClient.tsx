@@ -28,6 +28,7 @@ import { useBuildState } from './useBuildState';
 import { runScenarioForDsl } from '@/lib/permalink';
 import { MassCategoryList } from './components/MassCategoryList';
 import { MassCategoryPanel } from './components/MassCategoryPanel';
+import { computeDeficitTotals, computeDebtTotals } from '@/lib/fiscal';
 
 const treemapColors = ['#2563eb', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#ef4444', '#6366f1', '#14b8a6', '#a855f7', '#d946ef'];
 
@@ -348,7 +349,8 @@ export default function BuildPageClient() {
   };
 
   const formatCurrency = (amount: number) => {
-    return `€${(amount / 1e9).toFixed(1)}B`;
+    const sign = amount < 0 ? '-' : '';
+    return `${sign}€${(Math.abs(amount) / 1e9).toFixed(1)}B`;
   };
 
   const pendingMasses = useMemo(() => {
@@ -362,11 +364,9 @@ export default function BuildPageClient() {
     return pending;
   }, [scenarioResult]);
 
-  const totalDeltaExpenditures = scenarioResult?.accounting.deficitPath[0] || 0;
-  const totalDeltaRevenues = scenarioResult?.macro.deltaDeficit[0] || 0; // Placeholder for revenue impact
   const resolutionPct = scenarioResult?.resolution.overallPct || 0;
-  const debtPath = scenarioResult?.accounting.debtPath || [];
-  const deficitPath = scenarioResult?.accounting.deficitPath || [];
+  const deficitPath = scenarioResult ? computeDeficitTotals(scenarioResult.accounting, scenarioResult.macro?.deltaDeficit) : [];
+  const debtPath = scenarioResult ? computeDebtTotals(scenarioResult.accounting) : [];
   const deltaGDP = scenarioResult?.macro.deltaGDP || [];
 
   if (initialLoading) {
@@ -538,10 +538,10 @@ export default function BuildPageClient() {
             {scenarioResult && !scenarioLoading && !scenarioError && (
                 <>
                     <StatCards items={[
-                        { label: t('score.deficit_y0'), value: formatCurrency(scenarioResult.accounting.deficitPath[0]) },
+                        { label: t('score.deficit_y0'), value: formatCurrency(deficitPath[0] || 0) },
                         { label: t('build.resolution'), value: `${(scenarioResult.resolution.overallPct * 100).toFixed(0)}%` },
                     ]} />
-                    <DeficitPathChart deficit={deficitPath} debt={debtPath} />
+                    <DeficitPathChart deficit={deficitPath} debt={debtPath} startYear={year} />
                 </>
             )}
           </div>

@@ -1,0 +1,1 @@
+Scenario payloads now include baseline and delta fiscal paths so that Gemini-powered prototypes can surface absolute deficit levels without additional joins. Combine `baselineDeficitPath` with `deficitDeltaPath` when you need totals; the existing `deficitPath` field remains for backwards compatibility but now mirrors the pre-summed value returned by the API.

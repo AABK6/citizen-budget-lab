@@ -75,7 +75,7 @@
   "build.preset_focus": "Focus largest",
   "build.suggestions": "Suggestions",
   "build.popular_intents": "Popular intents",
-  "score.deficit_y0": "Deficit (y0)",
+  "score.deficit_y0": "Deficit (current year)",
   "buttons.run": "Run",
   "buttons.reset": "Reset",
   "buttons.apply": "Apply",

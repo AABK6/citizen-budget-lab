@@ -63,6 +63,10 @@ class AccountingType:
     deficitPath: List[float]
     debtPath: List[float]
     commitmentsPath: Optional[List[float]] = None
+    deficitDeltaPath: Optional[List[float]] = None
+    debtDeltaPath: Optional[List[float]] = None
+    baselineDeficitPath: Optional[List[float]] = None
+    baselineDebtPath: Optional[List[float]] = None
 
 
 @strawberry.type
@@ -1025,6 +1029,10 @@ class Query:
                 deficitPath=acc.deficit_path,
                 debtPath=acc.debt_path,
                 commitmentsPath=acc.commitments_path or [],
+                deficitDeltaPath=acc.deficit_delta_path or [],
+                debtDeltaPath=acc.debt_delta_path or [],
+                baselineDeficitPath=acc.baseline_deficit_path or [],
+                baselineDebtPath=acc.baseline_debt_path or [],
             ),
             compliance=ComplianceType(
                 eu3pct=comp.eu3pct,
@@ -1156,6 +1164,10 @@ class Query:
                 deficitPath=acc_a.deficit_path,
                 debtPath=acc_a.debt_path,
                 commitmentsPath=acc_a.commitments_path or [],
+                deficitDeltaPath=acc_a.deficit_delta_path or [],
+                debtDeltaPath=acc_a.debt_delta_path or [],
+                baselineDeficitPath=acc_a.baseline_deficit_path or [],
+                baselineDebtPath=acc_a.baseline_debt_path or [],
             ),
             compliance=ComplianceType(
                 eu3pct=comp_a.eu3pct,
@@ -1189,6 +1201,10 @@ class Query:
                 deficitPath=acc_b.deficit_path,
                 debtPath=acc_b.debt_path,
                 commitmentsPath=acc_b.commitments_path or [],
+                deficitDeltaPath=acc_b.deficit_delta_path or [],
+                debtDeltaPath=acc_b.debt_delta_path or [],
+                baselineDeficitPath=acc_b.baseline_deficit_path or [],
+                baselineDebtPath=acc_b.baseline_debt_path or [],
             ),
             compliance=ComplianceType(
                 eu3pct=comp_b.eu3pct,
@@ -1255,6 +1271,10 @@ class Mutation:
                 deficitPath=acc.deficit_path,
                 debtPath=acc.debt_path,
                 commitmentsPath=acc.commitments_path or [],
+                deficitDeltaPath=acc.deficit_delta_path or [],
+                debtDeltaPath=acc.debt_delta_path or [],
+                baselineDeficitPath=acc.baseline_deficit_path or [],
+                baselineDebtPath=acc.baseline_debt_path or [],
             ),
             compliance=ComplianceType(
                 eu3pct=comp.eu3pct,

@@ -166,7 +166,15 @@ type Allocation { mission: [MissionAllocation!]!, cofog: [MissionAllocation!], b
 type Supplier { siren: String!, name: String! }
 type ProcurementItem { supplier: Supplier!, amountEur: Float!, cpv: String, procedureType: String, locationCode: String, sourceUrl: String }
 
-type Accounting { deficitPath: [Float!]!, debtPath: [Float!]! }
+type Accounting {
+  deficitPath: [Float!]!
+  debtPath: [Float!]!
+  commitmentsPath: [Float!]
+  deficitDeltaPath: [Float!]
+  debtDeltaPath: [Float!]
+  baselineDeficitPath: [Float!]
+  baselineDebtPath: [Float!]
+}
 type Compliance { eu3pct: [String!]!, eu60pct: [String!]!, netExpenditure: [String!]!, localBalance: [String!]! }
 type Macro { deltaGDP: [Float!]!, deltaEmployment: [Float!]!, deltaDeficit: [Float!]!, assumptions: JSON! }
 
@@ -187,6 +195,8 @@ type ScenarioCompareResult {
     pieceLabels: JSON!
     massLabels: JSON!
 }
+
+"2025-09-22 update:" The `RunScenarioPayload.accounting` object now always includes baseline-plus-delta data. `deficitPath` / `debtPath` provide the summed totals for convenience, while the separate `baseline*` and `*Delta` arrays let clients distinguish the automatic baseline from the mechanical and macro impacts returned by the engine.
 
 type EUCountryCofog { country: String!, code: String!, label: String!, amountEur: Float!, share: Float! }
 type FiscalPath { years: [Int!]!, deficitRatio: [Float!]!, debtRatio: [Float!]! }

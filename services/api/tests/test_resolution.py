@@ -19,9 +19,11 @@ actions:
 """
     sid, acc, comp, macro, reso, warnings = run_scenario(_b64(sdl))
     
-    assert acc.deficit_path[0] == 1000
-    assert acc.debt_path[0] == 1000
-    assert acc.debt_path[4] == 5000
+    assert acc.deficit_delta_path is not None
+    assert acc.debt_delta_path is not None
+    assert acc.deficit_delta_path[0] == 1000
+    assert acc.debt_delta_path[0] == 1000
+    assert acc.debt_delta_path[4] == 5000
 
     assert reso["overallPct"] == 0.0 # No target, so resolution is 0%
     mass_09 = next((m for m in reso["byMass"] if m["massId"] == "09"), None)
@@ -44,8 +46,10 @@ actions:
 """
     sid, acc, comp, macro, reso, warnings = run_scenario(_b64(sdl))
     
-    assert acc.deficit_path[0] == 5000
-    assert acc.debt_path[4] == 25000
+    assert acc.deficit_delta_path is not None
+    assert acc.debt_delta_path is not None
+    assert acc.deficit_delta_path[0] == 5000
+    assert acc.debt_delta_path[4] == 25000
 
     assert reso["overallPct"] == 0.0 # Unspecified change doesn't count as specified
     mass_09 = next((m for m in reso["byMass"] if m["massId"] == "09"), None)
@@ -74,8 +78,10 @@ actions:
     sid, acc, comp, macro, reso, warnings = run_scenario(_b64(sdl))
     
     # The total change should be the mission target, not mission + piece
-    assert acc.deficit_path[0] == 5000
-    assert acc.debt_path[4] == 25000
+    assert acc.deficit_delta_path is not None
+    assert acc.debt_delta_path is not None
+    assert acc.deficit_delta_path[0] == 5000
+    assert acc.debt_delta_path[4] == 25000
 
     assert abs(reso["overallPct"] - (1000 / 5000)) < 1e-9
     mass_09 = next((m for m in reso["byMass"] if m["massId"] == "09"), None)

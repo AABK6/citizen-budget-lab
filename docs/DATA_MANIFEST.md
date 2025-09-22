@@ -70,7 +70,7 @@ This document provides a central inventory of all data sources, configuration fi
 *   **Purpose:** Provides the baseline multi-year path for core metrics like GDP, deficit, and debt.
 *   **Source Files:** `data/gdp_series.csv`, `data/baseline_deficit_debt.csv`
 *   **Status:** **Exists, with sample data.**
-*   **Pipeline:** Read by the `runScenario` mutation to calculate compliance and macro paths.
+*   **Pipeline:** Read by the `runScenario` mutation to calculate compliance and macro paths. The GraphQL payload now surfaces these series explicitly (`baselineDeficitPath`, `baselineDebtPath`) so clients can reconstruct absolute levels without re-fetching the CSV.
 
 ### 3.4. Warmed Snapshots (Eurostat, PLF, DECP)
 

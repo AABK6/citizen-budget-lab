@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import { gqlRequest } from '@/lib/graphql';
+import { computeDeficitTotals, computeDebtTotals } from '@/lib/fiscal';
 
 const scenarioCompareQuery = `
   query ScenarioCompare($a: ID!, $b: ID) {
@@ -12,7 +13,15 @@ const scenarioCompareQuery = `
       a {
         id
         scenarioId
-        accounting { deficitPath debtPath commitmentsPath }
+        accounting {
+          deficitPath
+          debtPath
+          commitmentsPath
+          deficitDeltaPath
+          debtDeltaPath
+          baselineDeficitPath
+          baselineDebtPath
+        }
         compliance { eu3pct eu60pct netExpenditure localBalance }
         macro { deltaGDP deltaEmployment deltaDeficit }
         resolution { overallPct byMass { massId targetDeltaEur specifiedDeltaEur } }
@@ -20,7 +29,15 @@ const scenarioCompareQuery = `
       b {
         id
         scenarioId
-        accounting { deficitPath debtPath commitmentsPath }
+        accounting {
+          deficitPath
+          debtPath
+          commitmentsPath
+          deficitDeltaPath
+          debtDeltaPath
+          baselineDeficitPath
+          baselineDebtPath
+        }
         compliance { eu3pct eu60pct netExpenditure localBalance }
         macro { deltaGDP deltaEmployment deltaDeficit }
         resolution { overallPct byMass { massId targetDeltaEur specifiedDeltaEur } }
@@ -36,7 +53,15 @@ const scenarioCompareQuery = `
 type RunScenario = {
   id: string;
   scenarioId: string;
-  accounting: { deficitPath: number[]; debtPath: number[]; commitmentsPath?: number[] };
+  accounting: {
+    deficitPath: number[];
+    debtPath: number[];
+    commitmentsPath?: number[];
+    deficitDeltaPath?: number[];
+    debtDeltaPath?: number[];
+    baselineDeficitPath?: number[];
+    baselineDebtPath?: number[];
+  };
   compliance: { eu3pct: string[]; eu60pct: string[]; netExpenditure: string[]; localBalance: string[] };
   macro: { deltaGDP: number[]; deltaEmployment: number[]; deltaDeficit: number[] };
   resolution: { overallPct: number; byMass: { massId: string; targetDeltaEur: number; specifiedDeltaEur: number }[] };
@@ -117,6 +142,10 @@ export default function ComparePageClient() {
           deficitPath: (sc.accounting?.deficitPath ?? []).map((v: number) => Number(v)),
           debtPath: (sc.accounting?.debtPath ?? []).map((v: number) => Number(v)),
           commitmentsPath: sc.accounting?.commitmentsPath?.map((v: number) => Number(v)),
+          deficitDeltaPath: sc.accounting?.deficitDeltaPath?.map((v: number) => Number(v)),
+          debtDeltaPath: sc.accounting?.debtDeltaPath?.map((v: number) => Number(v)),
+          baselineDeficitPath: sc.accounting?.baselineDeficitPath?.map((v: number) => Number(v)),
+          baselineDebtPath: sc.accounting?.baselineDebtPath?.map((v: number) => Number(v)),
         },
         compliance: {
           eu3pct: sc.compliance?.eu3pct ?? [],
@@ -216,8 +245,10 @@ export default function ComparePageClient() {
     if (!payload) {
       return null;
     }
-    const firstYearA = Number(first(payload.a.accounting.deficitPath));
-    const firstYearB = Number(first(payload.b.accounting.deficitPath));
+    const totalsA = computeDeficitTotals(payload.a.accounting, payload.a.macro.deltaDeficit);
+    const totalsB = computeDeficitTotals(payload.b.accounting, payload.b.macro.deltaDeficit);
+    const firstYearA = Number(first(totalsA));
+    const firstYearB = Number(first(totalsB));
     const commitmentsA = Number(first(payload.a.accounting.commitmentsPath));
     const commitmentsB = Number(first(payload.b.accounting.commitmentsPath));
 

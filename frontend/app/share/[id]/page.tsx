@@ -8,7 +8,15 @@ const getScenarioQuery = `
   query GetScenario($id: ID!) {
     scenario(id: $id) {
       id
-      accounting { deficitPath debtPath }
+      accounting {
+        deficitPath
+        debtPath
+        commitmentsPath
+        deficitDeltaPath
+        debtDeltaPath
+        baselineDeficitPath
+        baselineDebtPath
+      }
       compliance { eu3pct eu60pct netExpenditure localBalance }
       macro { deltaGDP deltaEmployment deltaDeficit assumptions }
       resolution { overallPct byMass { massId targetDeltaEur specifiedDeltaEur } }

@@ -16,6 +16,10 @@ Give the app reliable, up‑to‑date, and well‑documented pipes into French a
 
 ---
 
+**Fresh addition (2025-09-22):** The API’s `runScenario` payload now returns `baselineDeficitPath` / `baselineDebtPath` alongside their delta equivalents. When integrating downstream analyses, add the baseline back if you need absolute levels rather than pure scenario deltas.
+
+---
+
 ## A) Central‑government budget & performance (MEFSIN / data.economie.gouv.fr)
 
 **Platform**: Opendatasoft “Explore API v2.1” (uniform across many datasets)

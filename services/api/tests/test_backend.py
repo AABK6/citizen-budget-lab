@@ -110,7 +110,15 @@ actions:
       mutation Run($dsl: String!) {
         runScenario(input: { dsl: $dsl }) {
           id
-          accounting { deficitPath debtPath commitmentsPath }
+          accounting {
+            deficitPath
+            debtPath
+            commitmentsPath
+            deficitDeltaPath
+            debtDeltaPath
+            baselineDeficitPath
+            baselineDebtPath
+          }
           compliance { eu3pct eu60pct netExpenditure }
           macro { deltaGDP deltaEmployment deltaDeficit assumptions }
         }
@@ -124,6 +132,10 @@ actions:
     assert len(data["accounting"]["deficitPath"]) == 5
     assert len(data["accounting"]["debtPath"]) == 5
     assert len(data["accounting"]["commitmentsPath"]) == 5
+    assert len(data["accounting"]["deficitDeltaPath"]) == 5
+    assert len(data["accounting"]["debtDeltaPath"]) == 5
+    assert len(data["accounting"]["baselineDeficitPath"]) == 5
+    assert len(data["accounting"]["baselineDebtPath"]) == 5
     assert len(data["compliance"]["eu3pct"]) == 5
     assert len(data["compliance"]["eu60pct"]) == 5
     assert len(data["compliance"]["netExpenditure"]) == 5
@@ -162,12 +174,18 @@ actions:
 
     cp_sid, cp_acc, *_rest = run_scenario(_encode_scenario_yaml(cp_sdl))
     assert cp_sid
-    assert cp_acc.deficit_path[0] > 0
+    assert cp_acc.deficit_delta_path is not None
+    assert cp_acc.baseline_deficit_path is not None
+    assert cp_acc.deficit_delta_path[0] > 0
+    assert cp_acc.deficit_path[0] != cp_acc.baseline_deficit_path[0]
     assert cp_acc.commitments_path is not None
     assert cp_acc.commitments_path[0] == pytest.approx(0.0, abs=1e-6)
 
     _, ae_acc, *_ = run_scenario(_encode_scenario_yaml(ae_sdl))
-    assert ae_acc.deficit_path[0] == pytest.approx(0.0, abs=1e-6)
+    assert ae_acc.deficit_delta_path is not None
+    assert ae_acc.baseline_deficit_path is not None
+    assert ae_acc.deficit_delta_path[0] == pytest.approx(0.0, abs=1e-6)
+    assert ae_acc.deficit_path[0] == pytest.approx(ae_acc.baseline_deficit_path[0], abs=1e-6)
     assert ae_acc.commitments_path is not None
     assert ae_acc.commitments_path[0] > 0
 

@@ -1,6 +1,6 @@
 # Current Development Plan: A Prioritized Roadmap for Architectural Stability and Feature Completion
 
-> **Status update (2025-09-22):** All Phase 1 (warehouse unification) and Phase 2 (2026 baseline ingestion) deliverables are in production. Phase 3 UX work—permalink hygiene, the `Compare & Remix` page, and the builder state refactor—has also landed. This document now serves as a historical record of the remediation program and a checklist for ongoing validation.
+> **Status update (2025-09-22):** All Phase 1 (warehouse unification) and Phase 2 (2026 baseline ingestion) deliverables are in production. Phase 3 UX work—permalink hygiene, the `Compare & Remix` page, and the builder state refactor—has also landed. Most recently, the scenario engine now exposes both baseline and delta fiscal paths so the `/build` experience surfaces the true 2026 deficit out of the box. This document now serves as a historical record of the remediation program and a checklist for ongoing validation.
 
 ## 1.0 Executive Summary & Strategic Imperative
 

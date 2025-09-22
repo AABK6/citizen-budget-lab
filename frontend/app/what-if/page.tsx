@@ -6,6 +6,12 @@ import { DeficitPathChart } from '@/components/DeficitPathChart'
 import { RuleLights } from '@/components/RuleLights'
 import { StatCards } from '@/components/StatCards'
 import { useI18n } from '@/lib/i18n'
+import {
+  computeDeficitTotals,
+  computeDeficitDeltas,
+  computeDebtTotals,
+  computeDebtDeltas,
+} from '@/lib/fiscal'
 
 const SAMPLE_YAML = `version: 0.1
 baseline_year: 2026
@@ -48,7 +54,15 @@ export default function WhatIfPage() {
         mutation Run($dsl: String!) {
           runScenario(input: { dsl: $dsl }) {
             id
-            accounting { deficitPath debtPath }
+            accounting {
+              deficitPath
+              debtPath
+              commitmentsPath
+              deficitDeltaPath
+              debtDeltaPath
+              baselineDeficitPath
+              baselineDebtPath
+            }
             compliance { eu3pct eu60pct netExpenditure localBalance }
             macro { deltaGDP deltaEmployment deltaDeficit assumptions }
           }
@@ -66,14 +80,27 @@ export default function WhatIfPage() {
 
   const stats = useMemo(() => {
     if (!result) return null
-    const d0 = Number(result.accounting?.deficitPath?.[0] || 0)
-    const debt5 = Number(result.accounting?.debtPath?.[result.accounting?.debtPath?.length - 1] || 0)
-    const fmt = (v: number) => (v >= 0 ? '+' : '') + v.toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' €'
+    const deficitTotals = computeDeficitTotals(result.accounting, result.macro?.deltaDeficit)
+    const deficitDelta = computeDeficitDeltas(result.accounting, result.macro?.deltaDeficit)
+    const debtTotals = computeDebtTotals(result.accounting)
+    const debtDelta = computeDebtDeltas(result.accounting)
+    const currency = (v: number) => v.toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' €'
+    const signed = (v: number) => (v >= 0 ? '+' : '') + currency(v)
+    const lastDebtTotal = debtTotals.length ? debtTotals[debtTotals.length - 1] : 0
+    const lastDebtDelta = debtDelta.length ? debtDelta[debtDelta.length - 1] : 0
+
     return [
-      { label: 'Δ Deficit (Y0)', value: fmt(d0) },
-      { label: 'Δ Debt (Yend)', value: fmt(debt5) },
+      { label: 'Deficit (Y0)', value: currency(deficitTotals[0] ?? 0) },
+      { label: 'Δ vs baseline (Y0)', value: signed(deficitDelta[0] ?? 0) },
+      { label: 'Debt (Yend)', value: currency(lastDebtTotal) },
+      { label: 'Δ Debt vs baseline (Yend)', value: signed(lastDebtDelta) },
     ]
   }, [result])
+
+  const chartStartYear = useMemo(() => {
+    const match = yamlText.match(/baseline_year:\s*(\d{4})/)
+    return match ? Number(match[1]) : undefined
+  }, [yamlText])
 
   return (
     <div className="stack">
@@ -102,7 +129,11 @@ export default function WhatIfPage() {
           <h3>{t('whatif.results') || 'Results'}</h3>
           {stats && <StatCards items={stats} />} 
           <RuleLights eu3pct={result.compliance?.eu3pct} eu60pct={result.compliance?.eu60pct} netExpenditure={result.compliance?.netExpenditure} localBalance={result.compliance?.localBalance} />
-          <DeficitPathChart deficit={result.accounting?.deficitPath || []} debt={result.accounting?.debtPath || []} />
+          <DeficitPathChart
+            deficit={computeDeficitTotals(result.accounting, result.macro?.deltaDeficit)}
+            debt={computeDebtTotals(result.accounting)}
+            startYear={chartStartYear}
+          />
           <details open>
             <summary>{t('whatif.accounting') || 'Accounting'}</summary>
             <pre className="code">{JSON.stringify(result.accounting, null, 2)}</pre>

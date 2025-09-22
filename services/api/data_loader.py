@@ -1307,12 +1307,12 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
 
 
     # Deficit path = sum of deltas (positive increases deficit)
-    deficit_path = [float(x) for x in deltas_by_year]
-    debt_path: List[float] = []
+    deficit_delta_path = [float(x) for x in deltas_by_year]
+    debt_delta_path: List[float] = []
     debt = 0.0
-    for d in deficit_path:
+    for d in deficit_delta_path:
         debt += d
-        debt_path.append(float(debt))
+        debt_delta_path.append(float(debt))
 
     # Macro kernel
     macro = _macro_kernel(horizon_years, shocks_pct_gdp, gdp_series)
@@ -1345,11 +1345,19 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
         base_map = _read_baseline_def_debt()
     eu3 = []
     debt_ratio = []
+    baseline_deficit_path: List[float] = []
+    baseline_debt_path: List[float] = []
+    total_deficit_path: List[float] = []
+    total_debt_path: List[float] = []
     for i in range(horizon_years):
         year = baseline_year + i
         base_def, base_debt = base_map.get(year, (0.0, 0.0))
-        total_def = base_def + deficit_path[i] + macro.delta_deficit[i]
-        total_debt = base_debt + debt_path[i]
+        baseline_deficit_path.append(float(base_def))
+        baseline_debt_path.append(float(base_debt))
+        total_def = base_def + deficit_delta_path[i] + macro.delta_deficit[i]
+        total_debt = base_debt + debt_delta_path[i]
+        total_deficit_path.append(float(total_def))
+        total_debt_path.append(float(total_debt))
         ratio_def = total_def / gdp_series[i]
         eu3.append("breach" if ratio_def < -0.03 else "ok")
         debt_ratio.append((total_debt / gdp_series[i]))
@@ -1384,9 +1392,13 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
     )
 
     acc = Accounting(
-        deficit_path=deficit_path,
-        debt_path=debt_path,
+        deficit_path=total_deficit_path,
+        debt_path=total_debt_path,
         commitments_path=[float(v) for v in ae_deltas_by_year],
+        deficit_delta_path=deficit_delta_path,
+        debt_delta_path=debt_delta_path,
+        baseline_deficit_path=baseline_deficit_path,
+        baseline_debt_path=baseline_debt_path,
     )
 
     # Build resolution payload (overallPct + byMass)

@@ -42,6 +42,7 @@ This is the core interactive feature of the application, allowing users to build
     *   **Left Panel (Spending):** Lists spending categories (masses). Clicking a category expands a detailed view with underlying pieces and relevant policy reforms.
     *   **Center Panel (Canvas):** An interactive treemap visualizes the budget masses. Below are charts showing the scenario's impact on the deficit, debt, and economic growth.
     *   **Right Panel (Revenues):** Lists revenue categories with controls for adjustments.
+-   **Baseline Transparency Update (Sept 2025):** The "Current deficit" stat card and the deficit chart now display the absolute baseline deficit (≈ €150 bn in 2026) with deltas layered on top. Users no longer see a zeroed starting point when no reforms are applied; instead they get an immediate sense of the Treasury’s blank-page challenge.
 -   **Top HUD Bar:** A persistent header provides global feedback: the Resolution Meter, EU compliance lights, year selector, and scenario controls (Run, Reset, Undo/Redo).
 -   **Lens Switcher:** A toggle in the center panel allows users to re-color the treemap visualization based on different perspectives (e.g., by budget mass, by reform family).
 

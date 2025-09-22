@@ -1,6 +1,14 @@
 export type ScenarioResult = {
   id: string;
-  accounting: { deficitPath: number[]; debtPath: number[]; };
+  accounting: {
+    deficitPath: number[];
+    debtPath: number[];
+    commitmentsPath?: number[];
+    deficitDeltaPath?: number[];
+    debtDeltaPath?: number[];
+    baselineDeficitPath?: number[];
+    baselineDebtPath?: number[];
+  };
   compliance: {
     eu3pct: string[];
     eu60pct: string[];

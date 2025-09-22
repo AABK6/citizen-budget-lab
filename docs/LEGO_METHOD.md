@@ -140,6 +140,7 @@ Consistency & Validation
 - Mapping weights are expected to sum to 1 per (COFOG major × NA_ITEM) bucket across pieces that reference it.
 - Revenue splits are sourced from `data/revenue_splits.json` and can be audited alongside the baseline snapshot.
  - Lever attribution: sum of `mass_attribution` across masses equals the lever’s `delta_eur` (within tolerance); conflicts are rejected unless explicitly offset.
+- Scenario engine outputs now include `baselineDeficitPath` / `baselineDebtPath` alongside their delta counterparts. The UI and analytics combine these to show absolute levels, while keeping deltas explicit for attribution exercises.
 
 Versioning
 

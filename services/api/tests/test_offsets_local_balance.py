@@ -32,12 +32,15 @@ offsets:
 """
     q = """
       mutation Run($dsl: String!) {
-        runScenario(input: { dsl: $dsl }) { accounting { deficitPath } }
+        runScenario(input: { dsl: $dsl }) {
+          accounting { deficitPath deficitDeltaPath baselineDeficitPath }
+        }
       }
     """
     res = _exec_gql(q, {"dsl": _b64(sdl)})
     assert not res.errors, res.errors
-    path = res.data["runScenario"]["accounting"]["deficitPath"]
+    accounting = res.data["runScenario"]["accounting"]
+    path = accounting["deficitDeltaPath"]
     # All years should be ~0 after offset
     assert all(abs(v) < 1e-6 for v in path)
 
@@ -107,12 +110,15 @@ offsets:
 """
     q = """
       mutation Run($dsl: String!) {
-        runScenario(input: { dsl: $dsl }) { accounting { deficitPath } }
+        runScenario(input: { dsl: $dsl }) {
+          accounting { deficitPath deficitDeltaPath baselineDeficitPath }
+        }
       }
     """
     res = _exec_gql(q, {"dsl": _b64(sdl)})
     assert not res.errors, res.errors
-    path = res.data["runScenario"]["accounting"]["deficitPath"]
+    accounting = res.data["runScenario"]["accounting"]
+    path = accounting["deficitDeltaPath"]
     # All years should be ~0 after offset
     assert all(abs(v) < 1e-6 for v in path)
 
@@ -139,7 +145,7 @@ offsets:
     q = """
       mutation Run($dsl: String!) {
         runScenario(input: { dsl: $dsl }) {
-          accounting { deficitPath }
+          accounting { deficitPath deficitDeltaPath baselineDeficitPath }
           compliance { localBalance }
         }
       }
@@ -150,5 +156,5 @@ offsets:
     # Local balance should be 'ok'
     assert data["compliance"]["localBalance"][0] == "ok"
     # Main deficit path should NOT be affected by the local offset
-    assert data["accounting"]["deficitPath"][0] == 500000000
-
+    deltas = data["accounting"]["deficitDeltaPath"]
+    assert deltas[0] == 500000000

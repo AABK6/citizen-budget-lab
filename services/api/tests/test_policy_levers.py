@@ -75,6 +75,7 @@ actions:
     op: activate
 """
     _, acc, *_ = run_scenario(_encode(sdl))
-    assert acc.deficit_path[0] == pytest.approx(-lever["fixed_impact_eur"], abs=1e-6)
+    assert acc.deficit_delta_path is not None
+    assert acc.deficit_delta_path[0] == pytest.approx(-lever["fixed_impact_eur"], abs=1e-6)
     assert acc.commitments_path is not None
     assert acc.commitments_path[0] == pytest.approx(0.0, abs=1e-6)

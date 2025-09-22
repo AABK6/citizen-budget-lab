@@ -36,13 +36,18 @@ actions:
     recurring: true
 """
     q = """
-      mutation Run($dsl:String!){ runScenario(input:{ dsl:$dsl }){ accounting{ deficitPath } } }
+      mutation Run($dsl:String!){
+        runScenario(input:{ dsl:$dsl }){
+          accounting{ deficitPath deficitDeltaPath baselineDeficitPath }
+        }
+      }
     """
     res = gql_schema.schema.execute_sync(q, variable_values={"dsl": _b64(sdl)})
     assert not res.errors
-    path = res.data["runScenario"]["accounting"]["deficitPath"]
-    assert len(path) == 3
-    assert all(v >= 1e9 - 1 for v in path)
+    accounting = res.data["runScenario"]["accounting"]
+    delta = accounting["deficitDeltaPath"]
+    assert len(delta) == 3
+    assert all(v >= 1e9 - 1 for v in delta)
 
 
 def test_piece_delta_pct_uses_baseline_amount(monkeypatch, tmp_path):
@@ -61,12 +66,17 @@ actions:
     delta_pct: 10
 """
     q = """
-      mutation Run($dsl:String!){ runScenario(input:{ dsl:$dsl }){ accounting{ deficitPath } } }
+      mutation Run($dsl:String!){
+        runScenario(input:{ dsl:$dsl }){
+          accounting{ deficitPath deficitDeltaPath baselineDeficitPath }
+        }
+      }
     """
     res = gql_schema.schema.execute_sync(q, variable_values={"dsl": _b64(sdl)})
     assert not res.errors
-    path = res.data["runScenario"]["accounting"]["deficitPath"]
-    assert abs(path[0] - 1_000_000_000.0) < 1e-3
+    accounting = res.data["runScenario"]["accounting"]
+    delta = accounting["deficitDeltaPath"]
+    assert abs(delta[0] - 1_000_000_000.0) < 1e-3
 
 
 def test_run_scenario_without_warehouse_raises(monkeypatch):
