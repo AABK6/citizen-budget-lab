@@ -1,27 +1,24 @@
 # Refactoring Plan: Architectural Stability and Feature Completion
 
-_Last updated: 2025-09-08_
+_Last updated: 2025-09-22_
 
-This document mirrors the canonical roadmap in `current_dev_plan.md`. It exists so engineers have a single place to track the remediation work that will eliminate the "two-engine" architecture, ingest PLF 2026 data, and finish the outstanding UX features.
+> **Status:** The remediation program is complete. The dbt warehouse is now the single source of truth, PLF 2026 data flows end-to-end, and Phase 3 UX polish (permalinks, the builder refactor, `/compare`) is live. This plan is retained as an architectural log and an operational checklist.
+
+This document mirrors the canonical roadmap in `current_dev_plan.md`. It exists so engineers have a single place to track the remediation work that eliminated the "two-engine" architecture, ingested PLF 2026 data, and finished the outstanding UX features.
 
 ## 1. Executive Summary & Strategic Imperative
 
-### 1.1 Confirmed Diagnosis: A Project Divided
+### 1.1 Confirmed Diagnosis (Resolved)
 
-A granular, line-by-line audit of the Citizen Budget Lab codebase confirms the central finding of the "Strategic Analysis for the 2026 French Budget Simulation" report: the project is fundamentally compromised by a critical architectural flaw. This **two-engine problem** stems from an incomplete data warehouse refactor, resulting in two parallel and inconsistent data pipelines operating simultaneously.
+The initial audit exposed a **two-engine problem**: dbt models and JSON fallbacks could both answer API requests, often with conflicting numbers. Phase 1 removed the legacy path entirely, and regression tests now enforce the warehouse contract for every resolver.
 
-- The **first engine** is the intended single source of truth: a modern data warehouse managed by dbt.
-- The **second engine** is a legacy, file-based fallback system located within `services/api/data_loader.py`, which reads directly from warmed flat files in `data/cache/`, bypassing the warehouse entirely.
+### 1.2 Quality Assurance Now
 
-These systems are not in sync. They produce divergent results, particularly in the complex, year-aware logic for mapping administrative budget codes to COFOG classifications. This means the application can report different figures for the same query depending on the path taken, rendering any output unverifiable. Both `BACKLOG.md` and this plan label the inconsistency a **CRITICAL GAP**.
+CI continues to run unit tests, dbt builds, and typed frontend checks. Integration coverage has been expanded with parity tests (`test_cofog_mapping_parity.py`, `test_budget_baseline.py`) to ensure the warehouse and API stay aligned.
 
-### 1.2 Quality Assurance Blind Spot
+### 1.3 Strategic Outcome
 
-The CI pipeline (`.github/workflows/ci.yml`) currently gives a false sense of security. Backend tests, dbt builds, and the frontend build all pass, but the checks run in isolation. The suite cannot detect the cross-engine data divergence described above, which is why a fundamental integrity flaw can coexist with a green CI badge.
-
-### 1.3 Strategic Imperative: Halt and Refactor
-
-Given the severity of the architectural flaw, all net-new feature development is paused. Building atop a bifurcated foundation would add technical debt, surface contradictory numbers to users, and undermine trust. The sole focus of the engineering team is to complete the data warehouse refactor described below. This is a non-negotiable prerequisite for future shipping work.
+The refactor is complete. The ongoing mandate is to keep warmers, dbt models, and UX surfaces healthy so that new content (e.g., PLF updates) can drop in without reintroducing architectural drift.
 
 ### 1.4 Critical Path (Three Phases)
 
@@ -31,7 +28,7 @@ Given the severity of the architectural flaw, all net-new feature development is
 
 ## 2. Task Ledger
 
-All tasks are currently **Not Started**.
+All remediation tasks are **Completed**; the ledger is retained for traceability.
 
 | Task ID | Description | Phase | Priority | Key Files & Components | Acceptance Criteria |
 | --- | --- | --- | --- | --- | --- |
@@ -43,23 +40,22 @@ All tasks are currently **Not Started**.
 | **DI-02** | Create dbt source/staging models for PLF ceilings and integrate into semantic layer (`stg_plf_2026_ceilings`, downstream marts). | 2 | High | `warehouse/models/staging/`, new source config | dbt ingest succeeds; downstream marts can reference PLF ceilings; `dbt build/test` stays green. | Completed |
 | **BL-01** | Build `fct_simulation_baseline_2026` (joins LFI 2025, PLF 2026, macro forecasts; dbt tests for totals). | 2 | High | `warehouse/models/marts/fct_simulation_baseline_2026.sql` (new) | Baseline mart combines inputs and passes dbt tests for totals/consistency. | Completed |
 | **BL-02** | Surface baseline disclaimer in `/build` explaining PLF proposal assumptions. | 2 | Medium | `frontend/app/build/BuildPageClient.tsx` | Prominent UI disclaimer clarifies baseline is a proposal that may change. | Completed |
-| **BE-03** | Implement AE/CP arithmetic differentiation (dimension-aware deltas, unit tests). | 3 | Medium | `services/api/data_loader.py`, tests | Scenario actions respect `dimension` flag, maintaining separate AE and CP ledgers. |
-| **BE-04** | Model PLF 2026 policy levers ("année blanche", targeted ministry cuts) with verified fiscal impacts. | 3 | Medium | `services/api/policy_catalog.py`, `services/api/data_loader.py`, tests | Levers defined, applied correctly in `run_scenario`, unit tests cover impacts. |
-| **FE-01** | Refactor `BuildPageClient.tsx` state management (introduce reducer/custom hooks, modular components). | 3 | Medium | `frontend/app/build/BuildPageClient.tsx` | Component decomposed; state handled via reducer/custom hooks; behaviour unchanged. |
-| **FE-02** | Unify permalink generation/parsing (`scenarioId` everywhere; shared utility for `/challenges`, `/build`, share links). | 3 | Low | `frontend/lib/`, `frontend/app/challenges/page.tsx`, `frontend/app/build/BuildPageClient.tsx` | Single query parameter format; shared helpers; manual QA on permalinks. |
-| **FE-03** | Implement the "Compare & Remix" UI (fully interactive `/compare` powered by `scenarioCompare`). | 3 | Low | `frontend/app/compare/ComparePageClient.tsx`, GraphQL schema | `/compare` loads two scenario IDs, renders comparison using `scenarioCompare`. |
+| **BE-03** | Implement AE/CP arithmetic differentiation (dimension-aware deltas, unit tests). | 3 | Medium | `services/api/data_loader.py`, tests | Scenario actions respect `dimension` flag, maintaining separate AE and CP ledgers. | Completed |
+| **BE-04** | Model PLF 2026 policy levers ("année blanche", targeted ministry cuts) with verified fiscal impacts. | 3 | Medium | `services/api/policy_catalog.py`, `services/api/data_loader.py`, tests | Levers defined, applied correctly in `run_scenario`, unit tests cover impacts. | Completed |
+| **FE-01** | Refactor `BuildPageClient.tsx` state management (introduce reducer/custom hooks, modular components). | 3 | Medium | `frontend/app/build/BuildPageClient.tsx` | Component decomposed; state handled via reducer/custom hooks; behaviour unchanged. | Completed |
+| **FE-02** | Unify permalink generation/parsing (`scenarioId` everywhere; shared utility for `/challenges`, `/build`, share links). | 3 | Low | `frontend/lib/`, `frontend/app/challenges/page.tsx`, `frontend/app/build/BuildPageClient.tsx` | Single query parameter format; shared helpers; manual QA on permalinks. | Completed |
+| **FE-03** | Implement the "Compare & Remix" UI (fully interactive `/compare` powered by `scenarioCompare`). | 3 | Low | `frontend/app/compare/ComparePageClient.tsx`, GraphQL schema | `/compare` loads two scenario IDs, renders comparison using `scenarioCompare`. | Completed |
 
 ## 3. Risks & Dependencies
 
-- **Two-engine divergence remains** until BE-01 and BE-02 land. We expect continued inconsistencies in user-visible numbers until the fallbacks are removed.
-- **Static document formats** for PLF datasets may change unexpectedly; DI-01 should include robust parsing and validation.
-- **CI blind spots** will persist; once Phase 1 closes we must extend CI to run seed generation + dbt builds + integration smoke tests.
+- **Upstream dataset volatility.** PLF workbooks, Eurostat metadata, and DECP exports can add or rename fields. Warmers must continue to validate headers and surface schema changes quickly.
+- **Data freshness.** The warehouse reads from `data/cache/`; missed warmer runs can leave the duckdb snapshot stale. Schedule nightly warmers (or trigger on data releases) and monitor `tools/warm_summary.py` output.
+- **Regression coverage.** The API/dbt/pytest suite now catches drift, but CI must keep running `dbt build` and the full pytest suite (including parity tests) to preserve guarantees.
 
 ## 4. Immediate Next Actions
 
-1. Draft implementation notes for BE-01 (warehouse query, error handling) and BE-02 (baseline loading contract).
-2. ✅ 2025-09-21 — APU subsector rules codified in `dim_apu_entities` (DBT-01 delivered).
-3. Prototype PLF PDF parsing locally to de-risk DI-01.
-4. Establish test harness for future AE/CP dimension checks before BE-03 work begins.
+1. Automate regular warmer runs (`make warm-all`, `make warm-decp`) with alerting when upstream fetches fail.
+2. Keep dbt snapshots current by running `dbt build` after each warmer batch and archiving `data/warehouse.duckdb` releases.
+3. Continue to dogfood `/compare` and permalink flows to capture UX regressions early.
 
 Progress should always be reflected in both this document and `BACKLOG.md`.

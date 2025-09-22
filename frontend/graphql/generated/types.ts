@@ -1,5 +1,3 @@
-import { gql } from "@apollo/client";
-import * as Apollo from "@apollo/client";
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
@@ -20,7 +18,6 @@ export type Incremental<T> =
   | {
       [P in keyof T]?: P extends " $fragmentName" | "__typename" ? T[P] : never;
     };
-const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: { input: string; output: string };
@@ -445,105 +442,3 @@ export type GetAllocationQuery = {
     }> | null;
   };
 };
-
-export const GetAllocationDocument = gql`
-  query GetAllocation($year: Int!, $basis: BasisEnum!, $lens: LensEnum!) {
-    allocation(year: $year, basis: $basis, lens: $lens) {
-      mission {
-        code
-        label
-        amountEur
-        share
-      }
-      cofog {
-        code
-        label
-        amountEur
-        share
-      }
-      beneficiary {
-        code
-        label
-        amountEur
-        share
-      }
-    }
-  }
-`;
-
-/**
- * __useGetAllocationQuery__
- *
- * To run a query within a React component, call `useGetAllocationQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAllocationQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetAllocationQuery({
- *   variables: {
- *      year: // value for 'year'
- *      basis: // value for 'basis'
- *      lens: // value for 'lens'
- *   },
- * });
- */
-export function useGetAllocationQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    GetAllocationQuery,
-    GetAllocationQueryVariables
-  > &
-    (
-      | { variables: GetAllocationQueryVariables; skip?: boolean }
-      | { skip: boolean }
-    ),
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<GetAllocationQuery, GetAllocationQueryVariables>(
-    GetAllocationDocument,
-    options,
-  );
-}
-export function useGetAllocationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    GetAllocationQuery,
-    GetAllocationQueryVariables
-  >,
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<GetAllocationQuery, GetAllocationQueryVariables>(
-    GetAllocationDocument,
-    options,
-  );
-}
-export function useGetAllocationSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
-        GetAllocationQuery,
-        GetAllocationQueryVariables
-      >,
-) {
-  const options =
-    baseOptions === Apollo.skipToken
-      ? baseOptions
-      : { ...defaultOptions, ...baseOptions };
-  return Apollo.useSuspenseQuery<
-    GetAllocationQuery,
-    GetAllocationQueryVariables
-  >(GetAllocationDocument, options);
-}
-export type GetAllocationQueryHookResult = ReturnType<
-  typeof useGetAllocationQuery
->;
-export type GetAllocationLazyQueryHookResult = ReturnType<
-  typeof useGetAllocationLazyQuery
->;
-export type GetAllocationSuspenseQueryHookResult = ReturnType<
-  typeof useGetAllocationSuspenseQuery
->;
-export type GetAllocationQueryResult = Apollo.QueryResult<
-  GetAllocationQuery,
-  GetAllocationQueryVariables
->;

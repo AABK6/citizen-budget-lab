@@ -440,14 +440,36 @@ def _coerce_plafond_amount(raw: Any, header_hint: str | None = None) -> float | 
 
 
 def _parse_plf_2026_xlsx(path: str) -> List[tuple[str, str, float]]:
-    wb = load_workbook(path, data_only=True, read_only=True)
-    sheet = wb.active
+    suffix = Path(path).suffix.lower()
+    rows_iter: Iterable[tuple]
+    if suffix == ".xls":
+        try:
+            import xlrd  # type: ignore
+        except ImportError as exc:  # pragma: no cover - optional dependency
+            raise RuntimeError("xlrd is required to parse .xls PLF sources") from exc
+        wb = xlrd.open_workbook(path)
+        sheet = wb.sheet_by_index(0)
+
+        def _xls_rows() -> Iterable[tuple]:
+            for idx in range(sheet.nrows):
+                yield tuple(sheet.row_values(idx))
+
+        rows_iter = _xls_rows()
+    else:
+        wb = load_workbook(path, data_only=True, read_only=True)
+        sheet = wb.active
+
+        def _xlsx_rows() -> Iterable[tuple]:
+            for row in sheet.iter_rows(values_only=True):
+                yield tuple(row)
+
+        rows_iter = _xlsx_rows()
     code_idx: int | None = None
     label_idx: int | None = None
     amount_idx: int | None = None
     amount_header: str | None = None
     entries: dict[str, tuple[str, float]] = {}
-    for row in sheet.iter_rows(values_only=True):
+    for row in rows_iter:
         values = [str(v).strip() if v is not None else "" for v in row]
         lowered = [v.lower() for v in values]
         if not any(values):
@@ -1232,9 +1254,12 @@ def warm_decp_procurement(
     base: str | None = None,
     dataset: str | None = None,
     *,
+    ods_where: str | None = None,
     enrich_sirene: bool = False,
     sirene_max: int = 100,
     sirene_qps: int = 5,
+    page_size: int = 100,
+    max_pages: int = 1000,
 ) -> str:
     """Ingest consolidated DECP-like data (CSV or ODS), deduplicate and roll up lots→contracts.
 
@@ -1246,7 +1271,23 @@ def warm_decp_procurement(
     """
     _ensure_dir(CACHE_DIR)
     t0 = time.time()
-    LOG.info("[DECP] start year=%s csv=%s ods=%s:%s enrich_sirene=%s max=%s qps=%s", year, csv_path or '-', base or '-', dataset or '-', enrich_sirene, sirene_max, sirene_qps)
+    if page_size > 100:
+        LOG.warning("[DECP] page_size %s exceeds API limit (100); clamping to 100", page_size)
+        page_size = 100
+
+    LOG.info(
+        "[DECP] start year=%s csv=%s ods=%s:%s where=%s enrich_sirene=%s max=%s qps=%s page_size=%s max_pages=%s",
+        year,
+        csv_path or '-',
+        base or '-',
+        dataset or '-',
+        ods_where or '-',
+        enrich_sirene,
+        sirene_max,
+        sirene_qps,
+        page_size,
+        max_pages,
+    )
 
     # Normalize and group by contract_id + signed_date
     def _year_of(s: str | None) -> int | None:
@@ -1261,26 +1302,57 @@ def warm_decp_procurement(
     def _process_record(rec: Dict[str, Any]) -> None:
         if not rec:
             return
-        y = _year_of(rec.get("signed_date") or rec.get("datePublication"))
+        signed_raw = (
+            rec.get("signed_date")
+            or rec.get("datePublication")
+            or rec.get("datepublication")
+            or rec.get("datepublicationdonnees")
+            or rec.get("datePublicationDonnees")
+            or rec.get("datenotification")
+            or rec.get("dateNotification")
+        )
+        y = _year_of(signed_raw)
         if y != year:
             return
         cid = str(rec.get("contract_id") or rec.get("id") or rec.get("id_marche") or rec.get("id_contract") or "").strip()
         if not cid:
             return
-        key = (cid, rec.get("signed_date") or rec.get("datePublication") or "")
+        key = (cid, signed_raw or "")
         ent = groups.setdefault(
             key,
             {
                 "contract_id": cid,
-                "buyer_org_id": str(rec.get("buyer_org_id") or rec.get("acheteur_id") or ""),
-                "supplier_siren": str(rec.get("supplier_siren") or rec.get("siret") or rec.get("siren") or ""),
-                "supplier_name": str(rec.get("supplier_name") or rec.get("fournisseur") or rec.get("raisonSociale") or ""),
-                "signed_date": str(rec.get("signed_date") or rec.get("datePublication") or ""),
+                "buyer_org_id": str(rec.get("buyer_org_id") or rec.get("acheteur_id") or rec.get("acheteur.id") or "UNKNOWN"),
+                "supplier_siren": str(
+                    rec.get("supplier_siren")
+                    or rec.get("siret")
+                    or rec.get("siren")
+                    or rec.get("titulaire_id_1")
+                    or rec.get("titulaireId1")
+                    or "UNKNOWN"
+                ),
+                "supplier_name": str(
+                    rec.get("supplier_name")
+                    or rec.get("fournisseur")
+                    or rec.get("raisonSociale")
+                    or rec.get("titulaire_denominationSociale_1")
+                    or rec.get("titulaire_denominationsociale_1")
+                    or rec.get("titulaire_denominationSociale")
+                    or "UNKNOWN"
+                ),
+                "signed_date": str(signed_raw or ""),
                 "amount_eur": 0.0,
-                "cpv_code": str(rec.get("cpv_code") or rec.get("cpv") or ""),
+                "cpv_code": str(rec.get("cpv_code") or rec.get("cpv") or rec.get("codecpv") or ""),
                 "procedure_type": str(rec.get("procedure_type") or rec.get("procedure") or ""),
                 "lot_count": 0,
-                "location_code": str(rec.get("location_code") or rec.get("codeCommune") or rec.get("code_postal") or ""),
+                "location_code": str(
+                    rec.get("location_code")
+                    or rec.get("codeCommune")
+                    or rec.get("code_postal")
+                    or rec.get("lieuExecution.code")
+                    or rec.get("lieuexecution_code")
+                    or ""
+                ),
                 "amount_quality": "OK",
             },
         )
@@ -1308,13 +1380,16 @@ def warm_decp_procurement(
     elif base and dataset:
         try:
             cnt = 0
-            for item in ods.iterate_records(base, dataset, select=None, where=None, order_by=None, page_size=1000, max_pages=5000):
+            for item in ods.iterate_records(base, dataset, select=None, where=ods_where, order_by=None, page_size=page_size, max_pages=max_pages):
                 _process_record(item)
                 cnt += 1
-                if cnt % 5000 == 0:
+                if cnt % page_size == 0:
                     LOG.info("[DECP] fetched %d rows...", cnt)
-            LOG.info("[DECP] fetched total %d rows from ODS", cnt)
-            auto_src = f"ods:{base}:{dataset}"
+            if cnt == 0:
+                raise RuntimeError("ODS dataset returned zero rows")
+            LOG.info("[DECP] fetched total %d rows from ODS (paged)", cnt)
+            where_suffix = f"&where={ods_where}" if ods_where else ""
+            auto_src = f"ods:{base}:{dataset}?page_size={page_size}&max_pages={max_pages}{where_suffix}"
         except Exception as e:
             LOG.warning("[DECP] ODS fetch failed: %s", e)
     else:
@@ -1511,9 +1586,12 @@ def main(argv: Iterable[str] | None = None) -> None:
     sp_decp.add_argument("--csv", dest="csv_path", default=None, help="Path to input CSV (consolidated)")
     sp_decp.add_argument("--base", default=None, help="ODS base URL (optional)")
     sp_decp.add_argument("--dataset", default=None, help="ODS dataset id (optional)")
+    sp_decp.add_argument("--where", dest="ods_where", default=None, help="Optional ODS where clause, e.g. annee=2024")
     sp_decp.add_argument("--enrich-sirene", action="store_true", help="Enrich top suppliers with SIRENE (NAF, size)")
     sp_decp.add_argument("--sirene-max", type=int, default=100, help="Max suppliers to enrich by amount")
     sp_decp.add_argument("--sirene-qps", type=int, default=5, help="Throttle SIRENE lookups (queries per second)")
+    sp_decp.add_argument("--page-size", type=int, default=100, help="ODS pagination batch size (default/max: 100)")
+    sp_decp.add_argument("--max-pages", type=int, default=1000, help="Max pages to fetch from ODS (default: 1000)")
 
     # INSEE macro series warmer
     sp_macro = sub.add_parser("macro-insee", help="Warm selected INSEE BDM macro series from a config JSON")
@@ -1561,9 +1639,12 @@ def main(argv: Iterable[str] | None = None) -> None:
             csv_path=args.csv_path,
             base=args.base,
             dataset=args.dataset,
+            ods_where=getattr(args, "ods_where", None),
             enrich_sirene=bool(getattr(args, "enrich_sirene", False)),
             sirene_max=int(getattr(args, "sirene_max", 100)),
             sirene_qps=int(getattr(args, "sirene_qps", 5)),
+            page_size=int(getattr(args, "page_size", 500)),
+            max_pages=int(getattr(args, "max_pages", 1000)),
         )
         print(f"Wrote {path}")
         return

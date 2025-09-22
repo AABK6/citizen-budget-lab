@@ -1,7 +1,7 @@
 {{ config(materialized='view') }}
 
 with raw_cache as (
-  select * from read_csv_auto('{{ var('procurement_glob') }}', header=true)
+  select * from read_csv_auto('{{ var('procurement_glob') }}', header=true, all_varchar=true)
 ),
 cache_typed as (
   select
@@ -19,7 +19,7 @@ cache_typed as (
   from raw_cache
 ),
 raw_sample as (
-  select * from read_csv_auto('{{ var('procurement_sample') }}', header=true)
+  select * from read_csv_auto('{{ var('procurement_sample') }}', header=true, all_varchar=true)
 ),
 sample_typed as (
   select
