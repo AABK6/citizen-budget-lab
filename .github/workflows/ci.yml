@@ -21,6 +21,18 @@ jobs:
           source .venv/bin/activate
           python -m pip install -U pip
           pip install -r services/api/requirements.txt
+      - name: Install dbt for warehouse build
+        run: |
+          source .venv/bin/activate
+          pip install "dbt-core~=1.9.0" "dbt-duckdb~=1.9.0" "dbt-postgres~=1.9.0"
+      - name: Warm datasets and build warehouse snapshot
+        env:
+          DBT_PROFILES_DIR: warehouse
+        run: |
+          source .venv/bin/activate
+          make warm-all YEAR=2026 COUNTRIES=FR
+          dbt deps --project-dir warehouse || true
+          dbt build --project-dir warehouse
       - name: Run tests
         run: |
           source .venv/bin/activate
