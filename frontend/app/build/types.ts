@@ -75,5 +75,8 @@ export type MassCategory = {
   id: string;
   name: string;
   amount: number;
+  share: number;
+  color?: string;
+  icon?: string;
   pieces: LegoPiece[];
 };

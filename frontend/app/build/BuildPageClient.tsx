@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useCallback, useMemo, useRef } from 'react';
+import { useEffect, useCallback, useMemo, useRef, useState } from 'react';
 import { useI18n } from '@/lib/i18n';
 import { gqlRequest } from '@/lib/graphql';
 import { parseDsl, serializeDsl } from '@/lib/dsl';
@@ -30,7 +30,33 @@ import { MassCategoryList } from './components/MassCategoryList';
 import { MassCategoryPanel } from './components/MassCategoryPanel';
 import { computeDeficitTotals, computeDebtTotals } from '@/lib/fiscal';
 
-const treemapColors = ['#2563eb', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#ef4444', '#6366f1', '#14b8a6', '#a855f7', '#d946ef'];
+const fallbackTreemapColors = ['#2563eb', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#ef4444', '#6366f1', '#14b8a6', '#a855f7', '#d946ef'];
+
+const missionStyles: Record<string, { color: string; icon: string }> = {
+  M_EDU: { color: '#2563eb', icon: '📚' },
+  M_HIGHER_EDU: { color: '#4338ca', icon: '🎓' },
+  M_HEALTH: { color: '#16a34a', icon: '🩺' },
+  M_PENSIONS: { color: '#6366f1', icon: '💼' },
+  M_SOLIDARITY: { color: '#f97316', icon: '🤝' },
+  M_EMPLOYMENT: { color: '#0ea5e9', icon: '🛠️' },
+  M_HOUSING: { color: '#f59e0b', icon: '🏠' },
+  M_SECURITY: { color: '#dc2626', icon: '🚔' },
+  M_JUSTICE: { color: '#7c3aed', icon: '⚖️' },
+  M_CIVIL_PROT: { color: '#fb7185', icon: '🚒' },
+  M_DEFENSE: { color: '#1f2937', icon: '🛡️' },
+  M_TRANSPORT: { color: '#0f766e', icon: '🚆' },
+  M_ENVIRONMENT: { color: '#22c55e', icon: '🌿' },
+  M_ECONOMIC: { color: '#0284c7', icon: '🏭' },
+  M_AGRI: { color: '#65a30d', icon: '🌾' },
+  M_CULTURE: { color: '#db2777', icon: '🎭' },
+  M_ADMIN: { color: '#4b5563', icon: '🏛️' },
+  M_DIPLO: { color: '#3b82f6', icon: '🌍' },
+  M_TERRITORIES: { color: '#ea580c', icon: '🗺️' },
+  M_DEBT: { color: '#475569', icon: '💶' },
+  M_UNKNOWN: { color: '#6b7280', icon: '❓' },
+};
+
+const getMissionStyle = (missionId: string) => missionStyles[missionId] || missionStyles.M_UNKNOWN;
 
 export default function BuildPageClient() {
   const { t } = useI18n();
@@ -60,6 +86,9 @@ export default function BuildPageClient() {
     expandedFamilies,
     scenarioId,
   } = state;
+  const [displayMode, setDisplayMode] = useState<'amount' | 'share'>('amount');
+  const [showLensInfo, setShowLensInfo] = useState(false);
+  const [shareFeedback, setShareFeedback] = useState<string | null>(null);
   const {
     setInitialLoading,
     setScenarioLoading,
@@ -92,6 +121,12 @@ export default function BuildPageClient() {
   const searchParamsString = searchParams.toString();
   const scenarioIdRef = useRef<string | null>(scenarioId);
   const latestRunRef = useRef(0);
+
+  useEffect(() => {
+    if (!shareFeedback) return;
+    const timer = setTimeout(() => setShareFeedback(null), 2400);
+    return () => clearTimeout(timer);
+  }, [shareFeedback]);
 
   useEffect(() => {
     scenarioIdRef.current = scenarioId;
@@ -164,9 +199,9 @@ export default function BuildPageClient() {
       const spending = allPieces.filter((p: LegoPiece) => p.type === 'expenditure');
       const revenue = allPieces.filter((p: LegoPiece) => p.type === 'revenue');
 
-      const missionLabels: { [key: string]: string } = {};
+      const missionLabels: Record<string, MissionLabel> = {};
       data.missionLabels?.forEach((m: MissionLabel) => {
-        missionLabels[m.id] = m.displayLabel;
+        missionLabels[m.id] = m;
       });
 
       const missionData: Record<string, MassCategory> = {};
@@ -174,17 +209,21 @@ export default function BuildPageClient() {
         const amount = p.amountEur || 0;
         const missionWeights = (p.missions || []).filter((m) => (m.weight ?? 0) > 0);
         const missions = missionWeights.length > 0 ? missionWeights : [{ code: 'M_UNKNOWN', weight: 1 }];
-        const totalWeight = missions.reduce((sum, m) => sum + (m.weight ?? 0), 0);
+        const totalWeight = missions.reduce((sum, m) => sum + (m.weight ?? 0), 0) || missions.length;
 
         missions.forEach((mission) => {
           const missionId = mission.code || 'M_UNKNOWN';
-          const weight = totalWeight > 0 ? (mission.weight ?? 0) / totalWeight : (1 / missions.length);
+          const style = getMissionStyle(missionId);
+          const weight = (mission.weight ?? 0) / totalWeight || (1 / missions.length);
           const contribution = amount * weight;
           if (!missionData[missionId]) {
             missionData[missionId] = {
               id: missionId,
-              name: missionLabels[missionId] || missionId.replace('M_', ''),
+              name: missionLabels[missionId]?.displayLabel || missionId.replace('M_', ''),
               amount: 0,
+              share: 0,
+              color: style.color,
+              icon: style.icon,
               pieces: [],
             };
           }
@@ -194,6 +233,12 @@ export default function BuildPageClient() {
           }
         });
       });
+
+      const totalMissionAmount = Object.values(missionData).reduce((sum, mission) => sum + mission.amount, 0);
+      Object.values(missionData).forEach((mission) => {
+        mission.share = totalMissionAmount > 0 ? mission.amount / totalMissionAmount : 0;
+      });
+
       const massList = Object.values(missionData)
         .filter((entry) => entry.amount > 0)
         .sort((a, b) => b.amount - a.amount);
@@ -382,6 +427,24 @@ export default function BuildPageClient() {
     return `${sign}€${(Math.abs(amount) / 1e9).toFixed(1)}B`;
   };
 
+  const formatShare = (value: number) => `${(value * 100).toFixed(1)}%`;
+
+  const handleShare = useCallback(async () => {
+    if (!scenarioIdRef.current) {
+      setShareFeedback('Run the scenario to generate a shareable link.');
+      return;
+    }
+    try {
+      const params = new URLSearchParams(searchParamsString);
+      params.set('scenarioId', scenarioIdRef.current);
+      const url = `${window.location.origin}${pathname}${params.toString() ? `?${params.toString()}` : ''}`;
+      await navigator.clipboard.writeText(url);
+      setShareFeedback('Scenario link copied to clipboard.');
+    } catch (err) {
+      setShareFeedback('Unable to copy link.');
+    }
+  }, [pathname, searchParamsString]);
+
   const pendingMasses = useMemo(() => {
     if (!scenarioResult) return new Set();
     const pending = new Set<string>();
@@ -396,7 +459,19 @@ export default function BuildPageClient() {
   const resolutionPct = scenarioResult?.resolution.overallPct || 0;
   const deficitPath = scenarioResult ? computeDeficitTotals(scenarioResult.accounting, scenarioResult.macro?.deltaDeficit) : [];
   const debtPath = scenarioResult ? computeDebtTotals(scenarioResult.accounting) : [];
-  const deltaGDP = scenarioResult?.macro.deltaGDP || [];
+
+  const treemapData = useMemo(
+    () => masses.map((mission, index) => ({
+      ...mission,
+      value: displayMode === 'share' ? mission.share : mission.amount,
+    })),
+    [masses, displayMode],
+  );
+
+  const treemapColors = useMemo(
+    () => treemapData.map((mission, index) => mission.color || fallbackTreemapColors[index % fallbackTreemapColors.length]),
+    [treemapData],
+  );
 
   if (initialLoading) {
     return <BuildPageSkeleton />;
@@ -435,10 +510,56 @@ export default function BuildPageClient() {
           <div className="nav-controls">
             <button className="fr-btn fr-btn--secondary" title="Undo" onClick={undo} disabled={!canUndo}><i className="material-icons" style={{ fontSize: '18px' }}>undo</i></button>
             <button className="fr-btn fr-btn--secondary" title="Redo" onClick={redo} disabled={!canRedo}><i className="material-icons" style={{ fontSize: '18px' }}>redo</i></button>
-            <button className="fr-btn fr-btn--secondary" title="Reset" onClick={reset}><i className="material-icons" style={{ fontSize: '18px' }}>refresh</i></button>
           </div>
         </div>
       </div>
+
+      <div className="control-toolbar">
+        <div className="toolbar-left">
+          <div className="lens-pill">
+            <span className="lens-icon" aria-hidden="true">🎯</span>
+            <div>
+              <div className="lens-title">Mission lens active</div>
+              <button type="button" className="link-button" onClick={() => setShowLensInfo(v => !v)}>
+                {showLensInfo ? 'Hide explanation' : 'What is a mission?'}
+              </button>
+            </div>
+          </div>
+        </div>
+        <div className="toolbar-right">
+          <div className="display-toggle" role="group" aria-label="Display mode">
+            <button
+              type="button"
+              className={`toggle-btn ${displayMode === 'amount' ? 'active' : ''}`}
+              onClick={() => setDisplayMode('amount')}
+            >
+              €
+            </button>
+            <button
+              type="button"
+              className={`toggle-btn ${displayMode === 'share' ? 'active' : ''}`}
+              onClick={() => setDisplayMode('share')}
+            >
+              %
+            </button>
+          </div>
+          <button type="button" className="ghost-btn" onClick={handleShare}>
+            <i className="material-icons" aria-hidden="true">link</i>
+            Share
+          </button>
+          <button type="button" className="ghost-btn" onClick={reset}>
+            <i className="material-icons" aria-hidden="true">refresh</i>
+            Reset
+          </button>
+        </div>
+      </div>
+      {showLensInfo && (
+        <div className="lens-info-note">
+          Missions regroup spending by ministerial responsibility (education, health, justice…).
+          They align with the State budget nomenclature and offer a direct bridge to parliamentary debates.
+        </div>
+      )}
+      {shareFeedback && <div className="share-feedback">{shareFeedback}</div>}
 
       <div className="fr-alert fr-alert--info baseline-disclaimer" role="status" style={{ margin: '1.5rem 0' }}>
         <p className="fr-alert__title">Baseline based on PLF 2026</p>
@@ -457,6 +578,8 @@ export default function BuildPageClient() {
               categories={masses}
               onSelect={handleCategoryClick}
               formatCurrency={formatCurrency}
+              formatShare={formatShare}
+              displayMode={displayMode}
             />
           )}
           {lens === 'mass' && isPanelExpanded && selectedCategory && (
@@ -475,6 +598,8 @@ export default function BuildPageClient() {
               popularIntents={popularIntents}
               onIntentClick={handleIntentClick}
               formatCurrency={formatCurrency}
+              formatShare={formatShare}
+              displayMode={displayMode}
             />
           )}
           {lens === 'family' && (
@@ -556,9 +681,10 @@ export default function BuildPageClient() {
           </div>
           <div className="treemap-container">
             <TreemapChart 
-              data={masses} 
-              colors={treemapColors} 
-              resolutionData={scenarioResult?.resolution.byMass || []} 
+              data={treemapData}
+              colors={treemapColors}
+              resolutionData={scenarioResult?.resolution.byMass || []}
+              mode={displayMode}
             />
           </div>
           <div className="scenario-charts">

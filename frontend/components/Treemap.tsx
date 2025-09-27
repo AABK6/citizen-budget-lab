@@ -2,28 +2,43 @@
 
 import { Treemap, ResponsiveContainer, Tooltip } from 'recharts';
 
+type TreemapItem = {
+  id: string;
+  name: string;
+  value: number;
+  amount: number;
+  share: number;
+  color?: string;
+  pieces: any[];
+};
+
 type TreemapProps = {
-  data: {
-    id: string;
-    name: string;
-    amount: number;
-    pieces: any[];
-  }[];
-  colors: string[];
+  data: TreemapItem[];
+  colors?: string[];
   resolutionData: {
     massId: string;
     targetDeltaEur: number;
     specifiedDeltaEur: number;
   }[];
+  mode: 'amount' | 'share';
 };
 
-const CustomTooltip = ({ active, payload }: any) => {
+const defaultColors = ['#2563eb', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#ef4444', '#6366f1', '#14b8a6', '#a855f7', '#d946ef'];
+
+const CustomTooltip = ({ active, payload, mode }: any) => {
   if (active && payload && payload.length) {
-    const { name, pieces } = payload[0].payload;
+    const { name, pieces, amount, share } = payload[0].payload;
+    const valueLine = mode === 'share'
+      ? `${(payload[0].value * 100).toFixed(1)}% of baseline`
+      : `€${(payload[0].value / 1e9).toFixed(1)}B`;
+    const secondaryLine = mode === 'share'
+      ? `€${(amount / 1e9).toFixed(1)}B baseline`
+      : `${(share * 100).toFixed(1)}% of baseline`;
     return (
       <div className="custom-tooltip">
         <p className="label">{`${name}`}</p>
-        <p className="intro">{`€${(payload[0].value / 1e9).toFixed(1)}B`}</p>
+        <p className="intro">{valueLine}</p>
+        <p className="secondary">{secondaryLine}</p>
         <ul className="tooltip-pieces">
           {pieces.slice(0, 3).map((piece: any) => (
             <li key={piece.id}>{piece.label}</li>
@@ -37,8 +52,9 @@ const CustomTooltip = ({ active, payload }: any) => {
 };
 
 const CustomizedContent = (props: any) => {
-  const { depth, x, y, width, height, index, name, amount, unresolvedPct } = props;
-  const baseColor = props.colors[index % props.colors.length];
+  const { depth, x, y, width, height, index, name, amount, value, unresolvedPct, color, mode } = props;
+  const palette: string[] = props.colors?.length ? props.colors : defaultColors;
+  const baseColor = color || palette[index % palette.length];
 
   // Don't render text in very small boxes
   if (width < 50 || height < 30) {
@@ -115,7 +131,7 @@ const CustomizedContent = (props: any) => {
         >
           <div>{name}</div>
           <div style={{ fontSize: '12px', opacity: 0.8, marginTop: '4px' }}>
-            {`€${(amount / 1e9).toFixed(1)}B`}
+            {mode === 'share' ? `${(value * 100).toFixed(1)}%` : `€${(amount / 1e9).toFixed(1)}B`}
           </div>
         </div>
       </foreignObject>
@@ -123,7 +139,7 @@ const CustomizedContent = (props: any) => {
   );
 };
 
-export const TreemapChart = ({ data, colors, resolutionData }: TreemapProps) => {
+export const TreemapChart = ({ data, colors, resolutionData, mode }: TreemapProps) => {
   const resolutionMap = new Map<string, number>();
   if (resolutionData) {
     for (const res of resolutionData) {
@@ -136,27 +152,30 @@ export const TreemapChart = ({ data, colors, resolutionData }: TreemapProps) => 
     }
   }
 
+  const palette = colors && colors.length ? colors : defaultColors;
+
   const dataWithResolution = data.map(item => ({
     ...item,
     unresolvedPct: resolutionMap.get(item.id) || 0,
+    color: item.color,
   }));
 
   return (
     <ResponsiveContainer width="100%" height="100%">
       <Treemap
         data={dataWithResolution}
-        dataKey="amount"
+        dataKey="value"
         aspectRatio={4 / 3}
         stroke="#fff"
         fill="#8884d8"
-        content={<CustomizedContent colors={colors} />}
+        content={<CustomizedContent colors={palette} mode={mode} />}
       >
         <defs>
           <pattern id="pattern-stripe" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
             <rect width="4" height="8" transform="translate(0,0)" fill="rgba(255,255,255,0.4)"></rect>
           </pattern>
         </defs>
-        <Tooltip content={<CustomTooltip />} />
+        <Tooltip content={<CustomTooltip mode={mode} />} />
       </Treemap>
     </ResponsiveContainer>
   );

@@ -13,6 +13,8 @@ export type MassCategoryPanelProps = {
   popularIntents: PopularIntent[];
   onIntentClick: (intent: PopularIntent) => void;
   formatCurrency: (value: number) => string;
+  formatShare: (value: number) => string;
+  displayMode: 'amount' | 'share';
 };
 
 export function MassCategoryPanel({
@@ -28,15 +30,43 @@ export function MassCategoryPanel({
   popularIntents,
   onIntentClick,
   formatCurrency,
+  formatShare,
+  displayMode,
 }: MassCategoryPanelProps) {
+  const lightenColor = (hex: string, amount = 0.25) => {
+    if (!hex || hex[0] !== '#' || hex.length !== 7) return hex;
+    const value = parseInt(hex.slice(1), 16);
+    const base = (channel: number) => Math.round(channel + (255 - channel) * amount);
+    const r = base((value >> 16) & 255);
+    const g = base((value >> 8) & 255);
+    const b = base(value & 255);
+    return `rgb(${r}, ${g}, ${b})`;
+  };
+
+  const headerColor = category.color || '#1d4ed8';
+  const headerAccent = lightenColor(headerColor, 0.35);
+
   return (
     <>
       <button className="fr-btn fr-btn--secondary fr-btn--sm" onClick={onClose} style={{ marginBottom: '1rem', alignSelf: 'flex-start' }}>Back</button>
-      <div className="panel-header">{category.name} Reforms &amp; Targets</div>
-      <div className="selected-category">
+      <div
+        className="mission-panel-header"
+        style={{ background: `linear-gradient(120deg, ${headerColor}, ${headerAccent})` }}
+      >
+        <span className="mission-panel-icon" aria-hidden="true">{category.icon || '🏛️'}</span>
+        <div className="mission-panel-copy">
+          <div className="mission-panel-title">{category.name}</div>
+          <div className="mission-panel-subtitle">
+            {formatCurrency(category.amount)} · {formatShare(category.share)}
+          </div>
+        </div>
+      </div>
+      <div className="selected-category" style={{ borderLeftColor: headerColor }}>
         <div className="category-header">
           <div className="category-name">{category.name}</div>
-          <div className="category-amount">{formatCurrency(category.amount)}</div>
+          <div className="category-amount">
+            {displayMode === 'share' ? formatShare(category.share) : formatCurrency(category.amount)}
+          </div>
         </div>
         <div className="target-controls">
           <span className="target-label">Target:</span>
@@ -79,7 +109,12 @@ export function MassCategoryPanel({
           {popularIntents
             .filter(intent => intent.massId === category.id)
             .map((intent) => (
-              <div key={intent.id} className="reform-pill" onClick={() => onIntentClick(intent)}>
+              <div
+                key={intent.id}
+                className="reform-pill"
+                style={{ backgroundColor: `${headerColor}15`, color: headerColor }}
+                onClick={() => onIntentClick(intent)}
+              >
                 {intent.emoji} {intent.label}
               </div>
             ))}
