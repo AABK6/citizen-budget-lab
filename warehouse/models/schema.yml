@@ -53,6 +53,8 @@ models:
     columns:
       - name: piece_id
         tests: [not_null, unique]
+      - name: mission_mapping
+
 
   - name: fct_admin_by_mission
     description: Aggregates by mission and year for AE/CP
@@ -99,6 +101,7 @@ models:
         tests: [not_null]
       - name: piece_id
         tests: [not_null]
+      - name: mission_mapping
 
   - name: fct_procurement_suppliers
     description: Supplier-level procurement rollups by year with competition flags

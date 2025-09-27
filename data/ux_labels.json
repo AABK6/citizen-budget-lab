@@ -1,15 +1,412 @@
 {
   "masses": [
-    { "id": "01", "displayLabel": "General public services", "description": "Government, executive, financial and fiscal affairs.", "examples": ["Public administration", "Debt management"], "synonyms": ["administration", "gouvernement"] },
-    { "id": "02", "displayLabel": "Defense", "description": "Military and civil defense activities.", "examples": ["Procurement", "Personnel", "Operations"], "synonyms": ["armée", "militaire"] },
-    { "id": "03", "displayLabel": "Public order & safety", "description": "Police services, law courts, prisons.", "examples": ["Police", "Justice"], "synonyms": ["sécurité", "police", "justice"] },
-    { "id": "04", "displayLabel": "Economic affairs", "description": "General economic, commercial and labor affairs.", "examples": ["Industry support", "Transport"], "synonyms": ["économie", "affaires économiques"] },
-    { "id": "05", "displayLabel": "Environmental protection", "description": "Waste management, pollution abatement.", "examples": ["Waste", "Water"], "synonyms": ["environnement", "écologie"] },
-    { "id": "06", "displayLabel": "Housing & community amenities", "description": "Housing development, community amenities.", "examples": ["Urbanism", "Utilities"], "synonyms": ["logement", "aménagement"] },
-    { "id": "07", "displayLabel": "Health", "description": "Health services and public health.", "examples": ["Hospitals", "Primary care"], "synonyms": ["santé", "hôpital"] },
-    { "id": "08", "displayLabel": "Recreation, culture, religion", "description": "Cultural services, broadcasting, recreation.", "examples": ["Culture", "Sports"], "synonyms": ["culture", "sport"] },
-    { "id": "09", "displayLabel": "Education", "description": "Pre‑primary to tertiary education.", "examples": ["Schools", "Universities"], "synonyms": ["éducation", "école", "université"] },
-    { "id": "10", "displayLabel": "Social protection", "description": "Sickness, disability, old age, family, unemployment.", "examples": ["Pensions", "Family", "Unemployment"], "synonyms": ["protection sociale", "pensions"] }
+    {
+      "id": "01",
+      "displayLabel": "General public services",
+      "description": "Government, executive, financial and fiscal affairs.",
+      "examples": [
+        "Public administration",
+        "Debt management"
+      ],
+      "synonyms": [
+        "administration",
+        "gouvernement"
+      ]
+    },
+    {
+      "id": "02",
+      "displayLabel": "Defense",
+      "description": "Military and civil defense activities.",
+      "examples": [
+        "Procurement",
+        "Personnel",
+        "Operations"
+      ],
+      "synonyms": [
+        "armée",
+        "militaire"
+      ]
+    },
+    {
+      "id": "03",
+      "displayLabel": "Public order & safety",
+      "description": "Police services, law courts, prisons.",
+      "examples": [
+        "Police",
+        "Justice"
+      ],
+      "synonyms": [
+        "sécurité",
+        "police",
+        "justice"
+      ]
+    },
+    {
+      "id": "04",
+      "displayLabel": "Economic affairs",
+      "description": "General economic, commercial and labor affairs.",
+      "examples": [
+        "Industry support",
+        "Transport"
+      ],
+      "synonyms": [
+        "économie",
+        "affaires économiques"
+      ]
+    },
+    {
+      "id": "05",
+      "displayLabel": "Environmental protection",
+      "description": "Waste management, pollution abatement.",
+      "examples": [
+        "Waste",
+        "Water"
+      ],
+      "synonyms": [
+        "environnement",
+        "écologie"
+      ]
+    },
+    {
+      "id": "06",
+      "displayLabel": "Housing & community amenities",
+      "description": "Housing development, community amenities.",
+      "examples": [
+        "Urbanism",
+        "Utilities"
+      ],
+      "synonyms": [
+        "logement",
+        "aménagement"
+      ]
+    },
+    {
+      "id": "07",
+      "displayLabel": "Health",
+      "description": "Health services and public health.",
+      "examples": [
+        "Hospitals",
+        "Primary care"
+      ],
+      "synonyms": [
+        "santé",
+        "hôpital"
+      ]
+    },
+    {
+      "id": "08",
+      "displayLabel": "Recreation, culture, religion",
+      "description": "Cultural services, broadcasting, recreation.",
+      "examples": [
+        "Culture",
+        "Sports"
+      ],
+      "synonyms": [
+        "culture",
+        "sport"
+      ]
+    },
+    {
+      "id": "09",
+      "displayLabel": "Education",
+      "description": "Pre‑primary to tertiary education.",
+      "examples": [
+        "Schools",
+        "Universities"
+      ],
+      "synonyms": [
+        "éducation",
+        "école",
+        "université"
+      ]
+    },
+    {
+      "id": "10",
+      "displayLabel": "Social protection",
+      "description": "Sickness, disability, old age, family, unemployment.",
+      "examples": [
+        "Pensions",
+        "Family",
+        "Unemployment"
+      ],
+      "synonyms": [
+        "protection sociale",
+        "pensions"
+      ]
+    }
+  ],
+  "missions": [
+    {
+      "id": "M_EDU",
+      "displayLabel": "Éducation primaire & secondaire",
+      "description": "Écoles, collèges et lycées",
+      "examples": [
+        "Salaires enseignants",
+        "Fonctionnement établissements"
+      ],
+      "synonyms": [
+        "éducation",
+        "enseignement scolaire"
+      ]
+    },
+    {
+      "id": "M_HIGHER_EDU",
+      "displayLabel": "Enseignement supérieur & recherche",
+      "description": "Universités, grandes écoles, organismes de recherche",
+      "examples": [
+        "Université",
+        "CNRS"
+      ],
+      "synonyms": [
+        "recherche",
+        "universités"
+      ]
+    },
+    {
+      "id": "M_HEALTH",
+      "displayLabel": "Santé",
+      "description": "Hôpitaux, médecine de ville, prévention",
+      "examples": [
+        "Hôpital",
+        "Urgences",
+        "Vaccination"
+      ],
+      "synonyms": [
+        "santé",
+        "soins"
+      ]
+    },
+    {
+      "id": "M_PENSIONS",
+      "displayLabel": "Retraites",
+      "description": "Versement des pensions et équilibre des régimes",
+      "examples": [
+        "Pensions CNAV",
+        "Compensation régimes"
+      ],
+      "synonyms": [
+        "retraites",
+        "pensions"
+      ]
+    },
+    {
+      "id": "M_SOLIDARITY",
+      "displayLabel": "Solidarité & inclusion",
+      "description": "Famille, handicap, lutte contre la pauvreté",
+      "examples": [
+        "Allocations familiales",
+        "AAH"
+      ],
+      "synonyms": [
+        "solidarité",
+        "famille"
+      ]
+    },
+    {
+      "id": "M_EMPLOYMENT",
+      "displayLabel": "Travail & emploi",
+      "description": "Assurance chômage et politiques actives de l’emploi",
+      "examples": [
+        "France Travail",
+        "Formation"
+      ],
+      "synonyms": [
+        "emploi",
+        "chômage"
+      ]
+    },
+    {
+      "id": "M_HOUSING",
+      "displayLabel": "Logement et ville",
+      "description": "Aides au logement, rénovation urbaine",
+      "examples": [
+        "APL",
+        "ANRU"
+      ],
+      "synonyms": [
+        "logement",
+        "ville"
+      ]
+    },
+    {
+      "id": "M_SECURITY",
+      "displayLabel": "Sécurité intérieure",
+      "description": "Police, gendarmerie, sécurité du quotidien",
+      "examples": [
+        "Police nationale",
+        "Gendarmerie"
+      ],
+      "synonyms": [
+        "sécurité",
+        "police"
+      ]
+    },
+    {
+      "id": "M_JUSTICE",
+      "displayLabel": "Justice",
+      "description": "Tribunaux, administration pénitentiaire",
+      "examples": [
+        "Prisons",
+        "Justice civile"
+      ],
+      "synonyms": [
+        "justice",
+        "prisons"
+      ]
+    },
+    {
+      "id": "M_CIVIL_PROT",
+      "displayLabel": "Sécurité civile",
+      "description": "Services d’incendie et de secours",
+      "examples": [
+        "Pompiers",
+        "Sécurité civile"
+      ],
+      "synonyms": [
+        "pompiers",
+        "secours"
+      ]
+    },
+    {
+      "id": "M_DEFENSE",
+      "displayLabel": "Défense",
+      "description": "Armées, matériel et opérations",
+      "examples": [
+        "Armée de terre",
+        "Matériel militaire"
+      ],
+      "synonyms": [
+        "défense",
+        "armée"
+      ]
+    },
+    {
+      "id": "M_TRANSPORT",
+      "displayLabel": "Transports & mobilités",
+      "description": "Transports du quotidien et infrastructures",
+      "examples": [
+        "SNCF",
+        "Réseaux routiers"
+      ],
+      "synonyms": [
+        "transports",
+        "mobilité"
+      ]
+    },
+    {
+      "id": "M_ENVIRONMENT",
+      "displayLabel": "Transition écologique",
+      "description": "Climat, énergie, eau, déchets",
+      "examples": [
+        "Rénovation énergétique",
+        "Biodiversité"
+      ],
+      "synonyms": [
+        "environnement",
+        "écologie"
+      ]
+    },
+    {
+      "id": "M_ECONOMIC",
+      "displayLabel": "Économie et entreprises",
+      "description": "Soutien aux entreprises, industrie",
+      "examples": [
+        "Bpifrance",
+        "Subventions"
+      ],
+      "synonyms": [
+        "économie",
+        "entreprises"
+      ]
+    },
+    {
+      "id": "M_AGRI",
+      "displayLabel": "Agriculture & alimentation",
+      "description": "Politiques agricoles et alimentaires",
+      "examples": [
+        "PAC",
+        "Aides agricoles"
+      ],
+      "synonyms": [
+        "agriculture",
+        "alimentation"
+      ]
+    },
+    {
+      "id": "M_CULTURE",
+      "displayLabel": "Culture, médias & sport",
+      "description": "Patrimoine, création, audiovisuel, sport",
+      "examples": [
+        "Musées",
+        "Audiovisuel public",
+        "ANS"
+      ],
+      "synonyms": [
+        "culture",
+        "sport",
+        "médias"
+      ]
+    },
+    {
+      "id": "M_ADMIN",
+      "displayLabel": "Services généraux de l’État",
+      "description": "Fonctions support, finances publiques",
+      "examples": [
+        "DGFiP",
+        "Préfectures"
+      ],
+      "synonyms": [
+        "administration",
+        "finances publiques"
+      ]
+    },
+    {
+      "id": "M_DIPLO",
+      "displayLabel": "Affaires étrangères & Europe",
+      "description": "Diplomatie, contributions internationales",
+      "examples": [
+        "Réseau diplomatique",
+        "UE"
+      ],
+      "synonyms": [
+        "diplomatie",
+        "europe"
+      ]
+    },
+    {
+      "id": "M_TERRITORIES",
+      "displayLabel": "Relations avec les collectivités",
+      "description": "Dotations et transferts aux collectivités territoriales",
+      "examples": [
+        "DGF",
+        "péréquation"
+      ],
+      "synonyms": [
+        "collectivités",
+        "territoires"
+      ]
+    },
+    {
+      "id": "M_DEBT",
+      "displayLabel": "Charge de la dette",
+      "description": "Intérêts et gestion de la dette de l’État",
+      "examples": [
+        "OAT",
+        "Agence France Trésor"
+      ],
+      "synonyms": [
+        "dette",
+        "intérêts"
+      ]
+    },
+    {
+      "id": "M_TEST",
+      "displayLabel": "Pièce de test",
+      "description": "Élément technique pour tests",
+      "examples": [],
+      "synonyms": [
+        "test"
+      ]
+    }
   ]
 }
-
