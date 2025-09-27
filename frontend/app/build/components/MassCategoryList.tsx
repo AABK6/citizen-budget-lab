@@ -1,5 +1,16 @@
 import type { MassCategory } from '../types';
 
+const tintBackground = (hex: string, alpha = 0.18) => {
+  if (!/^#([0-9A-Fa-f]{6})$/.test(hex)) {
+    return 'rgba(37, 99, 235, 0.12)';
+  }
+  const value = parseInt(hex.slice(1), 16);
+  const r = (value >> 16) & 255;
+  const g = (value >> 8) & 255;
+  const b = value & 255;
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
+
 export type MassCategoryListProps = {
   categories: MassCategory[];
   onSelect: (category: MassCategory) => void;
@@ -14,13 +25,13 @@ export function MassCategoryList({ categories, onSelect, formatCurrency, formatS
       <div className="panel-header">Spending Targets &amp; Reforms</div>
       {categories.map((category, index) => {
         const accent = category.color || '#2563eb';
-        const tint = accent.length === 7 ? `${accent}1A` : accent;
+        const tint = tintBackground(accent, 0.16);
         return (
         <div
           key={category.id ?? index}
           className="spending-category mission-card"
           onClick={() => onSelect(category)}
-          style={{ borderColor: category.color || '#2563eb' }}
+          style={{ borderColor: '#e5e7eb', borderLeftColor: accent }}
         >
           <div className="mission-card-header">
             <div className="mission-identity">

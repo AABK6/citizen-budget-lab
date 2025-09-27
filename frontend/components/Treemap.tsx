@@ -52,7 +52,8 @@ const CustomTooltip = ({ active, payload, mode }: any) => {
 };
 
 const CustomizedContent = (props: any) => {
-  const { depth, x, y, width, height, index, name, amount, value, unresolvedPct, color, mode } = props;
+  const { depth, x, y, width, height, index, name, amount, unresolvedPct, color, mode } = props;
+  const dataValue = typeof props.value === 'number' ? props.value : (props.payload?.value ?? 0);
   const palette: string[] = props.colors?.length ? props.colors : defaultColors;
   const baseColor = color || palette[index % palette.length];
 
@@ -131,7 +132,7 @@ const CustomizedContent = (props: any) => {
         >
           <div>{name}</div>
           <div style={{ fontSize: '12px', opacity: 0.8, marginTop: '4px' }}>
-            {mode === 'share' ? `${(value * 100).toFixed(1)}%` : `€${(amount / 1e9).toFixed(1)}B`}
+            {mode === 'share' ? `${(dataValue * 100).toFixed(1)}%` : `€${(amount / 1e9).toFixed(1)}B`}
           </div>
         </div>
       </foreignObject>

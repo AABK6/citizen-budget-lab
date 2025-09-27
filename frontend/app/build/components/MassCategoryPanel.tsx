@@ -45,6 +45,7 @@ export function MassCategoryPanel({
 
   const headerColor = category.color || '#1d4ed8';
   const headerAccent = lightenColor(headerColor, 0.35);
+  const pillTint = lightenColor(headerColor, 0.65);
 
   return (
     <>
@@ -61,7 +62,7 @@ export function MassCategoryPanel({
           </div>
         </div>
       </div>
-      <div className="selected-category" style={{ borderLeftColor: headerColor }}>
+      <div className="selected-category" style={{ borderLeftColor: headerColor, backgroundColor: lightenColor(headerColor, 0.9) }}>
         <div className="category-header">
           <div className="category-name">{category.name}</div>
           <div className="category-amount">
@@ -112,7 +113,7 @@ export function MassCategoryPanel({
               <div
                 key={intent.id}
                 className="reform-pill"
-                style={{ backgroundColor: `${headerColor}15`, color: headerColor }}
+                style={{ backgroundColor: pillTint, color: headerColor }}
                 onClick={() => onIntentClick(intent)}
               >
                 {intent.emoji} {intent.label}

@@ -89,6 +89,7 @@ export default function BuildPageClient() {
   const [displayMode, setDisplayMode] = useState<'amount' | 'share'>('amount');
   const [showLensInfo, setShowLensInfo] = useState(false);
   const [shareFeedback, setShareFeedback] = useState<string | null>(null);
+  const [showBaselineNote, setShowBaselineNote] = useState(true);
   const {
     setInitialLoading,
     setScenarioLoading,
@@ -127,6 +128,21 @@ export default function BuildPageClient() {
     const timer = setTimeout(() => setShareFeedback(null), 2400);
     return () => clearTimeout(timer);
   }, [shareFeedback]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const stored = window.localStorage.getItem('cbl-hide-baseline-note');
+    if (stored === '1') {
+      setShowBaselineNote(false);
+    }
+  }, []);
+
+  const dismissBaseline = useCallback(() => {
+    setShowBaselineNote(false);
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem('cbl-hide-baseline-note', '1');
+    }
+  }, []);
 
   useEffect(() => {
     scenarioIdRef.current = scenarioId;
@@ -461,10 +477,13 @@ export default function BuildPageClient() {
   const debtPath = scenarioResult ? computeDebtTotals(scenarioResult.accounting) : [];
 
   const treemapData = useMemo(
-    () => masses.map((mission, index) => ({
-      ...mission,
-      value: displayMode === 'share' ? mission.share : mission.amount,
-    })),
+    () => masses.map((mission) => {
+      const metric = displayMode === 'share' ? mission.share : mission.amount;
+      return {
+        ...mission,
+        value: Math.max(metric, 0),
+      };
+    }),
     [masses, displayMode],
   );
 
@@ -488,29 +507,36 @@ export default function BuildPageClient() {
         <div className="hud-left">
           <div className="logo">Citizen Budget Lab</div>
           <div className="resolution-meter">
-            <span className="meter-label">Resolution:</span>
+            <span className="meter-label">Resolution</span>
             <div className="meter-bar"><div className="meter-fill" style={{ width: `${(resolutionPct * 100).toFixed(0)}%` }}></div></div>
             <span className="meter-value">{(resolutionPct * 100).toFixed(0)}%</span>
           </div>
         </div>
         <div className="hud-right">
-            <button className="fr-btn" onClick={runScenario} disabled={scenarioLoading}>{scenarioLoading ? 'Running...' : 'Run'}</button>
-          <div className="year-selector">
-            <i className="material-icons" style={{ fontSize: '16px' }}>calendar_today</i>
-            <span className="year-text">{year}</span>
+          <div className="hud-meta">
+            <div className="year-selector" aria-label="Scenario year">
+              <i className="material-icons" aria-hidden="true" style={{ fontSize: '16px' }}>calendar_today</i>
+              <span className="year-text">{year}</span>
+            </div>
+            <div className="eu-lights" aria-label="EU compliance lights">
+              <RuleLights 
+                  eu3pct={scenarioResult?.compliance.eu3pct}
+                  eu60pct={scenarioResult?.compliance.eu60pct}
+                  netExpenditure={scenarioResult?.compliance.netExpenditure}
+                  localBalance={scenarioResult?.compliance.localBalance}
+              />
+            </div>
           </div>
-          <div className="eu-lights">
-            <RuleLights 
-                eu3pct={scenarioResult?.compliance.eu3pct}
-                eu60pct={scenarioResult?.compliance.eu60pct}
-                netExpenditure={scenarioResult?.compliance.netExpenditure}
-                localBalance={scenarioResult?.compliance.localBalance}
-            />
-          </div>
-          <div className="nav-controls">
-            <button className="fr-btn fr-btn--secondary" title="Undo" onClick={undo} disabled={!canUndo}><i className="material-icons" style={{ fontSize: '18px' }}>undo</i></button>
-            <button className="fr-btn fr-btn--secondary" title="Redo" onClick={redo} disabled={!canRedo}><i className="material-icons" style={{ fontSize: '18px' }}>redo</i></button>
-          </div>
+          <button
+            className={`run-button ${scenarioLoading ? 'is-loading' : ''}`}
+            onClick={runScenario}
+            disabled={scenarioLoading}
+          >
+            <i className={`material-icons ${scenarioLoading ? 'spin' : ''}`} aria-hidden="true">
+              {scenarioLoading ? 'autorenew' : 'play_arrow'}
+            </i>
+            {scenarioLoading ? 'Running…' : 'Run scenario'}
+          </button>
         </div>
       </div>
 
@@ -532,22 +558,34 @@ export default function BuildPageClient() {
               type="button"
               className={`toggle-btn ${displayMode === 'amount' ? 'active' : ''}`}
               onClick={() => setDisplayMode('amount')}
+              aria-pressed={displayMode === 'amount'}
             >
-              €
+              <span className="toggle-icon" aria-hidden="true">€</span>
+              <span className="toggle-label">Amounts</span>
             </button>
             <button
               type="button"
               className={`toggle-btn ${displayMode === 'share' ? 'active' : ''}`}
               onClick={() => setDisplayMode('share')}
+              aria-pressed={displayMode === 'share'}
             >
-              %
+              <span className="toggle-icon" aria-hidden="true">%</span>
+              <span className="toggle-label">Shares</span>
             </button>
           </div>
+          <button type="button" className="ghost-btn ghost-btn--muted" onClick={undo} disabled={!canUndo}>
+            <i className="material-icons" aria-hidden="true">undo</i>
+            Undo
+          </button>
+          <button type="button" className="ghost-btn ghost-btn--muted" onClick={redo} disabled={!canRedo}>
+            <i className="material-icons" aria-hidden="true">redo</i>
+            Redo
+          </button>
           <button type="button" className="ghost-btn" onClick={handleShare}>
             <i className="material-icons" aria-hidden="true">link</i>
             Share
           </button>
-          <button type="button" className="ghost-btn" onClick={reset}>
+          <button type="button" className="ghost-btn ghost-btn--muted" onClick={reset}>
             <i className="material-icons" aria-hidden="true">refresh</i>
             Reset
           </button>
@@ -555,19 +593,29 @@ export default function BuildPageClient() {
       </div>
       {showLensInfo && (
         <div className="lens-info-note">
-          Missions regroup spending by ministerial responsibility (education, health, justice…).
-          They align with the State budget nomenclature and offer a direct bridge to parliamentary debates.
+          Missions regroup spending by ministerial responsibility (education, health, justice…). They align with the State budget nomenclature and offer a direct bridge to parliamentary debates.
         </div>
       )}
-      {shareFeedback && <div className="share-feedback">{shareFeedback}</div>}
+      {shareFeedback && (
+        <div className="snackbar" role="status">
+          <i className="material-icons" aria-hidden="true">check_circle</i>
+          {shareFeedback}
+        </div>
+      )}
 
-      <div className="fr-alert fr-alert--info baseline-disclaimer" role="status" style={{ margin: '1.5rem 0' }}>
-        <p className="fr-alert__title">Baseline based on PLF 2026</p>
-        <p className="fr-alert__description">
-          The current baseline reflects the government&apos;s PLF 2026 proposal and may diverge from the final voted budget.
-          Re-run scenarios once the finance bill is enacted to refresh the reference path.
-        </p>
-      </div>
+      {showBaselineNote && (
+        <div className="baseline-banner" role="status">
+          <div>
+            <p className="baseline-title">Baseline based on PLF 2026</p>
+            <p className="baseline-body">
+              The current baseline reflects the government&apos;s PLF 2026 proposal and may diverge from the final voted budget. Re-run scenarios once the finance bill is enacted to refresh the reference path.
+            </p>
+          </div>
+          <button type="button" className="baseline-close" onClick={dismissBaseline} aria-label="Dismiss baseline note">
+            <i className="material-icons" aria-hidden="true">close</i>
+          </button>
+        </div>
+      )}
 
       {/* Main Content */}
       <div className="main-content">
@@ -674,10 +722,39 @@ export default function BuildPageClient() {
 
         {/* Center Panel */}
         <div className="center-panel">
-          <div className="lens-switcher">
-            <div className={`lens-option ${lens === 'mass' ? 'active' : ''}`} onClick={() => setLens('mass')}>By Mass</div>
-            <div className={`lens-option ${lens === 'family' ? 'active' : ''}`} onClick={() => setLens('family')}>By Family</div>
-            <div className={`lens-option ${lens === 'reform' ? 'active' : ''}`} onClick={() => setLens('reform')}>By Reform</div>
+          <div className="center-panel-header">
+            <div className="lens-switcher" role="tablist" aria-label="Treemap lens">
+              <button
+                type="button"
+                role="tab"
+                className={`lens-option ${lens === 'mass' ? 'active' : ''}`}
+                onClick={() => setLens('mass')}
+                aria-selected={lens === 'mass'}
+              >
+                By mission
+              </button>
+              <button
+                type="button"
+                role="tab"
+                className={`lens-option ${lens === 'family' ? 'active' : ''}`}
+                onClick={() => setLens('family')}
+                aria-selected={lens === 'family'}
+              >
+                By family
+              </button>
+              <button
+                type="button"
+                role="tab"
+                className={`lens-option ${lens === 'reform' ? 'active' : ''}`}
+                onClick={() => setLens('reform')}
+                aria-selected={lens === 'reform'}
+              >
+                By reform
+              </button>
+            </div>
+            <div className={`treemap-mode-pill ${displayMode === 'share' ? 'is-share' : ''}`}>
+              {displayMode === 'share' ? 'Displaying mission shares' : 'Displaying annual amounts (€B)'}
+            </div>
           </div>
           <div className="treemap-container">
             <TreemapChart 
