@@ -18,11 +18,11 @@ import {
   DslObject,
   INITIAL_DSL_OBJECT,
   LegoPiece,
-  MassLabel,
   PolicyLever,
   PopularIntent,
   BuildLens,
   MassCategory,
+  MissionLabel,
 } from './types';
 import { useBuildState } from './useBuildState';
 import { runScenarioForDsl } from '@/lib/permalink';
@@ -164,26 +164,39 @@ export default function BuildPageClient() {
       const spending = allPieces.filter((p: LegoPiece) => p.type === 'expenditure');
       const revenue = allPieces.filter((p: LegoPiece) => p.type === 'revenue');
 
-      const massLabels: { [key: string]: string } = {};
-      data.massLabels.forEach((m: MassLabel) => {
-        massLabels[m.id] = m.displayLabel;
+      const missionLabels: { [key: string]: string } = {};
+      data.missionLabels?.forEach((m: MissionLabel) => {
+        missionLabels[m.id] = m.displayLabel;
       });
 
-      const massData: Record<string, MassCategory> = {};
+      const missionData: Record<string, MassCategory> = {};
       spending.forEach((p: LegoPiece) => {
-          const massId = p.cofogMajors[0] || 'unknown';
-          if (!massData[massId]) {
-              massData[massId] = {
-                id: massId,
-                name: massLabels[massId] || `Mass ${massId}`,
-                amount: 0,
-                pieces: [],
-              };
+        const amount = p.amountEur || 0;
+        const missionWeights = (p.missions || []).filter((m) => (m.weight ?? 0) > 0);
+        const missions = missionWeights.length > 0 ? missionWeights : [{ code: 'M_UNKNOWN', weight: 1 }];
+        const totalWeight = missions.reduce((sum, m) => sum + (m.weight ?? 0), 0);
+
+        missions.forEach((mission) => {
+          const missionId = mission.code || 'M_UNKNOWN';
+          const weight = totalWeight > 0 ? (mission.weight ?? 0) / totalWeight : (1 / missions.length);
+          const contribution = amount * weight;
+          if (!missionData[missionId]) {
+            missionData[missionId] = {
+              id: missionId,
+              name: missionLabels[missionId] || missionId.replace('M_', ''),
+              amount: 0,
+              pieces: [],
+            };
           }
-          massData[massId].amount += p.amountEur || 0;
-          massData[massId].pieces.push(p);
+          missionData[missionId].amount += contribution;
+          if (!missionData[missionId].pieces.some((piece) => piece.id === p.id)) {
+            missionData[missionId].pieces.push(p);
+          }
+        });
       });
-      const massList = Object.values(massData).sort((a, b) => b.amount - a.amount);
+      const massList = Object.values(missionData)
+        .filter((entry) => entry.amount > 0)
+        .sort((a, b) => b.amount - a.amount);
 
       setData({
         spendingPieces: spending,
@@ -284,7 +297,7 @@ export default function BuildPageClient() {
         }
         const newAction: DslAction = {
             id: `target_${massId}`,
-            target: `cofog.${massId}`,
+            target: `mission.${massId}`,
             op: (amount > 0 ? 'increase' : 'decrease') as 'increase' | 'decrease',
             amount_eur: Math.abs(amount),
             role: 'target',

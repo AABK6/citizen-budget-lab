@@ -23,7 +23,7 @@ def test_popular_intents_and_mass_labels():
 def test_suggest_levers_defense_has_relevant_items():
     app = create_app()
     client = TestClient(app)
-    data = _gql(client, "query{ suggestLevers(massId:\"02\"){ id family label } }")
+    data = _gql(client, "query{ suggestLevers(massId:\"M_DEFENSE\"){ id family label } }")
     arr = data["suggestLevers"]
     # At least one DEFENSE lever suggested
     assert any(it["family"] == "DEFENSE" for it in arr)
@@ -64,7 +64,7 @@ def test_specify_mass_validation_and_apply():
         vars = {
             "input": {
                 "dsl": dsl_b64,
-                "massId": "09",
+                "massId": "M_EDU",
                 "targetDeltaEur": 1000000000.0,
                 "splits": [
                     {"pieceId": "ed_schools_staff_ops", "amountEur": 800000000.0},
@@ -84,7 +84,7 @@ def test_specify_mass_validation_and_apply():
         assert res2["ok"] is True
         # Education mass specified should now be close to target (pending near 0)
         bm = {e["massId"]: (e["targetDeltaEur"], e["specifiedDeltaEur"]) for e in res2["resolution"]["byMass"]}
-        t, s = bm.get("09", (0.0, 0.0))
+        t, s = bm.get("M_EDU", (0.0, 0.0))
         assert t >= 1_000_000_000.0 - 1e-6
         assert s >= 1_000_000_000.0 - 1e-6
     finally:

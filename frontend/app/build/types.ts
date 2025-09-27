@@ -17,6 +17,12 @@ export type MassLabel = {
   displayLabel: string;
 };
 
+export type MissionLabel = {
+  id: string;
+  displayLabel: string;
+  description?: string;
+};
+
 export type PolicyLever = {
   id: string;
   label: string;

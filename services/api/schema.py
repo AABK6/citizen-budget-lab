@@ -1122,15 +1122,21 @@ class Query:
 
         Output shape (JSON):
         {
-          "waterfall": [{"massId":"07","deltaEur":1234.0}, ...],
-          "ribbons": [{"pieceId":"health_ops","massId":"07","amountEur":120.0}, ...],
+          "waterfall": [{"massId":"M_HEALTH","deltaEur":1234.0}, ...],
+          "ribbons": [{"pieceId":"health_ops","massId":"M_HEALTH","amountEur":120.0}, ...],
           "pieceLabels": { "health_ops": "Health ops", ... },
-          "massLabels": { "07": "Health", ... }
+          "massLabels": { "M_HEALTH": "Santé", ... }
         }
         """
         import json as _json
         from .store import scenario_dsl_store
-        from .data_loader import _piece_amounts_after_dsl as _pad, load_lego_config as _cfg, run_scenario as _run
+        from .data_loader import (
+            DATA_DIR,
+            mission_bridges as _mission_bridges,
+            _piece_amounts_after_dsl as _pad,
+            load_lego_config as _cfg,
+            run_scenario as _run,
+        )
 
         dsl_a = scenario_dsl_store.get(a)
         if not dsl_a:
@@ -1172,45 +1178,36 @@ class Query:
 
         # Map piece deltas to mass majors via config weights
         cfg = _cfg()
-        cof_map: dict[str, list[tuple[str, float]]] = {}
+        mission_map, cofog_to_mission = _mission_bridges()
         piece_labels: dict[str, str] = {}
         for p in cfg.get("pieces", []):
             pid = str(p.get("id"))
             piece_labels[pid] = str(p.get("label") or pid)
-            cof = []
-            for mc in (p.get("mapping", {}).get("cofog") or []):
-                cof.append((str(mc.get("code")), float(mc.get("weight", 1.0))))
-            if cof:
-                cof_map[pid] = cof
         ribbons: list[dict] = []
         mass_totals: dict[str, float] = {}
         for pid, dv in piece_delta.items():
             if abs(dv) <= 0:
                 continue
-            cof = cof_map.get(pid) or []
-            if not cof:
+            missions = mission_map.get(pid) or []
+            if not missions:
                 continue
-            wsum = sum(w for _, w in cof) or 1.0
-            for code, w in cof:
-                major = str(code).split(".")[0][:2]
-                amt = float(dv) * (w / wsum)
-                ribbons.append({"pieceId": pid, "massId": major, "amountEur": amt})
-                mass_totals[major] = mass_totals.get(major, 0.0) + amt
+            for mission_code, weight in missions:
+                amt = float(dv) * float(weight)
+                ribbons.append({"pieceId": pid, "massId": mission_code, "amountEur": amt})
+                mass_totals[mission_code] = mass_totals.get(mission_code, 0.0) + amt
         waterfall = [{"massId": k, "deltaEur": float(v)} for k, v in mass_totals.items()]
         waterfall.sort(key=lambda x: abs(x["deltaEur"]), reverse=True)
-        # Mass labels (COFOG majors)
-        mass_labels = {
-            "01": "General public services",
-            "02": "Defense",
-            "03": "Public order & safety",
-            "04": "Economic affairs",
-            "05": "Environmental protection",
-            "06": "Housing & community amenities",
-            "07": "Health",
-            "08": "Recreation, culture, religion",
-            "09": "Education",
-            "10": "Social protection",
-        }
+        # Mission labels
+        mission_labels: dict[str, str] = {}
+        try:
+            import os as _os
+
+            with open(_os.path.join(DATA_DIR, "ux_labels.json"), "r", encoding="utf-8") as f:
+                labels_js = _json.load(f)
+            for ent in labels_js.get("missions", []):
+                mission_labels[str(ent.get("id"))] = str(ent.get("displayLabel") or ent.get("id"))
+        except Exception:
+            mission_labels = {}
         
         scenario_a_payload = RunScenarioPayload(
             id=strawberry.ID(sid_a),
@@ -1292,7 +1289,7 @@ class Query:
             waterfall=waterfall, 
             ribbons=ribbons, 
             pieceLabels=piece_labels, 
-            massLabels=mass_labels
+            massLabels=mission_labels
         )
 
 @strawberry.type
@@ -1454,9 +1451,14 @@ class Mutation:
         if abs(target) > tol:
             # Remove any prior marker for this mass
             acts = [a for a in acts if str(a.get("id","")) != f"target_{input.massId}"]
+            mission_target = str(input.massId)
+            if mission_target.upper().startswith("M_"):
+                target_expr = f"mission.{mission_target.upper()}"
+            else:
+                target_expr = f"mission.{mission_target}"
             acts.append({
                 "id": f"target_{input.massId}",
-                "target": f"cofog.{input.massId}",
+                "target": target_expr,
                 "dimension": "cp",
                 "role": "target",
                 "op": ("increase" if target >= 0 else "decrease"),

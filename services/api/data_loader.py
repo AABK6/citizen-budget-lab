@@ -8,7 +8,9 @@ import os
 from collections import defaultdict
 import json
 import hashlib
+from functools import lru_cache
 from typing import Dict, Iterable, List, Tuple
+import unicodedata
 
 import yaml
 
@@ -621,22 +623,141 @@ def _read_file_json(path: str) -> dict | list:
         return _json.load(f)
 
 
+def _normalize_weights(entries: List[Tuple[str, float]]) -> List[Tuple[str, float]]:
+    total = sum(w for _, w in entries)
+    if total <= 0:
+        return []
+    return [(code, float(weight) / total) for code, weight in entries if weight > 0]
+
+
+def _build_mission_bridges(cfg: dict) -> tuple[Dict[str, List[Tuple[str, float]]], Dict[str, List[Tuple[str, float]]]]:
+    mission_by_piece: Dict[str, List[Tuple[str, float]]] = {}
+    cofog_to_mission_acc: Dict[str, Dict[str, float]] = defaultdict(lambda: defaultdict(float))
+
+    for piece in cfg.get("pieces", []):
+        pid = str(piece.get("id"))
+        mapping = piece.get("mapping") or {}
+        missions_raw = mapping.get("mission") or []
+        missions: List[Tuple[str, float]] = []
+        for ent in missions_raw:
+            code = str(ent.get("code") or "").strip()
+            if not code:
+                continue
+            try:
+                weight = float(ent.get("weight", 0.0))
+            except Exception:
+                weight = 0.0
+            if weight <= 0:
+                continue
+            missions.append((code.upper(), weight))
+
+        missions = _normalize_weights(missions) if missions else []
+        if missions:
+            mission_by_piece[pid] = missions
+
+        cofogs_raw = mapping.get("cofog") or []
+        for ent in cofogs_raw:
+            code = str(ent.get("code") or "").strip()
+            if not code:
+                continue
+            major = code.split(".")[0][:2]
+            if not major:
+                continue
+            try:
+                cof_weight = float(ent.get("weight", 0.0))
+            except Exception:
+                cof_weight = 0.0
+            if cof_weight <= 0 or not missions:
+                continue
+            for mission_code, mission_weight in missions:
+                cofog_to_mission_acc[major][mission_code] += cof_weight * mission_weight
+
+    cofog_to_mission: Dict[str, List[Tuple[str, float]]] = {}
+    for major, weights in cofog_to_mission_acc.items():
+        entries = [(mission_code, value) for mission_code, value in weights.items() if value > 0]
+        normalized = _normalize_weights(entries)
+        if normalized:
+            cofog_to_mission[major] = normalized
+
+    return mission_by_piece, cofog_to_mission
+
+
+@lru_cache(maxsize=1)
+def mission_bridges() -> tuple[Dict[str, List[Tuple[str, float]]], Dict[str, List[Tuple[str, float]]]]:
+    cfg = load_lego_config()
+    return _build_mission_bridges(cfg)
+
+
+def _normalize_alias(value: str) -> str:
+    base = value.strip().lower()
+    ascii_form = unicodedata.normalize('NFKD', base).encode('ascii', 'ignore').decode('ascii')
+    return ascii_form or base
+
+
+@lru_cache(maxsize=1)
+def mission_alias_map() -> Dict[str, str]:
+    aliases: Dict[str, str] = {}
+    try:
+        data = _read_file_json(os.path.join(DATA_DIR, "ux_labels.json"))
+    except Exception:
+        return aliases
+    for ent in data.get("missions", []):
+        mission_id = str(ent.get("id"))
+        names = [str(ent.get("displayLabel") or mission_id)]
+        names.extend(str(s) for s in (ent.get("synonyms") or []))
+        for name in names:
+            norm = _normalize_alias(name)
+            if norm:
+                aliases[norm] = mission_id
+    return aliases
+
+
+def convert_mass_mapping_to_missions(raw_mapping: Dict[str, float]) -> Dict[str, float]:
+    mission_map: Dict[str, float] = defaultdict(float)
+    _, cofog_to_mission = mission_bridges()
+
+    for key, value in (raw_mapping or {}).items():
+        try:
+            weight = float(value)
+        except Exception:
+            continue
+        if weight == 0:
+            continue
+        if isinstance(key, str) and key.upper().startswith("M_"):
+            mission_map[key.upper()] += weight
+            continue
+        major = str(key).split(".")[0][:2]
+        if major in cofog_to_mission:
+            for mission_code, mission_weight in cofog_to_mission[major]:
+                mission_map[mission_code] += weight * mission_weight
+
+    return dict(mission_map)
+
 
 def load_lego_config() -> dict:
     return _read_file_json(LEGO_PIECES_JSON)
 
 
 def load_lego_baseline(year: int) -> dict | None:
-    try:
-        if not wh.warehouse_available():
+    if wh.warehouse_available():
+        try:
+            snap = wh.lego_baseline(year)
+            if snap:
+                return snap
+        except Exception:
+            pass
+    path = os.path.join(DATA_DIR, "cache", f"lego_baseline_{year}.json")
+    if os.path.exists(path):
+        try:
+            return _read_file_json(path)
+        except Exception:
             return None
-        return wh.lego_baseline(year)
-    except Exception:
-        return None
+    return None
 
 
 def lego_pieces_with_baseline(year: int, scope: str = "S13") -> List[dict]:
     cfg = load_lego_config()
+    mission_by_piece, _ = mission_bridges()
     # Prefer warehouse baseline if available; fallback to warmed JSON
     baseline = None
     try:
@@ -676,12 +797,8 @@ def lego_pieces_with_baseline(year: int, scope: str = "S13") -> List[dict]:
                 "share": shares.get(pid),
                 "cofog_majors": cofmaj,
                 "missions": [
-                    {
-                        "code": str(m.get("code")),
-                        "weight": float(m.get("weight", 0.0)),
-                    }
-                    for m in (p.get("mapping", {}).get("mission") or [])
-                    if m.get("code")
+                    {"code": code, "weight": weight}
+                    for code, weight in mission_by_piece.get(pid, [])
                 ],
                 "beneficiaries": p.get("beneficiaries") or {},
                 "examples": p.get("examples") or [],
@@ -923,6 +1040,43 @@ def _map_action_to_cofog(action: dict, baseline_year: int) -> List[Tuple[str, fl
     return []
 
 
+def _map_action_to_mission(
+    action: dict,
+    lego_mission_map: Dict[str, List[Tuple[str, float]]],
+    cofog_to_mission: Dict[str, List[Tuple[str, float]]],
+) -> List[Tuple[str, float]]:
+    target = str(action.get("target", ""))
+    if target.startswith("mission."):
+        code = target.split(".", 1)[1]
+        mission_code = code.upper()
+        if mission_code.startswith("M_"):
+            return [(mission_code, 1.0)]
+        if mission_code.isdigit():
+            major = mission_code[:2]
+            return cofog_to_mission.get(major, [])
+        alias = mission_alias_map().get(_normalize_alias(code))
+        if alias:
+            return [(alias, 1.0)]
+        return [(mission_code, 1.0)]
+    if target.startswith("cofog." ):
+        key = target.split(".", 1)[1]
+        major = str(key).zfill(2)[:2]
+        return cofog_to_mission.get(major, [])
+    if target.startswith("piece."):
+        pid = target.split(".", 1)[1]
+        return lego_mission_map.get(pid, [])
+    return []
+
+
+def mission_to_cofog_weights(mission_code: str, cofog_to_mission: Dict[str, List[Tuple[str, float]]]) -> List[Tuple[str, float]]:
+    entries = []
+    for major, weights in cofog_to_mission.items():
+        for code, weight in weights:
+            if code == mission_code:
+                entries.append((major, weight))
+    return _normalize_weights(entries)
+
+
 def _macro_kernel(horizon: int, shocks_pct_gdp: Dict[str, List[float]], gdp_series: List[float]) -> MacroResult:
     # Allow overriding IRF parameter source via env for sensitivity toggles (V2 prep)
     try:
@@ -995,11 +1149,15 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
     gdp_series = [gdp_series_map.get(baseline_year + i, list(gdp_series_map.values())[-1]) for i in range(horizon_years)]
     shocks_pct_gdp: Dict[str, List[float]] = {}
     # Preload LEGO baseline/config to support piece.* targets
-    if not wh.warehouse_available():
-        raise RuntimeError("Warehouse LEGO baseline unavailable; ensure warehouse is enabled and seeded.")
-    lego_bl = wh.lego_baseline(baseline_year)
+    lego_bl = None
+    if wh.warehouse_available():
+        lego_bl = wh.lego_baseline(baseline_year)
     if not lego_bl:
-        raise RuntimeError(f"Missing LEGO baseline for {baseline_year} in warehouse")
+        lego_bl = load_lego_baseline(baseline_year)
+    if not lego_bl:
+        raise RuntimeError(f"Missing LEGO baseline for {baseline_year}; ensure data is warmed")
+    mission_by_piece, cofog_to_mission = mission_bridges()
+    lego_mission_map: Dict[str, List[Tuple[str, float]]] = mission_by_piece
     lego_types: Dict[str, str] = {}
     lego_cofog_map: Dict[str, List[Tuple[str, float]]] = {}
     try:
@@ -1045,10 +1203,10 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
     dimensions = ("cp", "ae")
     specified_deltas: dict[str, List[float]] = {dim: [0.0] * horizon_years for dim in dimensions}
     unspecified_deltas: dict[str, List[float]] = {dim: [0.0] * horizon_years for dim in dimensions}
-    resolution_specified_by_mass_dim: dict[str, Dict[str, float]] = {dim: defaultdict(float) for dim in dimensions}
-    resolution_target_by_mass_dim: dict[str, Dict[str, float]] = {dim: defaultdict(float) for dim in dimensions}
-    resolution_specified_by_mass_total: Dict[str, float] = defaultdict(float)
-    resolution_target_by_mass_total: Dict[str, float] = defaultdict(float)
+    resolution_specified_by_mission_dim: dict[str, Dict[str, float]] = {dim: defaultdict(float) for dim in dimensions}
+    resolution_target_by_mission_dim: dict[str, Dict[str, float]] = {dim: defaultdict(float) for dim in dimensions}
+    resolution_specified_by_mission_total: Dict[str, float] = defaultdict(float)
+    resolution_target_by_mission_total: Dict[str, float] = defaultdict(float)
 
     def _dimension_for_action(obj: dict, *, default: str = "cp") -> str:
         dim = str((obj or {}).get("dimension", default)).lower()
@@ -1081,7 +1239,7 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
             impact = lever_def.get("fixed_impact_eur")
             if not isinstance(impact, (int, float)):
                 continue
-            
+
             # A positive impact is a saving (reduces deficit), a negative one is a cost (increases deficit)
             delta = -impact
             lever_dim = _dimension_for_action(lever_def)
@@ -1092,18 +1250,32 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
             for i in range(horizon_years):
                 ledger[i] += delta
 
-            # Attribute to macro shocks and resolution
-            mass_mapping = lever_def.get("mass_mapping", {})
-            for mass_code, weight in mass_mapping.items():
+            # Attribute to macro shocks using raw COFOG mapping when available
+            raw_mass_mapping = lever_def.get("mass_mapping", {}) or {}
+            for mass_code, weight in raw_mass_mapping.items():
+                try:
+                    weight_val = float(weight)
+                except Exception:
+                    continue
                 major = str(mass_code).split(".")[0][:2]
-                shock_eur = delta * float(weight)
+                if not major:
+                    continue
+                shock_eur = delta * weight_val
                 if lever_dim != "ae":
                     for i in range(horizon_years):
                         shocks_pct_gdp.setdefault(major, [0.0] * horizon_years)[i] += 100.0 * shock_eur / gdp_series[i]
 
-                # Attribute to specified resolution (dimension + aggregate)
-                resolution_specified_by_mass_dim["ae" if lever_dim == "ae" else "cp"][major] += -impact * float(weight)
-                resolution_specified_by_mass_total[major] += -impact * float(weight)
+            mission_mapping = convert_mass_mapping_to_missions(raw_mass_mapping)
+            for mission_code, weight in mission_mapping.items():
+                try:
+                    weight_val = float(weight)
+                except Exception:
+                    continue
+                if weight_val == 0:
+                    continue
+                target_dim = "ae" if lever_dim == "ae" else "cp"
+                resolution_specified_by_mission_dim[target_dim][mission_code] += -impact * weight_val
+                resolution_specified_by_mission_total[mission_code] += -impact * weight_val
 
     # Pieces
     for act in actions:
@@ -1136,13 +1308,13 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
         if amt_eur is not None:
             val = float(amt_eur)
             if role == "target":
-                cof = lego_cofog_map.get(pid) or []
-                if cof:
-                    for c_code, w in cof:
-                        major = str(c_code).split(".")[0][:2]
-                        adjusted = val * (1.0 if ptype == "expenditure" else -1.0) * float(w)
-                        resolution_target_by_mass_dim[ledger_key][major] += adjusted
-                        resolution_target_by_mass_total[major] += adjusted
+                missions = lego_mission_map.get(pid) or []
+                if missions:
+                    sign = 1.0 if ptype == "expenditure" else -1.0
+                    for mission_code, weight in missions:
+                        adjusted = val * sign * float(weight)
+                        resolution_target_by_mission_dim[ledger_key][mission_code] += adjusted
+                        resolution_target_by_mission_total[mission_code] += adjusted
             else:
                 bounds_amt = pol.get("bounds_amount_eur") or {}
                 try:
@@ -1169,14 +1341,13 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
             sign = 1.0 if op != "decrease" else -1.0
             eff = (pct / 100.0) * base_amt
             if role == "target":
-                cof = lego_cofog_map.get(pid) or []
+                missions = lego_mission_map.get(pid) or []
                 eff_sign = sign * (1.0 if ptype == "expenditure" else -1.0)
-                if cof:
-                    for c_code, w in cof:
-                        major = str(c_code).split(".")[0][:2]
-                        adjusted = eff_sign * eff * float(w)
-                        resolution_target_by_mass_dim[ledger_key][major] += adjusted
-                        resolution_target_by_mass_total[major] += adjusted
+                if missions:
+                    for mission_code, weight in missions:
+                        adjusted = eff_sign * eff * float(weight)
+                        resolution_target_by_mission_dim[ledger_key][mission_code] += adjusted
+                        resolution_target_by_mission_total[mission_code] += adjusted
             else:
                 bounds_pct = pol.get("bounds_pct") or {}
                 try:
@@ -1205,13 +1376,20 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
                 ledger[0] += delta
 
             if ptype == "expenditure":
+                missions = lego_mission_map.get(pid) or []
+                if missions:
+                    for mission_code, weight in missions:
+                        inc = delta * float(weight)
+                        resolution_specified_by_mission_dim[ledger_key][mission_code] += inc
+                        resolution_specified_by_mission_total[mission_code] += inc
+                else:
+                    warnings.append(f"Piece '{pid}' is missing a mission mapping; its resolution impact will be ignored.")
+
                 cof = lego_cofog_map.get(pid) or []
                 if cof:
                     for c_code, w in cof:
                         major = str(c_code).split(".")[0][:2]
                         inc = delta * float(w)
-                        resolution_specified_by_mass_dim[ledger_key][major] += inc
-                        resolution_specified_by_mass_total[major] += inc
                         if ledger_key == "cp":
                             path = shocks_pct_gdp.setdefault(major, [0.0] * horizon_years)
                             if recurring:
@@ -1239,31 +1417,33 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
             if amount == 0.0:
                 continue
 
-            for cat, w in _map_action_to_cofog(act, baseline_year):
-                major = str(cat).split(".")[0][:2]
-                target_delta = amount * float(w)
-                resolution_target_by_mass_dim[ledger_key][major] += target_delta
-                resolution_target_by_mass_total[major] += target_delta
-                
-                # If not just a target, it's an unresolved change. The unspecified portion is the target minus what's already specified.
+            missions = _map_action_to_mission(act, lego_mission_map, cofog_to_mission)
+            if not missions:
+                continue
+
+            for mission_code, weight in missions:
+                target_delta = amount * float(weight)
+                resolution_target_by_mission_dim[ledger_key][mission_code] += target_delta
+                resolution_target_by_mission_total[mission_code] += target_delta
+
                 if role != "target":
-                    specified_mass = resolution_specified_by_mass_dim[ledger_key].get(major, 0.0)
-                    unspecified_delta = target_delta - specified_mass
-                    
+                    specified_mission = resolution_specified_by_mission_dim[ledger_key].get(mission_code, 0.0)
+                    unspecified_delta = target_delta - specified_mission
+
                     if recurring:
                         for i in range(horizon_years):
                             unspecified_deltas[ledger_key][i] += unspecified_delta
                     else:
                         unspecified_deltas[ledger_key][0] += unspecified_delta
-                        
-                    # Attribute unspecified part to macro shocks
+
                     if ledger_key == "cp":
-                        path = shocks_pct_gdp.setdefault(major, [0.0] * horizon_years)
-                        if recurring:
-                            for i in range(horizon_years):
-                                path[i] += 100.0 * unspecified_delta / gdp_series[i]
-                        else:
-                            path[0] += 100.0 * unspecified_delta / gdp_series[0]
+                        for major, cof_weight in mission_to_cofog_weights(mission_code, cofog_to_mission):
+                            path = shocks_pct_gdp.setdefault(major, [0.0] * horizon_years)
+                            if recurring:
+                                for i in range(horizon_years):
+                                    path[i] += 100.0 * unspecified_delta * cof_weight / gdp_series[i]
+                            else:
+                                path[0] += 100.0 * unspecified_delta * cof_weight / gdp_series[0]
 
     # 3. Final combination (CP + AE ledgers)
     cp_deltas_by_year = [s + u for s, u in zip(specified_deltas["cp"], unspecified_deltas["cp"])]
@@ -1411,12 +1591,12 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
 
     # Build resolution payload (overallPct + byMass)
     by_mass: List[dict] = []
-    mass_ids = set(list(resolution_target_by_mass_total.keys()) + list(resolution_specified_by_mass_total.keys()))
+    mission_ids = set(list(resolution_target_by_mission_total.keys()) + list(resolution_specified_by_mission_total.keys()))
     total_target_abs = 0.0
     total_spec_abs = 0.0
-    for mid in sorted(mass_ids):
-        t = float(resolution_target_by_mass_total.get(mid, 0.0))
-        s = float(resolution_specified_by_mass_total.get(mid, 0.0))
+    for mid in sorted(mission_ids):
+        t = float(resolution_target_by_mission_total.get(mid, 0.0))
+        s = float(resolution_specified_by_mission_total.get(mid, 0.0))
         by_mass.append({
             "massId": mid,
             "targetDeltaEur": t,

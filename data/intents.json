@@ -4,38 +4,60 @@
       "id": "hire_more_nurses",
       "label": "Hire more nurses",
       "emoji": "🩺",
-      "massId": "07",
-      "seed": { "amount_eur": 2000000000, "op": "increase" },
+      "massId": "M_HEALTH",
+      "seed": {
+        "amount_eur": 2000000000,
+        "op": "increase"
+      },
       "popularity": 0.9,
-      "tags": ["health", "staffing"]
+      "tags": [
+        "health",
+        "staffing"
+      ]
     },
     {
       "id": "rural_er_coverage",
       "label": "Rural ER coverage",
       "emoji": "🚑",
-      "massId": "07",
-      "seed": { "amount_eur": 1000000000, "op": "increase" },
+      "massId": "M_HEALTH",
+      "seed": {
+        "amount_eur": 1000000000,
+        "op": "increase"
+      },
       "popularity": 0.7,
-      "tags": ["health"]
+      "tags": [
+        "health"
+      ]
     },
     {
       "id": "reduce_defense_procurement",
       "label": "Trim defense procurement",
       "emoji": "⚓",
-      "massId": "02",
-      "seed": { "amount_eur": -3000000000, "op": "decrease" },
+      "massId": "M_DEFENSE",
+      "seed": {
+        "amount_eur": -3000000000,
+        "op": "decrease"
+      },
       "popularity": 0.6,
-      "tags": ["defense", "procurement"]
+      "tags": [
+        "defense",
+        "procurement"
+      ]
     },
     {
       "id": "raise_carbon_tax",
       "label": "Raise carbon tax",
       "emoji": "🌍",
-      "massId": "10",
-      "seed": { "amount_eur": 3000000000, "op": "increase" },
+      "massId": "M_ENVIRONMENT",
+      "seed": {
+        "amount_eur": 3000000000,
+        "op": "increase"
+      },
       "popularity": 0.8,
-      "tags": ["climate", "tax"]
+      "tags": [
+        "climate",
+        "tax"
+      ]
     }
   ]
 }
-

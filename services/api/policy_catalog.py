@@ -871,19 +871,29 @@ def levers_by_id() -> Dict[str, dict]:
 
 
 def suggest_levers_for_mass(mass_id: str, limit: int = 5) -> List[dict]:
-    """Return levers ranked by relevance to the given COFOG major.
+    """Return levers ranked by relevance to the given mission identifier."""
 
-    Ranking = mass_mapping weight × popularity (fallback popularity=0.5 when absent).
-    """
-    mid = str(mass_id).zfill(2)[:2]
+    mission_id = str(mass_id).upper()
+    try:
+        from . import data_loader as dl  # lazy import to avoid cycles
+    except Exception:  # pragma: no cover - fallback for import issues
+        dl = None
     scored: List[tuple[float, dict]] = []
     for it in _LEVER_CATALOG:
-        mm = it.get("mass_mapping") or {}
-        w = float(mm.get(mid, 0.0))
-        if w <= 0:
+        raw_mapping = it.get("mass_mapping") or {}
+        mission_mapping = dl.convert_mass_mapping_to_missions(raw_mapping) if dl else {}
+
+        weight = float(mission_mapping.get(mission_id, 0.0))
+        if weight <= 0 and mission_id.isdigit():
+            # Legacy support: allow raw COFOG majors
+            try:
+                weight = float(raw_mapping.get(mission_id, 0.0))
+            except Exception:
+                weight = 0.0
+        if weight <= 0:
             continue
         pop = float(it.get("popularity", 0.5))
-        score = w * (0.5 + 0.5 * pop)
+        score = weight * (0.5 + 0.5 * pop)
         scored.append((score, it))
     scored.sort(key=lambda x: x[0], reverse=True)
     return [it for _, it in scored[:limit]]

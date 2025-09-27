@@ -26,10 +26,10 @@ actions:
     assert acc.debt_delta_path[4] == 5000
 
     assert reso["overallPct"] == 0.0 # No target, so resolution is 0%
-    mass_09 = next((m for m in reso["byMass"] if m["massId"] == "09"), None)
-    assert mass_09 is not None
-    assert mass_09["targetDeltaEur"] == 0.0
-    assert mass_09["specifiedDeltaEur"] == 1000.0
+    mission_edu = next((m for m in reso["byMass"] if m["massId"] == "M_EDU"), None)
+    assert mission_edu is not None
+    assert mission_edu["targetDeltaEur"] == 0.0
+    assert mission_edu["specifiedDeltaEur"] == 1000.0
 
 def test_resolution_mission_only():
     """Test that a simple mission change correctly updates targetDeltaEur and the deficit."""
@@ -39,7 +39,7 @@ baseline_year: 2026
 assumptions: { horizon_years: 5 }
 actions:
   - id: m1
-    target: mission.education # COFOG 09
+    target: mission.M_EDU
     op: increase
     amount_eur: 5000
     recurring: true
@@ -52,10 +52,10 @@ actions:
     assert acc.debt_delta_path[4] == 25000
 
     assert reso["overallPct"] == 0.0 # Unspecified change doesn't count as specified
-    mass_09 = next((m for m in reso["byMass"] if m["massId"] == "09"), None)
-    assert mass_09 is not None
-    assert mass_09["targetDeltaEur"] == 5000.0
-    assert mass_09["specifiedDeltaEur"] == 0.0
+    mission_edu = next((m for m in reso["byMass"] if m["massId"] == "M_EDU"), None)
+    assert mission_edu is not None
+    assert mission_edu["targetDeltaEur"] == 5000.0
+    assert mission_edu["specifiedDeltaEur"] == 0.0
 
 def test_resolution_hierarchical_no_double_count():
     """Test that a hierarchical change does not double-count."""
@@ -65,7 +65,7 @@ baseline_year: 2026
 assumptions: { horizon_years: 5 }
 actions:
   - id: m1
-    target: mission.education # COFOG 09
+    target: mission.M_EDU
     op: increase
     amount_eur: 5000
     recurring: true
@@ -84,10 +84,10 @@ actions:
     assert acc.debt_delta_path[4] == 25000
 
     assert abs(reso["overallPct"] - (1000 / 5000)) < 1e-9
-    mass_09 = next((m for m in reso["byMass"] if m["massId"] == "09"), None)
-    assert mass_09 is not None
-    assert mass_09["targetDeltaEur"] == 5000.0
-    assert mass_09["specifiedDeltaEur"] == 1000.0
+    mission_edu = next((m for m in reso["byMass"] if m["massId"] == "M_EDU"), None)
+    assert mission_edu is not None
+    assert mission_edu["targetDeltaEur"] == 5000.0
+    assert mission_edu["specifiedDeltaEur"] == 1000.0
 
 def test_resolution_missing_cofog_warning():
     """Test that a piece with a missing COFOG mapping generates a warning."""

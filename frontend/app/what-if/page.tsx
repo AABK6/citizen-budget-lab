@@ -19,7 +19,7 @@ assumptions:
   horizon_years: 5
 actions:
   - id: ed_invest_boost
-    target: mission.education
+    target: mission.M_EDU
     dimension: cp
     op: increase
     amount_eur: 1000000000

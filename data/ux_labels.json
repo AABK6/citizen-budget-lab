@@ -146,7 +146,9 @@
       ],
       "synonyms": [
         "éducation",
-        "enseignement scolaire"
+        "enseignement scolaire",
+        "education",
+        "enseignement"
       ]
     },
     {
@@ -173,7 +175,9 @@
       ],
       "synonyms": [
         "santé",
-        "soins"
+        "soins",
+        "sante",
+        "health"
       ]
     },
     {
@@ -199,7 +203,9 @@
       ],
       "synonyms": [
         "solidarité",
-        "famille"
+        "famille",
+        "solidarite",
+        "solidarity"
       ]
     },
     {
@@ -212,7 +218,8 @@
       ],
       "synonyms": [
         "emploi",
-        "chômage"
+        "chômage",
+        "employment"
       ]
     },
     {
@@ -277,7 +284,8 @@
       ],
       "synonyms": [
         "défense",
-        "armée"
+        "armée",
+        "defense"
       ]
     },
     {
@@ -303,7 +311,8 @@
       ],
       "synonyms": [
         "environnement",
-        "écologie"
+        "écologie",
+        "environment"
       ]
     },
     {
@@ -406,6 +415,16 @@
       "examples": [],
       "synonyms": [
         "test"
+      ]
+    },
+    {
+      "id": "M_UNKNOWN",
+      "displayLabel": "Mission non catégorisée",
+      "description": "Utilisé lorsque la pièce ne possède pas encore de rattachement administratif.",
+      "examples": [],
+      "synonyms": [
+        "inconnu",
+        "autre"
       ]
     }
   ]
