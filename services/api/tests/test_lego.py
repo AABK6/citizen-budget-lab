@@ -105,7 +105,7 @@ def test_graphql_lego_queries_smoke(monkeypatch):
         return js["data"]
 
     data = gql("""
-      query($y:Int!){ legoPieces(year:$y){ id label type amountEur share beneficiaries examples sources } }
+      query($y:Int!){ legoPieces(year:$y){ id label type amountEur share missions{ code weight } beneficiaries examples sources } }
     """, {"y": year})
     assert data["legoPieces"] and isinstance(data["legoPieces"], list)
 
@@ -162,7 +162,7 @@ def test_lego_queries_absent_snapshot(monkeypatch):
     assert data["legoBaseline"]["pieces"] == []
 
     data2 = gql("""
-      query($y:Int!){ legoPieces(year:$y){ id type amountEur share } }
+      query($y:Int!){ legoPieces(year:$y){ id type amountEur share missions{ code weight } } }
     """, {"y": year})
     assert isinstance(data2["legoPieces"], list)
     assert any(isinstance(ent.get("id"), str) for ent in data2["legoPieces"])

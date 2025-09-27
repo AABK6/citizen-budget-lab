@@ -675,6 +675,14 @@ def lego_pieces_with_baseline(year: int, scope: str = "S13") -> List[dict]:
                 "amount_eur": amounts.get(pid),
                 "share": shares.get(pid),
                 "cofog_majors": cofmaj,
+                "missions": [
+                    {
+                        "code": str(m.get("code")),
+                        "weight": float(m.get("weight", 0.0)),
+                    }
+                    for m in (p.get("mapping", {}).get("mission") or [])
+                    if m.get("code")
+                ],
                 "beneficiaries": p.get("beneficiaries") or {},
                 "examples": p.get("examples") or [],
                 "sources": p.get("sources") or [],

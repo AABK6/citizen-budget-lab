@@ -3,7 +3,13 @@ export type LegoPiece = {
   label: string;
   type: 'expenditure' | 'revenue';
   cofogMajors: string[];
+  missions: MissionWeight[];
   amountEur?: number;
+};
+
+export type MissionWeight = {
+  code: string;
+  weight: number;
 };
 
 export type MassLabel = {

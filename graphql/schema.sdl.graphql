@@ -13,7 +13,8 @@ MVP+ (LEGO Builder) additions
 
 enum ScopeEnum { S13 CENTRAL }
 
-type LegoPiece { id: ID!, label: String!, type: String!, amountEur: Float, share: Float, beneficiaries: JSON!, examples: [String!]!, sources: [String!]!, locked: Boolean! }
+type MissionWeight { code: String!, weight: Float! }
+type LegoPiece { id: ID!, label: String!, type: String!, amountEur: Float, share: Float, missions: [MissionWeight!]!, beneficiaries: JSON!, examples: [String!]!, sources: [String!]!, locked: Boolean! }
 type LegoBaseline { year: Int!, scope: ScopeEnum!, pib: Float!, depensesTotal: Float!, recettesTotal: Float!, pieces: [LegoPiece!]! }
 type DistanceByPiece { id: ID!, shareDelta: Float! }
 type Distance { score: Float!, byPiece: [DistanceByPiece!]! }
@@ -89,6 +90,14 @@ type MassLabelType {
     synonyms: [String!]!
 }
 
+type MissionLabelType {
+    id: ID!
+    displayLabel: String!
+    description: String
+    examples: [String!]!
+    synonyms: [String!]!
+}
+
 type IntentType {
     id: ID!
     label: String!
@@ -118,6 +127,7 @@ type Query {
   scenarioCompare(a: ID!, b: ID): ScenarioCompareResult!
   policyLevers(family: PolicyFamilyEnum, search: String): [PolicyLeverType!]!
   massLabels: [MassLabelType!]!
+  missionLabels: [MissionLabelType!]!
   popularIntents(limit: Int = 6): [IntentType!]!
   suggestLevers(massId: String!, limit: Int = 5): [PolicyLeverType!]!
 

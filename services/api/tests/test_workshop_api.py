@@ -14,9 +14,10 @@ def _gql(client: TestClient, q: str, variables: dict | None = None) -> dict:
 def test_popular_intents_and_mass_labels():
     app = create_app()
     client = TestClient(app)
-    data = _gql(client, "query{ popularIntents(limit:4){ id label massId popularity } massLabels { id displayLabel } }")
+    data = _gql(client, "query{ popularIntents(limit:4){ id label massId popularity } massLabels { id displayLabel } missionLabels { id displayLabel } }")
     assert len(data["popularIntents"]) <= 4
     assert any(m["id"] == "09" for m in data["massLabels"])  # Education present
+    assert any(m["id"] == "M_EDU" for m in data["missionLabels"])  # Mission education present
 
 
 def test_suggest_levers_defense_has_relevant_items():
@@ -32,42 +33,60 @@ def test_specify_mass_validation_and_apply():
     app = create_app()
     client = TestClient(app)
 
-    # Start from empty DSL (baseline) and set a target for Education (09)
-    dsl = "version: 0.1\nbaseline_year: 2026\nassumptions: { horizon_years: 3 }\nactions: []\n"
-    import base64
+    from services.api import warehouse_client as wh
 
-    dsl_b64 = base64.b64encode(dsl.encode("utf-8")).decode("utf-8")
+    baseline = {
+        "year": 2026,
+        "pieces": [
+            {"id": "ed_schools_staff_ops", "type": "expenditure", "amount_eur": 60000000000.0, "missions": [{"code": "M_EDU", "weight": 1.0}]},
+            {"id": "ed_secondary", "type": "expenditure", "amount_eur": 40000000000.0, "missions": [{"code": "M_EDU", "weight": 1.0}]},
+        ],
+    }
 
-    # 1) Over-allocate: target 1bn, plan 1.2bn → expect error
-    q = """
+    orig_available = wh.warehouse_available
+    orig_baseline = wh.lego_baseline
+    wh.warehouse_available = lambda: True
+    wh.lego_baseline = lambda year: baseline if year == 2026 else None
+
+    try:
+        # Start from empty DSL (baseline) and set a target for Education (09)
+        dsl = "version: 0.1\nbaseline_year: 2026\nassumptions: { horizon_years: 3 }\nactions: []\n"
+        import base64
+
+        dsl_b64 = base64.b64encode(dsl.encode("utf-8")).decode("utf-8")
+
+        # 1) Over-allocate: target 1bn, plan 1.2bn → expect error
+        q = """
       mutation M($input: SpecifyMassInput!){
         specifyMass(input:$input){ ok errors{ code message pieceId } dsl resolution{ overallPct byMass{ massId targetDeltaEur specifiedDeltaEur } } }
       }
     """
-    vars = {
-        "input": {
-            "dsl": dsl_b64,
-            "massId": "09",
-            "targetDeltaEur": 1000000000.0,
-            "splits": [
-                {"pieceId": "ed_schools_staff_ops", "amountEur": 800000000.0},
-                {"pieceId": "ed_secondary", "amountEur": 400000000.0},
-            ],
+        vars = {
+            "input": {
+                "dsl": dsl_b64,
+                "massId": "09",
+                "targetDeltaEur": 1000000000.0,
+                "splits": [
+                    {"pieceId": "ed_schools_staff_ops", "amountEur": 800000000.0},
+                    {"pieceId": "ed_secondary", "amountEur": 400000000.0},
+                ],
+            }
         }
-    }
-    data = _gql(client, q, vars)
-    res = data["specifyMass"]
-    assert res["ok"] is False
-    assert any(e["code"] == "over_allocate" for e in res["errors"])
+        data = _gql(client, q, vars)
+        res = data["specifyMass"]
+        assert res["ok"] is False
+        assert any(e["code"] == "over_allocate" for e in res["errors"])
 
-    # 2) Valid plan: adjust to exactly pending (1.0bn)
-    vars["input"]["splits"][1]["amountEur"] = 200000000.0
-    data2 = _gql(client, q, vars)
-    res2 = data2["specifyMass"]
-    assert res2["ok"] is True
-    # Education mass specified should now be close to target (pending near 0)
-    bm = {e["massId"]: (e["targetDeltaEur"], e["specifiedDeltaEur"]) for e in res2["resolution"]["byMass"]}
-    t, s = bm.get("09", (0.0, 0.0))
-    assert t >= 1_000_000_000.0 - 1e-6
-    assert s >= 1_000_000_000.0 - 1e-6
-
+        # 2) Valid plan: adjust to exactly pending (1.0bn)
+        vars["input"]["splits"][1]["amountEur"] = 200000000.0
+        data2 = _gql(client, q, vars)
+        res2 = data2["specifyMass"]
+        assert res2["ok"] is True
+        # Education mass specified should now be close to target (pending near 0)
+        bm = {e["massId"]: (e["targetDeltaEur"], e["specifiedDeltaEur"]) for e in res2["resolution"]["byMass"]}
+        t, s = bm.get("09", (0.0, 0.0))
+        assert t >= 1_000_000_000.0 - 1e-6
+        assert s >= 1_000_000_000.0 - 1e-6
+    finally:
+        wh.warehouse_available = orig_available
+        wh.lego_baseline = orig_baseline

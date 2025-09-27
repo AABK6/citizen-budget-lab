@@ -342,7 +342,8 @@ def lego_baseline(year: int) -> Optional[Dict[str, Any]]:
             p.piece_label,
             b.amount_eur,
             b.share,
-            b.scope
+            b.scope,
+            b.mission_mapping
         from {bl_rel} b
         join {p_rel} p on b.piece_id = p.piece_id
         where b.year = ?
@@ -358,7 +359,7 @@ def lego_baseline(year: int) -> Optional[Dict[str, Any]]:
     dep_total = 0.0
     rev_total = 0.0
     scope_val = None
-    for pid, ptype, plabel, amount, share, scope in rows:
+    for pid, ptype, plabel, amount, share, scope, missions in rows:
         amt = float(amount or 0.0)
         pieces.append({
             "id": pid,
@@ -366,6 +367,7 @@ def lego_baseline(year: int) -> Optional[Dict[str, Any]]:
             "label": plabel,
             "amount_eur": amt,
             "share": share,
+            "missions": missions,
         })
         if isinstance(scope, str) and not scope_val:
             scope_val = scope

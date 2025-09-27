@@ -30,13 +30,8 @@ export type Scalars = {
 
 export type Accounting = {
   __typename?: "Accounting";
-  baselineDebtPath?: Maybe<Array<Scalars["Float"]["output"]>>;
-  baselineDeficitPath?: Maybe<Array<Scalars["Float"]["output"]>>;
-  commitmentsPath?: Maybe<Array<Scalars["Float"]["output"]>>;
   debtPath: Array<Scalars["Float"]["output"]>;
-  debtDeltaPath?: Maybe<Array<Scalars["Float"]["output"]>>;
   deficitPath: Array<Scalars["Float"]["output"]>;
-  deficitDeltaPath?: Maybe<Array<Scalars["Float"]["output"]>>;
 };
 
 export type Allocation = {
@@ -130,6 +125,7 @@ export type LegoPiece = {
   id: Scalars["ID"]["output"];
   label: Scalars["String"]["output"];
   locked: Scalars["Boolean"]["output"];
+  missions: Array<MissionWeight>;
   share?: Maybe<Scalars["Float"]["output"]>;
   sources: Array<Scalars["String"]["output"]>;
   type: Scalars["String"]["output"];
@@ -171,6 +167,21 @@ export type MissionAllocation = {
   code: Scalars["String"]["output"];
   label: Scalars["String"]["output"];
   share: Scalars["Float"]["output"];
+};
+
+export type MissionLabelType = {
+  __typename?: "MissionLabelType";
+  description?: Maybe<Scalars["String"]["output"]>;
+  displayLabel: Scalars["String"]["output"];
+  examples: Array<Scalars["String"]["output"]>;
+  id: Scalars["ID"]["output"];
+  synonyms: Array<Scalars["String"]["output"]>;
+};
+
+export type MissionWeight = {
+  __typename?: "MissionWeight";
+  code: Scalars["String"]["output"];
+  weight: Scalars["Float"]["output"];
 };
 
 export type Mutation = {
@@ -246,6 +257,7 @@ export type Query = {
   legoDistance: Distance;
   legoPieces: Array<LegoPiece>;
   massLabels: Array<MassLabelType>;
+  missionLabels: Array<MissionLabelType>;
   policyLevers: Array<PolicyLeverType>;
   popularIntents: Array<IntentType>;
   procurement: Array<ProcurementItem>;

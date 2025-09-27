@@ -182,6 +182,13 @@ class SpecifyMassPayload:
     resolution: ResolutionType
     dsl: str
 
+
+@strawberry.type
+class MissionWeightType:
+    code: str
+    weight: float
+
+
 @strawberry.type
 class LegoPieceType:
     id: str
@@ -190,6 +197,7 @@ class LegoPieceType:
     amountEur: float | None
     share: float | None
     cofogMajors: list[str]
+    missions: list[MissionWeightType]
     beneficiaries: JSON
     examples: list[str]
     sources: list[str]
@@ -317,6 +325,15 @@ class BudgetBaselineMissionType:
 
 @strawberry.type
 class MassLabelType:
+    id: str
+    displayLabel: str
+    description: str | None
+    examples: list[str]
+    synonyms: list[str]
+
+
+@strawberry.type
+class MissionLabelType:
     id: str
     displayLabel: str
     description: str | None
@@ -616,6 +633,11 @@ class Query:
                 amountEur=i.get("amount_eur"),
                 share=i.get("share"),
                 cofogMajors=[str(x) for x in (i.get("cofog_majors") or [])],
+                missions=[
+                    MissionWeightType(code=str(m.get("code")), weight=float(m.get("weight", 0.0)))
+                    for m in (i.get("missions") or [])
+                    if m.get("code")
+                ],
                 beneficiaries=i.get("beneficiaries") or {},
                 examples=list(i.get("examples") or []),
                 sources=list(i.get("sources") or []),
@@ -744,6 +766,11 @@ class Query:
                                 amountEur=(float(amt) if isinstance(amt, (int, float)) else None),
                                 share=(float(ent.get("share")) if isinstance(ent.get("share"), (int, float)) else None),
                                 cofogMajors=[],
+                                missions=[
+                                    MissionWeightType(code=str(m.get("code")), weight=float(m.get("weight", 0.0)))
+                                    for m in (ent.get("missions") or [])
+                                    if isinstance(m, dict) and m.get("code")
+                                ],
                                 beneficiaries={},
                                 examples=[],
                                 sources=[],
@@ -771,6 +798,11 @@ class Query:
                 amountEur=(ent.get("amount_eur") if isinstance(ent.get("amount_eur"), (int, float)) else None),
                 share=(ent.get("share") if isinstance(ent.get("share"), (int, float)) else None),
                 cofogMajors=[],
+                missions=[
+                    MissionWeightType(code=str(m.get("code")), weight=float(m.get("weight", 0.0)))
+                    for m in (ent.get("missions") or [])
+                    if isinstance(m, dict) and m.get("code")
+                ],
                 beneficiaries={},
                 examples=[],
                 sources=[],
@@ -864,6 +896,29 @@ class Query:
             for ent in js.get("masses", []):
                 out.append(
                     MassLabelType(
+                        id=str(ent.get("id")),
+                        displayLabel=str(ent.get("displayLabel") or ent.get("id")),
+                        description=str(ent.get("description") or ""),
+                        examples=[str(x) for x in (ent.get("examples") or [])],
+                        synonyms=[str(x) for x in (ent.get("synonyms") or [])],
+                    )
+                )
+            return out
+        except Exception:
+            return []
+
+    @strawberry.field
+    def missionLabels(self) -> list[MissionLabelType]:
+        import json, os
+        from .data_loader import DATA_DIR  # type: ignore
+        path = os.path.join(DATA_DIR, "ux_labels.json")
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                js = json.load(f)
+            out: list[MissionLabelType] = []
+            for ent in js.get("missions", []):
+                out.append(
+                    MissionLabelType(
                         id=str(ent.get("id")),
                         displayLabel=str(ent.get("displayLabel") or ent.get("id")),
                         description=str(ent.get("description") or ""),

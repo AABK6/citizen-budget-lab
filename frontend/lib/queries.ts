@@ -5,6 +5,7 @@ export const buildPageQuery = `
       pieces {
         id
         amountEur
+        missions { code weight }
       }
     }
     legoPieces(year: $year) {
@@ -12,10 +13,16 @@ export const buildPageQuery = `
       label
       type
       cofogMajors
+      missions { code weight }
     }
     massLabels {
       id
       displayLabel
+    }
+    missionLabels {
+      id
+      displayLabel
+      description
     }
     policyLevers {
       id
