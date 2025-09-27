@@ -13,6 +13,7 @@ Then we filter by extension and concatenate.
 """
 
 import argparse
+import datetime
 import subprocess
 from pathlib import Path
 
@@ -27,7 +28,6 @@ def parse_args() -> argparse.Namespace:
         description="Combine code files into one text file (respects .gitignore)."
     )
     p.add_argument("--root", default=".", help="Repo root directory (default: .)")
-    p.add_argument("--output", default="all_code.txt", help="Output file path")
     p.add_argument(
         "--ext",
         default=",".join(sorted(DEFAULT_EXTS)),
@@ -81,7 +81,12 @@ def git_list_unignored_files(root: Path) -> list[Path]:
 def main() -> None:
     args = parse_args()
     root = Path(args.root).resolve()
-    out_path = (root / args.output).resolve()
+
+    repo_name = root.name
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d")
+    out_filename = f"{repo_name}_{timestamp}.txt"
+    out_path = root / out_filename
+
     include_exts = normalize_exts(args.ext)
 
     assert_git_repo(root)
@@ -91,7 +96,7 @@ def main() -> None:
     # Filter by extension, nodir, and skip the output file itself
     selected: list[Path] = []
     for f in files:
-        if f.resolve() == out_path:
+        if f.resolve() == out_path.resolve():
             continue
         try:
             rel = f.relative_to(root)
