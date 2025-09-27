@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import type { MassCategory } from '../types';
 
 const tintBackground = (hex: string, alpha = 0.18) => {
@@ -29,31 +30,27 @@ export function MassCategoryList({ categories, onSelect, formatCurrency, formatS
         return (
         <div
           key={category.id ?? index}
-          className="spending-category mission-card"
+          className="mission-card"
           onClick={() => onSelect(category)}
-          style={{ borderColor: '#e5e7eb', borderLeftColor: accent }}
+          style={{ '--card-accent': accent } as CSSProperties}
         >
-          <div className="mission-card-header">
-            <div className="mission-identity">
-              <span
-                className="mission-icon"
-                style={{ backgroundColor: category.color || '#2563eb' }}
-                aria-hidden="true"
-              >
+          <div className="mission-card__body">
+            <div className="mission-card__identity">
+              <span className="mission-card__icon" aria-hidden="true" style={{ backgroundColor: tint, color: accent }}>
                 {category.icon || '🏛️'}
               </span>
-              <div className="mission-titles">
-                <div className="category-name">{category.name}</div>
-                <div className="category-amount">
+              <div className="mission-card__titles">
+                <div className="mission-card__title">{category.name}</div>
+                <div className="mission-card__metric">
                   {displayMode === 'share' ? formatShare(category.share) : formatCurrency(category.amount)}
                 </div>
               </div>
             </div>
-            <i className="material-icons mission-chevron" aria-hidden="true">chevron_right</i>
+            <i className="material-icons mission-card__chevron" aria-hidden="true">chevron_right</i>
           </div>
-          <div className="category-controls">
-            <div className="control-button" style={{ backgroundColor: tint, color: accent }}>Set target</div>
-            <div className="control-button" style={{ backgroundColor: tint, color: accent }}>View reforms</div>
+          <div className="mission-card__footer">
+            <span className="mission-card__action">Set target</span>
+            <span className="mission-card__action">View reforms</span>
           </div>
         </div>
       )})}

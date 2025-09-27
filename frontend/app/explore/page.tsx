@@ -84,7 +84,7 @@ export default function ExplorePage() {
     }
     run()
     return () => { cancelled = true }
-  }, [year, lens, basis])
+  }, [year, lens, basis, t])
 
   return (
     <div className="stack">

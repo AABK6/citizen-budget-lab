@@ -1,6 +1,6 @@
 ﻿"use client"
 
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { gqlRequest } from '@/lib/graphql'
 import { YearPicker } from '@/components/YearPicker'
 import { Select } from '@/components/Select'
@@ -49,7 +49,7 @@ export default function ProcurementPage() {
     { key: 'sourceUrl', label: t('proc.source') || 'Source', render: (v: string) => v ? <a href={v} target="_blank" rel="noreferrer">Open</a> : '' }
   ], [t])
 
-  async function load() {
+  const load = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
@@ -85,11 +85,11 @@ export default function ProcurementPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [cpvPrefix, minAmount, region, year])
 
   useEffect(() => {
     load()
-  }, [])
+  }, [load])
 
   return (
     <div className="stack">

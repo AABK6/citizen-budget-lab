@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { gqlRequest } from '@/lib/graphql'
 import dynamic from 'next/dynamic'
 
@@ -17,7 +17,7 @@ export default function CompareEUPage() {
 
   const countryList = useMemo(() => countries.split(',').map(s => s.trim()).filter(Boolean), [countries])
 
-  async function load() {
+  const load = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
@@ -26,9 +26,9 @@ export default function CompareEUPage() {
       setData(js.euCofogCompare)
     } catch (e: any) { setError(e?.message || 'Failed to load') }
     finally { setLoading(false) }
-  }
+  }, [countryList, year])
 
-  useEffect(() => { load() }, [])
+  useEffect(() => { load() }, [load])
 
   return (
     <div className="stack">

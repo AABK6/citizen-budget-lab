@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Script from 'next/script'
+import Image from 'next/image'
 import './globals.css'
 import { NavTabs } from '@/components/NavTabs'
 import { LangSwitcher } from '@/components/LangSwitcher'
@@ -47,8 +48,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <div className="fr-header__brand fr-enlarge-link">
                     <div className="fr-header__brand-top">
                       <div className="fr-header__logo" aria-hidden="true">
-                        <img src="/citizenbudgetlogo.png" alt="Citizen Budget Lab" className="brand-logo brand-logo-light" />
-                        <img src="/citizenbudgetlogo_dark.png" alt="Citizen Budget Lab" className="brand-logo brand-logo-dark" />
+                        <Image
+                          src="/citizenbudgetlogo.png"
+                          alt="Citizen Budget Lab"
+                          className="brand-logo brand-logo-light"
+                          width={277}
+                          height={419}
+                          priority
+                        />
+                        <Image
+                          src="/citizenbudgetlogo_dark.png"
+                          alt="Citizen Budget Lab"
+                          className="brand-logo brand-logo-dark"
+                          width={277}
+                          height={419}
+                        />
                       </div>
                     </div>
                     <div className="fr-header__service">
@@ -82,8 +96,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <div className="fr-footer__body" style={{ padding: '.5rem 0' }}>
                 <div className="fr-footer__brand fr-enlarge-link">
                   <a className="fr-footer__brand-link" href="/" title="Retour à l’accueil" style={{ display: 'inline-flex', alignItems: 'center', gap: '.5rem' }}>
-                    <img src="/citizenbudgetlogo.png" alt="Citizen Budget Lab" className="brand-logo brand-logo-light" />
-                    <img src="/citizenbudgetlogo_dark.png" alt="Citizen Budget Lab" className="brand-logo brand-logo-dark" />
+                    <Image
+                      src="/citizenbudgetlogo.png"
+                      alt="Citizen Budget Lab"
+                      className="brand-logo brand-logo-light"
+                      width={277}
+                      height={419}
+                    />
+                    <Image
+                      src="/citizenbudgetlogo_dark.png"
+                      alt="Citizen Budget Lab"
+                      className="brand-logo brand-logo-dark"
+                      width={277}
+                      height={419}
+                    />
                     <span className="fr-footer__brand-title">Budget citoyen</span>
                   </a>
                 </div>
@@ -106,4 +132,3 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   )
 }
-

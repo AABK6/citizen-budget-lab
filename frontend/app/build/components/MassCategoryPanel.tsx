@@ -1,4 +1,5 @@
 import type { PolicyLever, PopularIntent, MassCategory } from '../types';
+import type { CSSProperties } from 'react';
 
 export type MassCategoryPanelProps = {
   category: MassCategory;
@@ -44,81 +45,83 @@ export function MassCategoryPanel({
   };
 
   const headerColor = category.color || '#1d4ed8';
-  const headerAccent = lightenColor(headerColor, 0.35);
-  const pillTint = lightenColor(headerColor, 0.65);
+  const pillTint = lightenColor(headerColor, 0.82);
+  const iconTint = lightenColor(headerColor, 0.9);
+  const accentStyle = { '--panel-accent': headerColor } as CSSProperties;
 
   return (
     <>
       <button className="fr-btn fr-btn--secondary fr-btn--sm" onClick={onClose} style={{ marginBottom: '1rem', alignSelf: 'flex-start' }}>Back</button>
-      <div
-        className="mission-panel-header"
-        style={{ background: `linear-gradient(120deg, ${headerColor}, ${headerAccent})` }}
-      >
-        <span className="mission-panel-icon" aria-hidden="true">{category.icon || '🏛️'}</span>
-        <div className="mission-panel-copy">
-          <div className="mission-panel-title">{category.name}</div>
-          <div className="mission-panel-subtitle">
-            {formatCurrency(category.amount)} · {formatShare(category.share)}
-          </div>
-        </div>
-      </div>
-      <div className="selected-category" style={{ borderLeftColor: headerColor, backgroundColor: lightenColor(headerColor, 0.9) }}>
-        <div className="category-header">
-          <div className="category-name">{category.name}</div>
-          <div className="category-amount">
-            {displayMode === 'share' ? formatShare(category.share) : formatCurrency(category.amount)}
-          </div>
-        </div>
-        <div className="target-controls">
-          <span className="target-label">Target:</span>
-          <input
-            type="text"
-            className="target-input"
-            value={targetInput}
-            onChange={(e) => onTargetChange(e.target.value)}
-            placeholder="+10B, -500M..."
-          />
-          <button className="target-button" onClick={onApplyTarget}>Apply</button>
-          <button className="target-button fr-btn--secondary" onClick={onClearTarget}>Clear</button>
-        </div>
-        <div className="reforms-section">
-          <div className="section-title">Available Reforms</div>
-          {suggestedLevers.map((reform) => (
-            <div key={reform.id} className={`reform-item ${isLeverSelected(reform.id) ? 'applied' : ''}`}>
-              <div className="reform-details">
-                <div className="reform-name">{reform.label}</div>
-                <div className="reform-description">{reform.description}</div>
-              </div>
-              <div className="reform-actions">
-                <div className="reform-impact">
-                  <span className={reform.fixedImpactEur && reform.fixedImpactEur > 0 ? 'impact-positive' : 'impact-negative'}>
-                    {formatCurrency(reform.fixedImpactEur || 0)}
-                  </span>
-                </div>
-                <button
-                  className={`fr-btn fr-btn--${isLeverSelected(reform.id) ? 'secondary' : 'primary'}`}
-                  onClick={() => onLeverToggle(reform)}
-                >
-                  {isLeverSelected(reform.id) ? 'Remove' : 'Add'}
-                </button>
-              </div>
+      <div className="mission-panel" style={accentStyle}>
+        <div className="mission-panel-header">
+          <span className="mission-panel-icon" aria-hidden="true" style={{ backgroundColor: iconTint, color: headerColor }}>
+            {category.icon || '🏛️'}
+          </span>
+          <div className="mission-panel-copy">
+            <div className="mission-panel-title">{category.name}</div>
+            <div className="mission-panel-subtitle">
+              {formatCurrency(category.amount)} · {formatShare(category.share)}
             </div>
-          ))}
+          </div>
         </div>
-        <div className="popular-reforms">
-          <div className="section-title">Popular Reforms</div>
-          {popularIntents
-            .filter(intent => intent.massId === category.id)
-            .map((intent) => (
-              <div
-                key={intent.id}
-                className="reform-pill"
-                style={{ backgroundColor: pillTint, color: headerColor }}
-                onClick={() => onIntentClick(intent)}
-              >
-                {intent.emoji} {intent.label}
+        <div className="selected-category">
+          <div className="category-header">
+            <div className="category-name">{category.name}</div>
+            <div className="category-amount">
+              {displayMode === 'share' ? formatShare(category.share) : formatCurrency(category.amount)}
+            </div>
+          </div>
+          <div className="target-controls">
+            <span className="target-label">Target:</span>
+            <input
+              type="text"
+              className="target-input"
+              value={targetInput}
+              onChange={(e) => onTargetChange(e.target.value)}
+              placeholder="+10B, -500M..."
+            />
+            <button className="target-button" onClick={onApplyTarget}>Apply</button>
+            <button className="target-button fr-btn--secondary" onClick={onClearTarget}>Clear</button>
+          </div>
+          <div className="reforms-section">
+            <div className="section-title">Available Reforms</div>
+            {suggestedLevers.map((reform) => (
+              <div key={reform.id} className={`reform-item ${isLeverSelected(reform.id) ? 'applied' : ''}`}>
+                <div className="reform-details">
+                  <div className="reform-name">{reform.label}</div>
+                  <div className="reform-description">{reform.description}</div>
+                </div>
+                <div className="reform-actions">
+                  <div className="reform-impact">
+                    <span className={reform.fixedImpactEur && reform.fixedImpactEur > 0 ? 'impact-positive' : 'impact-negative'}>
+                      {formatCurrency(reform.fixedImpactEur || 0)}
+                    </span>
+                  </div>
+                  <button
+                    className={`fr-btn fr-btn--${isLeverSelected(reform.id) ? 'secondary' : 'primary'}`}
+                    onClick={() => onLeverToggle(reform)}
+                  >
+                    {isLeverSelected(reform.id) ? 'Remove' : 'Add'}
+                  </button>
+                </div>
               </div>
             ))}
+          </div>
+          <div className="popular-reforms">
+            <div className="section-title">Popular Reforms</div>
+            {popularIntents
+              .filter(intent => intent.massId === category.id)
+              .map((intent) => (
+                <div
+                  key={intent.id}
+                  className="reform-pill"
+                  style={{ backgroundColor: pillTint, color: headerColor }}
+                  onClick={() => onIntentClick(intent)}
+                >
+                  {intent.emoji} {intent.label}
+                </div>
+              ))}
+          </div>
         </div>
       </div>
     </>

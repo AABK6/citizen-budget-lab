@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { gqlRequest } from '@/lib/graphql'
 
 type Source = { id: string; datasetName: string; url: string; license: string; refreshCadence: string; vintage: string }
@@ -8,6 +8,8 @@ type Source = { id: string; datasetName: string; url: string; license: string; r
 export function SourceLink({ ids }: { ids?: string[] }) {
   const [sources, setSources] = useState<Source[]>([])
   const [error, setError] = useState<string | null>(null)
+
+  const normalizedIds = useMemo(() => (ids ? ids.filter(Boolean) : []), [ids])
 
   useEffect(() => {
     let cancelled = false
@@ -17,8 +19,8 @@ export function SourceLink({ ids }: { ids?: string[] }) {
         const data = await gqlRequest(q)
         const arr: Source[] = data.sources || []
         let out = arr
-        if (ids && ids.length) {
-          const set = new Set(ids)
+        if (normalizedIds.length) {
+          const set = new Set(normalizedIds)
           out = arr.filter(s => set.has(s.id))
         }
         if (!cancelled) setSources(out)
@@ -28,7 +30,7 @@ export function SourceLink({ ids }: { ids?: string[] }) {
     }
     load()
     return () => { cancelled = true }
-  }, [JSON.stringify(ids || [])])
+  }, [normalizedIds])
 
   if (error) return <span aria-live="polite">⚠ Sources</span>
   if (!sources.length) return <a className="fr-link fr-icon-external-link-line fr-link--icon-right" href="/sources" aria-label="Sources">Sources</a>

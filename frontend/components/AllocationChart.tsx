@@ -78,7 +78,7 @@ export function AllocationChart({ rows, kind, onSliceClick }: Props) {
       }
     }
     return common
-  }, [data, kind])
+  }, [data, kind, rows])
 
   const onEvents = React.useMemo(() => ({
     click: (p: any) => {
