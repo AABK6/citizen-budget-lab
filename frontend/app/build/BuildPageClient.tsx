@@ -25,9 +25,13 @@ import { useBuildState } from './useBuildState';
 import { runScenarioForDsl } from '@/lib/permalink';
 import { MassCategoryList } from './components/MassCategoryList';
 import { MassCategoryPanel } from './components/MassCategoryPanel';
+import { RevenueCategoryList } from './components/RevenueCategoryList';
+import { RevenueCategoryPanel } from './components/RevenueCategoryPanel';
 import { computeDeficitTotals } from '@/lib/fiscal';
 
 const fallbackTreemapColors = ['#2563eb', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#ef4444', '#6366f1', '#14b8a6', '#a855f7', '#d946ef'];
+const revenueColorPalette = ['#0ea5e9', '#f97316', '#9333ea', '#16a34a', '#dc2626', '#facc15', '#0f766e', '#7c3aed', '#22c55e', '#2563eb'];
+const revenueIcons = ['💶', '📈', '🏦', '🧾', '🏭', '🛢️', '🚬', '💡', '🎯', '💼'];
 
 const missionStyles: Record<string, { color: string; icon: string }> = {
   M_EDU: { color: '#2563eb', icon: '📚' },
@@ -409,10 +413,24 @@ export default function BuildPageClient() {
   };
 
   const handleRevenueCategoryClick = async (category: LegoPiece) => {
+    togglePanel(false);
+    setSelectedCategory(null);
+    const targetAction = dslObject.actions.find((action: DslAction) => action.id === `target_${category.id}`);
+    if (targetAction) {
+      const amount = targetAction.amount_eur * (targetAction.op === 'increase' ? 1 : -1);
+      setRevenueTargetInput(`${amount / 1e9}B`);
+    } else {
+      setRevenueTargetInput('');
+    }
     setSelectedRevenueCategory(category);
     toggleRevenuePanel(true);
 
-    const revenueLevers = policyLevers.filter(lever => lever.family === 'TAXES');
+    const revenueLevers = policyLevers.filter(lever => {
+      if (lever.family !== 'TAXES') return false;
+      if (!lever.massMapping) return true;
+      const weight = lever.massMapping[category.id];
+      return typeof weight === 'number' && weight > 0;
+    });
     setSuggestedLevers(revenueLevers);
   };
 
@@ -477,6 +495,17 @@ export default function BuildPageClient() {
     () => treemapData.map((mission, index) => mission.color || fallbackTreemapColors[index % fallbackTreemapColors.length]),
     [treemapData],
   );
+
+  const revenueVisuals = useMemo(() => {
+    const map = new Map<string, { color: string; icon: string }>();
+    revenuePieces.forEach((piece, index) => {
+      map.set(piece.id, {
+        color: revenueColorPalette[index % revenueColorPalette.length],
+        icon: revenueIcons[index % revenueIcons.length],
+      });
+    });
+    return map;
+  }, [revenuePieces]);
 
   if (initialLoading) {
     return <BuildPageSkeleton />;
@@ -723,90 +752,30 @@ export default function BuildPageClient() {
 
           <div className="right-panel">
             {isRevenuePanelExpanded && selectedRevenueCategory ? (
-              <>
-                <button
-                  className="fr-btn fr-btn--secondary fr-btn--sm"
-                  onClick={handleRevenueBackClick}
-                  style={{ marginBottom: '1rem', alignSelf: 'flex-start' }}
-                >
-                  Back
-                </button>
-                <div className="panel-header">{selectedRevenueCategory.label} Reforms & Targets</div>
-                <div className="selected-category">
-                  <div className="category-header">
-                    <div className="category-name">{selectedRevenueCategory.label}</div>
-                    <div className="category-amount">{formatCurrency(selectedRevenueCategory.amountEur || 0)}</div>
-                  </div>
-                  <div className="target-controls">
-                    <span className="target-label">Target:</span>
-                    <input
-                      type="text"
-                      className="target-input"
-                      value={revenueTargetInput}
-                      onChange={(e) => setRevenueTargetInput(e.target.value)}
-                      placeholder="+10B, -500M..."
-                    />
-                    <button className="target-button" onClick={handleApplyRevenueTarget}>Apply</button>
-                    <button className="target-button fr-btn--secondary" onClick={() => setRevenueTargetInput('')}>
-                      Clear
-                    </button>
-                  </div>
-                  <div className="reforms-section">
-                    <div className="section-title">Available Reforms</div>
-                    {suggestedLevers.map((reform, index) => (
-                      <div key={index} className={`reform-item ${isLeverInDsl(reform.id) ? 'applied' : ''}`}>
-                        <div className="reform-details">
-                          <div className="reform-name">{reform.label}</div>
-                          <div className="reform-description">{reform.description}</div>
-                        </div>
-                        <div className="reform-actions">
-                          <div className="reform-impact">
-                            <span className={
-                              reform.fixedImpactEur && reform.fixedImpactEur > 0 ? 'impact-positive' : 'impact-negative'
-                            }>
-                              {formatCurrency(reform.fixedImpactEur || 0)}
-                            </span>
-                          </div>
-                          <button
-                            className={`fr-btn fr-btn--${isLeverInDsl(reform.id) ? 'secondary' : 'primary'}`}
-                            onClick={() =>
-                              (isLeverInDsl(reform.id) ? removeLeverFromDsl(reform.id) : addLeverToDsl(reform))
-                            }
-                          >
-                            {isLeverInDsl(reform.id) ? 'Remove' : 'Add'}
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="popular-reforms">
-                    <div className="section-title">Popular Reforms</div>
-                    {popularIntents
-                      .filter((intent) => intent.seed && intent.seed.actions && intent.seed.actions.some((a: DslAction) => a.target.startsWith('piece.rev_')))
-                      .map((intent, index) => (
-                        <div key={index} className="reform-pill" onClick={() => handleIntentClick(intent)}>
-                          {intent.emoji} {intent.label}
-                        </div>
-                      ))}
-                  </div>
-                </div>
-              </>
+              <RevenueCategoryPanel
+                category={selectedRevenueCategory}
+                visual={revenueVisuals.get(selectedRevenueCategory.id)}
+                targetInput={revenueTargetInput}
+                onTargetChange={setRevenueTargetInput}
+                onApplyTarget={handleApplyRevenueTarget}
+                onClearTarget={() => setRevenueTargetInput('')}
+                onBack={handleRevenueBackClick}
+                suggestedLevers={suggestedLevers}
+                onLeverToggle={(lever) =>
+                  (isLeverInDsl(lever.id) ? removeLeverFromDsl(lever.id) : addLeverToDsl(lever))
+                }
+                isLeverSelected={isLeverInDsl}
+                popularIntents={popularIntents}
+                onIntentClick={handleIntentClick}
+                formatCurrency={formatCurrency}
+              />
             ) : (
-              <>
-                <div className="panel-header">Revenues</div>
-                {revenuePieces.map((piece, index) => (
-                  <div key={index} className="revenue-category" onClick={() => handleRevenueCategoryClick(piece)}>
-                    <div className="category-header">
-                      <div className="category-name">{piece.label}</div>
-                      <div className="category-amount">{formatCurrency(piece.amountEur || 0)}</div>
-                    </div>
-                    <div className="category-controls">
-                      <div className="control-button">Adjust Rate</div>
-                      <div className="control-button">View Reforms</div>
-                    </div>
-                  </div>
-                ))}
-              </>
+              <RevenueCategoryList
+                categories={revenuePieces}
+                onSelect={handleRevenueCategoryClick}
+                formatCurrency={formatCurrency}
+                visuals={revenueVisuals}
+              />
             )}
           </div>
         </div>
