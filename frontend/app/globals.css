@@ -109,17 +109,17 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 18px clamp(12px, 2vw, 28px) 120px;
-    gap: 18px;
+    padding: 16px clamp(12px, 1.8vw, 24px) 112px;
+    gap: 16px;
 }
 
 .mission-control {
     background: #ffffff;
     border-bottom: 1px solid rgba(15, 23, 42, 0.06);
-    padding: 14px clamp(16px, 2.5vw, 28px);
+    padding: 12px clamp(14px, 2.3vw, 26px);
     display: grid;
-    grid-template-columns: minmax(360px, 1.8fr) minmax(240px, 0.9fr) auto;
-    gap: clamp(16px, 3vw, 48px);
+    grid-template-columns: minmax(320px, 1.5fr) minmax(280px, 1.1fr) minmax(200px, 0.8fr);
+    gap: clamp(12px, 2.4vw, 32px);
     align-items: center;
     box-shadow: 0 12px 28px rgba(15, 23, 42, 0.05);
     position: relative;
@@ -129,7 +129,7 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
 .mission-cluster {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 12px;
 }
 
 .mission-cluster--left {
@@ -261,7 +261,7 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
     justify-content: flex-start;
     align-items: center;
     gap: 12px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
 }
 
 .mission-cluster--right {
@@ -272,7 +272,7 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
 .mission-history {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
 
 @keyframes spin {
@@ -1061,10 +1061,16 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
     align-items: center;
     gap: 4px;
     padding: 6px;
-    border-radius: 999px;
+    border-radius: 12px;
     border: 1px solid #d7defa;
     background: #f6f8ff;
     color: #1f3a8a;
+}
+
+.control-stack {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
 }
 
 .display-prefix {
@@ -1077,8 +1083,8 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
 .toggle-btn {
     border: none;
     background: transparent;
-    padding: 8px 18px;
-    border-radius: 999px;
+    padding: 8px 16px;
+    border-radius: 10px;
     font-weight: 600;
     color: #334155;
     cursor: pointer;
@@ -1107,11 +1113,11 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    border-radius: 12px;
+    border-radius: 10px;
     border: 1px solid #e2e8f0;
     background: #ffffff;
     color: #1f2937;
-    padding: 10px 16px;
+    padding: 8px 14px;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
@@ -1376,4 +1382,10 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
 
 .eu-light.warn {
     background-color: #f59e0b;
+}
+.control-stack {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
 }

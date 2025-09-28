@@ -530,55 +530,57 @@ export default function BuildPageClient() {
         </div>
 
         <div className="mission-cluster mission-cluster--center">
-          <div className="display-toggle" role="group" aria-label="Display mode">
-            <span className="display-prefix">Display:</span>
-            <button
-              type="button"
-              className={`toggle-btn ${displayMode === 'amount' ? 'active' : ''}`}
-              onClick={() => setDisplayMode('amount')}
-              aria-pressed={displayMode === 'amount'}
-            >
-              <span className="toggle-icon" aria-hidden="true">€</span>
-              <span className="toggle-label">Amounts</span>
-            </button>
-            <button
-              type="button"
-              className={`toggle-btn ${displayMode === 'share' ? 'active' : ''}`}
-              onClick={() => setDisplayMode('share')}
-              aria-pressed={displayMode === 'share'}
-            >
-              <span className="toggle-icon" aria-hidden="true">%</span>
-              <span className="toggle-label">Shares</span>
-            </button>
-          </div>
-          <div className="lens-switcher" role="tablist" aria-label="Treemap lens">
-            <button
-              type="button"
-              role="tab"
-              className={`lens-option ${lens === 'mass' ? 'active' : ''}`}
-              onClick={() => setLens('mass')}
-              aria-selected={lens === 'mass'}
-            >
-              By mission
-            </button>
-            <button
-              type="button"
-              role="tab"
-              className={`lens-option ${lens === 'family' ? 'active' : ''}`}
-              onClick={() => setLens('family')}
-              aria-selected={lens === 'family'}
-            >
-              By family
-            </button>
-            <button
-              type="button"
-              role="tab"
-              className={`lens-option ${lens === 'reform' ? 'active' : ''}`}
-              onClick={() => setLens('reform')}
-              aria-selected={lens === 'reform'}
-            >
-              By reform
-            </button>
+          <div className="control-stack">
+            <div className="display-toggle" role="group" aria-label="Display mode">
+              <span className="display-prefix">Display:</span>
+              <button
+                type="button"
+                className={`toggle-btn ${displayMode === 'amount' ? 'active' : ''}`}
+                onClick={() => setDisplayMode('amount')}
+                aria-pressed={displayMode === 'amount'}
+              >
+                <span className="toggle-icon" aria-hidden="true">€</span>
+                <span className="toggle-label">Amounts</span>
+              </button>
+              <button
+                type="button"
+                className={`toggle-btn ${displayMode === 'share' ? 'active' : ''}`}
+                onClick={() => setDisplayMode('share')}
+                aria-pressed={displayMode === 'share'}
+              >
+                <span className="toggle-icon" aria-hidden="true">%</span>
+                <span className="toggle-label">Shares</span>
+              </button>
+            </div>
+            <div className="lens-switcher" role="tablist" aria-label="Treemap lens">
+              <button
+                type="button"
+                role="tab"
+                className={`lens-option ${lens === 'mass' ? 'active' : ''}`}
+                onClick={() => setLens('mass')}
+                aria-selected={lens === 'mass'}
+              >
+                By mission
+              </button>
+              <button
+                type="button"
+                role="tab"
+                className={`lens-option ${lens === 'family' ? 'active' : ''}`}
+                onClick={() => setLens('family')}
+                aria-selected={lens === 'family'}
+              >
+                By family
+              </button>
+              <button
+                type="button"
+                role="tab"
+                className={`lens-option ${lens === 'reform' ? 'active' : ''}`}
+                onClick={() => setLens('reform')}
+                aria-selected={lens === 'reform'}
+              >
+                By reform
+              </button>
+            </div>
           </div>
         </div>
 
