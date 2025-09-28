@@ -313,30 +313,7 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
     border-radius: 999px;
 }
 
-.left-panel::before,
-.left-panel::after,
-.right-panel::before,
-.right-panel::after {
-    content: '';
-    position: sticky;
-    left: 0;
-    right: 0;
-    height: 24px;
-    pointer-events: none;
-    z-index: 2;
-}
 
-.left-panel::before,
-.right-panel::before {
-    top: 0;
-    background: linear-gradient(180deg, rgba(15, 23, 42, 0.12), rgba(15, 23, 42, 0));
-}
-
-.left-panel::after,
-.right-panel::after {
-    bottom: 0;
-    background: linear-gradient(0deg, rgba(15, 23, 42, 0.12), rgba(15, 23, 42, 0));
-}
 
 .panel-header {
     position: sticky;
