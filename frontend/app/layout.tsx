@@ -71,7 +71,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     </div>
                     <div className="fr-header__service">
                       <a href="/" title="Accueil">Budget citoyen</a>
-                      <p className="fr-header__service-tagline">Explorer et simuler le budget public</p>
                     </div>
                   </div>
                   <div className="fr-header__tools">

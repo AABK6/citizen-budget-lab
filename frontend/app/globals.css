@@ -82,8 +82,8 @@ html[data-fr-theme='dark'] th { background: #151b2c; color: var(--muted) }
 html[data-fr-theme='dark'] .fr-nav__link.fr-link--active { color: var(--accent) }
 
 /* Brand logo sizing */
-.brand-logo { height: 40px; width: auto; display: block }
-@media (max-width: 768px) { .brand-logo { height: 32px } }
+.brand-logo { height: 28px; width: auto; display: block }
+@media (max-width: 768px) { .brand-logo { height: 24px } }
 .brand-logo-dark { display: none }
 html[data-fr-theme='dark'] .brand-logo-light { display: none }
 html[data-fr-theme='dark'] .brand-logo-dark { display: block }
@@ -109,14 +109,14 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 32px clamp(16px, 2.2vw, 32px) 136px;
-    gap: 32px;
+    padding: 18px clamp(12px, 2vw, 28px) 120px;
+    gap: 18px;
 }
 
 .mission-control {
     background: #ffffff;
     border-bottom: 1px solid rgba(15, 23, 42, 0.06);
-    padding: 18px clamp(16px, 2.5vw, 36px);
+    padding: 14px clamp(16px, 2.5vw, 28px);
     display: grid;
     grid-template-columns: minmax(360px, 1.8fr) minmax(240px, 0.9fr) auto;
     gap: clamp(16px, 3vw, 48px);
@@ -280,8 +280,8 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
 .main-content {
     flex: 1;
     display: grid;
-    grid-template-columns: minmax(220px, 300px) minmax(0, 2.3fr) minmax(220px, 260px);
-    gap: clamp(12px, 2vw, 24px);
+    grid-template-columns: minmax(220px, 290px) minmax(0, 2.4fr) minmax(210px, 250px);
+    gap: clamp(10px, 1.6vw, 18px);
     min-height: 0;
 }
 
@@ -525,7 +525,7 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
     --panel-accent: #1d4ed8;
     border-radius: 18px;
     border: 1px solid rgba(148, 163, 184, 0.25);
-    padding: 18px;
+    padding: 12px 14px 18px;
     background: #ffffff;
     display: flex;
     flex-direction: column;
@@ -851,10 +851,10 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
     border-left: 4px solid var(--panel-accent, #1d4ed8);
     border-radius: 16px;
     background: #ffffff;
-    padding: 16px;
+    padding: 12px 14px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
 }
 
 .selected-category .category-name {

@@ -4,14 +4,15 @@ import { useI18n } from '@/lib/i18n'
 
 export function LangSwitcher() {
   const { lang, setLang } = useI18n()
-  const id = 'lang_switcher'
+
+  function toggle() {
+    const next = lang === 'fr' ? 'en' : 'fr'
+    setLang(next)
+  }
+
   return (
-    <div className="fr-select-group" style={{ marginLeft: 'auto' }}>
-      <label className="fr-label" htmlFor={id}>Langue</label>
-      <select className="fr-select" id={id} value={lang} onChange={e => setLang(e.target.value as 'en'|'fr')}>
-        <option value="en">EN</option>
-        <option value="fr">FR</option>
-      </select>
-    </div>
+    <button className="fr-btn fr-btn--tertiary-no-outline fr-icon-translate-fill fr-btn--icon-left" onClick={toggle} aria-label="Switch language">
+      {lang === 'fr' ? 'EN' : 'FR'}
+    </button>
   )
 }
