@@ -116,11 +116,11 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
 .mission-control {
     background: #ffffff;
     border-bottom: 1px solid rgba(15, 23, 42, 0.06);
-    padding: 12px clamp(14px, 2.3vw, 26px);
-    display: grid;
-    grid-template-columns: minmax(320px, 1.5fr) minmax(280px, 1.1fr) minmax(200px, 0.8fr);
-    gap: clamp(12px, 2.4vw, 32px);
+    padding: 12px clamp(16px, 2.4vw, 28px);
+    display: flex;
     align-items: center;
+    gap: clamp(12px, 2vw, 28px);
+    justify-content: space-between;
     box-shadow: 0 12px 28px rgba(15, 23, 42, 0.05);
     position: relative;
     z-index: 10;
@@ -133,21 +133,15 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
 }
 
 .mission-cluster--left {
-    align-items: center;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    gap: 16px;
-    flex: 1;
-    min-width: 0;
+    flex: 0 0 auto;
+    gap: 12px;
 }
 
 .mission-header-bar {
     display: inline-flex;
     align-items: center;
-    gap: clamp(14px, 2vw, 24px);
+    gap: clamp(12px, 2vw, 20px);
     flex-wrap: nowrap;
-    flex: 1;
-    min-width: 0;
 }
 
 .mission-header-bar > * {
@@ -164,6 +158,19 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
 
 .mission-header-bar .mission-year {
     white-space: nowrap;
+}
+
+.mission-cluster--center {
+    flex: 1 1 auto;
+    justify-content: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.mission-cluster--right {
+    flex: 0 0 auto;
+    gap: 10px;
+    justify-content: flex-end;
 }
 
 
@@ -599,6 +606,7 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
     border-radius: 12px;
     padding: 4px;
     gap: 4px;
+    flex-shrink: 0;
 }
 
 .lens-option {
@@ -1065,6 +1073,13 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
     border: 1px solid #d7defa;
     background: #f6f8ff;
     color: #1f3a8a;
+}
+
+.control-stack {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: nowrap;
 }
 
 .control-stack {
