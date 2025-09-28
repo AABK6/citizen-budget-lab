@@ -84,7 +84,7 @@ export default function BuildPageClient() {
     scenarioId,
   } = state;
   const [displayMode, setDisplayMode] = useState<'amount' | 'share'>('amount');
-  const [showLensInfo, setShowLensInfo] = useState(false);
+  
   const [shareFeedback, setShareFeedback] = useState<string | null>(null);
   const {
     setInitialLoading,
@@ -265,6 +265,8 @@ export default function BuildPageClient() {
   }, [runScenario]);
 
   const handleCategoryClick = async (category: MassCategory) => {
+    toggleRevenuePanel(false);
+    setSelectedRevenueCategory(null);
     setSelectedCategory(category);
     togglePanel(true);
 
@@ -489,22 +491,8 @@ export default function BuildPageClient() {
       <div className="mission-control" role="region" aria-label="Mission control toolbar">
         <div className="mission-cluster mission-cluster--left">
           <div className="mission-header-bar">
-            <button
-              type="button"
-              className="mission-learn"
-              onClick={() => setShowLensInfo((prev) => !prev)}
-            >
-              <span className="mission-status">Mission lens on</span>
-              <span className="mission-separator" aria-hidden="true">·</span>
-              <span className="mission-link">{showLensInfo ? 'Hide' : 'Learn more'}</span>
-            </button>
-            <div className="resolution-meter" aria-label="Scenario resolution">
-              <span className="meter-label">Resolution</span>
-              <div className="meter-bar">
-                <div className="meter-fill" style={{ width: `${(resolutionPct * 100).toFixed(0)}%` }} />
-              </div>
-              <span className="meter-value">{(resolutionPct * 100).toFixed(0)}%</span>
-            </div>
+            
+            
             <div className="mission-year" aria-label="Scenario baseline year">
               <i className="material-icons" aria-hidden="true">calendar_today</i>
               <span>{year}</span>
@@ -717,17 +705,14 @@ export default function BuildPageClient() {
                 colors={treemapColors}
                 resolutionData={scenarioResult?.resolution.byMass || []}
                 mode={displayMode}
+                onSelect={(item) => {
+                  if (lens !== 'mass') {
+                    setLens('mass');
+                  }
+                  handleCategoryClick(item as MassCategory);
+                }}
               />
-              {showLensInfo && (
-                <div className="info-pill info-pill--floating" role="note">
-                  <div className="info-pill__copy">
-                    Missions regroup spending by ministerial responsibility (education, health, justice…). Figures follow the State budget (PLF) baseline for {year}.
-                  </div>
-                  <button type="button" className="info-pill__dismiss" onClick={() => setShowLensInfo(false)}>
-                    Dismiss
-                  </button>
-                </div>
-              )}
+              
               {scenarioError && (
                 <div className="scenario-inline-error scenario-inline-error--floating" role="alert">
                   {scenarioError}

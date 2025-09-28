@@ -21,6 +21,7 @@ type TreemapProps = {
     specifiedDeltaEur: number;
   }[];
   mode: 'amount' | 'share';
+  onSelect?: (item: TreemapItem) => void;
 };
 
 const defaultColors = ['#2563eb', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#ef4444', '#6366f1', '#14b8a6', '#a855f7', '#d946ef'];
@@ -52,15 +53,14 @@ const CustomTooltip = ({ active, payload, mode }: any) => {
 };
 
 const CustomizedContent = (props: any) => {
-  const { depth, x, y, width, height, index, name, amount, unresolvedPct, color, mode } = props;
+  const { depth, x, y, width, height, index, name, amount, unresolvedPct, color, mode, onSelect } = props;
   const dataValue = typeof props.value === 'number' ? props.value : (props.payload?.value ?? 0);
   const palette: string[] = props.colors?.length ? props.colors : defaultColors;
   const baseColor = color || palette[index % palette.length];
-
   // Don't render text in very small boxes
   if (width < 50 || height < 30) {
     return (
-       <g>
+       <g style={{ cursor: onSelect && props.payload?.id ? 'pointer' : 'default' }}>
         <rect
           x={x}
           y={y}
@@ -89,7 +89,7 @@ const CustomizedContent = (props: any) => {
   }
 
   return (
-    <g>
+    <g style={{ cursor: onSelect && props.payload?.id ? 'pointer' : 'default' }}>
       <rect
         x={x}
         y={y}
@@ -113,7 +113,7 @@ const CustomizedContent = (props: any) => {
           }}
         />
       )}
-      <foreignObject x={x + 4} y={y + 4} width={width - 8} height={height - 8}>
+      <foreignObject x={x + 4} y={y + 4} width={width - 8} height={height - 8} style={{ pointerEvents: 'none' }}>
         <div
           style={{
             width: '100%',
@@ -140,7 +140,7 @@ const CustomizedContent = (props: any) => {
   );
 };
 
-export const TreemapChart = ({ data, colors, resolutionData, mode }: TreemapProps) => {
+export const TreemapChart = ({ data, colors, resolutionData, mode, onSelect }: TreemapProps) => {
   const resolutionMap = new Map<string, number>();
   if (resolutionData) {
     for (const res of resolutionData) {
@@ -169,7 +169,22 @@ export const TreemapChart = ({ data, colors, resolutionData, mode }: TreemapProp
         aspectRatio={4 / 3}
         stroke="#fff"
         fill="#8884d8"
-        content={<CustomizedContent colors={palette} mode={mode} />}
+        isAnimationActive={false}
+        content={<CustomizedContent colors={palette} mode={mode} onSelect={onSelect} />}
+        cursor={onSelect ? 'pointer' : 'default'}
+        onClick={(node: any) => {
+          if (!onSelect) {
+            return;
+          }
+          const index = typeof node?.index === 'number' ? node.index : undefined;
+          if (index === undefined) {
+            return;
+          }
+          const selected = dataWithResolution[index];
+          if (selected) {
+            onSelect(selected);
+          }
+        }}
       >
         <defs>
           <pattern id="pattern-stripe" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">

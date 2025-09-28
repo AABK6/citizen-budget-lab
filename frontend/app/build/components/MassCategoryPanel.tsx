@@ -51,7 +51,7 @@ export function MassCategoryPanel({
 
   return (
     <>
-      <button className="fr-btn fr-btn--secondary fr-btn--sm" onClick={onClose} style={{ marginBottom: '1rem', alignSelf: 'flex-start' }}>Back</button>
+      <button className="fr-btn fr-btn--secondary fr-btn--sm mass-panel__back" onClick={onClose}>Back</button>
       <div className="mission-panel" style={accentStyle}>
         <div className="mission-panel-header">
           <span className="mission-panel-icon" aria-hidden="true" style={{ backgroundColor: iconTint, color: headerColor }}>
