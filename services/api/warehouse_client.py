@@ -51,6 +51,8 @@ def warehouse_status() -> dict:
         "fct_admin_by_mission",
         "fct_admin_by_apu",
         "fct_admin_by_cofog",
+        "fct_lego_baseline",
+        "fct_lego_baseline_mission",
         "vw_procurement_contracts",
     ]
     try:
@@ -383,6 +385,32 @@ def lego_baseline(year: int) -> Optional[Dict[str, Any]]:
         "depenses_total_eur": dep_total,
         "recettes_total_eur": rev_total,
     }
+
+
+def lego_baseline_mission(year: int) -> List[Dict[str, Any]]:
+    """Return mission-level aggregation of LEGO baseline amounts for a given year."""
+    if not warehouse_available():
+        return []
+    try:
+        con = _connect_duckdb()
+    except Exception:
+        return []
+    rel = _qual_name(con, "fct_lego_baseline_mission")
+    sql = f"select mission_code, amount_eur, share from {rel} where year = ?"
+    try:
+        rows = con.execute(sql, [year]).fetchall()
+    except Exception:
+        return []
+    out: List[Dict[str, Any]] = []
+    for code, amount, share in rows:
+        out.append(
+            {
+                "mission_code": str(code),
+                "amount_eur": float(amount or 0.0),
+                "share": float(share or 0.0),
+            }
+        )
+    return out
 
 
 def budget_baseline_2026() -> List[Dict[str, Any]]:

@@ -34,7 +34,7 @@ type Distribution { decile: [DecileImpact!]!, giniDelta: Float!, povertyRateDelt
 
 type Source { id: ID!, datasetName: String!, url: String!, license: String!, refreshCadence: String!, vintage: String! }
 
-input RunScenarioInput { dsl: String! }
+input RunScenarioInput { dsl: String!, lens: LensEnum }
 type ShareSummary { title: String!, deficit: Float!, debtDeltaPct: Float, highlight: String, resolutionPct: Float, masses: JSON, eu3: String, eu60: String }
 type RunScenarioPayload { id: ID!, scenarioId: ID!, accounting: Accounting!, compliance: Compliance!, macro: Macro!, distribution: Distribution, distanceScore: Float, shareSummary: ShareSummary, resolution: ResolutionType, warnings: [String!], dsl: String }
 
@@ -51,7 +51,9 @@ type EUCountryCofog { country: String!, code: String!, label: String!, amountEur
 type FiscalPath { years: [Int!]!, deficitRatio: [Float!]!, debtRatio: [Float!]! }
 
 type MassTargetType { massId: String!, targetDeltaEur: Float!, specifiedDeltaEur: Float! }
-type ResolutionType { overallPct: Float!, byMass: [MassTargetType!]! }
+type BuilderMassType { massId: String!, amountEur: Float!, share: Float! }
+
+type ResolutionType { overallPct: Float!, byMass: [MassTargetType!]!, lens: LensEnum! }
 
 enum PolicyFamilyEnum {
     PENSIONS
@@ -80,6 +82,7 @@ type PolicyLeverType {
     shortLabel: String
     popularity: Float
     massMapping: JSON
+    missionMapping: JSON
 }
 
 type MassLabelType {
@@ -88,6 +91,8 @@ type MassLabelType {
     description: String
     examples: [String!]!
     synonyms: [String!]!
+    color: String
+    icon: String
 }
 
 type MissionLabelType {
@@ -96,6 +101,8 @@ type MissionLabelType {
     description: String
     examples: [String!]!
     synonyms: [String!]!
+    color: String
+    icon: String
 }
 
 type IntentType {
@@ -122,6 +129,7 @@ type Query {
   # MVP+: LEGO Builder
   legoPieces(year: Int!, scope: ScopeEnum = S13): [LegoPiece!]!
   legoBaseline(year: Int!, scope: ScopeEnum = S13): LegoBaseline!
+  builderMasses(year: Int!, lens: LensEnum = ADMIN): [BuilderMassType!]!
   legoDistance(year: Int!, dsl: String!, scope: ScopeEnum = S13): Distance!
   shareCard(scenarioId: ID!): ShareSummary!
   scenarioCompare(a: ID!, b: ID): ScenarioCompareResult!

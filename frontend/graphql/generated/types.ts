@@ -46,6 +46,13 @@ export enum BasisEnum {
   Cp = "CP",
 }
 
+export type BuilderMassType = {
+  __typename?: "BuilderMassType";
+  amountEur: Scalars["Float"]["output"];
+  massId: Scalars["String"]["output"];
+  share: Scalars["Float"]["output"];
+};
+
 export type Compliance = {
   __typename?: "Compliance";
   eu3pct: Array<Scalars["String"]["output"]>;
@@ -147,9 +154,11 @@ export type Macro = {
 
 export type MassLabelType = {
   __typename?: "MassLabelType";
+  color?: Maybe<Scalars["String"]["output"]>;
   description?: Maybe<Scalars["String"]["output"]>;
   displayLabel: Scalars["String"]["output"];
   examples: Array<Scalars["String"]["output"]>;
+  icon?: Maybe<Scalars["String"]["output"]>;
   id: Scalars["ID"]["output"];
   synonyms: Array<Scalars["String"]["output"]>;
 };
@@ -171,9 +180,11 @@ export type MissionAllocation = {
 
 export type MissionLabelType = {
   __typename?: "MissionLabelType";
+  color?: Maybe<Scalars["String"]["output"]>;
   description?: Maybe<Scalars["String"]["output"]>;
   displayLabel: Scalars["String"]["output"];
   examples: Array<Scalars["String"]["output"]>;
+  icon?: Maybe<Scalars["String"]["output"]>;
   id: Scalars["ID"]["output"];
   synonyms: Array<Scalars["String"]["output"]>;
 };
@@ -229,6 +240,7 @@ export type PolicyLeverType = {
   id: Scalars["ID"]["output"];
   label: Scalars["String"]["output"];
   massMapping?: Maybe<Scalars["JSON"]["output"]>;
+  missionMapping?: Maybe<Scalars["JSON"]["output"]>;
   paramsSchema: Scalars["JSON"]["output"];
   popularity?: Maybe<Scalars["Float"]["output"]>;
   shortLabel?: Maybe<Scalars["String"]["output"]>;
@@ -248,6 +260,7 @@ export type ProcurementItem = {
 export type Query = {
   __typename?: "Query";
   allocation: Allocation;
+  builderMasses: Array<BuilderMassType>;
   communes: Scalars["JSON"]["output"];
   dataGouvSearch: Scalars["JSON"]["output"];
   euCofogCompare: Array<EuCountryCofog>;
@@ -271,6 +284,11 @@ export type Query = {
 
 export type QueryAllocationArgs = {
   basis?: InputMaybe<BasisEnum>;
+  lens?: InputMaybe<LensEnum>;
+  year: Scalars["Int"]["input"];
+};
+
+export type QueryBuilderMassesArgs = {
   lens?: InputMaybe<LensEnum>;
   year: Scalars["Int"]["input"];
 };
@@ -360,11 +378,13 @@ export type QuerySuggestLeversArgs = {
 export type ResolutionType = {
   __typename?: "ResolutionType";
   byMass: Array<MassTargetType>;
+  lens: LensEnum;
   overallPct: Scalars["Float"]["output"];
 };
 
 export type RunScenarioInput = {
   dsl: Scalars["String"]["input"];
+  lens?: InputMaybe<LensEnum>;
 };
 
 export type RunScenarioPayload = {

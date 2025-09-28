@@ -107,3 +107,25 @@ actions:
     assert len(warnings) == 1
     assert "test_piece_no_cofog" in warnings[0]
     assert "missing a COFOG mapping" in warnings[0]
+
+
+def test_resolution_cofog_lens():
+    """When requesting the COFOG lens, resolution buckets should be keyed by COFOG codes."""
+    sdl = """
+version: 0.1
+baseline_year: 2026
+assumptions: { horizon_years: 5 }
+actions:
+  - id: cf1
+    target: cofog.09
+    op: increase
+    amount_eur: 4000
+    recurring: true
+"""
+    sid, acc, comp, macro, reso, warnings = run_scenario(_b64(sdl), lens="COFOG")
+
+    assert reso["lens"] == "COFOG"
+    cofog_ed = next((m for m in reso["byMass"] if m["massId"] == "09"), None)
+    assert cofog_ed is not None
+    assert cofog_ed["targetDeltaEur"] == 4000.0
+    assert cofog_ed["specifiedDeltaEur"] == 0.0

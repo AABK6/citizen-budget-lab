@@ -15,14 +15,28 @@ export const buildPageQuery = `
       cofogMajors
       missions { code weight }
     }
+    builderMassesAdmin: builderMasses(year: $year, lens: ADMIN) {
+      massId
+      amountEur
+      share
+    }
+    builderMassesCofog: builderMasses(year: $year, lens: COFOG) {
+      massId
+      amountEur
+      share
+    }
     massLabels {
       id
       displayLabel
+      color
+      icon
     }
     missionLabels {
       id
       displayLabel
       description
+      color
+      icon
     }
     policyLevers {
       id
@@ -30,6 +44,8 @@ export const buildPageQuery = `
       label
       description
       fixedImpactEur
+      massMapping
+      missionMapping
     }
     popularIntents {
       id
@@ -53,8 +69,8 @@ export const suggestLeversQuery = `
 `;
 
 export const runScenarioMutation = `
-  mutation Run($dsl: String!) {
-    runScenario(input: { dsl: $dsl }) {
+  mutation Run($dsl: String!, $lens: LensEnum!) {
+    runScenario(input: { dsl: $dsl, lens: $lens }) {
       id
       accounting {
         deficitPath
@@ -67,7 +83,7 @@ export const runScenarioMutation = `
       }
       compliance { eu3pct eu60pct netExpenditure localBalance }
       macro { deltaGDP deltaEmployment deltaDeficit assumptions }
-      resolution { overallPct byMass { massId targetDeltaEur specifiedDeltaEur } }
+      resolution { overallPct lens byMass { massId targetDeltaEur specifiedDeltaEur } }
     }
   }
 `;

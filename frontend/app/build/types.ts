@@ -15,12 +15,16 @@ export type MissionWeight = {
 export type MassLabel = {
   id: string;
   displayLabel: string;
+  color?: string;
+  icon?: string;
 };
 
 export type MissionLabel = {
   id: string;
   displayLabel: string;
   description?: string;
+  color?: string;
+  icon?: string;
 };
 
 export type PolicyLever = {
@@ -32,6 +36,7 @@ export type PolicyLever = {
   shortLabel?: string;
   popularity?: number;
   massMapping?: Record<string, number> | undefined;
+  missionMapping?: Record<string, number> | undefined;
 };
 
 export type PopularIntent = {
@@ -56,6 +61,7 @@ export type DslObject = {
   baseline_year: number;
   assumptions: {
     horizon_years: number;
+    lens?: AggregationLens;
   };
   actions: DslAction[];
 };
@@ -65,9 +71,12 @@ export const INITIAL_DSL_OBJECT: DslObject = {
   baseline_year: 2026,
   assumptions: {
     horizon_years: 5,
+    lens: 'MISSION',
   },
   actions: [],
 };
+
+export type AggregationLens = 'MISSION' | 'COFOG';
 
 export type BuildLens = 'mass' | 'family' | 'reform';
 

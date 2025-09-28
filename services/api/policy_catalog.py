@@ -851,6 +851,17 @@ _LEVER_CATALOG: List[dict] = [
 ]
 
 
+def _with_mission_mapping(entry: dict) -> dict:
+    out = dict(entry)
+    try:
+        from . import data_loader as dl  # lazy import to avoid cycles
+
+        out["mission_mapping"] = dl.convert_mass_mapping_to_missions(entry.get("mass_mapping") or {})
+    except Exception:
+        out["mission_mapping"] = {}
+    return out
+
+
 def list_policy_levers(family: Optional[str] = None, search: Optional[str] = None) -> List[dict]:
     items = _LEVER_CATALOG
     if family:
@@ -863,11 +874,11 @@ def list_policy_levers(family: Optional[str] = None, search: Optional[str] = Non
             for x in items
             if q in str(x.get("label", "")).lower() or q in str(x.get("description", "")).lower()
         ]
-    return list(items)
+    return [_with_mission_mapping(x) for x in items]
 
 
 def levers_by_id() -> Dict[str, dict]:
-    return {str(x.get("id")): x for x in _LEVER_CATALOG}
+    return {str(x.get("id")): _with_mission_mapping(x) for x in _LEVER_CATALOG}
 
 
 def suggest_levers_for_mass(mass_id: str, limit: int = 5) -> List[dict]:
@@ -894,6 +905,6 @@ def suggest_levers_for_mass(mass_id: str, limit: int = 5) -> List[dict]:
             continue
         pop = float(it.get("popularity", 0.5))
         score = weight * (0.5 + 0.5 * pop)
-        scored.append((score, it))
+        scored.append((score, _with_mission_mapping(it)))
     scored.sort(key=lambda x: x[0], reverse=True)
     return [it for _, it in scored[:limit]]

@@ -156,6 +156,7 @@ class ShareSummaryType:
 @strawberry.input
 class RunScenarioInput:
     dsl: str  # base64-encoded YAML
+    lens: LensEnum | None = None
 
 @strawberry.input
 class MassSplitInput:
@@ -270,9 +271,17 @@ class MassTargetType:
 
 
 @strawberry.type
+class BuilderMassType:
+    massId: str
+    amountEur: float
+    share: float
+
+
+@strawberry.type
 class ResolutionType:
     overallPct: float
     byMass: list[MassTargetType]
+    lens: LensEnum
 
 
 @strawberry.enum
@@ -304,6 +313,7 @@ class PolicyLeverType:
     shortLabel: str | None = None
     popularity: float | None = None
     massMapping: JSON | None = None
+    missionMapping: JSON | None = None
 
 
 @strawberry.type
@@ -330,6 +340,8 @@ class MassLabelType:
     description: str | None
     examples: list[str]
     synonyms: list[str]
+    color: str | None = None
+    icon: str | None = None
 
 
 @strawberry.type
@@ -339,6 +351,8 @@ class MissionLabelType:
     description: str | None
     examples: list[str]
     synonyms: list[str]
+    color: str | None = None
+    icon: str | None = None
 
 
 @strawberry.type
@@ -820,6 +834,26 @@ class Query:
         )
 
     @strawberry.field
+    def builderMasses(self, year: int, lens: LensEnum = LensEnum.ADMIN) -> list[BuilderMassType]:  # noqa: N802
+        from .data_loader import builder_mass_allocation as _builder_mass
+
+        if lens == LensEnum.COFOG:
+            lens_key = "COFOG"
+        else:
+            lens_key = "MISSION"
+        alloc = _builder_mass(year, lens_key)
+        out: list[BuilderMassType] = []
+        for ent in alloc:
+            out.append(
+                BuilderMassType(
+                    massId=str(ent.get("massId")),
+                    amountEur=float(ent.get("amountEur", 0.0)),
+                    share=float(ent.get("share", 0.0)),
+                )
+            )
+        return out
+
+    @strawberry.field
     def legoDistance(self, year: int, dsl: str, scope: ScopeEnum = ScopeEnum.S13) -> DistanceType:  # noqa: N802
         res = lego_distance_from_dsl(year, dsl, scope.value)
         return DistanceType(
@@ -853,6 +887,7 @@ class Query:
                     shortLabel=str(it.get("short_label") or ""),
                     popularity=float(it.get("popularity", 0.0)),
                     massMapping=it.get("mass_mapping") or {},
+                    missionMapping=it.get("mission_mapping") or {},
                 )
             )
         return out
@@ -901,6 +936,8 @@ class Query:
                         description=str(ent.get("description") or ""),
                         examples=[str(x) for x in (ent.get("examples") or [])],
                         synonyms=[str(x) for x in (ent.get("synonyms") or [])],
+                        color=(str(ent.get("color")) if ent.get("color") else None),
+                        icon=(str(ent.get("icon")) if ent.get("icon") else None),
                     )
                 )
             return out
@@ -924,6 +961,8 @@ class Query:
                         description=str(ent.get("description") or ""),
                         examples=[str(x) for x in (ent.get("examples") or [])],
                         synonyms=[str(x) for x in (ent.get("synonyms") or [])],
+                        color=(str(ent.get("color")) if ent.get("color") else None),
+                        icon=(str(ent.get("icon")) if ent.get("icon") else None),
                     )
                 )
             return out
@@ -1071,11 +1110,23 @@ class Query:
         from .store import scenario_dsl_store
         from .data_loader import run_scenario as _run
 
+        import base64 as _b64
+        import yaml as _yaml
+
         dsl = scenario_dsl_store.get(id)
         if not dsl:
             raise ValueError(f"Scenario {id} not found")
 
-        sid, acc, comp, macro, reso, warnings = _run(dsl)
+        try:
+            dsl_obj = _yaml.safe_load(_b64.b64decode(dsl).decode("utf-8")) or {}
+        except Exception:
+            dsl_obj = {}
+        assumptions = dsl_obj.get("assumptions") or {}
+        lens_key = str(assumptions.get("lens") or dsl_obj.get("lens") or "MISSION").upper()
+        if lens_key not in {"MISSION", "COFOG"}:
+            lens_key = "MISSION"
+
+        sid, acc, comp, macro, reso, warnings = _run(dsl, lens=lens_key)
         
         return RunScenarioPayload(
             id=strawberry.ID(sid),
@@ -1111,6 +1162,7 @@ class Query:
                     )
                     for e in reso.get("byMass", [])
                 ],
+                lens=(LensEnum.ADMIN if lens_key == "MISSION" else LensEnum.COFOG),
             ),
             warnings=warnings,
             dsl=dsl,
@@ -1305,8 +1357,14 @@ class ScenarioCompareResultType:
 class Mutation:
     @strawberry.mutation
     def runScenario(self, input: RunScenarioInput) -> RunScenarioPayload:  # noqa: N802
+        lens_value: str | None = None
+        if input.lens == LensEnum.ADMIN:
+            lens_value = "MISSION"
+        elif input.lens == LensEnum.COFOG:
+            lens_value = "COFOG"
+
         try:
-            sid, acc, comp, macro, reso, warnings = run_scenario(input.dsl)
+            sid, acc, comp, macro, reso, warnings = run_scenario(input.dsl, lens=lens_value)
         except ValueError as e:
             raise ValueError(str(e)) from e
 
@@ -1350,6 +1408,11 @@ class Mutation:
                     )
                     for e in reso.get("byMass", [])
                 ],
+                lens=(
+                    LensEnum.ADMIN
+                    if str(reso.get("lens", "MISSION")).upper() == "MISSION"
+                    else LensEnum.COFOG
+                ),
             ),
             warnings=warnings,
             dsl=input.dsl,
@@ -1386,8 +1449,19 @@ class Mutation:
         import yaml as _yaml
         from .data_loader import run_scenario as _run, load_lego_config as _cfg
 
-        # Current resolution to compute pending
-        _, _, _, _, reso, _warnings = _run(input.dsl)
+        # Decode DSL to infer current lens and compute pending
+        try:
+            dsl_obj = _yaml.safe_load(_b64.b64decode(input.dsl).decode("utf-8")) or {}
+        except Exception:
+            dsl_obj = {}
+        assumptions = dsl_obj.get("assumptions") or {}
+        lens_key = str(assumptions.get("lens") or dsl_obj.get("lens") or "MISSION").upper()
+        if lens_key not in {"MISSION", "COFOG"}:
+            lens_key = "MISSION"
+        assumptions["lens"] = lens_key
+        dsl_obj["assumptions"] = assumptions
+
+        _, _, _, _, reso, _warnings = _run(input.dsl, lens=lens_key)
         by_mass = {str(e.get("massId")): (float(e.get("targetDeltaEur", 0.0)), float(e.get("specifiedDeltaEur", 0.0))) for e in reso.get("byMass", [])}
         t, s = by_mass.get(str(input.massId), (float(input.targetDeltaEur), 0.0))
         # Prefer explicit target from input if non-zero
@@ -1424,6 +1498,8 @@ class Mutation:
 
         if errors:
             # Return current resolution and unchanged DSL
+            reso_lens_str = str(reso.get("lens", lens_key)).upper()
+            reso_lens_enum = LensEnum.ADMIN if reso_lens_str == "MISSION" else LensEnum.COFOG
             return SpecifyMassPayload(
                 ok=False,
                 errors=errors,
@@ -1437,25 +1513,26 @@ class Mutation:
                         )
                         for e in reso.get("byMass", [])
                     ],
+                    lens=reso_lens_enum,
                 ),
                 dsl=input.dsl,
             )
 
         # Build updated DSL (append piece.* amount actions)
-        try:
-            data = _yaml.safe_load(_b64.b64decode(input.dsl).decode("utf-8")) or {}
-        except Exception:
-            data = {}
+        data = dsl_obj
         acts = list(data.get("actions") or [])
         # Insert/refresh a target marker for this mass to drive progress bars without affecting deltas
         if abs(target) > tol:
             # Remove any prior marker for this mass
             acts = [a for a in acts if str(a.get("id","")) != f"target_{input.massId}"]
             mission_target = str(input.massId)
-            if mission_target.upper().startswith("M_"):
-                target_expr = f"mission.{mission_target.upper()}"
+            if lens_key == "MISSION":
+                if mission_target.upper().startswith("M_"):
+                    target_expr = f"mission.{mission_target.upper()}"
+                else:
+                    target_expr = f"mission.{mission_target}"
             else:
-                target_expr = f"mission.{mission_target}"
+                target_expr = f"cofog.{mission_target.zfill(2)}"
             acts.append({
                 "id": f"target_{input.massId}",
                 "target": target_expr,
@@ -1480,7 +1557,9 @@ class Mutation:
         new_dsl = _b64.b64encode(yaml_text.encode("utf-8")).decode("ascii")
 
         # Recompute resolution
-        _, _, _, _, reso2, _warnings2 = _run(new_dsl)
+        _, _, _, _, reso2, _warnings2 = _run(new_dsl, lens=lens_key)
+        reso2_lens_str = str(reso2.get("lens", lens_key)).upper()
+        reso2_lens_enum = LensEnum.ADMIN if reso2_lens_str == "MISSION" else LensEnum.COFOG
         return SpecifyMassPayload(
             ok=True,
             errors=[],
@@ -1495,6 +1574,7 @@ class Mutation:
                     )
                     for e in reso2.get("byMass", [])
                 ],
+                lens=reso2_lens_enum,
             ),
         )
 

@@ -20,7 +20,16 @@ def test_policy_levers_query_stub():
     q = """
       query Q($fam: PolicyFamilyEnum){
         policyLevers(family: $fam, search: "age"){
-          id family label description paramsSchema feasibility conflictsWith sources
+          id
+          family
+          label
+          description
+          paramsSchema
+          feasibility
+          conflictsWith
+          sources
+          massMapping
+          missionMapping
         }
       }
     """
@@ -33,6 +42,9 @@ def test_policy_levers_query_stub():
     # Our stub includes a pensions lever with label mentioning age
     assert isinstance(items, list)
     assert any(it.get("id") == "pen_age_plus3m_per_year" for it in items)
+    pensions = next(it for it in items if it.get("id") == "pen_age_plus3m_per_year")
+    mission_map = pensions.get("missionMapping") or {}
+    assert "M_PENSIONS" in mission_map and mission_map["M_PENSIONS"] > 0
 
 
 def test_policy_levers_search_filter():

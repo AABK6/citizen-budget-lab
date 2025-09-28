@@ -34,7 +34,7 @@ export default function ChallengesPage() {
   const handleChallengeClick = async (challenge: Challenge) => {
     try {
       setLoadingId(challenge.id);
-      const scenarioId = await ensureScenarioIdFromDsl(challenge.dsl);
+      const scenarioId = await ensureScenarioIdFromDsl(challenge.dsl, 'MISSION');
       router.push(`/build?scenarioId=${scenarioId}`);
     } catch (error) {
       console.error('Failed to prepare challenge scenario', error);

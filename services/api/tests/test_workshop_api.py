@@ -14,10 +14,13 @@ def _gql(client: TestClient, q: str, variables: dict | None = None) -> dict:
 def test_popular_intents_and_mass_labels():
     app = create_app()
     client = TestClient(app)
-    data = _gql(client, "query{ popularIntents(limit:4){ id label massId popularity } massLabels { id displayLabel } missionLabels { id displayLabel } }")
+    data = _gql(
+        client,
+        "query{ popularIntents(limit:4){ id label massId popularity } massLabels { id displayLabel color icon } missionLabels { id displayLabel color icon } }",
+    )
     assert len(data["popularIntents"]) <= 4
-    assert any(m["id"] == "09" for m in data["massLabels"])  # Education present
-    assert any(m["id"] == "M_EDU" for m in data["missionLabels"])  # Mission education present
+    assert any(m["id"] == "09" and m["color"] for m in data["massLabels"])  # Education present
+    assert any(m["id"] == "M_EDU" and m["icon"] for m in data["missionLabels"])  # Mission education present
 
 
 def test_suggest_levers_defense_has_relevant_items():
@@ -27,6 +30,15 @@ def test_suggest_levers_defense_has_relevant_items():
     arr = data["suggestLevers"]
     # At least one DEFENSE lever suggested
     assert any(it["family"] == "DEFENSE" for it in arr)
+
+
+def test_builder_masses_query_returns_data():
+    app = create_app()
+    client = TestClient(app)
+    data_admin = _gql(client, "query { builderMasses(year: 2026, lens: ADMIN) { massId amountEur share } }")
+    assert data_admin["builderMasses"], "Expected administrative masses"
+    data_cofog = _gql(client, "query { builderMasses(year: 2026, lens: COFOG) { massId amountEur share } }")
+    assert data_cofog["builderMasses"], "Expected COFOG masses"
 
 
 def test_specify_mass_validation_and_apply():
@@ -58,7 +70,7 @@ def test_specify_mass_validation_and_apply():
         # 1) Over-allocate: target 1bn, plan 1.2bn → expect error
         q = """
       mutation M($input: SpecifyMassInput!){
-        specifyMass(input:$input){ ok errors{ code message pieceId } dsl resolution{ overallPct byMass{ massId targetDeltaEur specifiedDeltaEur } } }
+        specifyMass(input:$input){ ok errors{ code message pieceId } dsl resolution{ overallPct lens byMass{ massId targetDeltaEur specifiedDeltaEur } } }
       }
     """
         vars = {

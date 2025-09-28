@@ -103,6 +103,14 @@ models:
         tests: [not_null]
       - name: mission_mapping
 
+  - name: fct_lego_baseline_mission
+    description: Mission-level aggregation of LEGO baseline amounts and shares derived from LEGO pieces.
+    columns:
+      - name: year
+        tests: [not_null]
+      - name: mission_code
+        tests: [not_null]
+
   - name: fct_procurement_suppliers
     description: Supplier-level procurement rollups by year with competition flags
     columns:

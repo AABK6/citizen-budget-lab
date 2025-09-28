@@ -11,7 +11,9 @@
       "synonyms": [
         "administration",
         "gouvernement"
-      ]
+      ],
+      "color": "#1f2937",
+      "icon": "🏛️"
     },
     {
       "id": "02",
@@ -25,7 +27,9 @@
       "synonyms": [
         "armée",
         "militaire"
-      ]
+      ],
+      "color": "#b91c1c",
+      "icon": "🛡️"
     },
     {
       "id": "03",
@@ -39,7 +43,9 @@
         "sécurité",
         "police",
         "justice"
-      ]
+      ],
+      "color": "#7c3aed",
+      "icon": "🚓"
     },
     {
       "id": "04",
@@ -52,7 +58,9 @@
       "synonyms": [
         "économie",
         "affaires économiques"
-      ]
+      ],
+      "color": "#2563eb",
+      "icon": "⚙️"
     },
     {
       "id": "05",
@@ -65,7 +73,9 @@
       "synonyms": [
         "environnement",
         "écologie"
-      ]
+      ],
+      "color": "#047857",
+      "icon": "🌿"
     },
     {
       "id": "06",
@@ -78,7 +88,9 @@
       "synonyms": [
         "logement",
         "aménagement"
-      ]
+      ],
+      "color": "#f59e0b",
+      "icon": "🏠"
     },
     {
       "id": "07",
@@ -91,7 +103,9 @@
       "synonyms": [
         "santé",
         "hôpital"
-      ]
+      ],
+      "color": "#16a34a",
+      "icon": "🩺"
     },
     {
       "id": "08",
@@ -104,7 +118,9 @@
       "synonyms": [
         "culture",
         "sport"
-      ]
+      ],
+      "color": "#d946ef",
+      "icon": "🎭"
     },
     {
       "id": "09",
@@ -118,7 +134,9 @@
         "éducation",
         "école",
         "université"
-      ]
+      ],
+      "color": "#0ea5e9",
+      "icon": "🎓"
     },
     {
       "id": "10",
@@ -132,7 +150,9 @@
       "synonyms": [
         "protection sociale",
         "pensions"
-      ]
+      ],
+      "color": "#f97316",
+      "icon": "🤝"
     }
   ],
   "missions": [
@@ -149,7 +169,9 @@
         "enseignement scolaire",
         "education",
         "enseignement"
-      ]
+      ],
+      "color": "#2563eb",
+      "icon": "📚"
     },
     {
       "id": "M_HIGHER_EDU",
@@ -162,7 +184,9 @@
       "synonyms": [
         "recherche",
         "universités"
-      ]
+      ],
+      "color": "#4338ca",
+      "icon": "🎓"
     },
     {
       "id": "M_HEALTH",
@@ -178,7 +202,9 @@
         "soins",
         "sante",
         "health"
-      ]
+      ],
+      "color": "#16a34a",
+      "icon": "🩺"
     },
     {
       "id": "M_PENSIONS",
@@ -191,7 +217,9 @@
       "synonyms": [
         "retraites",
         "pensions"
-      ]
+      ],
+      "color": "#6366f1",
+      "icon": "💼"
     },
     {
       "id": "M_SOLIDARITY",
@@ -206,7 +234,9 @@
         "famille",
         "solidarite",
         "solidarity"
-      ]
+      ],
+      "color": "#f97316",
+      "icon": "🤝"
     },
     {
       "id": "M_EMPLOYMENT",
@@ -220,7 +250,9 @@
         "emploi",
         "chômage",
         "employment"
-      ]
+      ],
+      "color": "#0ea5e9",
+      "icon": "🛠️"
     },
     {
       "id": "M_HOUSING",
@@ -233,7 +265,9 @@
       "synonyms": [
         "logement",
         "ville"
-      ]
+      ],
+      "color": "#f59e0b",
+      "icon": "🏠"
     },
     {
       "id": "M_SECURITY",
@@ -246,7 +280,9 @@
       "synonyms": [
         "sécurité",
         "police"
-      ]
+      ],
+      "color": "#dc2626",
+      "icon": "🚔"
     },
     {
       "id": "M_JUSTICE",
@@ -259,7 +295,9 @@
       "synonyms": [
         "justice",
         "prisons"
-      ]
+      ],
+      "color": "#7c3aed",
+      "icon": "⚖️"
     },
     {
       "id": "M_CIVIL_PROT",
@@ -272,7 +310,9 @@
       "synonyms": [
         "pompiers",
         "secours"
-      ]
+      ],
+      "color": "#fb7185",
+      "icon": "🚒"
     },
     {
       "id": "M_DEFENSE",
@@ -286,7 +326,9 @@
         "défense",
         "armée",
         "defense"
-      ]
+      ],
+      "color": "#1f2937",
+      "icon": "🛡️"
     },
     {
       "id": "M_TRANSPORT",
@@ -299,7 +341,9 @@
       "synonyms": [
         "transports",
         "mobilité"
-      ]
+      ],
+      "color": "#0f766e",
+      "icon": "🚆"
     },
     {
       "id": "M_ENVIRONMENT",
@@ -313,7 +357,9 @@
         "environnement",
         "écologie",
         "environment"
-      ]
+      ],
+      "color": "#22c55e",
+      "icon": "🌿"
     },
     {
       "id": "M_ECONOMIC",
@@ -326,7 +372,9 @@
       "synonyms": [
         "économie",
         "entreprises"
-      ]
+      ],
+      "color": "#0284c7",
+      "icon": "🏭"
     },
     {
       "id": "M_AGRI",
@@ -339,7 +387,9 @@
       "synonyms": [
         "agriculture",
         "alimentation"
-      ]
+      ],
+      "color": "#65a30d",
+      "icon": "🌾"
     },
     {
       "id": "M_CULTURE",
@@ -354,7 +404,9 @@
         "culture",
         "sport",
         "médias"
-      ]
+      ],
+      "color": "#db2777",
+      "icon": "🎭"
     },
     {
       "id": "M_ADMIN",
@@ -367,7 +419,9 @@
       "synonyms": [
         "administration",
         "finances publiques"
-      ]
+      ],
+      "color": "#4b5563",
+      "icon": "🏛️"
     },
     {
       "id": "M_DIPLO",
@@ -380,7 +434,9 @@
       "synonyms": [
         "diplomatie",
         "europe"
-      ]
+      ],
+      "color": "#3b82f6",
+      "icon": "🌍"
     },
     {
       "id": "M_TERRITORIES",
@@ -393,7 +449,9 @@
       "synonyms": [
         "collectivités",
         "territoires"
-      ]
+      ],
+      "color": "#ea580c",
+      "icon": "🗺️"
     },
     {
       "id": "M_DEBT",
@@ -406,7 +464,9 @@
       "synonyms": [
         "dette",
         "intérêts"
-      ]
+      ],
+      "color": "#475569",
+      "icon": "💶"
     },
     {
       "id": "M_TEST",
@@ -415,7 +475,9 @@
       "examples": [],
       "synonyms": [
         "test"
-      ]
+      ],
+      "color": "#6b7280",
+      "icon": "❓"
     },
     {
       "id": "M_UNKNOWN",
@@ -425,7 +487,9 @@
       "synonyms": [
         "inconnu",
         "autre"
-      ]
+      ],
+      "color": "#6b7280",
+      "icon": "❓"
     }
   ]
 }

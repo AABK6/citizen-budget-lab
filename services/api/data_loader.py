@@ -1077,6 +1077,95 @@ def mission_to_cofog_weights(mission_code: str, cofog_to_mission: Dict[str, List
     return _normalize_weights(entries)
 
 
+def _builder_mission_totals(year: int) -> Dict[str, float]:
+    # Prefer warehouse aggregation when available
+    try:
+        if wh.warehouse_available():
+            rows = wh.lego_baseline_mission(year)
+            if rows:
+                return {str(r.get("mission_code")): float(r.get("amount_eur") or 0.0) for r in rows}
+    except Exception:
+        pass
+
+    baseline = load_lego_baseline(year)
+    if not baseline:
+        return {}
+
+    mission_by_piece, _ = mission_bridges()
+    totals: Dict[str, float] = defaultdict(float)
+    for ent in baseline.get("pieces", []):
+        if str(ent.get("type")) != "expenditure":
+            continue
+        try:
+            amt = float(ent.get("amount_eur") or 0.0)
+        except Exception:
+            amt = 0.0
+        if amt == 0.0:
+            continue
+        pid = str(ent.get("id"))
+        missions = mission_by_piece.get(pid)
+        if not missions:
+            raw = ent.get("missions") or []
+            missions = []
+            for m in raw:
+                code = str(m.get("code") or "").upper()
+                if not code:
+                    continue
+                try:
+                    weight = float(m.get("weight") or 0.0)
+                except Exception:
+                    weight = 0.0
+                if weight > 0:
+                    missions.append((code, weight))
+            missions = _normalize_weights(missions) if missions else []
+        if not missions:
+            totals["M_UNKNOWN"] += amt
+            continue
+        total_weight = sum(w for _, w in missions)
+        if total_weight <= 0:
+            totals["M_UNKNOWN"] += amt
+            continue
+        for mission_code, weight in missions:
+            totals[mission_code] += amt * float(weight)
+    return totals
+
+
+def _format_mass_totals(totals: Dict[str, float]) -> List[dict]:
+    items = []
+    total_amount = sum(max(float(v), 0.0) for v in totals.values())
+    for code, amount in totals.items():
+        val = max(float(amount), 0.0)
+        if val == 0.0:
+            continue
+        share = (val / total_amount) if total_amount > 0 else 0.0
+        items.append({"massId": code, "amountEur": val, "share": share})
+    items.sort(key=lambda x: x["amountEur"], reverse=True)
+    return items
+
+
+def builder_mass_allocation(year: int, lens: str = "MISSION") -> List[dict]:
+    lens_key = str(lens).upper()
+    mission_totals = _builder_mission_totals(year)
+    if not mission_totals:
+        return []
+    if lens_key == "MISSION":
+        return _format_mass_totals(mission_totals)
+
+    if lens_key == "COFOG":
+        _, cofog_to_mission = mission_bridges()
+        cofog_totals: Dict[str, float] = defaultdict(float)
+        for mission_code, amount in mission_totals.items():
+            weights = mission_to_cofog_weights(mission_code, cofog_to_mission)
+            if weights:
+                for major, weight in weights:
+                    cofog_totals[major] += float(amount) * weight
+            else:
+                cofog_totals["UNKNOWN"] += float(amount)
+        return _format_mass_totals(cofog_totals)
+
+    return _format_mass_totals(mission_totals)
+
+
 def _macro_kernel(horizon: int, shocks_pct_gdp: Dict[str, List[float]], gdp_series: List[float]) -> MacroResult:
     # Allow overriding IRF parameter source via env for sensitivity toggles (V2 prep)
     try:
@@ -1125,8 +1214,17 @@ def _macro_kernel(horizon: int, shocks_pct_gdp: Dict[str, List[float]], gdp_seri
 
 
 
-def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult, dict, List[str]]:
+def run_scenario(dsl_b64: str, *, lens: str | None = None) -> tuple[str, Accounting, Compliance, MacroResult, dict, List[str]]:
     data = _decode_yaml_base64(dsl_b64)
+    if not isinstance(data.get("assumptions"), dict):
+        data["assumptions"] = {}
+    assumptions = data["assumptions"]
+    requested_lens = lens or assumptions.get("lens") or data.get("lens") or "MISSION"
+    selected_lens = str(requested_lens).upper()
+    if selected_lens not in {"MISSION", "COFOG"}:
+        selected_lens = "MISSION"
+    assumptions["lens"] = selected_lens
+    data.pop("lens", None)
     validate_scenario(data)
     # Deterministic scenario ID from canonicalized DSL
     canonical = json.dumps(data, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
@@ -1149,11 +1247,17 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
     gdp_series = [gdp_series_map.get(baseline_year + i, list(gdp_series_map.values())[-1]) for i in range(horizon_years)]
     shocks_pct_gdp: Dict[str, List[float]] = {}
     # Preload LEGO baseline/config to support piece.* targets
+    warehouse_ok = wh.warehouse_available()
+    allow_fallback = os.getenv("ALLOW_SCENARIO_BASELINE_FALLBACK", "0") in ("1", "true", "True")
+
     lego_bl = None
-    if wh.warehouse_available():
+    if warehouse_ok:
         lego_bl = wh.lego_baseline(baseline_year)
-    if not lego_bl:
+        if not lego_bl:
+            lego_bl = load_lego_baseline(baseline_year)
+    elif allow_fallback:
         lego_bl = load_lego_baseline(baseline_year)
+
     if not lego_bl:
         raise RuntimeError(f"Missing LEGO baseline for {baseline_year}; ensure data is warmed")
     mission_by_piece, cofog_to_mission = mission_bridges()
@@ -1265,7 +1369,7 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
                     for i in range(horizon_years):
                         shocks_pct_gdp.setdefault(major, [0.0] * horizon_years)[i] += 100.0 * shock_eur / gdp_series[i]
 
-            mission_mapping = convert_mass_mapping_to_missions(raw_mass_mapping)
+            mission_mapping = lever_def.get("mission_mapping") or convert_mass_mapping_to_missions(raw_mass_mapping)
             for mission_code, weight in mission_mapping.items():
                 try:
                     weight_val = float(weight)
@@ -1589,23 +1693,71 @@ def run_scenario(dsl_b64: str) -> tuple[str, Accounting, Compliance, MacroResult
         baseline_debt_path=baseline_debt_path,
     )
 
-    # Build resolution payload (overallPct + byMass)
-    by_mass: List[dict] = []
-    mission_ids = set(list(resolution_target_by_mission_total.keys()) + list(resolution_specified_by_mission_total.keys()))
+    # Build resolution payloads for both mission and COFOG lenses
+    mission_ids = set(
+        list(resolution_target_by_mission_total.keys()) + list(resolution_specified_by_mission_total.keys())
+    )
+
+    by_mass_mission: List[dict] = []
     total_target_abs = 0.0
     total_spec_abs = 0.0
     for mid in sorted(mission_ids):
         t = float(resolution_target_by_mission_total.get(mid, 0.0))
         s = float(resolution_specified_by_mission_total.get(mid, 0.0))
-        by_mass.append({
-            "massId": mid,
-            "targetDeltaEur": t,
-            "specifiedDeltaEur": s,
-        })
+        by_mass_mission.append(
+            {
+                "massId": mid,
+                "targetDeltaEur": t,
+                "specifiedDeltaEur": s,
+            }
+        )
         total_target_abs += abs(t)
         total_spec_abs += abs(s)
-    overall = (total_spec_abs / total_target_abs) if total_target_abs > 0 else 0.0
-    resolution = {"overallPct": overall, "byMass": by_mass}
+    overall_mission = (total_spec_abs / total_target_abs) if total_target_abs > 0 else 0.0
+    resolution_mission = {"overallPct": overall_mission, "byMass": by_mass_mission}
+
+    cofog_target_totals: Dict[str, float] = defaultdict(float)
+    cofog_spec_totals: Dict[str, float] = defaultdict(float)
+    for mid in mission_ids:
+        t = float(resolution_target_by_mission_total.get(mid, 0.0))
+        s = float(resolution_specified_by_mission_total.get(mid, 0.0))
+        weights = mission_to_cofog_weights(mid, cofog_to_mission)
+        if weights:
+            for major, cof_weight in weights:
+                cofog_target_totals[major] += t * cof_weight
+                cofog_spec_totals[major] += s * cof_weight
+        elif abs(t) > 0 or abs(s) > 0:
+            cofog_target_totals["UNKNOWN"] += t
+            cofog_spec_totals["UNKNOWN"] += s
+
+    by_mass_cofog: List[dict] = []
+    cofog_target_abs = 0.0
+    cofog_spec_abs = 0.0
+    for code in sorted(cofog_target_totals.keys()):
+        t = float(cofog_target_totals.get(code, 0.0))
+        s = float(cofog_spec_totals.get(code, 0.0))
+        by_mass_cofog.append(
+            {
+                "massId": code,
+                "targetDeltaEur": t,
+                "specifiedDeltaEur": s,
+            }
+        )
+        cofog_target_abs += abs(t)
+        cofog_spec_abs += abs(s)
+    overall_cofog = (cofog_spec_abs / cofog_target_abs) if cofog_target_abs > 0 else 0.0
+    resolution_cofog = {"overallPct": overall_cofog, "byMass": by_mass_cofog}
+
+    resolution_by_lens = {
+        "MISSION": resolution_mission,
+        "COFOG": resolution_cofog,
+    }
+    selected_resolution = resolution_by_lens.get(selected_lens, resolution_mission)
+    resolution = {
+        "overallPct": selected_resolution["overallPct"],
+        "byMass": selected_resolution["byMass"],
+        "lens": selected_lens,
+    }
 
     return sid, acc, comp, macro, resolution, warnings
 def _procurement_path(year: int) -> str:

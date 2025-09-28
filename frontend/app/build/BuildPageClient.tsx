@@ -20,6 +20,8 @@ import {
   BuildLens,
   MassCategory,
   MissionLabel,
+  MassLabel,
+  AggregationLens,
 } from './types';
 import { useBuildState } from './useBuildState';
 import { runScenarioForDsl } from '@/lib/permalink';
@@ -32,32 +34,6 @@ import { computeDeficitTotals } from '@/lib/fiscal';
 const fallbackTreemapColors = ['#2563eb', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#ef4444', '#6366f1', '#14b8a6', '#a855f7', '#d946ef'];
 const revenueColorPalette = ['#0ea5e9', '#f97316', '#9333ea', '#16a34a', '#dc2626', '#facc15', '#0f766e', '#7c3aed', '#22c55e', '#2563eb'];
 const revenueIcons = ['💶', '📈', '🏦', '🧾', '🏭', '🛢️', '🚬', '💡', '🎯', '💼'];
-
-const missionStyles: Record<string, { color: string; icon: string }> = {
-  M_EDU: { color: '#2563eb', icon: '📚' },
-  M_HIGHER_EDU: { color: '#4338ca', icon: '🎓' },
-  M_HEALTH: { color: '#16a34a', icon: '🩺' },
-  M_PENSIONS: { color: '#6366f1', icon: '💼' },
-  M_SOLIDARITY: { color: '#f97316', icon: '🤝' },
-  M_EMPLOYMENT: { color: '#0ea5e9', icon: '🛠️' },
-  M_HOUSING: { color: '#f59e0b', icon: '🏠' },
-  M_SECURITY: { color: '#dc2626', icon: '🚔' },
-  M_JUSTICE: { color: '#7c3aed', icon: '⚖️' },
-  M_CIVIL_PROT: { color: '#fb7185', icon: '🚒' },
-  M_DEFENSE: { color: '#1f2937', icon: '🛡️' },
-  M_TRANSPORT: { color: '#0f766e', icon: '🚆' },
-  M_ENVIRONMENT: { color: '#22c55e', icon: '🌿' },
-  M_ECONOMIC: { color: '#0284c7', icon: '🏭' },
-  M_AGRI: { color: '#65a30d', icon: '🌾' },
-  M_CULTURE: { color: '#db2777', icon: '🎭' },
-  M_ADMIN: { color: '#4b5563', icon: '🏛️' },
-  M_DIPLO: { color: '#3b82f6', icon: '🌍' },
-  M_TERRITORIES: { color: '#ea580c', icon: '🗺️' },
-  M_DEBT: { color: '#475569', icon: '💶' },
-  M_UNKNOWN: { color: '#6b7280', icon: '❓' },
-};
-
-const getMissionStyle = (missionId: string) => missionStyles[missionId] || missionStyles.M_UNKNOWN;
 
 export default function BuildPageClient() {
   const { t } = useI18n();
@@ -86,9 +62,16 @@ export default function BuildPageClient() {
     lens,
     expandedFamilies,
     scenarioId,
+    aggregationLens,
+    massLabels,
+    missionLabels,
   } = state;
   const [displayMode, setDisplayMode] = useState<'amount' | 'share'>('amount');
-  
+  const [massDataByLens, setMassDataByLens] = useState<Record<AggregationLens, MassCategory[]>>({
+    MISSION: [],
+    COFOG: [],
+  });
+
   const [shareFeedback, setShareFeedback] = useState<string | null>(null);
   const {
     setInitialLoading,
@@ -103,6 +86,9 @@ export default function BuildPageClient() {
     setSelectedCategory,
     setSelectedRevenueCategory,
     setLens,
+    setAggregationLens,
+    setMasses,
+    setLabels,
     togglePanel,
     toggleRevenuePanel,
     toggleFamily,
@@ -122,6 +108,74 @@ export default function BuildPageClient() {
   const searchParamsString = searchParams.toString();
   const scenarioIdRef = useRef<string | null>(scenarioId);
   const latestRunRef = useRef(0);
+  const aggregationLensRef = useRef<AggregationLens>(aggregationLens);
+
+  const addPieceToBucket = (bucket: Map<string, LegoPiece[]>, key: string, piece: LegoPiece) => {
+    const existing = bucket.get(key);
+    if (existing) {
+      if (!existing.some((p) => p.id === piece.id)) {
+        existing.push(piece);
+      }
+    } else {
+      bucket.set(key, [piece]);
+    }
+  };
+
+  const toAllocations = (
+    allocations: Array<{ massId: string; amountEur: number; share: number }> | null,
+    fallbackTotals: Map<string, number>,
+  ) => {
+    if (allocations && allocations.length > 0) {
+      return allocations;
+    }
+    const entries = Array.from(fallbackTotals.entries()).filter(([, amount]) => amount > 0);
+    const total = entries.reduce((sum, [, amount]) => sum + amount, 0);
+    if (entries.length === 0) {
+      return [];
+    }
+    return entries.map(([massId, amount]) => ({
+      massId,
+      amountEur: amount,
+      share: total > 0 ? amount / total : 0,
+    }));
+  };
+
+  const buildCategories = (
+    allocations: Array<{ massId: string; amountEur: number; share: number }>,
+    pieceMap: Map<string, LegoPiece[]>,
+    labelLookup: Record<string, { displayLabel?: string; color?: string; icon?: string }>,
+    defaultIcon: string,
+  ): MassCategory[] => {
+    const categories: MassCategory[] = [];
+    let colorIndex = 0;
+    for (const entry of allocations) {
+      const label = labelLookup[entry.massId];
+      let name = label?.displayLabel;
+      if (!name) {
+        if (entry.massId === 'UNKNOWN') {
+          name = 'Unspecified';
+        } else if (entry.massId.startsWith('M_')) {
+          name = entry.massId.replace('M_', '');
+        } else {
+          name = entry.massId;
+        }
+      }
+      const color = label?.color || fallbackTreemapColors[colorIndex % fallbackTreemapColors.length];
+      const icon = label?.icon || defaultIcon;
+      colorIndex += 1;
+      categories.push({
+        id: entry.massId,
+        name,
+        amount: entry.amountEur,
+        share: entry.share,
+        color,
+        icon,
+        pieces: pieceMap.get(entry.massId) ?? [],
+      });
+    }
+    categories.sort((a, b) => b.amount - a.amount);
+    return categories;
+  };
 
   useEffect(() => {
     if (!shareFeedback) return;
@@ -133,6 +187,23 @@ export default function BuildPageClient() {
   useEffect(() => {
     scenarioIdRef.current = scenarioId;
   }, [scenarioId]);
+
+  useEffect(() => {
+    aggregationLensRef.current = aggregationLens;
+  }, [aggregationLens]);
+
+  useEffect(() => {
+    const lensFromDsl = String(dslObject.assumptions?.lens || 'MISSION').toUpperCase() as AggregationLens;
+    if ((lensFromDsl === 'MISSION' || lensFromDsl === 'COFOG') && lensFromDsl !== aggregationLens) {
+      setAggregationLens(lensFromDsl);
+      const nextMasses = massDataByLens[lensFromDsl] ?? [];
+      setMasses(nextMasses);
+      if (selectedCategory && !nextMasses.some((mass) => mass.id === selectedCategory.id)) {
+        setSelectedCategory(null);
+        togglePanel(false);
+      }
+    }
+  }, [aggregationLens, dslObject, massDataByLens, selectedCategory, setAggregationLens, setMasses, setSelectedCategory, togglePanel]);
 
   useEffect(() => {
     const urlScenarioId = new URLSearchParams(searchParamsString).get('scenarioId');
@@ -160,7 +231,7 @@ export default function BuildPageClient() {
     setScenarioLoading(true);
     setScenarioError(null);
     try {
-      const result = await runScenarioForDsl(dslString);
+      const result = await runScenarioForDsl(dslString, aggregationLens);
       if (latestRunRef.current !== runToken) {
         return;
       }
@@ -182,7 +253,7 @@ export default function BuildPageClient() {
         setScenarioLoading(false);
       }
     }
-  }, [dslString, pathname, router, searchParamsString, setScenarioError, setScenarioLoading, setScenarioResult]);
+  }, [aggregationLens, dslString, pathname, router, searchParamsString, setScenarioError, setScenarioLoading, setScenarioResult]);
 
   const fetchData = useCallback(async () => {
     setInitialLoading(true);
@@ -191,64 +262,75 @@ export default function BuildPageClient() {
     try {
       const data = await gqlRequest(buildPageQuery, { year });
 
-      const baselineAmounts: { [key: string]: number } = {};
+      const baselineAmounts: Record<string, number> = {};
       data.legoBaseline.pieces.forEach((p: any) => {
         baselineAmounts[p.id] = p.amountEur;
       });
 
-      const allPieces = data.legoPieces.map((p: any) => ({ ...p, amountEur: baselineAmounts[p.id] || 0 }));
+      const allPieces: LegoPiece[] = data.legoPieces.map((p: any) => ({ ...p, amountEur: baselineAmounts[p.id] || 0 }));
 
-      const spending = allPieces.filter((p: LegoPiece) => p.type === 'expenditure');
-      const revenue = allPieces.filter((p: LegoPiece) => p.type === 'revenue');
+      const spending = allPieces.filter((p) => p.type === 'expenditure');
+      const revenue = allPieces.filter((p) => p.type === 'revenue');
 
-      const missionLabels: Record<string, MissionLabel> = {};
-      data.missionLabels?.forEach((m: MissionLabel) => {
-        missionLabels[m.id] = m;
+      const missionLabelMap: Record<string, MissionLabel> = {};
+      (data.missionLabels || []).forEach((label: MissionLabel) => {
+        missionLabelMap[label.id] = label;
       });
 
-      const missionData: Record<string, MassCategory> = {};
-      spending.forEach((p: LegoPiece) => {
-        const amount = p.amountEur || 0;
-        const missionWeights = (p.missions || []).filter((m) => (m.weight ?? 0) > 0);
-        const missions = missionWeights.length > 0 ? missionWeights : [{ code: 'M_UNKNOWN', weight: 1 }];
-        const totalWeight = missions.reduce((sum, m) => sum + (m.weight ?? 0), 0) || missions.length;
+      const massLabelMap: Record<string, MassLabel> = {};
+      (data.massLabels || []).forEach((label: MassLabel) => {
+        massLabelMap[label.id] = label;
+      });
 
-        missions.forEach((mission) => {
-          const missionId = mission.code || 'M_UNKNOWN';
-          const style = getMissionStyle(missionId);
-          const weight = (mission.weight ?? 0) / totalWeight || (1 / missions.length);
-          const contribution = amount * weight;
-          if (!missionData[missionId]) {
-            missionData[missionId] = {
-              id: missionId,
-              name: missionLabels[missionId]?.displayLabel || missionId.replace('M_', ''),
-              amount: 0,
-              share: 0,
-              color: style.color,
-              icon: style.icon,
-              pieces: [],
-            };
-          }
-          missionData[missionId].amount += contribution;
-          if (!missionData[missionId].pieces.some((piece) => piece.id === p.id)) {
-            missionData[missionId].pieces.push(p);
-          }
+      setLabels(massLabelMap, missionLabelMap);
+
+      const missionPieceMap = new Map<string, LegoPiece[]>();
+      const cofogPieceMap = new Map<string, LegoPiece[]>();
+      const missionFallbackTotals = new Map<string, number>();
+      const cofogFallbackTotals = new Map<string, number>();
+
+      spending.forEach((piece) => {
+        const weightEntries = (piece.missions || []).map((m) => ({
+          code: (m.code || 'M_UNKNOWN').toUpperCase(),
+          weight: typeof m.weight === 'number' ? m.weight : 0,
+        }));
+        const positiveWeights = weightEntries.filter((m) => m.weight > 0);
+        const missions = positiveWeights.length > 0 ? positiveWeights : [{ code: 'M_UNKNOWN', weight: 1 }];
+        const weightSum = missions.reduce((sum, m) => sum + m.weight, 0);
+        const normalized = missions.map((m) => ({
+          code: m.code,
+          weight: weightSum > 0 ? m.weight / weightSum : 1 / missions.length,
+        }));
+        normalized.forEach((mission) => {
+          addPieceToBucket(missionPieceMap, mission.code, piece);
+          missionFallbackTotals.set(
+            mission.code,
+            (missionFallbackTotals.get(mission.code) || 0) + (piece.amountEur || 0) * mission.weight,
+          );
+        });
+
+        const majors = (piece.cofogMajors && piece.cofogMajors.length > 0) ? piece.cofogMajors : ['UNKNOWN'];
+        const majorShare = majors.length > 0 ? 1 / majors.length : 1;
+        majors.forEach((major) => {
+          const key = (major || 'UNKNOWN').toUpperCase();
+          addPieceToBucket(cofogPieceMap, key, piece);
+          cofogFallbackTotals.set(key, (cofogFallbackTotals.get(key) || 0) + (piece.amountEur || 0) * majorShare);
         });
       });
 
-      const totalMissionAmount = Object.values(missionData).reduce((sum, mission) => sum + mission.amount, 0);
-      Object.values(missionData).forEach((mission) => {
-        mission.share = totalMissionAmount > 0 ? mission.amount / totalMissionAmount : 0;
-      });
+      const missionAllocations = toAllocations(data.builderMassesAdmin ?? null, missionFallbackTotals);
+      const missionCategories = buildCategories(missionAllocations, missionPieceMap, missionLabelMap, '🏛️');
 
-      const massList = Object.values(missionData)
-        .filter((entry) => entry.amount > 0)
-        .sort((a, b) => b.amount - a.amount);
+      const cofogAllocations = toAllocations(data.builderMassesCofog ?? null, cofogFallbackTotals);
+      const cofogCategories = buildCategories(cofogAllocations, cofogPieceMap, massLabelMap, '📊');
+
+      setMassDataByLens({ MISSION: missionCategories, COFOG: cofogCategories });
+      const lensForCategories = aggregationLensRef.current;
+      setMasses(lensForCategories === 'COFOG' ? cofogCategories : missionCategories);
 
       setData({
         spendingPieces: spending,
         revenuePieces: revenue,
-        masses: massList,
         policyLevers: data.policyLevers,
         popularIntents: data.popularIntents,
       });
@@ -257,7 +339,26 @@ export default function BuildPageClient() {
       setError(err.message || 'Failed to fetch data');
       setInitialLoading(false);
     }
-  }, [setData, setError, setInitialLoading, setScenarioError, year]);
+  }, [setData, setError, setInitialLoading, setLabels, setMassDataByLens, setMasses, setScenarioError, year]);
+
+  const handleLensSwitch = (nextLens: AggregationLens) => {
+    if (nextLens === aggregationLens) {
+      return;
+    }
+    setAggregationLens(nextLens);
+    const nextMasses = massDataByLens[nextLens] ?? [];
+    setMasses(nextMasses);
+    setSelectedCategory(null);
+    togglePanel(false);
+    setTargetInput('');
+    setDslObject({
+      ...dslObject,
+      assumptions: {
+        ...dslObject.assumptions,
+        lens: nextLens,
+      },
+    });
+  };
 
   useEffect(() => {
     fetchData();
@@ -344,9 +445,12 @@ export default function BuildPageClient() {
         if (Math.abs(amount) < 1) { // Remove target if input is empty/zero
             return { ...currentDsl, actions: otherActions };
         }
+        const targetKey = aggregationLens === 'COFOG'
+          ? `cofog.${massId}`
+          : `mission.${massId.toUpperCase().startsWith('M_') ? massId.toUpperCase() : massId}`;
         const newAction: DslAction = {
             id: `target_${massId}`,
-            target: `mission.${massId}`,
+            target: targetKey,
             op: (amount > 0 ? 'increase' : 'decrease') as 'increase' | 'decrease',
             amount_eur: Math.abs(amount),
             role: 'target',
@@ -531,6 +635,24 @@ export default function BuildPageClient() {
 
         <div className="mission-cluster mission-cluster--center">
           <div className="control-stack">
+            <div className="aggregation-toggle" role="group" aria-label="Budget lens">
+              <button
+                type="button"
+                className={`toggle-btn ${aggregationLens === 'MISSION' ? 'active' : ''}`}
+                onClick={() => handleLensSwitch('MISSION')}
+                aria-pressed={aggregationLens === 'MISSION'}
+              >
+                Administrative lens
+              </button>
+              <button
+                type="button"
+                className={`toggle-btn ${aggregationLens === 'COFOG' ? 'active' : ''}`}
+                onClick={() => handleLensSwitch('COFOG')}
+                aria-pressed={aggregationLens === 'COFOG'}
+              >
+                COFOG lens
+              </button>
+            </div>
             <div className="display-toggle" role="group" aria-label="Display mode">
               <span className="display-prefix">Display:</span>
               <button
@@ -552,7 +674,7 @@ export default function BuildPageClient() {
                 <span className="toggle-label">Shares</span>
               </button>
             </div>
-            <div className="lens-switcher" role="tablist" aria-label="Treemap lens">
+            <div className="view-switcher" role="tablist" aria-label="Treemap view">
               <button
                 type="button"
                 role="tab"

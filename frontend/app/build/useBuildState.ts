@@ -1,9 +1,12 @@
 import { useMemo, useReducer } from 'react';
 import type { ScenarioResult } from '@/lib/types';
 import type {
+  AggregationLens,
   BuildLens,
   LegoPiece,
   MassCategory,
+  MassLabel,
+  MissionLabel,
   PolicyLever,
   PopularIntent,
 } from './types';
@@ -30,6 +33,9 @@ export type BuildState = {
   revenueTargetInput: string;
   lens: BuildLens;
   expandedFamilies: string[];
+  aggregationLens: AggregationLens;
+  massLabels: Record<string, MassLabel>;
+  missionLabels: Record<string, MissionLabel>;
 };
 
 type BuildAction =
@@ -42,7 +48,10 @@ type BuildAction =
   | { type: 'TOGGLE_REVENUE_PANEL'; expanded?: boolean }
   | { type: 'SET_LENS'; lens: BuildLens }
   | { type: 'TOGGLE_FAMILY'; value: string }
-  | { type: 'RESET_EXPANDED_FAMILIES'; values?: string[] };
+  | { type: 'RESET_EXPANDED_FAMILIES'; values?: string[] }
+  | { type: 'SET_AGGREGATION_LENS'; lens: AggregationLens }
+  | { type: 'SET_MASSES'; masses: MassCategory[] }
+  | { type: 'SET_LABELS'; massLabels: Record<string, MassLabel>; missionLabels: Record<string, MissionLabel> };
 
 function reducer(state: BuildState, action: BuildAction): BuildState {
   switch (action.type) {
@@ -68,6 +77,8 @@ function reducer(state: BuildState, action: BuildAction): BuildState {
       return { ...state, isRevenuePanelExpanded: action.expanded ?? !state.isRevenuePanelExpanded };
     case 'SET_LENS':
       return { ...state, lens: action.lens };
+    case 'SET_AGGREGATION_LENS':
+      return { ...state, aggregationLens: action.lens };
     case 'TOGGLE_FAMILY': {
       const exists = state.expandedFamilies.includes(action.value);
       return {
@@ -79,6 +90,10 @@ function reducer(state: BuildState, action: BuildAction): BuildState {
     }
     case 'RESET_EXPANDED_FAMILIES':
       return { ...state, expandedFamilies: action.values ?? [] };
+    case 'SET_MASSES':
+      return { ...state, masses: action.masses };
+    case 'SET_LABELS':
+      return { ...state, massLabels: action.massLabels, missionLabels: action.missionLabels };
     default:
       return state;
   }
@@ -107,6 +122,9 @@ function createInitialState(initialYear: number): BuildState {
     revenueTargetInput: '',
     lens: 'mass',
     expandedFamilies: [],
+    aggregationLens: 'MISSION',
+    massLabels: {},
+    missionLabels: {},
   };
 }
 
@@ -128,7 +146,7 @@ export function useBuildState(initialYear: number) {
         dispatch({ type: 'SET_SCENARIO_RESULT', result, scenarioId }),
       setScenarioId: (id: string | null) =>
         dispatch({ type: 'PATCH', payload: { scenarioId: id } }),
-      setData: (payload: Partial<Pick<BuildState, 'spendingPieces' | 'revenuePieces' | 'masses' | 'policyLevers' | 'popularIntents'>>) =>
+      setData: (payload: Partial<Pick<BuildState, 'spendingPieces' | 'revenuePieces' | 'masses' | 'policyLevers' | 'popularIntents' | 'massLabels' | 'missionLabels'>>) =>
         dispatch({
           type: 'PATCH',
           payload: {
@@ -148,6 +166,10 @@ export function useBuildState(initialYear: number) {
       setSelectedRevenueCategory: (category: LegoPiece | null) =>
         dispatch({ type: 'SET_SELECTED_REVENUE_CATEGORY', category }),
       setLens: (lens: BuildLens) => dispatch({ type: 'SET_LENS', lens }),
+      setAggregationLens: (lens: AggregationLens) => dispatch({ type: 'SET_AGGREGATION_LENS', lens }),
+      setMasses: (masses: MassCategory[]) => dispatch({ type: 'SET_MASSES', masses }),
+      setLabels: (massLabels: Record<string, MassLabel>, missionLabels: Record<string, MissionLabel>) =>
+        dispatch({ type: 'SET_LABELS', massLabels, missionLabels }),
       togglePanel: (expanded?: boolean) => dispatch({ type: 'TOGGLE_PANEL', expanded }),
       toggleRevenuePanel: (expanded?: boolean) => dispatch({ type: 'TOGGLE_REVENUE_PANEL', expanded }),
       toggleFamily: (family: string) => dispatch({ type: 'TOGGLE_FAMILY', value: family }),
