@@ -489,7 +489,6 @@ export default function BuildPageClient() {
       <div className="mission-control" role="region" aria-label="Mission control toolbar">
         <div className="mission-cluster mission-cluster--left">
           <div className="mission-header-bar">
-            <div className="brand-wordmark">Citizen Budget Lab</div>
             <button
               type="button"
               className="mission-learn"
