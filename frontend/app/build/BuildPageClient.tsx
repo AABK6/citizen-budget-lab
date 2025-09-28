@@ -551,6 +551,35 @@ export default function BuildPageClient() {
               <span className="toggle-label">Shares</span>
             </button>
           </div>
+          <div className="lens-switcher" role="tablist" aria-label="Treemap lens">
+            <button
+              type="button"
+              role="tab"
+              className={`lens-option ${lens === 'mass' ? 'active' : ''}`}
+              onClick={() => setLens('mass')}
+              aria-selected={lens === 'mass'}
+            >
+              By mission
+            </button>
+            <button
+              type="button"
+              role="tab"
+              className={`lens-option ${lens === 'family' ? 'active' : ''}`}
+              onClick={() => setLens('family')}
+              aria-selected={lens === 'family'}
+            >
+              By family
+            </button>
+            <button
+              type="button"
+              role="tab"
+              className={`lens-option ${lens === 'reform' ? 'active' : ''}`}
+              onClick={() => setLens('reform')}
+              aria-selected={lens === 'reform'}
+            >
+              By reform
+            </button>
+          </div>
         </div>
 
         <div className="mission-cluster mission-cluster--right">
@@ -696,35 +725,6 @@ export default function BuildPageClient() {
                 <p className="treemap-subtitle">
                   {displayMode === 'share' ? 'Viewing share of baseline (%)' : 'Viewing annual amounts (€B)'}
                 </p>
-              </div>
-              <div className="lens-switcher" role="tablist" aria-label="Treemap lens">
-                <button
-                  type="button"
-                  role="tab"
-                  className={`lens-option ${lens === 'mass' ? 'active' : ''}`}
-                  onClick={() => setLens('mass')}
-                  aria-selected={lens === 'mass'}
-                >
-                  By mission
-                </button>
-                <button
-                  type="button"
-                  role="tab"
-                  className={`lens-option ${lens === 'family' ? 'active' : ''}`}
-                  onClick={() => setLens('family')}
-                  aria-selected={lens === 'family'}
-                >
-                  By family
-                </button>
-                <button
-                  type="button"
-                  role="tab"
-                  className={`lens-option ${lens === 'reform' ? 'active' : ''}`}
-                  onClick={() => setLens('reform')}
-                  aria-selected={lens === 'reform'}
-                >
-                  By reform
-                </button>
               </div>
             </div>
             <div className="treemap-divider" aria-hidden="true" />
