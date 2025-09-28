@@ -5,8 +5,6 @@ import { useI18n } from '@/lib/i18n';
 import { gqlRequest } from '@/lib/graphql';
 import { parseDsl, serializeDsl } from '@/lib/dsl';
 import { RuleLights } from '@/components/RuleLights';
-import { StatCards } from '@/components/StatCards';
-import { DeficitPathChart } from '@/components/DeficitPathChart';
 import { ErrorDisplay } from '@/components/ErrorDisplay';
 import { BuildPageSkeleton } from '@/components/BuildPageSkeleton';
 import { buildPageQuery, suggestLeversQuery, getScenarioDslQuery } from '@/lib/queries';
@@ -28,7 +26,7 @@ import { useBuildState } from './useBuildState';
 import { runScenarioForDsl } from '@/lib/permalink';
 import { MassCategoryList } from './components/MassCategoryList';
 import { MassCategoryPanel } from './components/MassCategoryPanel';
-import { computeDeficitTotals, computeDebtTotals } from '@/lib/fiscal';
+import { computeDeficitTotals } from '@/lib/fiscal';
 
 const fallbackTreemapColors = ['#2563eb', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#ef4444', '#6366f1', '#14b8a6', '#a855f7', '#d946ef'];
 
@@ -457,9 +455,11 @@ export default function BuildPageClient() {
     return pending;
   }, [scenarioResult]);
 
-  const resolutionPct = scenarioResult?.resolution.overallPct || 0;
   const deficitPath = scenarioResult ? computeDeficitTotals(scenarioResult.accounting, scenarioResult.macro?.deltaDeficit) : [];
-  const debtPath = scenarioResult ? computeDebtTotals(scenarioResult.accounting) : [];
+  const latestDeficit = deficitPath.length > 0 ? deficitPath[0] : null;
+  const resolutionPctRaw = scenarioResult?.resolution?.overallPct;
+  const hasResolution = typeof resolutionPctRaw === 'number';
+  const resolutionPct = hasResolution ? resolutionPctRaw : 0;
 
   const treemapData = useMemo(
     () => masses.map((mission) => {
@@ -741,33 +741,11 @@ export default function BuildPageClient() {
                 </button>
               </div>
             )}
-            <div className="scenario-charts">
-              {scenarioLoading && <div className="fr-p-2w">Running scenario...</div>}
-              {scenarioError && <div className="fr-p-2w error">{scenarioError}</div>}
-              {scenarioResult && !scenarioLoading && !scenarioError && (
-                <div className="impact-card">
-                  <div className="impact-card-header">
-                    <div>
-                      <div className="impact-title">Scenario impact</div>
-                      <div className="impact-subtitle">
-                        {displayMode === 'share' ? 'Viewing share of baseline (%)' : 'Viewing annual amounts (€B)'}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="impact-content">
-                    <StatCards
-                      items={[
-                        { label: t('score.deficit_y0'), value: formatCurrency(deficitPath[0] || 0) },
-                        { label: t('build.resolution'), value: `${(scenarioResult.resolution.overallPct * 100).toFixed(0)}%` },
-                      ]}
-                    />
-                    <div className="impact-chart">
-                      <DeficitPathChart deficit={deficitPath} debt={debtPath} startYear={year} />
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
+            {scenarioError && (
+              <div className="scenario-inline-error" role="alert">
+                {scenarioError}
+              </div>
+            )}
           </div>
 
           <div className="right-panel">
@@ -861,17 +839,64 @@ export default function BuildPageClient() {
         </div>
       </div>
 
-      <button
-        className={`run-fab ${scenarioLoading ? 'is-loading' : ''}`}
-        onClick={runScenario}
-        disabled={scenarioLoading}
-        aria-label="Run scenario"
-      >
-        <span className="run-label">{scenarioLoading ? 'Running…' : 'Run scenario'}</span>
-        <i className={`material-icons ${scenarioLoading ? 'spin' : ''}`} aria-hidden="true">
-          {scenarioLoading ? 'autorenew' : 'chevron_right'}
-        </i>
-      </button>
+      <div className="scenario-status-bar" role="region" aria-live="polite">
+        <div className="status-summary">
+          <div className="status-heading">Scenario impact</div>
+          <div className="status-metrics">
+            <div className="status-metric">
+              <span className="status-label">{t('score.deficit_y0')}</span>
+              <span className="status-value">
+                {scenarioLoading ? '—' : latestDeficit !== null ? formatCurrency(latestDeficit) : 'Not run'}
+              </span>
+            </div>
+            <div className="status-metric">
+              <span className="status-label">{t('build.resolution')}</span>
+              <span className="status-value">
+                {scenarioLoading
+                  ? '—'
+                  : hasResolution
+                    ? `${Math.round(resolutionPct * 100)}%`
+                    : 'Not run'}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="status-actions">
+          {scenarioLoading && (
+            <div className="status-feedback" role="status">
+              <i className="material-icons spin" aria-hidden="true">autorenew</i>
+              Running scenario…
+            </div>
+          )}
+          {!scenarioLoading && scenarioError && (
+            <div className="status-feedback status-feedback--error" role="alert">
+              <i className="material-icons" aria-hidden="true">error</i>
+              {scenarioError}
+            </div>
+          )}
+          {!scenarioLoading && scenarioResult && !scenarioError && (
+            <div className="status-feedback status-feedback--success" role="status">
+              <i className="material-icons" aria-hidden="true">check_circle</i>
+              Updated with latest run
+            </div>
+          )}
+          {!scenarioLoading && !scenarioResult && !scenarioError && (
+            <div className="status-feedback" role="status">
+              Scenario not yet run
+            </div>
+          )}
+          <button
+            className="status-run"
+            onClick={runScenario}
+            disabled={scenarioLoading}
+          >
+            <span>{scenarioLoading ? 'Running…' : 'Run scenario'}</span>
+            <i className="material-icons" aria-hidden="true">
+              {scenarioLoading ? 'autorenew' : 'chevron_right'}
+            </i>
+          </button>
+        </div>
+      </div>
 
       {shareFeedback && (
         <div className="snackbar snackbar--bottom" role="status">
