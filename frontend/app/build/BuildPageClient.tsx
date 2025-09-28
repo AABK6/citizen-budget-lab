@@ -4,7 +4,6 @@ import { useEffect, useCallback, useMemo, useRef, useState } from 'react';
 import { useI18n } from '@/lib/i18n';
 import { gqlRequest } from '@/lib/graphql';
 import { parseDsl, serializeDsl } from '@/lib/dsl';
-import { RuleLights } from '@/components/RuleLights';
 import { ErrorDisplay } from '@/components/ErrorDisplay';
 import { BuildPageSkeleton } from '@/components/BuildPageSkeleton';
 import { buildPageQuery, suggestLeversQuery, getScenarioDslQuery } from '@/lib/queries';
@@ -489,7 +488,7 @@ export default function BuildPageClient() {
     <div className="build-page-container">
       <div className="mission-control" role="region" aria-label="Mission control toolbar">
         <div className="mission-cluster mission-cluster--left">
-          <div className="mission-brand">
+          <div className="mission-header-bar">
             <div className="brand-wordmark">Citizen Budget Lab</div>
             <button
               type="button"
@@ -500,8 +499,6 @@ export default function BuildPageClient() {
               <span className="mission-separator" aria-hidden="true">·</span>
               <span className="mission-link">{showLensInfo ? 'Hide' : 'Learn more'}</span>
             </button>
-          </div>
-          <div className="mission-meta">
             <div className="resolution-meter" aria-label="Scenario resolution">
               <span className="meter-label">Resolution</span>
               <div className="meter-bar">
@@ -512,14 +509,6 @@ export default function BuildPageClient() {
             <div className="mission-year" aria-label="Scenario baseline year">
               <i className="material-icons" aria-hidden="true">calendar_today</i>
               <span>{year}</span>
-            </div>
-            <div className="mission-lights" aria-label="EU compliance lights">
-              <RuleLights
-                eu3pct={scenarioResult?.compliance.eu3pct}
-                eu60pct={scenarioResult?.compliance.eu60pct}
-                netExpenditure={scenarioResult?.compliance.netExpenditure}
-                localBalance={scenarioResult?.compliance.localBalance}
-              />
             </div>
           </div>
         </div>
