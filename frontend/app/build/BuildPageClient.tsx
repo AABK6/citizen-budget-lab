@@ -718,22 +718,22 @@ export default function BuildPageClient() {
                 resolutionData={scenarioResult?.resolution.byMass || []}
                 mode={displayMode}
               />
-            </div>
-            {showLensInfo && (
-              <div className="info-pill" role="note">
-                <div className="info-pill__copy">
-                  Missions regroup spending by ministerial responsibility (education, health, justice…). Figures follow the State budget (PLF) baseline for {year}.
+              {showLensInfo && (
+                <div className="info-pill info-pill--floating" role="note">
+                  <div className="info-pill__copy">
+                    Missions regroup spending by ministerial responsibility (education, health, justice…). Figures follow the State budget (PLF) baseline for {year}.
+                  </div>
+                  <button type="button" className="info-pill__dismiss" onClick={() => setShowLensInfo(false)}>
+                    Dismiss
+                  </button>
                 </div>
-                <button type="button" className="info-pill__dismiss" onClick={() => setShowLensInfo(false)}>
-                  Dismiss
-                </button>
-              </div>
-            )}
-            {scenarioError && (
-              <div className="scenario-inline-error" role="alert">
-                {scenarioError}
-              </div>
-            )}
+              )}
+              {scenarioError && (
+                <div className="scenario-inline-error scenario-inline-error--floating" role="alert">
+                  {scenarioError}
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="right-panel">

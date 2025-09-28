@@ -465,6 +465,13 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
     .mission-header-bar {
         flex-wrap: wrap;
     }
+    .center-panel {
+        position: relative;
+        top: 0;
+        height: auto;
+        max-height: none;
+        overflow: visible;
+    }
     .main-content {
         grid-template-columns: minmax(0, 1fr);
     }
@@ -565,6 +572,11 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
     gap: 20px;
     box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
     min-height: 0;
+    position: sticky;
+    top: 32px;
+    height: calc(100vh - 32px - 180px);
+    max-height: calc(100vh - 32px - 180px);
+    overflow: hidden;
 }
 
 .treemap-header {
@@ -630,12 +642,16 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
 .treemap-container {
     position: relative;
     flex: 1;
-    min-height: clamp(560px, 58vh, 720px);
+    min-height: 0;
+    height: 100%;
     display: flex;
+    overflow: hidden;
+    border-radius: 12px;
 }
 
 .treemap-container > div {
     flex: 1;
+    min-height: 0;
 }
 
 .info-pill {
@@ -668,6 +684,15 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
     text-decoration: underline;
 }
 
+.info-pill--floating {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    max-width: 320px;
+    box-shadow: 0 10px 24px rgba(49, 99, 221, 0.18);
+    backdrop-filter: blur(8px);
+}
+
 
 .scenario-inline-error {
     border-radius: 14px;
@@ -676,6 +701,15 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
     color: #991b1b;
     padding: 14px 18px;
     font-size: 14px;
+}
+
+.scenario-inline-error--floating {
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    box-shadow: 0 12px 28px rgba(220, 38, 38, 0.16);
+    backdrop-filter: blur(6px);
 }
 
 .scenario-status-bar {
