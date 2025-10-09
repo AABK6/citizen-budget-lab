@@ -174,6 +174,11 @@ type Accounting {
   debtDeltaPath: [Float!]
   baselineDeficitPath: [Float!]
   baselineDebtPath: [Float!]
+  gdpPath: [Float!]
+  deficitRatioPath: [Float!]
+  baselineDeficitRatioPath: [Float!]
+  debtRatioPath: [Float!]
+  baselineDebtRatioPath: [Float!]
 }
 type Compliance { eu3pct: [String!]!, eu60pct: [String!]!, netExpenditure: [String!]!, localBalance: [String!]! }
 type Macro { deltaGDP: [Float!]!, deltaEmployment: [Float!]!, deltaDeficit: [Float!]!, assumptions: JSON! }
@@ -196,7 +201,7 @@ type ScenarioCompareResult {
     massLabels: JSON!
 }
 
-"2025-09-22 update:" The `RunScenarioPayload.accounting` object now always includes baseline-plus-delta data. `deficitPath` / `debtPath` provide the summed totals for convenience, while the separate `baseline*` and `*Delta` arrays let clients distinguish the automatic baseline from the mechanical and macro impacts returned by the engine.
+"2025-09-22 update:" The `RunScenarioPayload.accounting` object now always includes baseline-plus-delta data. `deficitPath` / `debtPath` provide the summed totals for convenience, the `baseline*` and `*Delta` arrays let clients distinguish the automatic baseline from the mechanical and macro impacts returned by the engine, and `gdpPath`/`*RatioPath` expose the underlying GDP and ratio projections for UI display.
 
 type EUCountryCofog { country: String!, code: String!, label: String!, amountEur: Float!, share: Float! }
 type FiscalPath { years: [Int!]!, deficitRatio: [Float!]!, debtRatio: [Float!]! }

@@ -36,15 +36,25 @@ export function computeDeficitTotals(
   } | null | undefined,
   macroDelta?: NumericSeries,
 ): number[] {
-  const combined = combineSeries(
-    accounting?.baselineDeficitPath,
-    accounting?.deficitDeltaPath,
-    macroDelta,
-  );
-  if (combined.length > 0) {
-    return combined;
+  const totals = toNumberSeries(accounting?.deficitPath);
+  if (totals.length > 0) {
+    return totals;
   }
-  return toNumberSeries(accounting?.deficitPath);
+  const baseline = toNumberSeries(accounting?.baselineDeficitPath);
+  const deltas = toNumberSeries(accounting?.deficitDeltaPath);
+  const macro = toNumberSeries(macroDelta);
+  const maxLength = Math.max(baseline.length, deltas.length, macro.length);
+  if (maxLength === 0) {
+    return totals;
+  }
+  const result: number[] = new Array(maxLength).fill(0);
+  for (let i = 0; i < maxLength; i += 1) {
+    const baseVal = i < baseline.length ? baseline[i] : 0;
+    const deltaVal = i < deltas.length ? deltas[i] : 0;
+    const macroVal = i < macro.length ? macro[i] : 0;
+    result[i] = baseVal - deltaVal - macroVal;
+  }
+  return result;
 }
 
 export function computeDeficitDeltas(
@@ -55,10 +65,6 @@ export function computeDeficitDeltas(
   } | null | undefined,
   macroDelta?: NumericSeries,
 ): number[] {
-  const combined = combineSeries(accounting?.deficitDeltaPath, macroDelta);
-  if (combined.length > 0) {
-    return combined;
-  }
   const totals = toNumberSeries(accounting?.deficitPath);
   const baseline = toNumberSeries(accounting?.baselineDeficitPath);
   if (totals.length && baseline.length) {
@@ -71,7 +77,19 @@ export function computeDeficitDeltas(
     }
     return result;
   }
-  return totals;
+  const deltas = toNumberSeries(accounting?.deficitDeltaPath);
+  const macro = toNumberSeries(macroDelta);
+  const maxLength = Math.max(deltas.length, macro.length);
+  if (maxLength === 0) {
+    return totals;
+  }
+  const result: number[] = new Array(maxLength).fill(0);
+  for (let i = 0; i < maxLength; i += 1) {
+    const deltaVal = i < deltas.length ? deltas[i] : 0;
+    const macroVal = i < macro.length ? macro[i] : 0;
+    result[i] = -(deltaVal + macroVal);
+  }
+  return result;
 }
 
 export function computeDebtTotals(

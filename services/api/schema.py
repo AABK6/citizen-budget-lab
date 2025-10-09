@@ -67,6 +67,11 @@ class AccountingType:
     debtDeltaPath: Optional[List[float]] = None
     baselineDeficitPath: Optional[List[float]] = None
     baselineDebtPath: Optional[List[float]] = None
+    gdpPath: Optional[List[float]] = None
+    deficitRatioPath: Optional[List[float]] = None
+    baselineDeficitRatioPath: Optional[List[float]] = None
+    debtRatioPath: Optional[List[float]] = None
+    baselineDebtRatioPath: Optional[List[float]] = None
 
 
 @strawberry.type
@@ -1139,6 +1144,11 @@ class Query:
                 debtDeltaPath=acc.debt_delta_path or [],
                 baselineDeficitPath=acc.baseline_deficit_path or [],
                 baselineDebtPath=acc.baseline_debt_path or [],
+                gdpPath=acc.gdp_path or [],
+                deficitRatioPath=acc.deficit_ratio_path or [],
+                baselineDeficitRatioPath=acc.baseline_deficit_ratio_path or [],
+                debtRatioPath=acc.debt_ratio_path or [],
+                baselineDebtRatioPath=acc.baseline_debt_ratio_path or [],
             ),
             compliance=ComplianceType(
                 eu3pct=comp.eu3pct,
@@ -1272,6 +1282,11 @@ class Query:
                 debtDeltaPath=acc_a.debt_delta_path or [],
                 baselineDeficitPath=acc_a.baseline_deficit_path or [],
                 baselineDebtPath=acc_a.baseline_debt_path or [],
+                gdpPath=acc_a.gdp_path or [],
+                deficitRatioPath=acc_a.deficit_ratio_path or [],
+                baselineDeficitRatioPath=acc_a.baseline_deficit_ratio_path or [],
+                debtRatioPath=acc_a.debt_ratio_path or [],
+                baselineDebtRatioPath=acc_a.baseline_debt_ratio_path or [],
             ),
             compliance=ComplianceType(
                 eu3pct=comp_a.eu3pct,
@@ -1309,6 +1324,11 @@ class Query:
                 debtDeltaPath=acc_b.debt_delta_path or [],
                 baselineDeficitPath=acc_b.baseline_deficit_path or [],
                 baselineDebtPath=acc_b.baseline_debt_path or [],
+                gdpPath=acc_b.gdp_path or [],
+                deficitRatioPath=acc_b.deficit_ratio_path or [],
+                baselineDeficitRatioPath=acc_b.baseline_deficit_ratio_path or [],
+                debtRatioPath=acc_b.debt_ratio_path or [],
+                baselineDebtRatioPath=acc_b.baseline_debt_ratio_path or [],
             ),
             compliance=ComplianceType(
                 eu3pct=comp_b.eu3pct,
@@ -1385,6 +1405,11 @@ class Mutation:
                 debtDeltaPath=acc.debt_delta_path or [],
                 baselineDeficitPath=acc.baseline_deficit_path or [],
                 baselineDebtPath=acc.baseline_debt_path or [],
+                gdpPath=acc.gdp_path or [],
+                deficitRatioPath=acc.deficit_ratio_path or [],
+                baselineDeficitRatioPath=acc.baseline_deficit_ratio_path or [],
+                debtRatioPath=acc.debt_ratio_path or [],
+                baselineDebtRatioPath=acc.baseline_debt_ratio_path or [],
             ),
             compliance=ComplianceType(
                 eu3pct=comp.eu3pct,

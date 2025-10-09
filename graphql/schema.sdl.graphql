@@ -25,7 +25,20 @@ type Allocation { mission: [MissionAllocation!]!, cofog: [MissionAllocation!], b
 type Supplier { siren: String!, name: String! }
 type ProcurementItem { supplier: Supplier!, amountEur: Float!, cpv: String, procedureType: String, locationCode: String, sourceUrl: String }
 
-type Accounting { deficitPath: [Float!]!, debtPath: [Float!]! }
+type Accounting {
+  deficitPath: [Float!]!
+  debtPath: [Float!]!
+  commitmentsPath: [Float!]
+  deficitDeltaPath: [Float!]
+  debtDeltaPath: [Float!]
+  baselineDeficitPath: [Float!]
+  baselineDebtPath: [Float!]
+  gdpPath: [Float!]
+  deficitRatioPath: [Float!]
+  baselineDeficitRatioPath: [Float!]
+  debtRatioPath: [Float!]
+  baselineDebtRatioPath: [Float!]
+}
 type Compliance { eu3pct: [String!]!, eu60pct: [String!]!, netExpenditure: [String!]!, localBalance: [String!]! }
 type Macro { deltaGDP: [Float!]!, deltaEmployment: [Float!]!, deltaDeficit: [Float!]!, assumptions: JSON! }
 
