@@ -34,6 +34,7 @@ import { computeDeficitTotals } from '@/lib/fiscal';
 const fallbackTreemapColors = ['#2563eb', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#ef4444', '#6366f1', '#14b8a6', '#a855f7', '#d946ef'];
 const revenueColorPalette = ['#0ea5e9', '#f97316', '#9333ea', '#16a34a', '#dc2626', '#facc15', '#0f766e', '#7c3aed', '#22c55e', '#2563eb'];
 const revenueIcons = ['💶', '📈', '🏦', '🧾', '🏭', '🛢️', '🚬', '💡', '🎯', '💼'];
+const percentFormatter = new Intl.NumberFormat('fr-FR', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
 export default function BuildPageClient() {
   const { t } = useI18n();
@@ -549,6 +550,14 @@ export default function BuildPageClient() {
     return `${sign}€${(Math.abs(amount) / 1e9).toFixed(1)}B`;
   };
 
+  const formatDeficitWithRatio = (amount: number, ratio: number | null) => {
+    const base = formatCurrency(amount);
+    if (ratio === null || !Number.isFinite(ratio)) {
+      return base;
+    }
+    return `${base} (${percentFormatter.format(ratio)} du PIB)`;
+  };
+
   const formatShare = (value: number) => `${(value * 100).toFixed(1)}%`;
 
   const handleShare = useCallback(async () => {
@@ -580,6 +589,24 @@ export default function BuildPageClient() {
 
   const deficitPath = scenarioResult ? computeDeficitTotals(scenarioResult.accounting, scenarioResult.macro?.deltaDeficit) : [];
   const latestDeficit = deficitPath.length > 0 ? deficitPath[0] : null;
+  const latestDeficitRatio = useMemo(() => {
+    if (!scenarioResult) return null;
+    const ratios = scenarioResult.accounting?.deficitRatioPath;
+    if (Array.isArray(ratios) && ratios.length > 0) {
+      const raw = Number(ratios[0]);
+      if (Number.isFinite(raw)) {
+        return raw;
+      }
+    }
+    const gdpSeries = scenarioResult.accounting?.gdpPath;
+    if (Array.isArray(gdpSeries) && gdpSeries.length > 0) {
+      const gdp = Number(gdpSeries[0]);
+      if (Number.isFinite(gdp) && gdp !== 0 && latestDeficit !== null) {
+        return latestDeficit / gdp;
+      }
+    }
+    return null;
+  }, [scenarioResult, latestDeficit]);
   const resolutionPctRaw = scenarioResult?.resolution?.overallPct;
   const hasResolution = typeof resolutionPctRaw === 'number';
   const resolutionPct = hasResolution ? resolutionPctRaw : 0;
@@ -912,7 +939,11 @@ export default function BuildPageClient() {
             <div className="status-metric">
               <span className="status-label">{t('score.deficit_y0')}</span>
               <span className="status-value">
-                {scenarioLoading ? '—' : latestDeficit !== null ? formatCurrency(latestDeficit) : 'Not run'}
+                {scenarioLoading
+                  ? '—'
+                  : latestDeficit !== null
+                    ? formatDeficitWithRatio(latestDeficit, latestDeficitRatio)
+                    : 'Not run'}
               </span>
             </div>
             <div className="status-metric">

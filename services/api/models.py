@@ -50,6 +50,11 @@ class Accounting:
     debt_delta_path: Optional[List[float]] = None
     baseline_deficit_path: Optional[List[float]] = None
     baseline_debt_path: Optional[List[float]] = None
+    gdp_path: Optional[List[float]] = None
+    deficit_ratio_path: Optional[List[float]] = None
+    baseline_deficit_ratio_path: Optional[List[float]] = None
+    debt_ratio_path: Optional[List[float]] = None
+    baseline_debt_ratio_path: Optional[List[float]] = None
 
 
 @dataclass

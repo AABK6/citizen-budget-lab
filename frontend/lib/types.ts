@@ -8,6 +8,11 @@ export type ScenarioResult = {
     debtDeltaPath?: number[];
     baselineDeficitPath?: number[];
     baselineDebtPath?: number[];
+    gdpPath?: number[];
+    deficitRatioPath?: number[];
+    baselineDeficitRatioPath?: number[];
+    debtRatioPath?: number[];
+    baselineDebtRatioPath?: number[];
   };
   compliance: {
     eu3pct: string[];

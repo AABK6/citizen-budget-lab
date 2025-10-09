@@ -21,6 +21,11 @@ const scenarioCompareQuery = `
           debtDeltaPath
           baselineDeficitPath
           baselineDebtPath
+          gdpPath
+          deficitRatioPath
+          baselineDeficitRatioPath
+          debtRatioPath
+          baselineDebtRatioPath
         }
         compliance { eu3pct eu60pct netExpenditure localBalance }
         macro { deltaGDP deltaEmployment deltaDeficit }
@@ -37,6 +42,11 @@ const scenarioCompareQuery = `
           debtDeltaPath
           baselineDeficitPath
           baselineDebtPath
+          gdpPath
+          deficitRatioPath
+          baselineDeficitRatioPath
+          debtRatioPath
+          baselineDebtRatioPath
         }
         compliance { eu3pct eu60pct netExpenditure localBalance }
         macro { deltaGDP deltaEmployment deltaDeficit }
@@ -61,6 +71,11 @@ type RunScenario = {
     debtDeltaPath?: number[];
     baselineDeficitPath?: number[];
     baselineDebtPath?: number[];
+    gdpPath?: number[];
+    deficitRatioPath?: number[];
+    baselineDeficitRatioPath?: number[];
+    debtRatioPath?: number[];
+    baselineDebtRatioPath?: number[];
   };
   compliance: { eu3pct: string[]; eu60pct: string[]; netExpenditure: string[]; localBalance: string[] };
   macro: { deltaGDP: number[]; deltaEmployment: number[]; deltaDeficit: number[] };

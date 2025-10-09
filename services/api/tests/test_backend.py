@@ -180,6 +180,11 @@ actions:
     assert cp_acc.deficit_path[0] != cp_acc.baseline_deficit_path[0]
     assert cp_acc.commitments_path is not None
     assert cp_acc.commitments_path[0] == pytest.approx(0.0, abs=1e-6)
+    assert cp_acc.gdp_path is not None and cp_acc.gdp_path[0] > 0
+    assert cp_acc.deficit_ratio_path is not None
+    assert cp_acc.baseline_deficit_ratio_path is not None
+    assert cp_acc.deficit_ratio_path[0] == pytest.approx(cp_acc.deficit_path[0] / cp_acc.gdp_path[0], rel=1e-9)
+    assert cp_acc.baseline_deficit_ratio_path[0] == pytest.approx(cp_acc.baseline_deficit_path[0] / cp_acc.gdp_path[0], rel=1e-9)
 
     _, ae_acc, *_ = run_scenario(_encode_scenario_yaml(ae_sdl))
     assert ae_acc.deficit_delta_path is not None
@@ -188,6 +193,11 @@ actions:
     assert ae_acc.deficit_path[0] == pytest.approx(ae_acc.baseline_deficit_path[0], abs=1e-6)
     assert ae_acc.commitments_path is not None
     assert ae_acc.commitments_path[0] > 0
+    assert ae_acc.gdp_path is not None and ae_acc.gdp_path[0] > 0
+    assert ae_acc.deficit_ratio_path is not None
+    assert ae_acc.baseline_deficit_ratio_path is not None
+    assert ae_acc.deficit_ratio_path[0] == pytest.approx(ae_acc.deficit_path[0] / ae_acc.gdp_path[0], rel=1e-9)
+    assert ae_acc.baseline_deficit_ratio_path[0] == pytest.approx(ae_acc.baseline_deficit_path[0] / ae_acc.gdp_path[0], rel=1e-9)
 
 
 def test_net_expenditure_rule_lights():

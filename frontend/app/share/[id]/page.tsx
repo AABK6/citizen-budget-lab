@@ -16,6 +16,11 @@ const getScenarioQuery = `
         debtDeltaPath
         baselineDeficitPath
         baselineDebtPath
+        gdpPath
+        deficitRatioPath
+        baselineDeficitRatioPath
+        debtRatioPath
+        baselineDebtRatioPath
       }
       compliance { eu3pct eu60pct netExpenditure localBalance }
       macro { deltaGDP deltaEmployment deltaDeficit assumptions }

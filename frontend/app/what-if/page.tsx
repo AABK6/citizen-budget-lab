@@ -62,6 +62,11 @@ export default function WhatIfPage() {
               debtDeltaPath
               baselineDeficitPath
               baselineDebtPath
+              gdpPath
+              deficitRatioPath
+              baselineDeficitRatioPath
+              debtRatioPath
+              baselineDebtRatioPath
             }
             compliance { eu3pct eu60pct netExpenditure localBalance }
             macro { deltaGDP deltaEmployment deltaDeficit assumptions }
@@ -86,11 +91,30 @@ export default function WhatIfPage() {
     const debtDelta = computeDebtDeltas(result.accounting)
     const currency = (v: number) => v.toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' €'
     const signed = (v: number) => (v >= 0 ? '+' : '') + currency(v)
+    const percentFmt = new Intl.NumberFormat('fr-FR', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 })
+    const ratioSeries = result.accounting?.deficitRatioPath
+    let ratioValue: number | null = null
+    if (Array.isArray(ratioSeries) && ratioSeries.length > 0) {
+      const raw = Number(ratioSeries[0])
+      if (Number.isFinite(raw)) {
+        ratioValue = raw
+      }
+    }
+    if (ratioValue === null) {
+      const gdp0 = Number(result.accounting?.gdpPath?.[0])
+      if (Number.isFinite(gdp0) && gdp0 !== 0) {
+        ratioValue = (deficitTotals[0] ?? 0) / gdp0
+      }
+    }
+    const deficitWithRatio = ratioValue === null
+      ? currency(deficitTotals[0] ?? 0)
+      : `${currency(deficitTotals[0] ?? 0)} (${percentFmt.format(ratioValue)} du PIB)`
+
     const lastDebtTotal = debtTotals.length ? debtTotals[debtTotals.length - 1] : 0
     const lastDebtDelta = debtDelta.length ? debtDelta[debtDelta.length - 1] : 0
 
     return [
-      { label: 'Deficit (Y0)', value: currency(deficitTotals[0] ?? 0) },
+      { label: 'Deficit (Y0)', value: deficitWithRatio },
       { label: 'Δ vs baseline (Y0)', value: signed(deficitDelta[0] ?? 0) },
       { label: 'Debt (Yend)', value: currency(lastDebtTotal) },
       { label: 'Δ Debt vs baseline (Yend)', value: signed(lastDebtDelta) },

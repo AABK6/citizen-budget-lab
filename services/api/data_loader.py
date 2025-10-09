@@ -1636,11 +1636,15 @@ def run_scenario(dsl_b64: str, *, lens: str | None = None) -> tuple[str, Account
     except Exception:
         base_map = _read_baseline_def_debt()
     eu3 = []
-    debt_ratio = []
+    debt_ratio_path: List[float] = []
     baseline_deficit_path: List[float] = []
     baseline_debt_path: List[float] = []
     total_deficit_path: List[float] = []
     total_debt_path: List[float] = []
+    gdp_path: List[float] = []
+    baseline_deficit_ratio_path: List[float] = []
+    deficit_ratio_path: List[float] = []
+    baseline_debt_ratio_path: List[float] = []
     for i in range(horizon_years):
         year = baseline_year + i
         base_def, base_debt = base_map.get(year, (0.0, 0.0))
@@ -1650,10 +1654,25 @@ def run_scenario(dsl_b64: str, *, lens: str | None = None) -> tuple[str, Account
         total_debt = base_debt + debt_delta_path[i]
         total_deficit_path.append(float(total_def))
         total_debt_path.append(float(total_debt))
-        ratio_def = total_def / gdp_series[i]
+        gdp_val = float(gdp_series[i]) if i < len(gdp_series) else float(gdp_series[-1])
+        gdp_path.append(gdp_val)
+        if gdp_val != 0.0:
+            base_def_ratio = float(base_def) / gdp_val
+            scen_def_ratio = float(total_def) / gdp_val
+            base_debt_ratio = float(base_debt) / gdp_val
+            scen_debt_ratio = float(total_debt) / gdp_val
+        else:
+            base_def_ratio = 0.0
+            scen_def_ratio = 0.0
+            base_debt_ratio = 0.0
+            scen_debt_ratio = 0.0
+        ratio_def = scen_def_ratio
         eu3.append("breach" if ratio_def < -0.03 else "ok")
-        debt_ratio.append((total_debt / gdp_series[i]))
-    eu60 = ["above" if r > 0.60 else "info" for r in debt_ratio]
+        debt_ratio_path.append(scen_debt_ratio)
+        baseline_deficit_ratio_path.append(base_def_ratio)
+        deficit_ratio_path.append(scen_def_ratio)
+        baseline_debt_ratio_path.append(base_debt_ratio)
+    eu60 = ["above" if r > 0.60 else "info" for r in debt_ratio_path]
 
     # Local balance checks by subsector
     apu = str((data.get("assumptions") or {}).get("apu_subsector") or "").upper()
@@ -1691,6 +1710,11 @@ def run_scenario(dsl_b64: str, *, lens: str | None = None) -> tuple[str, Account
         debt_delta_path=debt_delta_path,
         baseline_deficit_path=baseline_deficit_path,
         baseline_debt_path=baseline_debt_path,
+        gdp_path=gdp_path,
+        deficit_ratio_path=deficit_ratio_path,
+        baseline_deficit_ratio_path=baseline_deficit_ratio_path,
+        debt_ratio_path=debt_ratio_path,
+        baseline_debt_ratio_path=baseline_debt_ratio_path,
     )
 
     # Build resolution payloads for both mission and COFOG lenses
