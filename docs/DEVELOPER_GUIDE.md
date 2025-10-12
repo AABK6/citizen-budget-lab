@@ -6,7 +6,7 @@
 
 #### **1.1. Prerequisites**
 
-*   **Python:** 3.12+ (as used in CI)
+*   **Python:** 3.13.x (matches CI; 3.12 remains supported if you prefer an older interpreter)
 *   **Node.js:** 18+ (as used in CI)
 *   **Docker & Docker Compose:** For running services in containers.
 *   **dbt-cli:** Required for managing the data warehouse. See section 2.3.
@@ -20,6 +20,7 @@
     source .venv/bin/activate
     pip install -r services/api/requirements.txt
     ```
+    > **Use Python 3.13**: `duckdb==1.4.1` ships wheels for Python 3.13 on all major platforms. If you're on 3.12, everything still works—just keep your `pip` up to date.
 
 2.  **Configure Environment Variables:** See the "Secrets & Environment Variables" section below for a complete list. At a minimum, copy the example and provide INSEE credentials if you need to refresh data from their APIs.
     ```bash
@@ -345,7 +346,7 @@ Macro baselines
 
 Example workflow breakdown:
 
-- Backend job sets up Python 3.12, installs `services/api/requirements.txt`, and runs `pytest -q`.
+- Backend job sets up Python 3.13, installs `services/api/requirements.txt`, and runs `pytest -q`.
 - dbt job installs `dbt-core`/`dbt-duckdb` and runs `dbt seed` + `dbt build` under `warehouse/`.
 - Frontend job uses Node 18, runs `npm ci` and `npm run build` under `frontend/`.
 
