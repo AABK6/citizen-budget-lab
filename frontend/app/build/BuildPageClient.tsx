@@ -35,6 +35,9 @@ const fallbackTreemapColors = ['#2563eb', '#8b5cf6', '#ec4899', '#10b981', '#f59
 const revenueColorPalette = ['#0ea5e9', '#f97316', '#9333ea', '#16a34a', '#dc2626', '#facc15', '#0f766e', '#7c3aed', '#22c55e', '#2563eb'];
 const revenueIcons = ['💶', '📈', '🏦', '🧾', '🏭', '🛢️', '🚬', '💡', '🎯', '💼'];
 const percentFormatter = new Intl.NumberFormat('fr-FR', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 });
+const TARGET_PERCENT_DEFAULT_RANGE = 10;
+const TARGET_PERCENT_EXPANDED_RANGE = 25;
+const TARGET_PERCENT_STEP = 0.5;
 
 export default function BuildPageClient() {
   const { t } = useI18n();
@@ -58,8 +61,10 @@ export default function BuildPageClient() {
     selectedCategory,
     selectedRevenueCategory,
     suggestedLevers,
-    targetInput,
-    revenueTargetInput,
+    targetPercent,
+    targetRangeMax,
+    revenueTargetPercent,
+    revenueTargetRangeMax,
     lens,
     expandedFamilies,
     scenarioId,
@@ -82,8 +87,10 @@ export default function BuildPageClient() {
     setScenarioResult,
     setData,
     setSuggestedLevers,
-    setTargetInput,
-    setRevenueTargetInput,
+    setTargetPercent,
+    setTargetRangeMax,
+    setRevenueTargetPercent,
+    setRevenueTargetRangeMax,
     setSelectedCategory,
     setSelectedRevenueCategory,
     setLens,
@@ -351,7 +358,12 @@ export default function BuildPageClient() {
     setMasses(nextMasses);
     setSelectedCategory(null);
     togglePanel(false);
-    setTargetInput('');
+    setTargetPercent(0);
+    setTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
+    setSelectedRevenueCategory(null);
+    toggleRevenuePanel(false);
+    setRevenueTargetPercent(0);
+    setRevenueTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
     setDslObject({
       ...dslObject,
       assumptions: {
@@ -366,9 +378,9 @@ export default function BuildPageClient() {
   }, [fetchData]);
 
   // Run scenario initially and whenever DSL changes
-  useEffect(() => {
-    runScenario();
-  }, [runScenario]);
+useEffect(() => {
+  runScenario();
+}, [dslObject, runScenario]);
 
   const handleCategoryClick = async (category: MassCategory) => {
     toggleRevenuePanel(false);
@@ -379,11 +391,18 @@ export default function BuildPageClient() {
     // Set initial target input value from current DSL
     const massId = category.id;
     const targetAction = dslObject.actions.find(a => a.id === `target_${massId}`);
-    if (targetAction) {
-        const amount = targetAction.amount_eur * (targetAction.op === 'increase' ? 1 : -1);
-        setTargetInput(`${amount / 1e9}B`);
+    const baselineAmount = category.amount || 0;
+    if (targetAction && baselineAmount !== 0) {
+      const signedAmount = targetAction.amount_eur * (targetAction.op === 'increase' ? 1 : -1);
+      const rawPercent = (signedAmount / baselineAmount) * 100;
+      const snapped = Math.round(rawPercent / TARGET_PERCENT_STEP) * TARGET_PERCENT_STEP;
+      const safePercent = Number.isFinite(snapped) ? Number(snapped.toFixed(1)) : 0;
+      const boundedPercent = Math.max(-TARGET_PERCENT_EXPANDED_RANGE, Math.min(TARGET_PERCENT_EXPANDED_RANGE, safePercent));
+      setTargetPercent(boundedPercent);
+      setTargetRangeMax(Math.abs(boundedPercent) > TARGET_PERCENT_DEFAULT_RANGE ? TARGET_PERCENT_EXPANDED_RANGE : TARGET_PERCENT_DEFAULT_RANGE);
     } else {
-        setTargetInput('');
+      setTargetPercent(0);
+      setTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
     }
 
     try {
@@ -428,72 +447,78 @@ export default function BuildPageClient() {
     return dslObject.actions.some(a => a.id === leverId);
   };
 
+  const handleTargetRangeChange = (nextMax: number) => {
+    setTargetRangeMax(nextMax);
+    const capped = Math.max(-nextMax, Math.min(nextMax, targetPercent));
+    const snapped = Math.round(capped / TARGET_PERCENT_STEP) * TARGET_PERCENT_STEP;
+    const finalValue = Number.isFinite(snapped) ? Number(snapped.toFixed(1)) : 0;
+    setTargetPercent(finalValue);
+  };
+
+  const handleRevenueRangeChange = (nextMax: number) => {
+    setRevenueTargetRangeMax(nextMax);
+    const capped = Math.max(-nextMax, Math.min(nextMax, revenueTargetPercent));
+    const snapped = Math.round(capped / TARGET_PERCENT_STEP) * TARGET_PERCENT_STEP;
+    const finalValue = Number.isFinite(snapped) ? Number(snapped.toFixed(1)) : 0;
+    setRevenueTargetPercent(finalValue);
+  };
+
   const handleApplyTarget = () => {
     if (!selectedCategory) return;
 
-    const parseCurrency = (input: string): number => {
-        const value = parseFloat(input.replace(/,/g, ''));
-        if (isNaN(value)) return 0;
-        const multiplier = input.toUpperCase().includes('B') ? 1e9 : (input.toUpperCase().includes('M') ? 1e6 : 1);
-        return value * multiplier;
-    };
-
-    const amount = parseCurrency(targetInput);
     const massId = selectedCategory.id;
+    const baseline = selectedCategory.amount || 0;
+    const baseMagnitude = Math.abs(baseline);
+    const amount = (baseMagnitude * targetPercent) / 100;
 
     setDslObject(currentDsl => {
-        const otherActions = currentDsl.actions.filter(a => a.id !== `target_${massId}`);
-        if (Math.abs(amount) < 1) { // Remove target if input is empty/zero
-            return { ...currentDsl, actions: otherActions };
-        }
-        const targetKey = aggregationLens === 'COFOG'
-          ? `cofog.${massId}`
-          : `mission.${massId.toUpperCase().startsWith('M_') ? massId.toUpperCase() : massId}`;
-        const newAction: DslAction = {
-            id: `target_${massId}`,
-            target: targetKey,
-            op: (amount > 0 ? 'increase' : 'decrease') as 'increase' | 'decrease',
-            amount_eur: Math.abs(amount),
-            role: 'target',
-            recurring: true,
-        };
-        return {
-            ...currentDsl,
-            actions: [...otherActions, newAction],
-        };
+      const otherActions = currentDsl.actions.filter(a => a.id !== `target_${massId}`);
+      if (!Number.isFinite(amount) || Math.abs(amount) < 1) {
+        return { ...currentDsl, actions: otherActions };
+      }
+      const targetKey = aggregationLens === 'COFOG'
+        ? `cofog.${massId}`
+        : `mission.${massId.toUpperCase().startsWith('M_') ? massId.toUpperCase() : massId}`;
+      const newAction: DslAction = {
+        id: `target_${massId}`,
+        target: targetKey,
+        op: (amount >= 0 ? 'increase' : 'decrease') as 'increase' | 'decrease',
+        amount_eur: Math.abs(amount),
+        role: 'target',
+        recurring: true,
+      };
+      return {
+        ...currentDsl,
+        actions: [...otherActions, newAction],
+      };
     });
   };
 
   const handleApplyRevenueTarget = () => {
     if (!selectedRevenueCategory) return;
 
-    const parseCurrency = (input: string): number => {
-        const value = parseFloat(input.replace(/,/g, ''));
-        if (isNaN(value)) return 0;
-        const multiplier = input.toUpperCase().includes('B') ? 1e9 : (input.toUpperCase().includes('M') ? 1e6 : 1);
-        return value * multiplier;
-    };
-
-    const amount = parseCurrency(revenueTargetInput);
+    const baseline = selectedRevenueCategory.amountEur || 0;
+    const baseMagnitude = Math.abs(baseline);
+    const amount = (baseMagnitude * revenueTargetPercent) / 100;
     const pieceId = selectedRevenueCategory.id;
 
     setDslObject(currentDsl => {
-        const otherActions = currentDsl.actions.filter(a => a.id !== `target_${pieceId}`);
-        if (Math.abs(amount) < 1) { // Remove target if input is empty/zero
-            return { ...currentDsl, actions: otherActions };
-        }
-        const newAction: DslAction = {
-            id: `target_${pieceId}`,
-            target: `piece.${pieceId}`,
-            op: (amount > 0 ? 'increase' : 'decrease') as 'increase' | 'decrease',
-            amount_eur: Math.abs(amount),
-            role: 'target',
-            recurring: true,
-        };
-        return {
-            ...currentDsl,
-            actions: [...otherActions, newAction],
-        };
+      const otherActions = currentDsl.actions.filter(a => a.id !== `target_${pieceId}`);
+      if (!Number.isFinite(amount) || Math.abs(amount) < 1) {
+        return { ...currentDsl, actions: otherActions };
+      }
+      const newAction: DslAction = {
+        id: `target_${pieceId}`,
+        target: `piece.${pieceId}`,
+        op: (amount > 0 ? 'increase' : 'decrease') as 'increase' | 'decrease',
+        amount_eur: Math.abs(amount),
+        role: 'target',
+        recurring: true,
+      };
+      return {
+        ...currentDsl,
+        actions: [...otherActions, newAction],
+      };
     });
   };
 
@@ -514,18 +539,28 @@ export default function BuildPageClient() {
   const handleBackClick = () => {
     togglePanel(false);
     setSelectedCategory(null);
-    setTargetInput('');
+    setTargetPercent(0);
+    setTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
   };
 
   const handleRevenueCategoryClick = async (category: LegoPiece) => {
     togglePanel(false);
     setSelectedCategory(null);
-    const targetAction = dslObject.actions.find((action: DslAction) => action.id === `target_${category.id}`);
-    if (targetAction) {
-      const amount = targetAction.amount_eur * (targetAction.op === 'increase' ? 1 : -1);
-      setRevenueTargetInput(`${amount / 1e9}B`);
+    const pieceId = category.id;
+    const targetAction = dslObject.actions.find((action: DslAction) => action.id === `target_${pieceId}`);
+    const baselineAmount = category.amountEur || 0;
+    const baseMagnitude = Math.abs(baselineAmount);
+    if (targetAction && baseMagnitude !== 0) {
+      const signedAmount = targetAction.amount_eur * (targetAction.op === 'increase' ? 1 : -1);
+      const rawPercent = (signedAmount / baseMagnitude) * 100;
+      const snapped = Math.round(rawPercent / TARGET_PERCENT_STEP) * TARGET_PERCENT_STEP;
+      const safePercent = Number.isFinite(snapped) ? Number(snapped.toFixed(1)) : 0;
+      const boundedPercent = Math.max(-TARGET_PERCENT_EXPANDED_RANGE, Math.min(TARGET_PERCENT_EXPANDED_RANGE, safePercent));
+      setRevenueTargetPercent(boundedPercent);
+      setRevenueTargetRangeMax(Math.abs(boundedPercent) > TARGET_PERCENT_DEFAULT_RANGE ? TARGET_PERCENT_EXPANDED_RANGE : TARGET_PERCENT_DEFAULT_RANGE);
     } else {
-      setRevenueTargetInput('');
+      setRevenueTargetPercent(0);
+      setRevenueTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
     }
     setSelectedRevenueCategory(category);
     toggleRevenuePanel(true);
@@ -542,7 +577,8 @@ export default function BuildPageClient() {
   const handleRevenueBackClick = () => {
     toggleRevenuePanel(false);
     setSelectedRevenueCategory(null);
-    setRevenueTargetInput('');
+    setRevenueTargetPercent(0);
+    setRevenueTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
   };
 
   const formatCurrency = (amount: number) => {
@@ -770,10 +806,15 @@ export default function BuildPageClient() {
             {lens === 'mass' && isPanelExpanded && selectedCategory && (
               <MassCategoryPanel
                 category={selectedCategory}
-                targetInput={targetInput}
-                onTargetChange={setTargetInput}
+                targetPercent={targetPercent}
+                targetRangeMax={targetRangeMax}
+                onTargetPercentChange={setTargetPercent}
+                onRangeChange={handleTargetRangeChange}
                 onApplyTarget={handleApplyTarget}
-                onClearTarget={() => setTargetInput('')}
+                onClearTarget={() => {
+                  setTargetPercent(0);
+                  setTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
+                }}
                 onClose={handleBackClick}
                 suggestedLevers={suggestedLevers}
                 onLeverToggle={(lever) =>
@@ -906,10 +947,15 @@ export default function BuildPageClient() {
               <RevenueCategoryPanel
                 category={selectedRevenueCategory}
                 visual={revenueVisuals.get(selectedRevenueCategory.id)}
-                targetInput={revenueTargetInput}
-                onTargetChange={setRevenueTargetInput}
+                targetPercent={revenueTargetPercent}
+                targetRangeMax={revenueTargetRangeMax}
+                onTargetPercentChange={setRevenueTargetPercent}
+                onRangeChange={handleRevenueRangeChange}
                 onApplyTarget={handleApplyRevenueTarget}
-                onClearTarget={() => setRevenueTargetInput('')}
+                onClearTarget={() => {
+                  setRevenueTargetPercent(0);
+                  setRevenueTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
+                }}
                 onBack={handleRevenueBackClick}
                 suggestedLevers={suggestedLevers}
                 onLeverToggle={(lever) =>

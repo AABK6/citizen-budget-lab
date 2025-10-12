@@ -29,8 +29,10 @@ export type BuildState = {
   selectedCategory: MassCategory | null;
   selectedRevenueCategory: LegoPiece | null;
   suggestedLevers: PolicyLever[];
-  targetInput: string;
-  revenueTargetInput: string;
+  targetPercent: number;
+  targetRangeMax: number;
+  revenueTargetPercent: number;
+  revenueTargetRangeMax: number;
   lens: BuildLens;
   expandedFamilies: string[];
   aggregationLens: AggregationLens;
@@ -118,8 +120,10 @@ function createInitialState(initialYear: number): BuildState {
     selectedCategory: null,
     selectedRevenueCategory: null,
     suggestedLevers: [],
-    targetInput: '',
-    revenueTargetInput: '',
+    targetPercent: 0,
+    targetRangeMax: 10,
+    revenueTargetPercent: 0,
+    revenueTargetRangeMax: 10,
     lens: 'mass',
     expandedFamilies: [],
     aggregationLens: 'MISSION',
@@ -157,10 +161,14 @@ export function useBuildState(initialYear: number) {
         }),
       setSuggestedLevers: (levers: PolicyLever[]) =>
         dispatch({ type: 'PATCH', payload: { suggestedLevers: levers } }),
-      setTargetInput: (value: string) =>
-        dispatch({ type: 'PATCH', payload: { targetInput: value } }),
-      setRevenueTargetInput: (value: string) =>
-        dispatch({ type: 'PATCH', payload: { revenueTargetInput: value } }),
+      setTargetPercent: (value: number) =>
+        dispatch({ type: 'PATCH', payload: { targetPercent: value } }),
+      setTargetRangeMax: (value: number) =>
+        dispatch({ type: 'PATCH', payload: { targetRangeMax: value } }),
+      setRevenueTargetPercent: (value: number) =>
+        dispatch({ type: 'PATCH', payload: { revenueTargetPercent: value } }),
+      setRevenueTargetRangeMax: (value: number) =>
+        dispatch({ type: 'PATCH', payload: { revenueTargetRangeMax: value } }),
       setSelectedCategory: (category: MassCategory | null) =>
         dispatch({ type: 'SET_SELECTED_CATEGORY', category }),
       setSelectedRevenueCategory: (category: LegoPiece | null) =>

@@ -1,10 +1,12 @@
 import type { PolicyLever, PopularIntent, MassCategory } from '../types';
-import type { CSSProperties } from 'react';
+import type { CSSProperties, ChangeEvent } from 'react';
 
 export type MassCategoryPanelProps = {
   category: MassCategory;
-  targetInput: string;
-  onTargetChange: (value: string) => void;
+  targetPercent: number;
+  targetRangeMax: number;
+  onTargetPercentChange: (value: number) => void;
+  onRangeChange: (nextMax: number) => void;
   onApplyTarget: () => void;
   onClearTarget: () => void;
   onClose: () => void;
@@ -20,8 +22,10 @@ export type MassCategoryPanelProps = {
 
 export function MassCategoryPanel({
   category,
-  targetInput,
-  onTargetChange,
+  targetPercent,
+  targetRangeMax,
+  onTargetPercentChange,
+  onRangeChange,
   onApplyTarget,
   onClearTarget,
   onClose,
@@ -34,6 +38,36 @@ export function MassCategoryPanel({
   formatShare,
   displayMode,
 }: MassCategoryPanelProps) {
+  const percentStep = 0.5;
+  const defaultRange = 10;
+  const expandedRange = 25;
+  const isExpanded = targetRangeMax > defaultRange;
+  const percentLabel = `${targetPercent > 0 ? '+' : targetPercent < 0 ? '' : ''}${targetPercent.toFixed(1)}%`;
+  const rawAmount = (category.amount || 0) * targetPercent / 100;
+  const amountLabel = `${rawAmount > 0 ? '+' : ''}${formatCurrency(rawAmount)}`;
+  const rangeLabel = isExpanded ? '±25% ◂' : '±10% ▸';
+  const clampToRange = (value: number) => Math.max(-targetRangeMax, Math.min(targetRangeMax, value));
+  const roundToStep = (value: number) => Math.round(value / percentStep) * percentStep;
+  const applyPercent = (value: number) => {
+    const rounded = roundToStep(clampToRange(value));
+    onTargetPercentChange(Number(rounded.toFixed(1)));
+  };
+  const handleSliderChange = (event: ChangeEvent<HTMLInputElement>) => {
+    applyPercent(Number(event.target.value));
+  };
+  const handleNudge = (direction: -1 | 1) => {
+    applyPercent(targetPercent + direction * percentStep);
+  };
+  const handleRangeToggle = () => {
+    onRangeChange(isExpanded ? defaultRange : expandedRange);
+  };
+  const handleClear = () => {
+    onTargetPercentChange(0);
+    onClearTarget();
+  };
+  const atMin = targetPercent <= -targetRangeMax + 1e-9;
+  const atMax = targetPercent >= targetRangeMax - 1e-9;
+
   const lightenColor = (hex: string, amount = 0.25) => {
     if (!hex || hex[0] !== '#' || hex.length !== 7) return hex;
     const value = parseInt(hex.slice(1), 16);
@@ -72,16 +106,51 @@ export function MassCategoryPanel({
             </div>
           </div>
           <div className="target-controls">
-            <span className="target-label">Target:</span>
-            <input
-              type="text"
-              className="target-input"
-              value={targetInput}
-              onChange={(e) => onTargetChange(e.target.value)}
-              placeholder="+10B, -500M..."
-            />
-            <button className="target-button" onClick={onApplyTarget}>Apply</button>
-            <button className="target-button fr-btn--secondary" onClick={onClearTarget}>Clear</button>
+            <div className="target-header">
+              <span className="target-label">Target</span>
+              <button type="button" className="target-range-toggle" onClick={handleRangeToggle}>
+                {rangeLabel}
+              </button>
+            </div>
+            <div className="target-track" role="group" aria-label="Adjust target">
+              <button
+                type="button"
+                className="target-nudge"
+                onClick={() => handleNudge(-1)}
+                disabled={atMin}
+                aria-label="Decrease target by 0.5 percentage point"
+              >
+                -
+              </button>
+              <input
+                type="range"
+                className="target-slider"
+                min={-targetRangeMax}
+                max={targetRangeMax}
+                step={percentStep}
+                value={targetPercent}
+                onChange={handleSliderChange}
+                aria-label="Target percentage"
+              />
+              <button
+                type="button"
+                className="target-nudge"
+                onClick={() => handleNudge(1)}
+                disabled={atMax}
+                aria-label="Increase target by 0.5 percentage point"
+              >
+                +
+              </button>
+            </div>
+            <div className="target-readout" aria-live="polite">
+              <span className="target-value">{percentLabel}</span>
+              <span className="target-separator">·</span>
+              <span className="target-amount">{amountLabel}</span>
+            </div>
+            <div className="target-actions">
+              <button className="target-button" onClick={onApplyTarget}>Apply</button>
+              <button className="target-button target-button--ghost" onClick={handleClear}>Clear</button>
+            </div>
           </div>
           <div className="reforms-section">
             <div className="section-title">Available Reforms</div>
