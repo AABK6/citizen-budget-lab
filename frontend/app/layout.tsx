@@ -87,7 +87,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
             <div className="fr-header__menu" id="main-navigation">
               <div className="fr-container">
-                <NavTabs />
+                <div className="fr-header__menu-links">
+                  <NavTabs />
+                </div>
               </div>
             </div>
           </header>

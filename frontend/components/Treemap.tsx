@@ -171,7 +171,6 @@ export const TreemapChart = ({ data, colors, resolutionData, mode, onSelect }: T
         fill="#8884d8"
         isAnimationActive={false}
         content={<CustomizedContent colors={palette} mode={mode} onSelect={onSelect} />}
-        cursor={onSelect ? 'pointer' : 'default'}
         onClick={(node: any) => {
           if (!onSelect) {
             return;
