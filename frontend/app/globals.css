@@ -915,20 +915,20 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
 .mission-panel-card {
     border: 1px solid rgba(148, 163, 184, 0.25);
     border-left: 4px solid var(--panel-accent, #1d4ed8);
-    border-radius: 16px;
+    border-radius: 14px;
     background: #ffffff;
-    padding: 14px 16px;
+    padding: 12px 14px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-}
-
-.mission-panel-card--controls {
     gap: 12px;
 }
 
+.mission-panel-card--controls {
+    gap: 10px;
+}
+
 .mission-panel-card--reforms {
-    gap: 14px;
+    gap: 12px;
 }
 
 .mission-panel-card__header {
@@ -1081,10 +1081,9 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
 }
 
 .reforms-section {
-    margin-top: 4px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
 }
 
 .section-title {
@@ -1094,25 +1093,25 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
 }
 
 .reform-item {
-    border: 1px solid rgba(148, 163, 184, 0.25);
-    border-left: 3px solid var(--panel-accent, #1d4ed8);
-    border-radius: 12px;
+    padding: 12px 16px 12px 18px;
+    border-radius: 14px;
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    border-left: 4px solid var(--panel-accent, #1d4ed8);
     background: #ffffff;
-    padding: 14px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.reform-item:hover {
-    transform: translateX(4px);
-    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.1);
+    gap: 8px;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .reform-item.applied {
-    border-color: rgba(29, 78, 216, 0.4);
+    border-color: rgba(37, 99, 235, 0.4);
     background: rgba(59, 130, 246, 0.08);
+}
+
+.reform-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.18);
 }
 
 .reform-name {
@@ -1124,19 +1123,25 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
 .reform-description {
     font-size: 13px;
     color: #64748b;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .reform-actions {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
+    justify-content: space-between;
     flex-wrap: wrap;
 }
 
 .reform-impact {
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    flex: 1 1 auto;
 }
 
 .impact-positive {
@@ -1145,6 +1150,37 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
 
 .impact-negative {
     color: #dc2626;
+}
+
+.reform-action-button {
+    border: none;
+    border-radius: 9999px;
+    padding: 6px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: var(--panel-accent, #1d4ed8);
+    color: #ffffff;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    flex-shrink: 0;
+}
+
+.reform-action-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.18);
+}
+
+.reform-action-button--secondary {
+    background: transparent;
+    color: var(--panel-accent, #1d4ed8);
+    border: 1px solid rgba(37, 99, 235, 0.35);
+    box-shadow: none;
+}
+
+.reform-action-button--secondary:hover {
+    background: rgba(59, 130, 246, 0.12);
 }
 
 .custom-tooltip {

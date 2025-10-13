@@ -169,7 +169,7 @@ export function MassCategoryPanel({
                       </span>
                     </div>
                     <button
-                      className={`fr-btn fr-btn--${isLeverSelected(reform.id) ? 'secondary' : 'primary'}`}
+                      className={`reform-action-button${isLeverSelected(reform.id) ? ' reform-action-button--secondary' : ''}`}
                       onClick={() => onLeverToggle(reform)}
                     >
                       {isLeverSelected(reform.id) ? t('build.remove') : t('build.add')}
