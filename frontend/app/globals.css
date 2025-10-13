@@ -1573,3 +1573,32 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
     gap: 12px;
     min-width: 0;
 }
+
+/* =================================== */
+/* Fix for i18n text wrapping in controls */
+/* =================================== */
+
+/* 1. Ensure control groups do not get compressed, which would force wrapping. */
+.aggregation-toggle,
+.display-toggle,
+.view-switcher {
+    flex-shrink: 0;
+}
+
+/* 2. Prevent text from wrapping inside the buttons and labels. */
+.toggle-btn,
+.display-prefix,
+.ghost-btn {
+    white-space: nowrap;
+}
+
+/* 3. Add styles to the aggregation-toggle for visual consistency with its neighbors. */
+.aggregation-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px;
+    border-radius: 12px;
+    border: 1px solid #d7defa;
+    background: #f6f8ff;
+}
