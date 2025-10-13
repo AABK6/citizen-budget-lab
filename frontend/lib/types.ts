@@ -21,5 +21,17 @@ export type ScenarioResult = {
     localBalance: string[];
   };
   macro: { deltaGDP: number[]; deltaEmployment: number[]; deltaDeficit: number[]; assumptions: any; };
-  resolution: { overallPct: number; byMass: { massId: string; targetDeltaEur: number; specifiedDeltaEur: number; }[]; };
+  resolution: {
+    overallPct: number;
+    lens: 'MISSION' | 'COFOG';
+    byMass: Array<{
+      massId: string;
+      targetDeltaEur: number;
+      specifiedDeltaEur: number;
+      cpTargetDeltaEur?: number;
+      cpSpecifiedDeltaEur?: number;
+      cpDeltaEur?: number;
+      unspecifiedCpDeltaEur?: number;
+    }>;
+  };
 };

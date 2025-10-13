@@ -43,7 +43,8 @@ export function MassCategoryPanel({
   const expandedRange = 25;
   const isExpanded = targetRangeMax > defaultRange;
   const percentLabel = `${targetPercent > 0 ? '+' : targetPercent < 0 ? '' : ''}${targetPercent.toFixed(1)}%`;
-  const rawAmount = (category.amount || 0) * targetPercent / 100;
+  const baselineAmount = category.baselineAmount ?? category.amount ?? 0;
+  const rawAmount = (baselineAmount) * targetPercent / 100;
   const amountLabel = `${rawAmount > 0 ? '+' : ''}${formatCurrency(rawAmount)}`;
   const rangeLabel = isExpanded ? '±25% ◂' : '±10% ▸';
   const clampToRange = (value: number) => Math.max(-targetRangeMax, Math.min(targetRangeMax, value));

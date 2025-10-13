@@ -63,7 +63,15 @@ type ScenarioCompareResult {
 type EUCountryCofog { country: String!, code: String!, label: String!, amountEur: Float!, share: Float! }
 type FiscalPath { years: [Int!]!, deficitRatio: [Float!]!, debtRatio: [Float!]! }
 
-type MassTargetType { massId: String!, targetDeltaEur: Float!, specifiedDeltaEur: Float! }
+type MassTargetType {
+  massId: String!
+  targetDeltaEur: Float!
+  specifiedDeltaEur: Float!
+  cpTargetDeltaEur: Float
+  cpSpecifiedDeltaEur: Float
+  cpDeltaEur: Float
+  unspecifiedCpDeltaEur: Float
+}
 type BuilderMassType { massId: String!, amountEur: Float!, share: Float! }
 
 type ResolutionType { overallPct: Float!, byMass: [MassTargetType!]!, lens: LensEnum! }

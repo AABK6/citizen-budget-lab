@@ -1722,17 +1722,31 @@ def run_scenario(dsl_b64: str, *, lens: str | None = None) -> tuple[str, Account
         list(resolution_target_by_mission_total.keys()) + list(resolution_specified_by_mission_total.keys())
     )
 
+    cp_target_by_mission = resolution_target_by_mission_dim.get("cp", {})
+    cp_spec_by_mission = resolution_specified_by_mission_dim.get("cp", {})
     by_mass_mission: List[dict] = []
     total_target_abs = 0.0
     total_spec_abs = 0.0
     for mid in sorted(mission_ids):
         t = float(resolution_target_by_mission_total.get(mid, 0.0))
         s = float(resolution_specified_by_mission_total.get(mid, 0.0))
+        cp_t = float(cp_target_by_mission.get(mid, 0.0))
+        cp_s = float(cp_spec_by_mission.get(mid, 0.0))
+        if abs(cp_t) > 1e-9:
+            cp_delta = cp_t
+            cp_unspecified = cp_t - cp_s
+        else:
+            cp_delta = cp_s
+            cp_unspecified = 0.0
         by_mass_mission.append(
             {
                 "massId": mid,
                 "targetDeltaEur": t,
                 "specifiedDeltaEur": s,
+                "cpTargetDeltaEur": cp_t,
+                "cpSpecifiedDeltaEur": cp_s,
+                "cpDeltaEur": cp_delta,
+                "unspecifiedCpDeltaEur": cp_unspecified,
             }
         )
         total_target_abs += abs(t)
@@ -1742,17 +1756,25 @@ def run_scenario(dsl_b64: str, *, lens: str | None = None) -> tuple[str, Account
 
     cofog_target_totals: Dict[str, float] = defaultdict(float)
     cofog_spec_totals: Dict[str, float] = defaultdict(float)
+    cofog_cp_target_totals: Dict[str, float] = defaultdict(float)
+    cofog_cp_spec_totals: Dict[str, float] = defaultdict(float)
     for mid in mission_ids:
         t = float(resolution_target_by_mission_total.get(mid, 0.0))
         s = float(resolution_specified_by_mission_total.get(mid, 0.0))
+        cp_t = float(cp_target_by_mission.get(mid, 0.0))
+        cp_s = float(cp_spec_by_mission.get(mid, 0.0))
         weights = mission_to_cofog_weights(mid, cofog_to_mission)
         if weights:
             for major, cof_weight in weights:
                 cofog_target_totals[major] += t * cof_weight
                 cofog_spec_totals[major] += s * cof_weight
+                cofog_cp_target_totals[major] += cp_t * cof_weight
+                cofog_cp_spec_totals[major] += cp_s * cof_weight
         elif abs(t) > 0 or abs(s) > 0:
             cofog_target_totals["UNKNOWN"] += t
             cofog_spec_totals["UNKNOWN"] += s
+            cofog_cp_target_totals["UNKNOWN"] += cp_t
+            cofog_cp_spec_totals["UNKNOWN"] += cp_s
 
     by_mass_cofog: List[dict] = []
     cofog_target_abs = 0.0
@@ -1760,11 +1782,23 @@ def run_scenario(dsl_b64: str, *, lens: str | None = None) -> tuple[str, Account
     for code in sorted(cofog_target_totals.keys()):
         t = float(cofog_target_totals.get(code, 0.0))
         s = float(cofog_spec_totals.get(code, 0.0))
+        cp_t = float(cofog_cp_target_totals.get(code, 0.0))
+        cp_s = float(cofog_cp_spec_totals.get(code, 0.0))
+        if abs(cp_t) > 1e-9:
+            cp_delta = cp_t
+            cp_unspecified = cp_t - cp_s
+        else:
+            cp_delta = cp_s
+            cp_unspecified = 0.0
         by_mass_cofog.append(
             {
                 "massId": code,
                 "targetDeltaEur": t,
                 "specifiedDeltaEur": s,
+                "cpTargetDeltaEur": cp_t,
+                "cpSpecifiedDeltaEur": cp_s,
+                "cpDeltaEur": cp_delta,
+                "unspecifiedCpDeltaEur": cp_unspecified,
             }
         )
         cofog_target_abs += abs(t)

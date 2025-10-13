@@ -38,6 +38,7 @@ const percentFormatter = new Intl.NumberFormat('fr-FR', { style: 'percent', mini
 const TARGET_PERCENT_DEFAULT_RANGE = 10;
 const TARGET_PERCENT_EXPANDED_RANGE = 25;
 const TARGET_PERCENT_STEP = 0.5;
+const EPSILON = 1e-6;
 
 export default function BuildPageClient() {
   const { t } = useI18n();
@@ -74,6 +75,10 @@ export default function BuildPageClient() {
   } = state;
   const [displayMode, setDisplayMode] = useState<'amount' | 'share'>('amount');
   const [massDataByLens, setMassDataByLens] = useState<Record<AggregationLens, MassCategory[]>>({
+    MISSION: [],
+    COFOG: [],
+  });
+  const [baselineMassDataByLens, setBaselineMassDataByLens] = useState<Record<AggregationLens, MassCategory[]>>({
     MISSION: [],
     COFOG: [],
   });
@@ -176,6 +181,10 @@ export default function BuildPageClient() {
         name,
         amount: entry.amountEur,
         share: entry.share,
+        baselineAmount: entry.amountEur,
+        baselineShare: entry.share,
+        deltaAmount: 0,
+        unspecifiedAmount: 0,
         color,
         icon,
         pieces: pieceMap.get(entry.massId) ?? [],
@@ -199,6 +208,105 @@ export default function BuildPageClient() {
   useEffect(() => {
     aggregationLensRef.current = aggregationLens;
   }, [aggregationLens]);
+
+  useEffect(() => {
+    if (!scenarioResult) {
+      return;
+    }
+    if (process.env.NODE_ENV !== 'production') {
+      const pending = scenarioResult.resolution?.byMass?.filter(
+        (entry: any) =>
+          Math.abs(Number(entry?.unspecifiedCpDeltaEur ?? entry?.cpTargetDeltaEur ?? entry?.cpDeltaEur ?? 0)) > EPSILON,
+      );
+      if (pending && pending.length) {
+        // eslint-disable-next-line no-console
+        console.debug('[Build] pending masses', pending.slice(0, 5));
+      }
+    }
+    const lensFromResult = scenarioResult.resolution?.lens === 'COFOG' ? 'COFOG' : 'MISSION';
+    const baselineForLens = baselineMassDataByLens[lensFromResult];
+    if (!baselineForLens || baselineForLens.length === 0) {
+      return;
+    }
+    const baselineMap = new Map(baselineForLens.map((category) => [category.id, category]));
+    const deltaEntries = Array.isArray(scenarioResult.resolution?.byMass)
+      ? scenarioResult.resolution.byMass
+      : [];
+    const deltaMap = new Map<string, number>();
+    const unspecifiedMap = new Map<string, number>();
+    for (const entry of deltaEntries) {
+      const cpTarget = Number(entry.cpTargetDeltaEur ?? 0);
+      const cpSpecified = Number(entry.cpSpecifiedDeltaEur ?? 0);
+      const cpDeltaRaw = entry.cpDeltaEur ?? (Math.abs(cpTarget) > EPSILON ? cpTarget : cpSpecified);
+      const cpDelta = Number(cpDeltaRaw ?? 0);
+      const cpUnspecified =
+        Math.abs(cpDelta) > EPSILON ? Number(entry.unspecifiedCpDeltaEur ?? 0) : 0;
+      deltaMap.set(entry.massId, cpDelta);
+      unspecifiedMap.set(entry.massId, cpUnspecified);
+    }
+    const baseIds = baselineForLens.map((category) => category.id);
+    const extraIds: string[] = [];
+    deltaMap.forEach((_, massId) => {
+      if (!baselineMap.has(massId)) {
+        extraIds.push(massId);
+      }
+    });
+    const defaultLabels = lensFromResult === 'COFOG' ? massLabels : missionLabels;
+    const defaultIcon = lensFromResult === 'COFOG' ? '📊' : '🏛️';
+    const deriveName = (massId: string) => {
+      const label = defaultLabels[massId];
+      if (label?.displayLabel) return label.displayLabel;
+      if (massId === 'UNKNOWN') return 'Unspecified';
+      if (massId.startsWith('M_')) return massId.replace('M_', '');
+      return massId;
+    };
+    const combinedIds = [...baseIds, ...extraIds];
+    const updated: MassCategory[] = [];
+    combinedIds.forEach((massId, index) => {
+      const baselineCategory = baselineMap.get(massId);
+      const baselineAmount = baselineCategory?.baselineAmount ?? baselineCategory?.amount ?? 0;
+      const baselineShare = baselineCategory?.baselineShare ?? baselineCategory?.share ?? 0;
+      const delta = deltaMap.get(massId) ?? 0;
+      const unspecified = Math.abs(delta) > EPSILON ? (unspecifiedMap.get(massId) ?? 0) : 0;
+      const newAmount = baselineAmount + delta;
+      const label = defaultLabels[massId];
+      const color =
+        baselineCategory?.color
+        ?? label?.color
+        ?? fallbackTreemapColors[index % fallbackTreemapColors.length];
+      const icon = baselineCategory?.icon ?? label?.icon ?? defaultIcon;
+      const name = baselineCategory?.name ?? deriveName(massId);
+      const pieces = baselineCategory?.pieces ?? [];
+      updated.push({
+        id: massId,
+        name,
+        amount: newAmount,
+        share: 0,
+        baselineAmount,
+        baselineShare,
+        deltaAmount: delta,
+        unspecifiedAmount: unspecified,
+        color,
+        icon,
+        pieces,
+      });
+    });
+    const total = updated.reduce((sum, category) => sum + Math.max(category.amount, 0), 0);
+    const finalCategories = updated
+      .map((category) => ({
+        ...category,
+        share: total > 0 ? Math.max(category.amount, 0) / total : 0,
+      }))
+      .sort((a, b) => b.amount - a.amount);
+
+    setMassDataByLens((prev) => ({
+      ...prev,
+      [lensFromResult]: finalCategories,
+    }));
+    if (aggregationLensRef.current === lensFromResult) {
+      setMasses(finalCategories);
+    }
+  }, [baselineMassDataByLens, massLabels, missionLabels, scenarioResult, setMassDataByLens, setMasses]);
 
   useEffect(() => {
     const lensFromDsl = String(dslObject.assumptions?.lens || 'MISSION').toUpperCase() as AggregationLens;
@@ -332,9 +440,15 @@ export default function BuildPageClient() {
       const cofogAllocations = toAllocations(data.builderMassesCofog ?? null, cofogFallbackTotals);
       const cofogCategories = buildCategories(cofogAllocations, cofogPieceMap, massLabelMap, '📊');
 
-      setMassDataByLens({ MISSION: missionCategories, COFOG: cofogCategories });
+      const missionBaseline = cloneCategories(missionCategories);
+      const cofogBaseline = cloneCategories(cofogCategories);
+      setBaselineMassDataByLens({ MISSION: missionBaseline, COFOG: cofogBaseline });
+
+      const missionCurrent = cloneCategories(missionBaseline);
+      const cofogCurrent = cloneCategories(cofogBaseline);
+      setMassDataByLens({ MISSION: missionCurrent, COFOG: cofogCurrent });
       const lensForCategories = aggregationLensRef.current;
-      setMasses(lensForCategories === 'COFOG' ? cofogCategories : missionCategories);
+      setMasses(lensForCategories === 'COFOG' ? cofogCurrent : missionCurrent);
 
       setData({
         spendingPieces: spending,
@@ -391,7 +505,7 @@ useEffect(() => {
     // Set initial target input value from current DSL
     const massId = category.id;
     const targetAction = dslObject.actions.find(a => a.id === `target_${massId}`);
-    const baselineAmount = category.amount || 0;
+    const baselineAmount = category.baselineAmount ?? category.amount ?? 0;
     if (targetAction && baselineAmount !== 0) {
       const signedAmount = targetAction.amount_eur * (targetAction.op === 'increase' ? 1 : -1);
       const rawPercent = (signedAmount / baselineAmount) * 100;
@@ -467,7 +581,7 @@ useEffect(() => {
     if (!selectedCategory) return;
 
     const massId = selectedCategory.id;
-    const baseline = selectedCategory.amount || 0;
+    const baseline = selectedCategory.baselineAmount ?? selectedCategory.amount ?? 0;
     const baseMagnitude = Math.abs(baseline);
     const amount = (baseMagnitude * targetPercent) / 100;
 
@@ -479,12 +593,12 @@ useEffect(() => {
       const targetKey = aggregationLens === 'COFOG'
         ? `cofog.${massId}`
         : `mission.${massId.toUpperCase().startsWith('M_') ? massId.toUpperCase() : massId}`;
+      // Keep role unset so backend treats this target as an actionable mass delta.
       const newAction: DslAction = {
         id: `target_${massId}`,
         target: targetKey,
         op: (amount >= 0 ? 'increase' : 'decrease') as 'increase' | 'decrease',
         amount_eur: Math.abs(amount),
-        role: 'target',
         recurring: true,
       };
       return {
@@ -507,12 +621,12 @@ useEffect(() => {
       if (!Number.isFinite(amount) || Math.abs(amount) < 1) {
         return { ...currentDsl, actions: otherActions };
       }
+      // Keep role unset so the backend applies piece deltas instead of treating them as target markers.
       const newAction: DslAction = {
         id: `target_${pieceId}`,
         target: `piece.${pieceId}`,
         op: (amount > 0 ? 'increase' : 'decrease') as 'increase' | 'decrease',
         amount_eur: Math.abs(amount),
-        role: 'target',
         recurring: true,
       };
       return {
@@ -611,17 +725,6 @@ useEffect(() => {
       setShareFeedback('Unable to copy link.');
     }
   }, [pathname, searchParamsString]);
-
-  const pendingMasses = useMemo(() => {
-    if (!scenarioResult) return new Set();
-    const pending = new Set<string>();
-    for (const mass of scenarioResult.resolution.byMass) {
-        if (Math.abs(mass.targetDeltaEur) > Math.abs(mass.specifiedDeltaEur)) {
-            pending.add(mass.massId);
-        }
-    }
-    return pending;
-  }, [scenarioResult]);
 
   const deficitPath = scenarioResult ? computeDeficitTotals(scenarioResult.accounting, scenarioResult.macro?.deltaDeficit) : [];
   const latestDeficit = deficitPath.length > 0 ? deficitPath[0] : null;
@@ -1028,16 +1131,6 @@ useEffect(() => {
               Scenario not yet run
             </div>
           )}
-          <button
-            className="status-run"
-            onClick={runScenario}
-            disabled={scenarioLoading}
-          >
-            <span>{scenarioLoading ? 'Running…' : 'Run scenario'}</span>
-            <i className="material-icons" aria-hidden="true">
-              {scenarioLoading ? 'autorenew' : 'chevron_right'}
-            </i>
-          </button>
         </div>
       </div>
 
@@ -1050,3 +1143,5 @@ useEffect(() => {
     </div>
   );
 }
+  const cloneCategories = (categories: MassCategory[]) =>
+    categories.map((category) => ({ ...category }));

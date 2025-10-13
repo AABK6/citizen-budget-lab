@@ -85,6 +85,10 @@ export type MassCategory = {
   name: string;
   amount: number;
   share: number;
+  baselineAmount: number;
+  baselineShare: number;
+  deltaAmount: number;
+  unspecifiedAmount: number;
   color?: string;
   icon?: string;
   pieces: LegoPiece[];

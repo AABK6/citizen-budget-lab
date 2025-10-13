@@ -88,7 +88,7 @@ export const runScenarioMutation = `
       }
       compliance { eu3pct eu60pct netExpenditure localBalance }
       macro { deltaGDP deltaEmployment deltaDeficit assumptions }
-      resolution { overallPct lens byMass { massId targetDeltaEur specifiedDeltaEur } }
+      resolution { overallPct lens byMass { massId targetDeltaEur specifiedDeltaEur cpTargetDeltaEur cpSpecifiedDeltaEur cpDeltaEur unspecifiedCpDeltaEur } }
     }
   }
 `;

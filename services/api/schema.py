@@ -273,6 +273,10 @@ class MassTargetType:
     massId: str
     targetDeltaEur: float
     specifiedDeltaEur: float
+    cpTargetDeltaEur: Optional[float] = None
+    cpSpecifiedDeltaEur: Optional[float] = None
+    cpDeltaEur: Optional[float] = None
+    unspecifiedCpDeltaEur: Optional[float] = None
 
 
 @strawberry.type
@@ -1430,6 +1434,26 @@ class Mutation:
                         massId=str(e.get("massId")),
                         targetDeltaEur=float(e.get("targetDeltaEur", 0.0)),
                         specifiedDeltaEur=float(e.get("specifiedDeltaEur", 0.0)),
+                        cpTargetDeltaEur=(
+                            float(e["cpTargetDeltaEur"])
+                            if e.get("cpTargetDeltaEur") is not None
+                            else None
+                        ),
+                        cpSpecifiedDeltaEur=(
+                            float(e["cpSpecifiedDeltaEur"])
+                            if e.get("cpSpecifiedDeltaEur") is not None
+                            else None
+                        ),
+                        cpDeltaEur=(
+                            float(e["cpDeltaEur"])
+                            if e.get("cpDeltaEur") is not None
+                            else None
+                        ),
+                        unspecifiedCpDeltaEur=(
+                            float(e["unspecifiedCpDeltaEur"])
+                            if e.get("unspecifiedCpDeltaEur") is not None
+                            else None
+                        ),
                     )
                     for e in reso.get("byMass", [])
                 ],
