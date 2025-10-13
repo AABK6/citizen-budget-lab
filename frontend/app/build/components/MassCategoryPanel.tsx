@@ -101,48 +101,12 @@ export function MassCategoryPanel({
             </div>
           </div>
         </div>
-        <div className="selected-category">
-          <div className="category-header">
-            <div className="category-name">{category.name}</div>
-            <div className="category-amount">
-              {displayMode === 'share' ? formatShare(category.share) : formatCurrency(category.amount)}
-            </div>
-          </div>
-          <div className="target-controls">
-            <div className="target-header">
-              <span className="target-label">{t('build.target')}</span>
+        <div className="mission-panel-content">
+          <section className="mission-panel-card mission-panel-card--controls">
+            <div className="mission-panel-card__header">
+              <span className="mission-panel-card__title">{t('build.target')}</span>
               <button type="button" className="target-range-toggle" onClick={handleRangeToggle}>
                 {rangeLabel}
-              </button>
-            </div>
-            <div className="target-track" role="group" aria-label="Adjust target">
-              <button
-                type="button"
-                className="target-nudge"
-                onClick={() => handleNudge(-1)}
-                disabled={atMin}
-                aria-label="Decrease target by 0.5 percentage point"
-              >
-                -
-              </button>
-              <input
-                type="range"
-                className="target-slider"
-                min={-targetRangeMax}
-                max={targetRangeMax}
-                step={percentStep}
-                value={targetPercent}
-                onChange={handleSliderChange}
-                aria-label="Target percentage"
-              />
-              <button
-                type="button"
-                className="target-nudge"
-                onClick={() => handleNudge(1)}
-                disabled={atMax}
-                aria-label="Increase target by 0.5 percentage point"
-              >
-                +
               </button>
             </div>
             <div className="target-readout" aria-live="polite">
@@ -150,50 +114,86 @@ export function MassCategoryPanel({
               <span className="target-separator">·</span>
               <span className="target-amount">{amountLabel}</span>
             </div>
-            <div className="target-actions">
-              <button className="target-button" onClick={onApplyTarget}>{t('build.apply')}</button>
-              <button className="target-button target-button--ghost" onClick={handleClear}>{t('build.clear')}</button>
-            </div>
-          </div>
-          <div className="reforms-section">
-            <div className="section-title">{t('build.available_reforms')}</div>
-            {suggestedLevers.map((reform) => (
-              <div key={reform.id} className={`reform-item ${isLeverSelected(reform.id) ? 'applied' : ''}`}>
-                <div className="reform-details">
-                  <div className="reform-name">{t(`lever.${reform.id}.label`)}</div>
-                  <div className="reform-description">{t(`lever.${reform.id}.description`)}</div>
-                </div>
-                <div className="reform-actions">
-                  <div className="reform-impact">
-                    <span className={reform.fixedImpactEur && reform.fixedImpactEur > 0 ? 'impact-positive' : 'impact-negative'}>
-                      {formatCurrency(reform.fixedImpactEur || 0)}
-                    </span>
-                  </div>
-                  <button
-                    className={`fr-btn fr-btn--${isLeverSelected(reform.id) ? 'secondary' : 'primary'}`}
-                    onClick={() => onLeverToggle(reform)}
-                  >
-                    {isLeverSelected(reform.id) ? t('build.remove') : t('build.add')}
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="popular-reforms">
-            <div className="section-title">{t('build.popular_reforms')}</div>
-            {popularIntents
-              .filter(intent => intent.massId === category.id)
-              .map((intent) => (
-                <div
-                  key={intent.id}
-                  className="reform-pill"
-                  style={{ backgroundColor: pillTint, color: headerColor }}
-                  onClick={() => onIntentClick(intent)}
+            <div className="target-controls">
+              <div className="target-track" role="group" aria-label="Adjust target">
+                <button
+                  type="button"
+                  className="target-nudge"
+                  onClick={() => handleNudge(-1)}
+                  disabled={atMin}
+                  aria-label="Decrease target by 0.5 percentage point"
                 >
-                  {intent.emoji} {intent.label}
+                  -
+                </button>
+                <input
+                  type="range"
+                  className="target-slider"
+                  min={-targetRangeMax}
+                  max={targetRangeMax}
+                  step={percentStep}
+                  value={targetPercent}
+                  onChange={handleSliderChange}
+                  aria-label="Target percentage"
+                />
+                <button
+                  type="button"
+                  className="target-nudge"
+                  onClick={() => handleNudge(1)}
+                  disabled={atMax}
+                  aria-label="Increase target by 0.5 percentage point"
+                >
+                  +
+                </button>
+              </div>
+              <div className="target-actions">
+                <button className="target-button" onClick={onApplyTarget}>{t('build.apply')}</button>
+                <button className="target-button target-button--ghost" onClick={handleClear}>{t('build.clear')}</button>
+              </div>
+            </div>
+          </section>
+          <section className="mission-panel-card mission-panel-card--reforms">
+            <div className="mission-panel-card__header">
+              <span className="mission-panel-card__title">{t('build.available_reforms')}</span>
+            </div>
+            <div className="reforms-section">
+              {suggestedLevers.map((reform) => (
+                <div key={reform.id} className={`reform-item ${isLeverSelected(reform.id) ? 'applied' : ''}`}>
+                  <div className="reform-details">
+                    <div className="reform-name">{t(`lever.${reform.id}.label`)}</div>
+                    <div className="reform-description">{t(`lever.${reform.id}.description`)}</div>
+                  </div>
+                  <div className="reform-actions">
+                    <div className="reform-impact">
+                      <span className={reform.fixedImpactEur && reform.fixedImpactEur > 0 ? 'impact-positive' : 'impact-negative'}>
+                        {formatCurrency(reform.fixedImpactEur || 0)}
+                      </span>
+                    </div>
+                    <button
+                      className={`fr-btn fr-btn--${isLeverSelected(reform.id) ? 'secondary' : 'primary'}`}
+                      onClick={() => onLeverToggle(reform)}
+                    >
+                      {isLeverSelected(reform.id) ? t('build.remove') : t('build.add')}
+                    </button>
+                  </div>
                 </div>
               ))}
-          </div>
+            </div>
+            <div className="popular-reforms">
+              <div className="section-title">{t('build.popular_reforms')}</div>
+              {popularIntents
+                .filter(intent => intent.massId === category.id)
+                .map((intent) => (
+                  <div
+                    key={intent.id}
+                    className="reform-pill"
+                    style={{ backgroundColor: pillTint, color: headerColor }}
+                    onClick={() => onIntentClick(intent)}
+                  >
+                    {intent.emoji} {intent.label}
+                  </div>
+                ))}
+            </div>
+          </section>
         </div>
       </div>
     </>

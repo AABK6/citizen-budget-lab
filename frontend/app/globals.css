@@ -906,52 +906,51 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
 
 /* Expanded Left Panel Styles */
 
-.selected-category {
-    border: 1px solid rgba(148, 163, 184, 0.25);
-    border-left: 4px solid var(--panel-accent, #1d4ed8);
-    border-radius: 16px;
-    background: #ffffff;
-    padding: 12px 14px;
+.mission-panel-content {
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
 
-.selected-category .category-name {
-    font-size: 18px;
-    font-weight: 600;
-    color: #0f172a;
-}
-
-.target-controls {
+.mission-panel-card {
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    border-left: 4px solid var(--panel-accent, #1d4ed8);
+    border-radius: 16px;
+    background: #ffffff;
+    padding: 14px 16px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    align-items: stretch;
+    gap: 10px;
 }
 
-.target-header {
+.mission-panel-card--controls {
+    gap: 12px;
+}
+
+.mission-panel-card--reforms {
+    gap: 14px;
+}
+
+.mission-panel-card__header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
+    gap: 10px;
 }
 
-.target-label {
+.mission-panel-card__title {
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: #475569;
 }
 
-.target-input {
-    width: 112px;
-    padding: 8px 10px;
-    border: 1px solid #d7defa;
-    border-radius: 10px;
-    font-size: 14px;
-    background: #f8faff;
+.target-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
 }
 
 .target-button {
@@ -1036,6 +1035,7 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
     font-size: 12px;
     color: #64748b;
     font-weight: 500;
+    margin-top: 4px;
 }
 
 .target-separator {
