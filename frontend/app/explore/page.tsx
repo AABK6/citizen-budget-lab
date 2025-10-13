@@ -101,10 +101,10 @@ export default function ExplorePage() {
         ]} />
         {lens === 'ADMIN' && (
           <fieldset className="fr-fieldset" aria-labelledby="rd-toggle-legend">
-            <legend className="fr-fieldset__legend--regular" id="rd-toggle-legend">Options</legend>
+            <legend className="fr-fieldset__legend--regular" id="rd-toggle-legend">{t('explore.options')}</legend>
             <div className="fr-checkbox-group">
               <input type="checkbox" id="exclude-rd" checked={excludeRD} onChange={e => setExcludeRD(e.target.checked)} />
-              <label className="fr-label" htmlFor="exclude-rd" title="Tax refunds/reliefs (VAT refunds, property-tax reliefs, credits). Reduces net revenue; not a functional outlay.">Exclude RD</label>
+              <label className="fr-label" htmlFor="exclude-rd" title="Tax refunds/reliefs (VAT refunds, property-tax reliefs, credits). Reduces net revenue; not a functional outlay.">{t('explore.exclude_rd')}</label>
             </div>
           </fieldset>
         )}
@@ -157,7 +157,7 @@ export default function ExplorePage() {
           />
           {drillRows && (
             <div className="row gap">
-              <button className="fr-btn fr-btn--secondary" onClick={() => { setDrillRows(null); setSelectedCode(null) }}>Back</button>
+              <button className="fr-btn fr-btn--secondary" onClick={() => { setDrillRows(null); setSelectedCode(null) }}>{t('explore.back')}</button>
               <span>{lens === 'ADMIN' ? `Programmes in mission ${selectedCode}` : `COFOG subfunctions of ${selectedCode}`}</span>
             </div>
           )}

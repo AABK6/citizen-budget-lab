@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useI18n } from '@/lib/i18n';
 import { ensureScenarioIdFromDsl } from '@/lib/permalink';
 
 type Challenge = {
@@ -28,7 +29,7 @@ const challenges: Challenge[] = [
 
 export default function ChallengesPage() {
   const router = useRouter();
-
+  const { t } = useI18n();
   const [loadingId, setLoadingId] = useState<string | null>(null);
 
   const handleChallengeClick = async (challenge: Challenge) => {
@@ -45,7 +46,7 @@ export default function ChallengesPage() {
 
   return (
     <div className="container">
-      <h1>Challenges</h1>
+      <h1>{t('challenges.title')}</h1>
       <div className="stack">
         {challenges.map(challenge => (
           <div
@@ -57,7 +58,7 @@ export default function ChallengesPage() {
           >
             <h2>{challenge.title}</h2>
             <p>{challenge.description}</p>
-            {loadingId === challenge.id && <p className="loading-hint">Preparing scenario…</p>}
+            {loadingId === challenge.id && <p className="loading-hint">{t('challenges.preparing_scenario')}</p>}
           </div>
         ))}
       </div>

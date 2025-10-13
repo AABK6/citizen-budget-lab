@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { gqlRequest } from '@/lib/graphql'
+import { useI18n } from '@/lib/i18n'
 import dynamic from 'next/dynamic'
 
 const EUCompareChart = dynamic(() => import('@/components/EUCompareChart').then(m => m.EUCompareChart), { ssr: false }) as any
@@ -9,6 +10,7 @@ const EUCompareChart = dynamic(() => import('@/components/EUCompareChart').then(
 type Row = { country: string; code: string; label: string; share: number }
 
 export default function CompareEUPage() {
+  const { t } = useI18n();
   const [data, setData] = useState<Row[]>([])
   const [year, setYear] = useState(2026)
   const [countries, setCountries] = useState('FR,DE')
@@ -32,19 +34,19 @@ export default function CompareEUPage() {
 
   return (
     <div className="stack">
-      <h2 className="fr-h2">Compare EU — COFOG Shares</h2>
+      <h2 className="fr-h2">{t('compare_eu.title')}</h2>
       <div className="row gap">
         <div className="fr-input-group">
-          <label className="fr-label" htmlFor="eu-year">Year</label>
+          <label className="fr-label" htmlFor="eu-year">{t('compare_eu.year')}</label>
           <input id="eu-year" className="fr-input" type="number" value={year} onChange={e => setYear(Number(e.target.value))} />
         </div>
         <div className="fr-input-group" style={{ minWidth: 320 }}>
-          <label className="fr-label" htmlFor="eu-countries">Countries (CSV)</label>
+          <label className="fr-label" htmlFor="eu-countries">{t('compare_eu.countries')}</label>
           <input id="eu-countries" className="fr-input" value={countries} onChange={e => setCountries(e.target.value)} />
         </div>
-        <button className="fr-btn" onClick={load}>Apply</button>
+        <button className="fr-btn" onClick={load}>{t('compare_eu.apply')}</button>
       </div>
-      {loading && <p>Loading…</p>}
+      {loading && <p>{t('compare_eu.loading')}</p>}
       {error && <p className="error">{error}</p>}
       {!loading && !error && data?.length > 0 && (
         <EUCompareChart data={data} />

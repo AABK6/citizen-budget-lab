@@ -10,8 +10,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "annee_blanche_indexation",
         "family": "SOCIAL_SECURITY",
-        "label": "Année Blanche (Freeze Benefit Indexation)",
-        "description": "Suspend the annual inflation indexation of social benefits and pensions for one fiscal year.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 6500000000,  # Approximate savings from freezing benefit indexation for one year
         "mass_mapping": {"10": 1.0},
         "feasibility": {
@@ -27,8 +27,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "plf2026_mission_justice_efficiency",
         "family": "OPERATIONS",
-        "label": "Justice Ministry Efficiency Savings",
-        "description": "Implement targeted efficiency measures across the Justice mission (digitalisation, shared services) as outlined in PLF 2026.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 750000000,
         "mass_mapping": {"03": 1.0},
         "feasibility": {
@@ -46,8 +46,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "plf2026_mission_education_efficiency",
         "family": "OPERATIONS",
-        "label": "Education Operational Efficiency",
-        "description": "Streamline support services and purchasing within the Education mission while safeguarding classroom spending.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 1200000000,
         "mass_mapping": {"09": 1.0},
         "feasibility": {
@@ -65,8 +65,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "plf2026_mission_foreign_affairs_streamlining",
         "family": "OPERATIONS",
-        "label": "Streamline Foreign Affairs Network",
-        "description": "Rationalise diplomatic posts and shared service centres abroad to deliver recurrent savings.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 350000000,
         "mass_mapping": {"01": 1.0},
         "feasibility": {
@@ -84,8 +84,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "wealth_tax",
         "family": "TAXES",
-        "label": "Reintroduce Wealth Tax (ISF)",
-        "description": "Restore a broad wealth tax on high-net-worth households (replacing the real-estate only IFI).",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 4000000000,  # Independent estimates ~€3–4 billion net gain; some political claims up to €10 billion
         "mass_mapping": {},
         "feasibility": {"law": True, "adminLagMonths": 12, "notes": "Requires new tax law; politically symbolic and contested."},
@@ -96,8 +96,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "high_income_surtax",
         "family": "TAXES",
-        "label": "Solidarity Surtax on High Incomes",
-        "description": "Introduce new top income tax brackets or surcharges for the highest earners.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 8000000000,  # e.g. adding multiple brackets could raise ~€8–10 billion annually
         "mass_mapping": {},
         "feasibility": {"law": True, "adminLagMonths": 6, "notes": "Requires budget law change; likely political resistance from opposition."},
@@ -108,8 +108,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "superprofits_tax",
         "family": "TAXES",
-        "label": "Tax on Excess Corporate Profits",
-        "description": "Levy an exceptional or higher tax rate on large companies’ “super-profits” (windfall profits).",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 4000000000,  # Moderate design yields a few €billion/year; extreme proposals claim >€20 billion (unlikely)
         "mass_mapping": {},
         "feasibility": {"law": True, "adminLagMonths": 6, "notes": "Needs new tax law; complex to define 'excess' profits and avoid capital flight."},
@@ -120,8 +120,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "end_flat_tax",
         "family": "TAXES",
-        "label": "Abolish Flat Tax on Capital Income",
-        "description": "Eliminate the 30% flat tax (PFU) on dividends/interest, reverting to standard progressive income tax rates.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 3500000000,  # Estimated additional revenue of ~€3–4 billion annually
         "mass_mapping": {},
         "feasibility": {"law": True, "adminLagMonths": 6, "notes": "Implemented via finance law; may affect investment behavior."},
@@ -132,8 +132,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "expand_ftt",
         "family": "TAXES",
-        "label": "Expand Financial Transaction Tax",
-        "description": "Broaden the base or increase the rate of the financial transactions tax on stock trades and other financial instruments.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 2000000000,  # Doubling current scope could roughly add €1–3 billion in revenue
         "mass_mapping": {},
         "feasibility": {"law": True, "adminLagMonths": 6, "notes": "Requires law; careful design needed to avoid market relocation."},
@@ -144,8 +144,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "progressive_csg",
         "family": "TAXES",
-        "label": "Make CSG Contributions More Progressive",
-        "description": "Increase the Generalized Social Contribution (CSG) on capital income or higher pensions while reducing it for low incomes.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 4500000000,  # A reformed CSG could yield on the order of +€4–5 billion if broadened to more income types
         "mass_mapping": {},
         "feasibility": {"law": True, "adminLagMonths": 6, "notes": "Adjustment via social security financing law; aims for revenue-neutral shifts or modest net gain."},
@@ -156,8 +156,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "carbon_tax",
         "family": "CLIMATE",
-        "label": "Reintroduce/Raise Carbon Tax on Fossil Fuels",
-        "description": "Gradually increase taxes on carbon emissions (fuels, gas, etc.), restoring the carbon tax trajectory halted in 2018.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 3000000000,  # Moderate carbon tax hikes could generate an extra €2–4 billion annually
         "mass_mapping": {},
         "feasibility": {"law": True, "adminLagMonths": 6, "notes": "Implemented via tax law; politically sensitive (yellow-vest protests)."},
@@ -168,8 +168,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "cap_research_credit",
         "family": "TAXES",
-        "label": "Reform Research Tax Credit (CIR)",
-        "description": "Reduce or cap the generous R&D tax credit for companies (Crédit d’Impôt Recherche) to save public funds.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 2000000000,  # Capping or trimming this €7.7 billion/year credit could save a few €billion
         "mass_mapping": {},
         "feasibility": {"law": True, "adminLagMonths": 6, "notes": "Change in tax code; risk of pushback from industry and research sectors."},
@@ -180,8 +180,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "reduce_home_services_credit",
         "family": "TAXES",
-        "label": "Reduce Household Services Tax Credit",
-        "description": "Scale back the tax credit for employing home-based workers (cleaners, nannies, etc.) to cut its cost.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 1000000000,  # Partial reduction of this ~€6.8 billion expenditure could save on the order of €1 billion+
         "mass_mapping": {},
         "feasibility": {"law": True, "adminLagMonths": 6, "notes": "Requires tax code change; might affect domestic employment sector."},
@@ -192,8 +192,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "remove_pension_deduction",
         "family": "TAXES",
-        "label": "Abolish 10% Pension Income Tax Deduction",
-        "description": "Eliminate the 10% tax allowance currently applied to pension income, making retirement income fully taxable like wages.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 5000000000,  # Would yield up to €5 billion by ending a €4.95 billion tax break for many retirees
         "mass_mapping": {},
         "feasibility": {"law": True, "adminLagMonths": 3, "notes": "Change in tax law; politically sensitive among retirees."},
@@ -204,8 +204,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "end_overtime_exemption",
         "family": "TAXES",
-        "label": "End Income Tax Exemption for Overtime Pay",
-        "description": "Tax overtime earnings like regular income (reversing the current income tax exemption on overtime hours).",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 1700000000,  # Removing this €1.8 billion/year tax niche would bring in roughly €1.5–2 billion
         "mass_mapping": {},
         "feasibility": {"law": True, "adminLagMonths": 3, "notes": "Simple change via finance law; may be unpopular as it affects take-home pay."},
@@ -216,8 +216,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "fight_tax_fraud",
         "family": "TAXES",
-        "label": "Combat Tax Evasion and Fraud",
-        "description": "Strengthen audits, data-sharing, and penalties to recover more unpaid taxes (closing the tax gap).",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 2300000000,  # Targeted additional tax recoveries ~€1–3 billion per year (gov aims ~€2.3 billion in 2024)
         "mass_mapping": {},
         "feasibility": {"law": True, "adminLagMonths": 12, "notes": "Mostly administrative, but may require new enforcement powers; actual yields uncertain."},
@@ -228,8 +228,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "expand_digital_tax",
         "family": "TAXES",
-        "label": "Increase Digital Services Tax or Minimum Tax",
-        "description": "Raise more revenue from multinational tech companies (e.g. higher national digital tax or enforcing a global minimum tax rate).",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 800000000,  # Roughly +€0.5–1 billion a year potential from expanded digital taxation
         "mass_mapping": {},
         "feasibility": {"law": True, "adminLagMonths": 12, "notes": "Dependent on international agreements (OECD/EU) for full effect; domestic DST increase possible unilaterally."},
@@ -240,8 +240,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "reinstate_cvae",
         "family": "TAXES",
-        "label": "Reinstate Local Business Tax (CVAE)",
-        "description": "Cancel the remaining abolition of the CVAE production tax on businesses, restoring it to boost local tax revenues.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 4000000000,  # Reversing the 2023 cut would bring back roughly €4 billion per year
         "mass_mapping": {},
         "feasibility": {"law": True, "adminLagMonths": 3, "notes": "Would be done via finance law; opposed by businesses due to competitiveness concerns."},
@@ -252,8 +252,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "cut_fuel_taxes",
         "family": "TAXES",
-        "label": "Reduce Fuel Tax or Subsidize Fuel Prices",
-        "description": "Lower the TICPE excise tax on gasoline/diesel or provide fuel price rebates to consumers to ease costs at the pump.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": -5000000000,  # A significant fuel tax cut or subsidy could cost the budget on the order of several €billion annually
         "mass_mapping": {},
         "feasibility": {"law": True, "adminLagMonths": 1, "notes": "Can be done via budget or decree; quick to implement but very costly and possibly at odds with climate goals."},
@@ -264,8 +264,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "cut_income_tax_middle",
         "family": "TAXES",
-        "label": "Income Tax Cut for Middle-Class Households",
-        "description": "Provide relief for middle-income taxpayers (e.g. by raising the tax-free threshold or lowering the rate of the first bracket).",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": -3000000000,  # Depending on scope, could reduce revenues by roughly €2–5 billion annually
         "mass_mapping": {},
         "feasibility": {"law": True, "adminLagMonths": 3, "notes": "Would be included in a finance law; popular with taxpayers but worsens deficit."},
@@ -276,8 +276,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "expand_overtime_exemption",
         "family": "TAXES",
-        "label": "Extend Tax Relief on Overtime/Bonuses",
-        "description": "Further reduce taxes or social charges on overtime pay or employee bonuses to increase net wages.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": -500000000,  # Additional relief measures would have modest costs (hundreds of €millions)
         "mass_mapping": {},
         "feasibility": {"law": True, "adminLagMonths": 3, "notes": "Change via finance or social law; relatively easy administratively, but reduces revenues."},
@@ -288,8 +288,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "cut_vat_essentials",
         "family": "TAXES",
-        "label": "Cut VAT on Essential Goods",
-        "description": "Apply a lower VAT rate (or zero rate) on essential items like food, baby supplies, or women’s hygiene products to boost purchasing power.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": -1500000000,  # Lowering VAT on basics could cost on the order of €1–2 billion in revenue, depending on scope
         "mass_mapping": {},
         "feasibility": {"law": True, "adminLagMonths": 3, "notes": "Needs change in VAT law; EU VAT rules allow reduced rates on some essentials."},
@@ -300,8 +300,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "cut_vat_energy",
         "family": "TAXES",
-        "label": "Lower VAT on Energy to 5.5%",
-        "description": "Reduce VAT on electricity, gas, and motor fuels from 20% to 5.5% to alleviate household energy costs.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": -11000000000,  # Estimated annual revenue loss of ~€10–12 billion from such a drastic VAT cut on energy
         "mass_mapping": {},
         "feasibility": {"law": True, "adminLagMonths": 12, "notes": "Requires EU approval to derogate from standard VAT rules on fuel; very costly measure championed by opposition."},
@@ -312,8 +312,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "freeze_tax_brackets",
         "family": "TAXES",
-        "label": "Suspend Inflation Indexing of Tax Brackets",
-        "description": "Temporarily freeze income tax bracket thresholds instead of adjusting them for inflation (letting “bracket creep” raise more revenue).",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 6100000000,  # Not indexing for one year yields roughly +€6.1 billion (2024 est.)
         "mass_mapping": {},
         "feasibility": {"law": True, "adminLagMonths": 0, "notes": "Enacted via annual budget; quick fiscal gain but effectively a stealth tax increase on all taxpayers."},
@@ -324,8 +324,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "raise_retirement_age_65",
         "family": "PENSIONS",
-        "label": "Raise Legal Retirement Age to 65",
-        "description": "Increase the state pension eligibility age beyond 64 (the current reform) to 65 years, further reducing pension system costs.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 8000000000,  # On the order of +€5–10 billion annual savings by early 2030s (incremental to the 64->65 shift)
         "mass_mapping": {"10": 1.0},
         "feasibility": {"law": True, "adminLagMonths": 6, "notes": "Major pension reform requiring law; phased implementation over several years."},
@@ -336,8 +336,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "lower_retirement_age_62",
         "family": "PENSIONS",
-        "label": "Revert Retirement Age to 62",
-        "description": "Cancel the 2023 reform and restore the legal pension age to 62 (with some exceptions for long careers).",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": -34000000000,  # Estimated cost over €34 billion per year once implemented (undoing the 64-age savings)
         "mass_mapping": {"10": 1.0},
         "feasibility": {"law": True, "adminLagMonths": 6, "notes": "Would require overturning recent law; extremely costly and likely violates EU fiscal commitments."},
@@ -348,8 +348,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "lower_retirement_age_60",
         "family": "PENSIONS",
-        "label": "Lower Retirement Age to 60",
-        "description": "Further reduce the legal pension age to 60 years (full pension at 60 for those meeting contribution requirements).",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": -50000000000,  # Around €50 billion annual cost (a transformative expansion of pension outlays)
         "mass_mapping": {"10": 1.0},
         "feasibility": {"law": True, "adminLagMonths": 12, "notes": "Flagship far-left proposal; tremendously expensive and would require massive new revenues or debt."},
@@ -360,8 +360,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "extend_contribution_period",
         "family": "PENSIONS",
-        "label": "Lengthen Pension Contribution Period",
-        "description": "Require additional years of work (more trimesters) to qualify for a full pension, potentially indexing the requirement to life expectancy.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 5000000000,  # Extended careers would gradually yield savings on the order of several €billion annually
         "mass_mapping": {"10": 1.0},
         "feasibility": {"law": True, "adminLagMonths": 6, "notes": "Can be included in pension law; effect builds over time as cohorts adjust."},
@@ -372,8 +372,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "close_special_regimes",
         "family": "PENSIONS",
-        "label": "Close Special Early-Retirement Regimes",
-        "description": "Phase out remaining special pension schemes (e.g. for certain public sector jobs) and restrict early retirement exceptions for specific professions.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 500000000,  # Closing remaining special regimes would save on the order of €0.5–1 billion annually (growing over time)
         "mass_mapping": {"10": 1.0},
         "feasibility": {"law": True, "adminLagMonths": 12, "notes": "Reform via statute or in pension law; unions strongly resist, and savings materialize gradually."},
@@ -384,8 +384,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "freeze_pension_indexation",
         "family": "PENSIONS",
-        "label": "Slow Pension Benefit Indexation",
-        "description": "Temporarily limit or delay inflation adjustments for pensions (e.g. skipping or postponing a cost-of-living increase).",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 6200000000,  # One-year freeze (delay Jan to Dec) in 2025 was estimated to save €6.2 billion
         "mass_mapping": {"10": 1.0},
         "feasibility": {"law": True, "adminLagMonths": 3, "notes": "Change enacted via Social Security law; immediate budget relief but reduces retirees’ purchasing power."},
@@ -396,8 +396,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "align_public_private_pensions",
         "family": "PENSIONS",
-        "label": "Align Public-Sector Pension Calculation with Private",
-        "description": "Calculate civil servant pensions on a broader salary period (like 25-year average) instead of the last 6 months, to reduce costs and align with private-sector rules.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 1500000000,  # Could eventually save on the order of €1–2 billion annually in the long run
         "mass_mapping": {"10": 1.0},
         "feasibility": {"law": True, "adminLagMonths": 12, "notes": "Requires pension reform law; long-term savings as new formula phases in."},
@@ -408,8 +408,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "raise_pension_contributions",
         "family": "PENSIONS",
-        "label": "Increase Pension Contribution Rates",
-        "description": "Raise the payroll contribution rates that fund pensions (for employers and/or employees) to improve pension fund revenues.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 10000000000,  # Roughly +€1 billion per 0.1% point increase – e.g. a full 1% point combined hike yields ~€10 billion
         "mass_mapping": {},
         "feasibility": {"law": True, "adminLagMonths": 3, "notes": "Change via Social Security financing law; effectively a tax increase on labor, facing resistance from employers and workers."},
@@ -420,8 +420,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "raise_min_pension",
         "family": "PENSIONS",
-        "label": "Raise Minimum Pension Benefits",
-        "description": "Increase the minimum pension payouts (e.g. ensuring a higher monthly floor for full-career retirees or boosting survivor benefits), improving retirement income for the lowest-paid retirees.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": -1500000000,  # A further boost to minimum pensions could cost on the order of €1–2 billion annually (depending on scope)
         "mass_mapping": {"10": 1.0},
         "feasibility": {"law": True, "adminLagMonths": 6, "notes": "Included in pension or social security law; must be financed by other measures or adds to deficit."},
@@ -432,8 +432,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "tighten_unemployment_benefits",
         "family": "SOCIAL_SECURITY",
-        "label": "Tighten Unemployment Benefit Rules",
-        "description": "Restrict unemployment insurance by shortening benefit duration or making rules stricter (especially when the job market is good), to encourage faster return-to-work.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 2500000000,  # Current reforms aim for ~€2–2.5 billion savings by 2026; deeper cuts could reach €4 billion by 2030
         "mass_mapping": {"10": 1.0},
         "feasibility": {"law": True, "adminLagMonths": 6, "notes": "Implemented via unemployment insurance regulations (backed by law or decree); opposed by unions but already partly in effect."},
@@ -444,8 +444,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "expand_unemployment_benefits",
         "family": "SOCIAL_SECURITY",
-        "label": "Reverse Unemployment Benefit Cuts",
-        "description": "Make unemployment insurance more generous again (e.g. restoring longer benefit duration or higher payouts), undoing recent savings measures.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": -2500000000,  # Would forgo the ~€2–2.5 billion in savings planned from the recent reform (and cost more if made even more generous)
         "mass_mapping": {"10": 1.0},
         "feasibility": {"law": True, "adminLagMonths": 3, "notes": "Could be done by executive order (as rules are in regulations) but likely via law; politically supported by left, criticized by fiscal watchdogs."},
@@ -456,8 +456,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "tighten_rsa_requirements",
         "family": "SOCIAL_SECURITY",
-        "label": "Condition/Reduce RSA Welfare Benefits",
-        "description": "Require recipients of the RSA minimum income benefit to engage in work or training and tighten eligibility, potentially reducing the beneficiary rolls and spending.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 800000000,  # Hard to quantify; optimistic scenarios see up to ~€0.5–1 billion in savings if many exit the program
         "mass_mapping": {"10": 1.0},
         "feasibility": {"law": True, "adminLagMonths": 12, "notes": "Would need legal changes and administrative capacity to enforce; savings are speculative and depend on implementation."},
@@ -468,8 +468,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "restrict_non_citizen_benefits",
         "family": "SOCIAL_SECURITY",
-        "label": "Restrict Benefits for Non-Citizens",
-        "description": "Apply a “national preference” by limiting access to certain non-contributory social benefits (like family allowances, RSA, housing aid) only to citizens or long-term residents.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 2000000000,  # Populist proposals claim ~€1–3 billion savings, but legal feasibility is doubtful
         "mass_mapping": {"10": 1.0},
         "feasibility": {"law": True, "adminLagMonths": 12, "notes": "Likely unconstitutional and against EU law; even if attempted, would face legal challenges and limited savings."},
@@ -480,8 +480,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "freeze_social_benefits",
         "family": "SOCIAL_SECURITY",
-        "label": "Freeze Indexation of Welfare Benefits",
-        "description": "Temporarily suspend inflation adjustments for social benefits (e.g. RSA, disability allowances) for a year to save on public spending.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 2300000000,  # An across-the-board one-year freeze of major benefits could save roughly €2.3 billion
         "mass_mapping": {"10": 1.0},
         "feasibility": {"law": True, "adminLagMonths": 3, "notes": "Can be done via budget/social security law for one year; reduces purchasing power for the poorest."},
@@ -492,8 +492,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "cut_housing_aid",
         "family": "SOCIAL_SECURITY",
-        "label": "Cut Housing Assistance (APL)",
-        "description": "Reduce expenditures on housing subsidies (APL), for example by tightening eligibility (e.g. for students or higher-income recipients) or slowing indexation of these aids.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 1300000000,  # E.g. eliminating certain housing aid programs was estimated up to ~€1.3 billion saved
         "mass_mapping": {"10": 1.0},
         "feasibility": {"law": True, "adminLagMonths": 6, "notes": "Change in Social Security or budget law; directly affects low-income renters, likely controversial."},
@@ -504,8 +504,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "cut_family_benefits",
         "family": "SOCIAL_SECURITY",
-        "label": "Reduce Family Allowances for High Earners",
-        "description": "Trim family benefit payouts for wealthier households (beyond the means-testing already in place) or consolidate family subsidies to save costs.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 600000000,  # On the order of €0.5–1 billion could be saved by further reducing upper-tier family benefits
         "mass_mapping": {"10": 1.0},
         "feasibility": {"law": True, "adminLagMonths": 6, "notes": "Changes via social security financing law; moderate savings but politically delicate among families."},
@@ -516,8 +516,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "fight_social_fraud",
         "family": "SOCIAL_SECURITY",
-        "label": "Crack Down on Social Benefit Fraud",
-        "description": "Strengthen controls to detect and prevent fraud in welfare programs (family benefits, unemployment, healthcare cards, etc.), recovering undue payments.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 1000000000,  # Officials cite potential to recover +€1 billion or more (currently ~€0.9b is recouped out of an estimated €20b fraud gap)
         "mass_mapping": {"10": 1.0},
         "feasibility": {"law": False, "adminLagMonths": 12, "notes": "Administrative measures (improved data cross-checks, inspections) largely; additional legal tools might help. Real impact uncertain."},
@@ -528,8 +528,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "eliminate_ame",
         "family": "SOCIAL_SECURITY",
-        "label": "Eliminate State Medical Aid for Undocumented (AME)",
-        "description": "Abolish the state-funded healthcare program for undocumented immigrants (AME) to reduce public health expenditure on non-citizens.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 500000000,  # Would save a few hundred million euros per year (though some costs might shift to emergency care)
         "mass_mapping": {"07": 1.0},
         "feasibility": {"law": True, "adminLagMonths": 6, "notes": "Requires legal change; controversial due to public health implications and likely marginal net savings."},
@@ -540,8 +540,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "cap_health_spending",
         "family": "HEALTH",
-        "label": "Cap Annual Health Expenditure Growth",
-        "description": "Impose a tighter ceiling (ONDAM) on yearly healthcare spending growth (e.g. a near-freeze in the health budget) to force savings in the health system.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 5000000000,  # A stringent cap was targeted to save roughly €5 billion in healthcare costs in a year (e.g. 2025 plan)
         "mass_mapping": {"07": 1.0},
         "feasibility": {"law": True, "adminLagMonths": 3, "notes": "Set in the Social Security financing law; requires subsequent cost-containment measures by health authorities."},
@@ -552,8 +552,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "reduce_health_costs",
         "family": "HEALTH",
-        "label": "Reduce Low-Value Health Expenditures",
-        "description": "Cut unnecessary or inefficient healthcare spending (e.g. stop fully reimbursing certain drugs, promote generics, delist low-value treatments) to improve system efficiency.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 2000000000,  # A package of efficiency measures could save on the order of €1–3 billion in health spending
         "mass_mapping": {"07": 1.0},
         "feasibility": {"law": False, "adminLagMonths": 6, "notes": "Mostly via administrative decisions and regulatory changes in health insurance coverage; part of recent savings plans."},
@@ -564,8 +564,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "increase_patient_copays",
         "family": "HEALTH",
-        "label": "Introduce/Increase Patient Co-pays",
-        "description": "Implement small patient co-payment fees (e.g. for GP visits or prescriptions) or raise existing co-pays to discourage overuse and shift a minor share of costs to patients.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 200000000,  # Such measures would have only marginal net savings (on the order of €0.1–0.2 billion)
         "mass_mapping": {"07": 1.0},
         "feasibility": {"law": True, "adminLagMonths": 6, "notes": "Usually set via Social Security financing law; politically sensitive as it affects access, and savings are small."},
@@ -576,8 +576,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "hire_health_workers",
         "family": "HEALTH",
-        "label": "Hire Additional Healthcare Staff",
-        "description": "Recruit more medical personnel (e.g. a plan to hire 20,000 nurses and other healthcare workers) to improve service quality, despite the higher wage bill.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": -2800000000,  # Rough cost ~€2.8 billion per year for +20k nurses (approx. €140k including benefits per nurse annually)
         "mass_mapping": {"07": 1.0},
         "feasibility": {"law": False, "adminLagMonths": 12, "notes": "Budget allocation and administrative hiring process; requires training and addressing staff shortages."},
@@ -588,8 +588,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "raise_healthcare_wages",
         "family": "HEALTH",
-        "label": "Raise Hospital Healthcare Worker Salaries",
-        "description": "Increase pay scales for hospital nurses and other underpaid medical staff (e.g. adding an extra wage step) to improve retention and recognition.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": -700000000,  # On the order of €0.5–1 billion annual cost for a notable salary boost
         "mass_mapping": {"07": 1.0},
         "feasibility": {"law": False, "adminLagMonths": 6, "notes": "Typically decided by government in healthcare budget or wage agreements; improves morale but adds to health deficits."},
@@ -600,8 +600,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "freeze_civil_service_pay",
         "family": "STAFFING",
-        "label": "Freeze Public Sector Wage Index",
-        "description": "Suspend any increase of the civil service pay index (point d’indice) for a year, instead of indexing it for inflation, to save on the government payroll.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 3600000000,  # A 1-year freeze in 2025 saves ~€3.6 billion (versus a modest 1.7% indexation)
         "mass_mapping": {"09": 0.3, "07": 0.2, "03": 0.1, "02": 0.1, "01": 0.3},
         "feasibility": {"law": False, "adminLagMonths": 0, "notes": "Can be decided by executive (no index raise decree); immediate savings but triggers labor discontent."},
@@ -612,8 +612,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "freeze_civil_service_promotions",
         "family": "STAFFING",
-        "label": "Freeze Automatic Pay Promotions (GVT)",
-        "description": "Temporarily halt automatic seniority/tenure pay increases (glissement vieillesse-technicité) for civil servants for one year.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 2700000000,  # One-year pause could save on the order of €2.5–3 billion in wage costs
         "mass_mapping": {"09": 0.3, "07": 0.2, "03": 0.1, "02": 0.1, "01": 0.3},
         "feasibility": {"law": False, "adminLagMonths": 0, "notes": "Likely can be done by executive HR policy; unions oppose strongly as it suspends career progression rewards."},
@@ -624,8 +624,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "raise_civil_service_pay",
         "family": "STAFFING",
-        "label": "Increase Civil Servant Pay Scale by 10%",
-        "description": "Raise the civil service base pay (point d’indice) by a significant amount (e.g. +10%), boosting public sector salaries across the board.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": -20000000000,  # Approximately -€20 billion annual cost (since ~1% = €2 billion) for a 10% increase
         "mass_mapping": {"09": 0.3, "07": 0.2, "03": 0.1, "02": 0.1, "01": 0.3},
         "feasibility": {"law": False, "adminLagMonths": 1, "notes": "Implemented by government decree; politically popular among workers but very costly to the budget."},
@@ -636,8 +636,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "cut_public_workforce",
         "family": "STAFFING",
-        "label": "Reduce Public Sector Workforce via Attrition",
-        "description": "Shrink the number of government employees by not replacing a portion of retirees (e.g. only hire 1 for every 2 departures), gradually lowering payroll costs.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 2500000000,  # An aggressive plan (e.g. 50k net job cuts over a few years) could save ~€2–3 billion annually when achieved
         "mass_mapping": {"09": 0.3, "07": 0.2, "03": 0.1, "02": 0.1, "01": 0.3},
         "feasibility": {"law": False, "adminLagMonths": 24, "notes": "Policy decision enforced via hiring freezes; savings accrue gradually as workforce declines."},
@@ -648,8 +648,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "cut_agencies",
         "family": "STAFFING",
-        "label": "Abolish/Merge Public Agencies",
-        "description": "Eliminate or consolidate certain government agencies, quangos, or advisory bodies deemed redundant or “improductive,” along with their associated jobs and overhead.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 1000000000,  # Rough estimate: scrapping some agencies and ~1,500 jobs plus overhead might save on the order of €1 billion
         "mass_mapping": {"01": 1.0},
         "feasibility": {"law": True, "adminLagMonths": 12, "notes": "Requires legislative or executive action to dissolve entities; savings modest, mainly symbolic of state belt-tightening."},
@@ -660,8 +660,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "reduce_sick_leave",
         "family": "STAFFING",
-        "label": "Reduce Public Sector Absenteeism",
-        "description": "Introduce measures to curb sick-leave abuse among government workers (e.g. reintroduce a waiting day before paid sick leave, stricter monitoring) to reduce lost work days and temp costs.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 1300000000,  # If successful, could save on the order of €1.3 billion by cutting excessive absenteeism
         "mass_mapping": {"09": 0.3, "07": 0.2, "03": 0.1, "02": 0.1, "01": 0.3},
         "feasibility": {"law": True, "adminLagMonths": 6, "notes": "May require legal change (to add waiting day, etc.); relies on enforcement and cultural change, savings are estimates."},
@@ -672,8 +672,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "cut_officials_privileges",
         "family": "STAFFING",
-        "label": "Cut Perks of Elected Officials",
-        "description": "Eliminate or reduce perceived privileges of politicians (e.g. special pension schemes for parliamentarians, free benefits for high officials, excessive expense budgets) to save costs and set an example.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 100000000,  # Only tens of millions in savings (<<€0.1b), but high symbolic value
         "mass_mapping": {"01": 1.0},
         "feasibility": {"law": True, "adminLagMonths": 12, "notes": "Some changes require law or even constitutional reform (e.g. cutting number of MPs); politically popular but fiscally minor."},
@@ -684,8 +684,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "cut_defense_spending",
         "family": "DEFENSE",
-        "label": "Cut Defense Budget by 10%",
-        "description": "Reduce military spending growth by cancelling or delaying major equipment programs (e.g. a ~10% cut in defense procurement) for immediate budgetary savings.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 6000000000,  # Example: ~€60b defense budget -> cut ~€6b in one year by scaling back procurement
         "mass_mapping": {"02": 1.0},
         "feasibility": {"law": True, "adminLagMonths": 6, "notes": "Would be set in budget law; faces strong opposition due to security concerns and contract penalties for cancellations."},
@@ -696,8 +696,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "reduce_payroll_subsidies",
         "family": "SUBSIDIES",
-        "label": "Roll Back Payroll Tax Cuts for Firms",
-        "description": "Scale down broad business subsidies like the generalized reductions in employer social security contributions (originating from the CICE), especially for large companies, to claw back some fiscal space.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 5000000000,  # Partial rollback of these €70+ billion/yr allègements could yield on the order of +€5 billion in revenue/savings
         "mass_mapping": {"04": 1.0},
         "feasibility": {"law": True, "adminLagMonths": 6, "notes": "Change via budget or social security law; businesses will lobby against it due to competitiveness concerns."},
@@ -708,8 +708,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "remove_fossil_subsidies",
         "family": "CLIMATE",
-        "label": "End Fossil Fuel Tax Breaks",
-        "description": "Phase out subsidies and tax exemptions that favor fossil fuels (e.g. reduced diesel taxes for trucking & farming), aligning fiscal policy with climate goals and raising revenue.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 1500000000,  # Ending remaining fuel tax advantages could save on the order of €1–2 billion per year
         "mass_mapping": {"05": 1.0},
         "feasibility": {"law": True, "adminLagMonths": 12, "notes": "Implemented via finance law; politically sensitive for affected sectors (transport, agriculture) but aligns with green transition."},
@@ -720,8 +720,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "cut_foreign_aid",
         "family": "SUBSIDIES",
-        "label": "Cut International Development Aid",
-        "description": "Reduce France’s budget for foreign aid and development assistance (which has been increasing) to save money domestically.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 1500000000,  # Further cuts could save on the order of €1–2 billion (a 2024 cut added €1.5b savings)
         "mass_mapping": {"01": 1.0},
         "feasibility": {"law": True, "adminLagMonths": 3, "notes": "Change in budget law; may draw criticism for undermining international commitments and soft power."},
@@ -732,8 +732,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "cut_association_subsidies",
         "family": "SUBSIDIES",
-        "label": "Reduce Subsidies to Associations",
-        "description": "Trim state subsidies to various associations and non-profits (including possibly certain cultural, environmental, or community organizations) as a budget savings measure.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 1600000000,  # A proposal targeted ~€1.6 billion reduction in these subsidies
         "mass_mapping": {"08": 1.0},
         "feasibility": {"law": True, "adminLagMonths": 6, "notes": "Enacted via budget allocations; politically contentious as it affects civil society and local programs."},
@@ -744,8 +744,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "cut_public_investments",
         "family": "OTHER",
-        "label": "Cut or Delay Public Investment Projects",
-        "description": "Cancel, scale back, or postpone planned public investment programs (e.g. infrastructure projects, strategic plans like France 2030) to reduce near-term expenditure.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 800000000,  # Perhaps on the order of €0.5–1 billion could be saved in a given year by deferring some investments
         "mass_mapping": {"04": 1.0},
         "feasibility": {"law": True, "adminLagMonths": 3, "notes": "Adjust via budget credit allocations; may hinder long-term goals (infrastructure, green transition) for short-term savings."},
@@ -756,8 +756,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "hire_teachers",
         "family": "STAFFING",
-        "label": "Hire Additional Teachers",
-        "description": "Recruit more teaching staff to reduce class sizes and improve education (e.g. 10,000 new teachers), increasing the education payroll budget.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": -500000000,  # Roughly €50k per teacher with benefits -> 10k teachers ~€0.5 billion annually
         "mass_mapping": {"09": 1.0},
         "feasibility": {"law": False, "adminLagMonths": 12, "notes": "Budgetary decision to fund new positions; faces teacher supply constraints but politically popular for education quality."},
@@ -768,8 +768,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "cut_local_transfers",
         "family": "OTHER",
-        "label": "Reduce Transfers to Local Governments",
-        "description": "Cut or freeze the state’s grant to local authorities (e.g. the Dotation Globale de Fonctionnement) to push municipalities and regions to also curb spending.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 1500000000,  # For instance, continuing a nominal freeze or slight cut could save on the order of €1–2 billion for the central state
         "mass_mapping": {"01": 1.0},
         "feasibility": {"law": True, "adminLagMonths": 3, "notes": "Done via budget law; shifts financial pressure to local governments (potentially causing local service cuts or tax hikes)."},
@@ -780,8 +780,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "green_transport_tax",
         "family": "CLIMATE",
-        "label": "Green Tax on Transport (Airline or Delivery)",
-        "description": "Levy new environmental taxes such as a tax on airline tickets/kerosene or on e-commerce deliveries (“small parcels”) to raise revenue and discourage high-emission activities.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 600000000,  # Could yield on the order of a few hundred million (up to ~€0.5–1 billion) annually, depending on rate and scope
         "mass_mapping": {},
         "feasibility": {"law": True, "adminLagMonths": 18, "notes": "Would ideally be coordinated at EU level (especially for kerosene); implementation could be slow due to negotiations."},
@@ -792,8 +792,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "efficient_procurement",
         "family": "PROCUREMENT",
-        "label": "Improve Public Procurement Efficiency",
-        "description": "Streamline government procurement (bulk purchasing, better tendering, anti-fraud) in sectors like healthcare and defense to lower costs for goods and services.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 500000000,  # Enhanced procurement practices might save on the order of a few hundred million euros per year
         "mass_mapping": {"02": 0.5, "07": 0.5},
         "feasibility": {"law": False, "adminLagMonths": 12, "notes": "Administrative and managerial reforms; requires investment in procurement systems and political will to enforce changes."},
@@ -804,8 +804,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "freeze_spending_one_year",
         "family": "OPERATIONS",
-        "label": "One-Year Nominal Spending Freeze (“Année Blanche”)",
-        "description": "Hold overall government spending flat for one year (no nominal increases in budgets or benefits across the board) to achieve a one-time deficit reduction.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": 7000000000,  # Approximately €7 billion saved in the year relative to trend growth, per government projection for 2026
         "mass_mapping": {"10": 0.5, "07": 0.2, "09": 0.1, "04": 0.1, "01": 0.1},
         "feasibility": {"law": True, "adminLagMonths": 0, "notes": "Enacted via annual budget law; not a permanent reform, but spreads the effort widely for a short-term gain."},
@@ -816,8 +816,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "build_social_housing",
         "family": "OTHER",
-        "label": "Massive Public Housing Construction",
-        "description": "Launch a major state-led program to build new public housing units (e.g. 200,000 units per year) as a social investment, despite the high upfront costs.",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": -30000000000,  # Tens of billions per year if fully financed by the state (200k units * ~€150k each ~ €30b, though could be co-financed)
         "mass_mapping": {"06": 1.0},
         "feasibility": {"law": True, "adminLagMonths": 12, "notes": "Would be part of multi-year investment plan and budgets; requires capacity in construction sector and political prioritization."},
@@ -828,8 +828,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "free_school_services",
         "family": "OTHER",
-        "label": "Make School Meals & Supplies Free",
-        "description": "Extend public education support by making school-related expenses free for families (e.g. free canteen meals, school supplies, extracurricular activities in public schools).",
+        "label": "",
+        "description": "",
         "fixed_impact_eur": -15000000000,  # On the order of tens of billions annually if fully generalized (would substantially increase education spending)
         "mass_mapping": {"09": 1.0},
         "feasibility": {"law": True, "adminLagMonths": 12, "notes": "Implemented through education budget increases; very costly universal benefit approach championed by the left."},
@@ -840,8 +840,8 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": "pen_age_plus3m_per_year",
         "family": "PENSIONS",
-        "label": "Retirement age +3m per year",
-        "description": "Increase the legal retirement age by 3 months each year until it reaches 65.",
+        "label": "",
+        "description": "",
         "mass_mapping": {"10": 1.0},
         "feasibility": {"law": True, "adminLagMonths": 12, "notes": "Requires a major pension reform law. Implementation would be gradual."},
         "conflicts_with": ["pen_age_minus3m_per_year"],

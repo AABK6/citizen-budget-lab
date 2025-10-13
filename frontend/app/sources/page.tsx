@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { gqlRequest } from '@/lib/graphql'
+import { useI18n } from '@/lib/i18n'
 import { DataTable } from '@/components/Table'
 
 type Row = {
@@ -14,6 +15,7 @@ type Row = {
 }
 
 export default function SourcesPage() {
+  const { t } = useI18n();
   const [rows, setRows] = useState<Row[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -24,8 +26,8 @@ export default function SourcesPage() {
     { key: 'license', label: 'License' },
     { key: 'refreshCadence', label: 'Cadence' },
     { key: 'vintage', label: 'Vintage' },
-    { key: 'url', label: 'Link', render: (v: string) => <a href={v} target="_blank" rel="noreferrer">Open</a> }
-  ], [])
+    { key: 'url', label: 'Link', render: (v: string) => <a href={v} target="_blank" rel="noreferrer">{t('sources.open')}</a> }
+  ], [t])
 
   useEffect(() => {
     let cancelled = false
@@ -58,12 +60,12 @@ export default function SourcesPage() {
 
   return (
     <div className="stack">
-      <h2>Sources</h2>
+      <h2>{t('sources.title')}</h2>
       <label className="field">
-        <span>Search</span>
+        <span>{t('sources.search')}</span>
         <input value={q} onChange={e => setQ(e.target.value)} placeholder="Filter datasets..." />
       </label>
-      {loading && <p>Loading…</p>}
+      {loading && <p>{t('sources.loading')}</p>}
       {error && <p className="error">{error}</p>}
       {!loading && !error && <DataTable columns={columns} rows={filtered} sortable pageSize={10} />}
     </div>

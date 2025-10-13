@@ -46,7 +46,7 @@ export default function ProcurementPage() {
     { key: 'cpv', label: 'CPV' },
     { key: 'procedureType', label: t('proc.procedure') || 'Procedure' },
     { key: 'amountEur', label: t('proc.amount') || 'Amount (EUR)', format: (v: number) => v.toLocaleString(undefined, { maximumFractionDigits: 0 }) },
-    { key: 'sourceUrl', label: t('proc.source') || 'Source', render: (v: string) => v ? <a href={v} target="_blank" rel="noreferrer">Open</a> : '' }
+    { key: 'sourceUrl', label: t('proc.source') || 'Source', render: (v: string) => v ? <a href={v} target="_blank" rel="noreferrer">{t('proc.open')}</a> : '' }
   ], [t])
 
   const load = useCallback(async () => {
@@ -123,7 +123,7 @@ export default function ProcurementPage() {
           { key: 'amountEur', label: t('proc.amount') || 'Amount (EUR)' },
         ], rows as any)}>{t('proc.export') || 'Export CSV'}</button>
       </div>
-      {loading && <p>Loading…</p>}
+      {loading && <p>{t('proc.loading')}</p>}
       {error && <p className="error">{error}</p>}
       {!loading && !error && (
         view === 'table'

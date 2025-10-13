@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { gqlRequest } from '@/lib/graphql';
+import { useI18n } from '@/lib/i18n';
 import { ScenarioResult } from '@/lib/types';
 
 const getScenarioQuery = `
@@ -30,6 +31,7 @@ const getScenarioQuery = `
 `;
 
 export default function SharePage({ params }: { params: { id: string } }) {
+  const { t } = useI18n();
   const [scenario, setScenario] = useState<ScenarioResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -61,7 +63,7 @@ export default function SharePage({ params }: { params: { id: string } }) {
   }, [fetchData]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>{t('share.loading')}</div>;
   }
 
   if (error) {
@@ -70,7 +72,7 @@ export default function SharePage({ params }: { params: { id: string } }) {
 
   return (
     <div className="container">
-      <h1>Share Card</h1>
+      <h1>{t('share.title')}</h1>
       <pre>{JSON.stringify(scenario, null, 2)}</pre>
     </div>
   );

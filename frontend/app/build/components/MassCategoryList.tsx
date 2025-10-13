@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import { useI18n } from '@/lib/i18n';
 import type { MassCategory } from '../types';
 
 const tintBackground = (hex: string, alpha = 0.18) => {
@@ -21,9 +22,10 @@ export type MassCategoryListProps = {
 };
 
 export function MassCategoryList({ categories, onSelect, formatCurrency, formatShare, displayMode }: MassCategoryListProps) {
+  const { t } = useI18n();
   return (
     <>
-      <div className="panel-header">Spending Targets &amp; Reforms</div>
+      <div className="panel-header">{t('build.spending_targets_reforms')}</div>
       {categories.map((category, index) => {
         const accent = category.color || '#2563eb';
         const tint = tintBackground(accent, 0.16);
@@ -49,8 +51,8 @@ export function MassCategoryList({ categories, onSelect, formatCurrency, formatS
             <i className="material-icons mission-card__chevron" aria-hidden="true">chevron_right</i>
           </div>
           <div className="mission-card__footer">
-            <span className="mission-card__action">Set target</span>
-            <span className="mission-card__action">View reforms</span>
+            <span className="mission-card__action">{t('build.set_target')}</span>
+            <span className="mission-card__action">{t('build.view_reforms')}</span>
           </div>
         </div>
       )})}

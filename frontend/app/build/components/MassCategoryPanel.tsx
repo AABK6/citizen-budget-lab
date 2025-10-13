@@ -1,5 +1,6 @@
 import type { PolicyLever, PopularIntent, MassCategory } from '../types';
 import type { CSSProperties, ChangeEvent } from 'react';
+import { useI18n } from '@/lib/i18n';
 
 export type MassCategoryPanelProps = {
   category: MassCategory;
@@ -38,6 +39,7 @@ export function MassCategoryPanel({
   formatShare,
   displayMode,
 }: MassCategoryPanelProps) {
+  const { t } = useI18n();
   const percentStep = 0.5;
   const defaultRange = 10;
   const expandedRange = 25;
@@ -86,7 +88,7 @@ export function MassCategoryPanel({
 
   return (
     <>
-      <button className="fr-btn fr-btn--secondary fr-btn--sm mass-panel__back" onClick={onClose}>Back</button>
+      <button className="fr-btn fr-btn--secondary fr-btn--sm mass-panel__back" onClick={onClose}>{t('build.back')}</button>
       <div className="mission-panel" style={accentStyle}>
         <div className="mission-panel-header">
           <span className="mission-panel-icon" aria-hidden="true" style={{ backgroundColor: iconTint, color: headerColor }}>
@@ -108,7 +110,7 @@ export function MassCategoryPanel({
           </div>
           <div className="target-controls">
             <div className="target-header">
-              <span className="target-label">Target</span>
+              <span className="target-label">{t('build.target')}</span>
               <button type="button" className="target-range-toggle" onClick={handleRangeToggle}>
                 {rangeLabel}
               </button>
@@ -149,17 +151,17 @@ export function MassCategoryPanel({
               <span className="target-amount">{amountLabel}</span>
             </div>
             <div className="target-actions">
-              <button className="target-button" onClick={onApplyTarget}>Apply</button>
-              <button className="target-button target-button--ghost" onClick={handleClear}>Clear</button>
+              <button className="target-button" onClick={onApplyTarget}>{t('build.apply')}</button>
+              <button className="target-button target-button--ghost" onClick={handleClear}>{t('build.clear')}</button>
             </div>
           </div>
           <div className="reforms-section">
-            <div className="section-title">Available Reforms</div>
+            <div className="section-title">{t('build.available_reforms')}</div>
             {suggestedLevers.map((reform) => (
               <div key={reform.id} className={`reform-item ${isLeverSelected(reform.id) ? 'applied' : ''}`}>
                 <div className="reform-details">
-                  <div className="reform-name">{reform.label}</div>
-                  <div className="reform-description">{reform.description}</div>
+                  <div className="reform-name">{t(`lever.${reform.id}.label`)}</div>
+                  <div className="reform-description">{t(`lever.${reform.id}.description`)}</div>
                 </div>
                 <div className="reform-actions">
                   <div className="reform-impact">
@@ -171,14 +173,14 @@ export function MassCategoryPanel({
                     className={`fr-btn fr-btn--${isLeverSelected(reform.id) ? 'secondary' : 'primary'}`}
                     onClick={() => onLeverToggle(reform)}
                   >
-                    {isLeverSelected(reform.id) ? 'Remove' : 'Add'}
+                    {isLeverSelected(reform.id) ? t('build.remove') : t('build.add')}
                   </button>
                 </div>
               </div>
             ))}
           </div>
           <div className="popular-reforms">
-            <div className="section-title">Popular Reforms</div>
+            <div className="section-title">{t('build.popular_reforms')}</div>
             {popularIntents
               .filter(intent => intent.massId === category.id)
               .map((intent) => (

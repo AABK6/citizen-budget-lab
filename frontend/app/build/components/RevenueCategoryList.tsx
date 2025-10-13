@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import { useI18n } from '@/lib/i18n';
 import type { LegoPiece } from '../types';
 
 const tintBackground = (hex: string, alpha = 0.18) => {
@@ -22,9 +23,10 @@ export type RevenueCategoryListProps = {
 };
 
 export function RevenueCategoryList({ categories, onSelect, formatCurrency, visuals }: RevenueCategoryListProps) {
+  const { t } = useI18n();
   return (
     <>
-      <div className="panel-header">Revenues</div>
+      <div className="panel-header">{t('build.revenues_panel_header')}</div>
       {categories.map((piece, index) => {
         const visual = visuals.get(piece.id) || { color: '#0ea5e9', icon: '💶' };
         const tint = tintBackground(visual.color, 0.16);
@@ -48,8 +50,8 @@ export function RevenueCategoryList({ categories, onSelect, formatCurrency, visu
               <i className="material-icons mission-card__chevron" aria-hidden="true">chevron_right</i>
             </div>
             <div className="mission-card__footer">
-              <span className="mission-card__action">Adjust rate</span>
-              <span className="mission-card__action">View reforms</span>
+              <span className="mission-card__action">{t('build.adjust_rate')}</span>
+              <span className="mission-card__action">{t('build.view_reforms')}</span>
             </div>
           </div>
         );

@@ -3,6 +3,7 @@
 import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useI18n } from '@/lib/i18n';
 
 import { gqlRequest } from '@/lib/graphql';
 import { computeDeficitTotals, computeDebtTotals } from '@/lib/fiscal';
@@ -116,6 +117,7 @@ function first<T>(arr: T[] | undefined, fallback = 0): T | typeof fallback {
 }
 
 export default function ComparePageClient() {
+  const { t } = useI18n();
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -211,16 +213,16 @@ export default function ComparePageClient() {
       fetchCompare(aParam, bParam);
     } else {
       setPayload(null);
-      setError('Provide a scenarioId in the “A” slot to start the comparison.');
+      setError(t('compare.error_missing_a'));
       setLoading(false);
     }
-  }, [searchParams, fetchCompare]);
+  }, [searchParams, fetchCompare, t]);
 
   const handleSubmit = useCallback(
     (evt: FormEvent<HTMLFormElement>) => {
       evt.preventDefault();
       if (!inputA.trim()) {
-        setError('Scenario A is required');
+        setError(t('compare.error_required_a'));
         return;
       }
       const params = new URLSearchParams(searchParams.toString());
@@ -233,7 +235,7 @@ export default function ComparePageClient() {
       const query = params.toString();
       router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
     },
-    [inputA, inputB, pathname, router, searchParams],
+    [inputA, inputB, pathname, router, searchParams, t],
   );
 
   const handleSwap = useCallback(() => {
@@ -299,16 +301,16 @@ export default function ComparePageClient() {
   return (
     <div className="compare-page">
       <header className="compare-header">
-        <h1>Compare &amp; Remix</h1>
+        <h1>{t('compare.title')}</h1>
         <p className="compare-tagline">
-          Load two saved scenarios to inspect their fiscal footprints side-by-side, understand the largest deltas by mission, and jump back into the builder for further tweaks.
+          {t('compare.tagline')}
         </p>
       </header>
 
       <section className="compare-controls">
         <form onSubmit={handleSubmit} className="compare-form">
           <div className="control-group">
-            <label htmlFor="scenario-a">Scenario A</label>
+            <label htmlFor="scenario-a">{t('compare.scenario_a')}</label>
             <input
               id="scenario-a"
               value={inputA}
@@ -318,7 +320,7 @@ export default function ComparePageClient() {
             />
           </div>
           <div className="control-group">
-            <label htmlFor="scenario-b">Scenario B</label>
+            <label htmlFor="scenario-b">{t('compare.scenario_b')}</label>
             <input
               id="scenario-b"
               value={inputB}
@@ -328,16 +330,16 @@ export default function ComparePageClient() {
             />
           </div>
           <div className="control-actions">
-            <button type="submit" className="fr-btn">Compare</button>
+            <button type="submit" className="fr-btn">{t('compare.compare_button')}</button>
             <button type="button" className="fr-btn fr-btn--secondary" onClick={handleSwap} disabled={!inputA && !inputB}>
-              Swap
+              {t('compare.swap_button')}
             </button>
           </div>
         </form>
       </section>
 
       {loading && (
-        <div className="compare-status">Loading comparison…</div>
+        <div className="compare-status">{t('compare.loading')}</div>
       )}
 
       {!loading && error && (
@@ -349,11 +351,11 @@ export default function ComparePageClient() {
       {!loading && !error && payload && (
         <>
           <section className="compare-summary">
-            <h2>Fiscal Snapshot (Year 1)</h2>
+            <h2>{t('compare.fiscal_snapshot')}</h2>
             {comparisonSummary && (
               <div className="summary-grid">
                 <div className="summary-card">
-                  <h3>Deficit Impact</h3>
+                  <h3>{t('compare.deficit_impact')}</h3>
                   <p className="summary-delta">{formatDelta(comparisonSummary.deficitFirstYear.diff)}</p>
                   <div className="summary-split">
                     <span>A: {formatCurrency(comparisonSummary.deficitFirstYear.a)}</span>
@@ -361,7 +363,7 @@ export default function ComparePageClient() {
                   </div>
                 </div>
                 <div className="summary-card">
-                  <h3>Commitments (AE)</h3>
+                  <h3>{t('compare.commitments')}</h3>
                   <p className="summary-delta">{formatDelta(comparisonSummary.commitmentsFirstYear.diff)}</p>
                   <div className="summary-split">
                     <span>A: {formatCurrency(comparisonSummary.commitmentsFirstYear.a)}</span>
@@ -369,7 +371,7 @@ export default function ComparePageClient() {
                   </div>
                 </div>
                 <div className="summary-card">
-                  <h3>Resolution Coverage</h3>
+                  <h3>{t('compare.resolution_coverage')}</h3>
                   <p className="summary-delta">{(comparisonSummary.resolutionPct.diff * 100).toFixed(1)}%</p>
                   <div className="summary-split">
                     <span>A: {(comparisonSummary.resolutionPct.a * 100).toFixed(1)}%</span>
@@ -381,18 +383,18 @@ export default function ComparePageClient() {
           </section>
 
           <section className="compare-waterfall">
-            <h2>Largest Mission Deltas</h2>
+            <h2>{t('compare.largest_mission_deltas')}</h2>
             <table className="fr-table compare-table">
               <thead>
                 <tr>
-                  <th>Mission (COFOG major)</th>
-                  <th>Scenario A vs B</th>
+                  <th>{t('compare.mission_cofog')}</th>
+                  <th>{t('compare.scenario_a_vs_b')}</th>
                 </tr>
               </thead>
               <tbody>
                 {topMasses.length === 0 && (
                   <tr>
-                    <td colSpan={2} className="empty">No mission deltas recorded.</td>
+                    <td colSpan={2} className="empty">{t('compare.no_mission_deltas')}</td>
                   </tr>
                 )}
                 {topMasses.map((entry) => (
@@ -411,19 +413,19 @@ export default function ComparePageClient() {
           </section>
 
           <section className="compare-pieces">
-            <h2>Top Piece Contributions</h2>
+            <h2>{t('compare.top_piece_contributions')}</h2>
             <table className="fr-table compare-table">
               <thead>
                 <tr>
-                  <th>Piece</th>
-                  <th>Mission</th>
-                  <th>Delta</th>
+                  <th>{t('compare.piece')}</th>
+                  <th>{t('compare.mission')}</th>
+                  <th>{t('compare.delta')}</th>
                 </tr>
               </thead>
               <tbody>
                 {topPieces.length === 0 && (
                   <tr>
-                    <td colSpan={3} className="empty">No piece-level contributions were detected.</td>
+                    <td colSpan={3} className="empty">{t('compare.no_piece_contributions')}</td>
                   </tr>
                 )}
                 {topPieces.map((entry) => (
@@ -438,10 +440,10 @@ export default function ComparePageClient() {
           </section>
 
           <section className="compare-macro">
-            <h2>Macro Impacts</h2>
+            <h2>{t('compare.macro_impacts')}</h2>
             <div className="summary-grid">
               <div className="summary-card">
-                <h3>GDP delta (Year 1)</h3>
+                <h3>{t('compare.gdp_delta')}</h3>
                 <p className="summary-delta">
                   {formatDelta(Number(first(payload.a.macro.deltaGDP)) - Number(first(payload.b.macro.deltaGDP)))}
                 </p>
@@ -451,7 +453,7 @@ export default function ComparePageClient() {
                 </div>
               </div>
               <div className="summary-card">
-                <h3>Employment index (Year 1)</h3>
+                <h3>{t('compare.employment_index')}</h3>
                 <p className="summary-delta">
                   {(Number(first(payload.a.macro.deltaEmployment)) - Number(first(payload.b.macro.deltaEmployment))).toFixed(2)} pts
                 </p>
@@ -461,7 +463,7 @@ export default function ComparePageClient() {
                 </div>
               </div>
               <div className="summary-card">
-                <h3>Automatic stabilisers</h3>
+                <h3>{t('compare.automatic_stabilisers')}</h3>
                 <p className="summary-delta">
                   {formatDelta(Number(first(payload.a.macro.deltaDeficit)) - Number(first(payload.b.macro.deltaDeficit)))}
                 </p>
@@ -474,20 +476,20 @@ export default function ComparePageClient() {
           </section>
 
           <section className="compare-remix">
-            <h2>Remix Scenarios</h2>
+            <h2>{t('compare.remix_scenarios')}</h2>
             <div className="remix-grid">
               <div className="remix-card">
-                <h3>Scenario A</h3>
+                <h3>{t('compare.scenario_a')}</h3>
                 <p>{inputA || payload.a.scenarioId}</p>
                 <Link className="fr-btn fr-btn--secondary" href={`/build?scenarioId=${encodeURIComponent(payload.a.scenarioId)}`}>
-                  Open in Builder
+                  {t('compare.open_in_builder')}
                 </Link>
               </div>
               <div className="remix-card">
-                <h3>Scenario B</h3>
+                <h3>{t('compare.scenario_b')}</h3>
                 <p>{inputB || payload.b.scenarioId}</p>
                 <Link className="fr-btn fr-btn--secondary" href={`/build?scenarioId=${encodeURIComponent(payload.b.scenarioId)}`}>
-                  Open in Builder
+                  {t('compare.open_in_builder')}
                 </Link>
               </div>
             </div>
