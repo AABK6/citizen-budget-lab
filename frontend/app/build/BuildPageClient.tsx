@@ -125,6 +125,14 @@ export default function BuildPageClient() {
   const latestRunRef = useRef(0);
   const aggregationLensRef = useRef<AggregationLens>(aggregationLens);
 
+  const lensToKey: Record<BuildLens, string> = {
+    mass: 'build.by_mission',
+    family: 'build.by_family',
+    reform: 'build.by_reform',
+  };
+  const metricKey = displayMode === 'share' ? 'build.metric_share_of_baseline' : 'build.metric_annual_amounts';
+  const unitText = displayMode === 'share' ? t('build.unit_percent') : t('build.unit_billion_eur');
+
   const addPieceToBucket = (bucket: Map<string, LegoPiece[]>, key: string, piece: LegoPiece) => {
     const existing = bucket.get(key);
     if (existing) {
@@ -1059,12 +1067,10 @@ useEffect(() => {
           <div className="center-panel">
             <div className="treemap-header">
               <div className="treemap-title-block">
-                <h2 className="treemap-title">Répartition par mission</h2>
-                <p className="treemap-subtitle">
-                  {displayMode === 'share'
-                    ? 'Parts du budget par mission · % du total'
-                    : 'Montants annuels par mission · Mds €'}
-                </p>
+                <h2 className="treemap-title">{t('build.budget_allocation')}</h2>
+                <span className="treemap-subtitle">
+                  {`· ${t(metricKey)} ${t(lensToKey[lens])} · ${unitText}`}
+                </span>
               </div>
             </div>
             <div className="treemap-container">

@@ -551,10 +551,10 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
     background-color: #ffffff;
     border-radius: 18px;
     border: 1px solid rgba(148, 163, 184, 0.2);
-    padding: 16px 18px;
+    padding: 12px 18px;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 8px;
     box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
     min-height: 0;
     position: sticky;
@@ -569,13 +569,12 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
     align-items: flex-start;
     justify-content: space-between;
     gap: 10px;
-    margin-bottom: 6px;
 }
 
 .treemap-title-block {
     display: flex;
-    flex-direction: column;
-    gap: 2px;
+    align-items: baseline;
+    gap: 8px;
 }
 
 .treemap-title {
