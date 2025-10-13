@@ -8,6 +8,7 @@ import { ErrorDisplay } from '@/components/ErrorDisplay';
 import { BuildPageSkeleton } from '@/components/BuildPageSkeleton';
 import { buildPageQuery, suggestLeversQuery, getScenarioDslQuery } from '@/lib/queries';
 import { TreemapChart } from '@/components/Treemap';
+import { Sparkline } from '@/components/Sparkline';
 import { useHistory } from '@/lib/useHistory';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
@@ -35,6 +36,7 @@ const fallbackTreemapColors = ['#2563eb', '#8b5cf6', '#ec4899', '#10b981', '#f59
 const revenueColorPalette = ['#0ea5e9', '#f97316', '#9333ea', '#16a34a', '#dc2626', '#facc15', '#0f766e', '#7c3aed', '#22c55e', '#2563eb'];
 const revenueIcons = ['💶', '📈', '🏦', '🧾', '🏭', '🛢️', '🚬', '💡', '🎯', '💼'];
 const percentFormatter = new Intl.NumberFormat('fr-FR', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 });
+const currencyFormatter = new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 const TARGET_PERCENT_DEFAULT_RANGE = 10;
 const TARGET_PERCENT_EXPANDED_RANGE = 25;
 const TARGET_PERCENT_STEP = 0.5;
@@ -696,8 +698,8 @@ useEffect(() => {
   };
 
   const formatCurrency = (amount: number) => {
-    const sign = amount < 0 ? '-' : '';
-    return `${sign}€${(Math.abs(amount) / 1e9).toFixed(1)}B`;
+    const sign = amount < 0 ? '−' : '';
+    return `${sign}${currencyFormatter.format(Math.abs(amount) / 1e9)} Md€`;
   };
 
   const formatDeficitWithRatio = (amount: number, ratio: number | null) => {
@@ -709,6 +711,52 @@ useEffect(() => {
   };
 
   const formatShare = (value: number) => `${(value * 100).toFixed(1)}%`;
+
+  const deficitPath = useMemo(
+    () =>
+      scenarioResult
+        ? computeDeficitTotals(
+            scenarioResult.accounting,
+            scenarioResult.macro?.deltaDeficit,
+          )
+        : [],
+    [scenarioResult],
+  );
+
+  const growthPctSeries = useMemo(() => {
+    const delta = scenarioResult?.macro?.deltaGDP;
+    const gdpBase = scenarioResult?.accounting?.gdpPath;
+    if (!Array.isArray(delta) || !Array.isArray(gdpBase) || delta.length === 0) {
+      return [] as number[];
+    }
+    const len = Math.min(delta.length, gdpBase.length);
+    const out: number[] = [];
+    for (let i = 0; i < len; i += 1) {
+      const d = Number(delta[i]);
+      const g = Number(gdpBase[i]);
+      if (!Number.isFinite(d) || !Number.isFinite(g) || g === 0) {
+        out.push(0);
+      } else {
+        out.push(d / g);
+      }
+    }
+    return out;
+  }, [scenarioResult]);
+
+  const timelineYears = useMemo(
+    () => deficitPath.map((_, idx) => year + idx),
+    [deficitPath, year],
+  );
+
+  const deficitSparkline = useMemo(
+    () => deficitPath.map((value) => Number(value) / 1e9),
+    [deficitPath],
+  );
+
+  const growthSparkline = useMemo(
+    () => growthPctSeries.map((value) => value * 100),
+    [growthPctSeries],
+  );
 
   const handleShare = useCallback(async () => {
     if (!scenarioIdRef.current) {
@@ -726,7 +774,6 @@ useEffect(() => {
     }
   }, [pathname, searchParamsString]);
 
-  const deficitPath = scenarioResult ? computeDeficitTotals(scenarioResult.accounting, scenarioResult.macro?.deltaDeficit) : [];
   const latestDeficit = deficitPath.length > 0 ? deficitPath[0] : null;
   const latestDeficitRatio = useMemo(() => {
     if (!scenarioResult) return null;
@@ -746,10 +793,6 @@ useEffect(() => {
     }
     return null;
   }, [scenarioResult, latestDeficit]);
-  const resolutionPctRaw = scenarioResult?.resolution?.overallPct;
-  const hasResolution = typeof resolutionPctRaw === 'number';
-  const resolutionPct = hasResolution ? resolutionPctRaw : 0;
-
   const treemapData = useMemo(
     () => masses.map((mission) => {
       const metric = displayMode === 'share' ? mission.share : mission.amount;
@@ -808,7 +851,7 @@ useEffect(() => {
                 onClick={() => handleLensSwitch('MISSION')}
                 aria-pressed={aggregationLens === 'MISSION'}
               >
-                Administrative lens
+                {t('build.administrative_lens')}
               </button>
               <button
                 type="button"
@@ -816,11 +859,11 @@ useEffect(() => {
                 onClick={() => handleLensSwitch('COFOG')}
                 aria-pressed={aggregationLens === 'COFOG'}
               >
-                COFOG lens
+                {t('build.cofog_lens')}
               </button>
             </div>
             <div className="display-toggle" role="group" aria-label="Display mode">
-              <span className="display-prefix">Display:</span>
+              <span className="display-prefix">{t('build.display_mode')}</span>
               <button
                 type="button"
                 className={`toggle-btn ${displayMode === 'amount' ? 'active' : ''}`}
@@ -828,7 +871,7 @@ useEffect(() => {
                 aria-pressed={displayMode === 'amount'}
               >
                 <span className="toggle-icon" aria-hidden="true">€</span>
-                <span className="toggle-label">Amounts</span>
+                <span className="toggle-label">{t('build.amounts')}</span>
               </button>
               <button
                 type="button"
@@ -837,7 +880,7 @@ useEffect(() => {
                 aria-pressed={displayMode === 'share'}
               >
                 <span className="toggle-icon" aria-hidden="true">%</span>
-                <span className="toggle-label">Shares</span>
+                <span className="toggle-label">{t('build.shares')}</span>
               </button>
             </div>
             <div className="view-switcher" role="tablist" aria-label="Treemap view">
@@ -848,7 +891,7 @@ useEffect(() => {
                 onClick={() => setLens('mass')}
                 aria-selected={lens === 'mass'}
               >
-                By mission
+                {t('build.by_mission')}
               </button>
               <button
                 type="button"
@@ -857,7 +900,7 @@ useEffect(() => {
                 onClick={() => setLens('family')}
                 aria-selected={lens === 'family'}
               >
-                By family
+                {t('build.by_family')}
               </button>
               <button
                 type="button"
@@ -866,7 +909,7 @@ useEffect(() => {
                 onClick={() => setLens('reform')}
                 aria-selected={lens === 'reform'}
               >
-                By reform
+                {t('build.by_reform')}
               </button>
             </div>
           </div>
@@ -876,20 +919,20 @@ useEffect(() => {
           <div className="mission-history" role="group" aria-label="Scenario history controls">
             <button type="button" className="ghost-btn ghost-btn--muted" onClick={undo} disabled={!canUndo}>
               <i className="material-icons" aria-hidden="true">undo</i>
-              Undo
+              {t('build.undo')}
             </button>
             <button type="button" className="ghost-btn ghost-btn--muted" onClick={redo} disabled={!canRedo}>
               <i className="material-icons" aria-hidden="true">redo</i>
-              Redo
+              {t('build.redo')}
             </button>
             <button type="button" className="ghost-btn ghost-btn--muted" onClick={reset}>
               <i className="material-icons" aria-hidden="true">refresh</i>
-              Reset
+              {t('build.reset')}
             </button>
           </div>
           <button type="button" className="ghost-btn" onClick={handleShare}>
             <i className="material-icons" aria-hidden="true">link</i>
-            Share
+            {t('build.share')}
           </button>
         </div>
       </div>
@@ -933,7 +976,7 @@ useEffect(() => {
             )}
             {lens === 'family' && (
               <>
-                <div className="panel-header">Reforms by Family</div>
+                <div className="panel-header">{t('build.reforms_by_family')}</div>
                 {Object.entries(policyLevers.reduce((acc, lever) => {
                   const family = lever.family || 'Other';
                   if (!acc[family]) {
@@ -951,8 +994,8 @@ useEffect(() => {
                         {levers.map((reform, index) => (
                           <div key={index} className={`reform-item ${isLeverInDsl(reform.id) ? 'applied' : ''}`}>
                             <div className="reform-details">
-                              <div className="reform-name">{reform.label}</div>
-                              <div className="reform-description">{reform.description}</div>
+                              <div className="reform-name">{t(`lever.${reform.id}.label`)}</div>
+                              <div className="reform-description">{t(`lever.${reform.id}.description`)}</div>
                             </div>
                             <div className="reform-actions">
                               <div className="reform-impact">
@@ -968,7 +1011,7 @@ useEffect(() => {
                                   (isLeverInDsl(reform.id) ? removeLeverFromDsl(reform.id) : addLeverToDsl(reform))
                                 }
                               >
-                                {isLeverInDsl(reform.id) ? 'Remove' : 'Add'}
+                                {isLeverInDsl(reform.id) ? t('build.remove') : t('build.add')}
                               </button>
                             </div>
                           </div>
@@ -981,7 +1024,7 @@ useEffect(() => {
             )}
             {lens === 'reform' && (
               <>
-                <div className="panel-header">All Reforms</div>
+                <div className="panel-header">{t('build.all_reforms')}</div>
                 <div className="reforms-section">
                   {policyLevers.map((reform, index) => (
                     <div key={index} className={`reform-item ${isLeverInDsl(reform.id) ? 'applied' : ''}`}>
@@ -1003,7 +1046,7 @@ useEffect(() => {
                             (isLeverInDsl(reform.id) ? removeLeverFromDsl(reform.id) : addLeverToDsl(reform))
                           }
                         >
-                          {isLeverInDsl(reform.id) ? 'Remove' : 'Add'}
+                          {isLeverInDsl(reform.id) ? t('build.remove') : t('build.add')}
                         </button>
                       </div>
                     </div>
@@ -1016,13 +1059,14 @@ useEffect(() => {
           <div className="center-panel">
             <div className="treemap-header">
               <div className="treemap-title-block">
-                <h2 className="treemap-title">{t('chart.treemap') || 'Budget allocation'}</h2>
+                <h2 className="treemap-title">Répartition par mission</h2>
                 <p className="treemap-subtitle">
-                  {displayMode === 'share' ? 'Viewing share of baseline (%)' : 'Viewing annual amounts (€B)'}
+                  {displayMode === 'share'
+                    ? 'Parts du budget par mission · % du total'
+                    : 'Montants annuels par mission · Mds €'}
                 </p>
               </div>
             </div>
-            <div className="treemap-divider" aria-hidden="true" />
             <div className="treemap-container">
               <TreemapChart
                 data={treemapData}
@@ -1036,12 +1080,67 @@ useEffect(() => {
                   handleCategoryClick(item as MassCategory);
                 }}
               />
-              
+
               {scenarioError && (
                 <div className="scenario-inline-error scenario-inline-error--floating" role="alert">
                   {scenarioError}
                 </div>
               )}
+            </div>
+            <div className="treemap-insights">
+              <div className="insight-row">
+                <div className="insight-summary-card">
+                  <span className="insight-label">Déficit {timelineYears[0] ?? year}</span>
+                  <span className="insight-value">
+                    {latestDeficit !== null ? formatCurrency(latestDeficit) : '—'}
+                  </span>
+                  <span className="insight-footnote">
+                    {latestDeficitRatio !== null
+                      ? `${percentFormatter.format(latestDeficitRatio)} du PIB`
+                      : 'Scénario non calculé'}
+                  </span>
+                </div>
+                <div className="trend-card trend-card--deficit">
+                  <div className="trend-header">
+                    <span>Trajectoire du déficit</span>
+                    <span className="trend-highlight">
+                      {deficitSparkline.length > 1 ? formatCurrency(deficitPath[deficitPath.length - 1]) : ''}
+                    </span>
+                  </div>
+                  <Sparkline
+                    data={deficitSparkline}
+                    stroke="#dc2626"
+                    fill="rgba(239,68,68,0.18)"
+                    height={72}
+                  />
+                  <div className="trend-axis">
+                    {timelineYears.length > 1
+                      ? `${timelineYears[0]} → ${timelineYears[timelineYears.length - 1]}`
+                      : timelineYears[0] ?? year}
+                  </div>
+                </div>
+                <div className="trend-card">
+                  <div className="trend-header">
+                    <span>Croissance (Δ PIB)</span>
+                    <span className="trend-highlight">
+                      {growthSparkline.length > 0
+                        ? percentFormatter.format(growthPctSeries[growthPctSeries.length - 1])
+                        : ''}
+                    </span>
+                  </div>
+                  <Sparkline
+                    data={growthSparkline}
+                    stroke="#0f766e"
+                    fill="rgba(16,185,129,0.22)"
+                    height={72}
+                  />
+                  <div className="trend-axis">
+                    {timelineYears.length > 1
+                      ? `${timelineYears[0]} → ${timelineYears[timelineYears.length - 1]}`
+                      : timelineYears[0] ?? year}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1078,59 +1177,6 @@ useEffect(() => {
               />
             )}
           </div>
-        </div>
-      </div>
-
-      <div className="scenario-status-bar" role="region" aria-live="polite">
-        <div className="status-summary">
-          <div className="status-heading">Scenario impact</div>
-          <div className="status-metrics">
-            <div className="status-metric">
-              <span className="status-label">{t('score.deficit_y0')}</span>
-              <span className="status-value">
-                {scenarioLoading
-                  ? '—'
-                  : latestDeficit !== null
-                    ? formatDeficitWithRatio(latestDeficit, latestDeficitRatio)
-                    : 'Not run'}
-              </span>
-            </div>
-            <div className="status-metric">
-              <span className="status-label">{t('build.resolution')}</span>
-              <span className="status-value">
-                {scenarioLoading
-                  ? '—'
-                  : hasResolution
-                    ? `${Math.round(resolutionPct * 100)}%`
-                    : 'Not run'}
-              </span>
-            </div>
-          </div>
-        </div>
-        <div className="status-actions">
-          {scenarioLoading && (
-            <div className="status-feedback" role="status">
-              <i className="material-icons spin" aria-hidden="true">autorenew</i>
-              Running scenario…
-            </div>
-          )}
-          {!scenarioLoading && scenarioError && (
-            <div className="status-feedback status-feedback--error" role="alert">
-              <i className="material-icons" aria-hidden="true">error</i>
-              {scenarioError}
-            </div>
-          )}
-          {!scenarioLoading && scenarioResult && !scenarioError && (
-            <div className="status-feedback status-feedback--success" role="status">
-              <i className="material-icons" aria-hidden="true">check_circle</i>
-              Updated with latest run
-            </div>
-          )}
-          {!scenarioLoading && !scenarioResult && !scenarioError && (
-            <div className="status-feedback" role="status">
-              Scenario not yet run
-            </div>
-          )}
         </div>
       </div>
 

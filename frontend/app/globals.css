@@ -480,26 +480,18 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
         padding: 16px 20px;
     }
     .main-content-stage {
-        padding: 24px 20px 168px;
+        padding: 24px 20px 120px;
     }
-    .scenario-status-bar {
-        left: 16px;
-        right: 16px;
-        bottom: 16px;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 16px;
-        padding: 12px;
+    .treemap-insights {
+        margin-top: 12px;
     }
-    .status-actions {
-        width: 100%;
-        flex-direction: column;
-        align-items: flex-start;
+    .insight-row {
+        grid-template-columns: 1fr;
         gap: 12px;
     }
-    .status-run {
-        width: 100%;
-        justify-content: center;
+    .insight-summary-card,
+    .trend-card {
+        padding: 14px 16px;
     }
     .snackbar {
         right: 16px;
@@ -574,15 +566,16 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
 
 .treemap-header {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
-    gap: 12px;
+    gap: 10px;
+    margin-bottom: 6px;
 }
 
 .treemap-title-block {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
 }
 
 .treemap-title {
@@ -627,24 +620,85 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
     box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12);
 }
 
-.treemap-divider {
-    height: 1px;
-    background: linear-gradient(90deg, rgba(148, 163, 184, 0), rgba(148, 163, 184, 0.4), rgba(148, 163, 184, 0));
-}
-
 .treemap-container {
     position: relative;
     flex: 1;
-    min-height: 0;
+    min-height: clamp(360px, 55vh, 560px);
     height: 100%;
     display: flex;
     overflow: hidden;
-    border-radius: 12px;
+    border-radius: 16px;
 }
 
 .treemap-container > div {
     flex: 1;
     min-height: 0;
+}
+
+.treemap-insights {
+    margin-top: 14px;
+}
+
+.insight-row {
+    display: grid;
+    grid-template-columns: minmax(210px, 240px) repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    align-items: stretch;
+}
+
+.insight-summary-card,
+.trend-card {
+    background: #ffffff;
+    border: 1px solid rgba(148, 163, 184, 0.28);
+    border-radius: 16px;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+}
+
+.insight-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.insight-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.insight-footnote {
+    font-size: 13px;
+    color: #64748b;
+}
+
+.trend-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.trend-card--deficit .trend-highlight {
+    color: #dc2626;
+}
+
+.trend-highlight {
+    font-size: 13px;
+    font-weight: 600;
+    color: #0f766e;
+}
+
+.trend-axis {
+    font-size: 12px;
+    color: #64748b;
 }
 
 .info-pill {
