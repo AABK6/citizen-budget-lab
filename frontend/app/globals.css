@@ -411,17 +411,39 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
 }
 
 .mission-card__footer {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid #e2e8f0;
     display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
 }
 
 .mission-card__action {
-    font-size: 12px;
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 8px;
+    border-radius: 9999px;
+    background-color: #f8fafc;
+    font-size: 10px;
     font-weight: 600;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: #64748b;
+    color: #334155;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.mission-card__action:hover {
+    background-color: rgba(79, 117, 214, 0.18);
+    color: #1d4ed8;
 }
 
 @media (max-width: 1280px) {
