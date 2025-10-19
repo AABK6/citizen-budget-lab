@@ -227,6 +227,7 @@ export enum PolicyFamilyEnum {
   SocialSecurity = "SOCIAL_SECURITY",
   Staffing = "STAFFING",
   Subsidies = "SUBSIDIES",
+  TaxExpenditures = "TAX_EXPENDITURES",
   Taxes = "TAXES",
 }
 

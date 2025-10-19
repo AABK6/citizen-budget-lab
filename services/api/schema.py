@@ -297,6 +297,7 @@ class ResolutionType:
 class PolicyFamilyEnum(str, enum.Enum):
     PENSIONS = "PENSIONS"
     TAXES = "TAXES"
+    TAX_EXPENDITURES = "TAX_EXPENDITURES"
     HEALTH = "HEALTH"
     DEFENSE = "DEFENSE"
     STAFFING = "STAFFING"

@@ -79,6 +79,7 @@ type ResolutionType { overallPct: Float!, byMass: [MassTargetType!]!, lens: Lens
 enum PolicyFamilyEnum {
     PENSIONS
     TAXES
+    TAX_EXPENDITURES
     HEALTH
     DEFENSE
     STAFFING
