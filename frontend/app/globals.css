@@ -647,6 +647,60 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
     min-height: 0;
 }
 
+.scenario-insights {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.scenario-insights-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.scenario-insights-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.scenario-score-cards .row {
+    flex-wrap: wrap;
+}
+
+.scenario-chart-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+}
+
+.scenario-chart-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.scenario-chart-card h4 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.empty-chart {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    color: #475569;
+    background: #f8fafc;
+    border: 1px dashed rgba(148, 163, 184, 0.4);
+    border-radius: 16px;
+}
+
 .info-pill {
     display: flex;
     justify-content: space-between;

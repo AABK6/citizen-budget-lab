@@ -8,6 +8,9 @@ import { ErrorDisplay } from '@/components/ErrorDisplay';
 import { BuildPageSkeleton } from '@/components/BuildPageSkeleton';
 import { buildPageQuery, suggestLeversQuery, getScenarioDslQuery } from '@/lib/queries';
 import { TreemapChart } from '@/components/Treemap';
+import { StatCards } from '@/components/StatCards';
+import { DeficitPathChart } from '@/components/DeficitPathChart';
+import { MacroGrowthChart } from '@/components/MacroGrowthChart';
 import { useHistory } from '@/lib/useHistory';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
@@ -29,7 +32,12 @@ import { MassCategoryList } from './components/MassCategoryList';
 import { MassCategoryPanel } from './components/MassCategoryPanel';
 import { RevenueCategoryList } from './components/RevenueCategoryList';
 import { RevenueCategoryPanel } from './components/RevenueCategoryPanel';
-import { computeDeficitTotals } from '@/lib/fiscal';
+import {
+  computeDeficitTotals,
+  computeDeficitDeltas,
+  computeDebtTotals,
+  computeDebtDeltas,
+} from '@/lib/fiscal';
 
 const fallbackTreemapColors = ['#2563eb', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#ef4444', '#6366f1', '#14b8a6', '#a855f7', '#d946ef'];
 const revenueColorPalette = ['#0ea5e9', '#f97316', '#9333ea', '#16a34a', '#dc2626', '#facc15', '#0f766e', '#7c3aed', '#22c55e', '#2563eb'];
@@ -700,6 +708,17 @@ useEffect(() => {
     return `${sign}€${(Math.abs(amount) / 1e9).toFixed(1)}B`;
   };
 
+  const formatSignedCurrency = (amount: number) => {
+    if (!Number.isFinite(amount)) {
+      return '—';
+    }
+    const formatted = formatCurrency(amount);
+    if (amount > 0) {
+      return `+${formatted}`;
+    }
+    return formatted;
+  };
+
   const formatDeficitWithRatio = (amount: number, ratio: number | null) => {
     const base = formatCurrency(amount);
     if (ratio === null || !Number.isFinite(ratio)) {
@@ -727,6 +746,41 @@ useEffect(() => {
   }, [pathname, searchParamsString]);
 
   const deficitPath = scenarioResult ? computeDeficitTotals(scenarioResult.accounting, scenarioResult.macro?.deltaDeficit) : [];
+  const debtPath = useMemo(
+    () => (scenarioResult ? computeDebtTotals(scenarioResult.accounting) : []),
+    [scenarioResult],
+  );
+  const deficitDeltaPath = useMemo(
+    () => (scenarioResult ? computeDeficitDeltas(scenarioResult.accounting, scenarioResult.macro?.deltaDeficit) : []),
+    [scenarioResult],
+  );
+  const debtDeltaPath = useMemo(
+    () => (scenarioResult ? computeDebtDeltas(scenarioResult.accounting) : []),
+    [scenarioResult],
+  );
+  const macroGrowthSeries = useMemo(() => {
+    if (!scenarioResult) {
+      return [] as number[];
+    }
+    const delta = Array.isArray(scenarioResult.macro?.deltaGDP)
+      ? scenarioResult.macro?.deltaGDP ?? []
+      : [];
+    if (!delta.length) {
+      return [];
+    }
+    const gdpSeriesRaw = Array.isArray(scenarioResult.accounting?.gdpPath)
+      ? scenarioResult.accounting?.gdpPath ?? []
+      : [];
+    const fallbackGdp = gdpSeriesRaw.length ? Number(gdpSeriesRaw[gdpSeriesRaw.length - 1]) : 0;
+    return delta.map((value, index) => {
+      const numeric = Number(value);
+      const denomRaw = Number(gdpSeriesRaw[index] ?? fallbackGdp);
+      if (!Number.isFinite(numeric) || !Number.isFinite(denomRaw) || denomRaw === 0) {
+        return 0;
+      }
+      return numeric / denomRaw;
+    });
+  }, [scenarioResult]);
   const latestDeficit = deficitPath.length > 0 ? deficitPath[0] : null;
   const latestDeficitRatio = useMemo(() => {
     if (!scenarioResult) return null;
@@ -749,6 +803,31 @@ useEffect(() => {
   const resolutionPctRaw = scenarioResult?.resolution?.overallPct;
   const hasResolution = typeof resolutionPctRaw === 'number';
   const resolutionPct = hasResolution ? resolutionPctRaw : 0;
+  const growthCardValue = macroGrowthSeries.length > 0 ? percentFormatter.format(macroGrowthSeries[0]) : '—';
+  const scenarioStatCards = scenarioResult
+    ? [
+        {
+          label: t('score.deficit_y0'),
+          value: latestDeficit !== null ? formatDeficitWithRatio(latestDeficit, latestDeficitRatio) : '—',
+        },
+        {
+          label: t('build.delta_vs_baseline') || 'Δ vs baseline (Y0)',
+          value: deficitDeltaPath.length > 0 ? formatSignedCurrency(deficitDeltaPath[0]) : '—',
+        },
+        {
+          label: t('build.debt_end') || 'Debt (Yend)',
+          value: debtPath.length > 0 ? formatCurrency(debtPath[debtPath.length - 1]) : '—',
+        },
+        {
+          label: t('build.debt_delta') || 'Δ debt vs baseline (Yend)',
+          value: debtDeltaPath.length > 0 ? formatSignedCurrency(debtDeltaPath[debtDeltaPath.length - 1]) : '—',
+        },
+        {
+          label: t('build.growth_delta') || 'Growth (Δ GDP Y0)',
+          value: growthCardValue,
+        },
+      ]
+    : null;
 
   const treemapData = useMemo(
     () => masses.map((mission) => {
@@ -1036,13 +1115,46 @@ useEffect(() => {
                   handleCategoryClick(item as MassCategory);
                 }}
               />
-              
+
               {scenarioError && (
                 <div className="scenario-inline-error scenario-inline-error--floating" role="alert">
                   {scenarioError}
                 </div>
               )}
             </div>
+
+            {scenarioResult && (
+              <div className="scenario-insights">
+                <div className="scenario-insights-header">
+                  <h3>{t('build.scoreboard') || 'Scoreboard'}</h3>
+                </div>
+                {scenarioStatCards && (
+                  <div className="scenario-score-cards">
+                    <StatCards items={scenarioStatCards} />
+                  </div>
+                )}
+                <div className="scenario-chart-grid">
+                  <div className="scenario-chart-card">
+                    <h4>{t('build.deficit_chart') || 'Deficit trajectory'}</h4>
+                    <DeficitPathChart
+                      deficit={deficitPath}
+                      debt={debtPath}
+                      startYear={year}
+                      emptyMessage={t('build.chart_no_data') || 'No data available'}
+                    />
+                  </div>
+                  <div className="scenario-chart-card">
+                    <h4>{t('build.growth_chart') || 'Growth (Δ GDP)'}</h4>
+                    <MacroGrowthChart
+                      growth={macroGrowthSeries}
+                      startYear={year}
+                      label={t('build.growth_chart') || 'Growth (Δ GDP)'}
+                      emptyMessage={t('build.chart_no_data') || 'No data available'}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="right-panel">
