@@ -8,6 +8,8 @@ import { ErrorDisplay } from '@/components/ErrorDisplay';
 import { BuildPageSkeleton } from '@/components/BuildPageSkeleton';
 import { buildPageQuery, suggestLeversQuery, getScenarioDslQuery } from '@/lib/queries';
 import { TreemapChart } from '@/components/Treemap';
+import { DeficitTrajectoryChart } from '@/components/DeficitTrajectoryChart';
+import { Sparkline } from '@/components/Sparkline';
 import { useHistory } from '@/lib/useHistory';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
@@ -39,6 +41,34 @@ const TARGET_PERCENT_DEFAULT_RANGE = 10;
 const TARGET_PERCENT_EXPANDED_RANGE = 25;
 const TARGET_PERCENT_STEP = 0.5;
 const EPSILON = 1e-6;
+
+function formatBillionsLabel(amount: number): string {
+  if (!Number.isFinite(amount)) {
+    return '—';
+  }
+  const billions = amount / 1e9;
+  const abs = Math.abs(billions);
+  const digits = abs >= 100 ? 0 : 1;
+  return `${new Intl.NumberFormat('fr-FR', { minimumFractionDigits: digits, maximumFractionDigits: digits }).format(billions)} Md€`;
+}
+
+function formatMacroPercent(value: number): string {
+  if (!Number.isFinite(value)) {
+    return '—';
+  }
+  if (value === 0) {
+    return new Intl.NumberFormat('fr-FR', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(0);
+  }
+  const abs = Math.abs(value);
+  let digits = 1;
+  if (abs < 0.05) {
+    digits = 2;
+  }
+  if (abs < 0.005) {
+    digits = 3;
+  }
+  return new Intl.NumberFormat('fr-FR', { style: 'percent', minimumFractionDigits: digits, maximumFractionDigits: digits }).format(value);
+}
 
 export default function BuildPageClient() {
   const { t } = useI18n();
@@ -726,7 +756,12 @@ useEffect(() => {
     }
   }, [pathname, searchParamsString]);
 
-  const deficitPath = scenarioResult ? computeDeficitTotals(scenarioResult.accounting, scenarioResult.macro?.deltaDeficit) : [];
+  const scenarioAccounting = scenarioResult?.accounting;
+  const scenarioMacroDelta = scenarioResult?.macro?.deltaDeficit;
+  const deficitPath = useMemo(
+    () => (scenarioAccounting ? computeDeficitTotals(scenarioAccounting, scenarioMacroDelta) : []),
+    [scenarioAccounting, scenarioMacroDelta],
+  );
   const latestDeficit = deficitPath.length > 0 ? deficitPath[0] : null;
   const latestDeficitRatio = useMemo(() => {
     if (!scenarioResult) return null;
@@ -749,6 +784,72 @@ useEffect(() => {
   const resolutionPctRaw = scenarioResult?.resolution?.overallPct;
   const hasResolution = typeof resolutionPctRaw === 'number';
   const resolutionPct = hasResolution ? resolutionPctRaw : 0;
+
+  const baselineDeficitPath = useMemo(() => {
+    if (!scenarioResult?.accounting?.baselineDeficitPath) {
+      return [];
+    }
+    return scenarioResult.accounting.baselineDeficitPath.map((value: number | string) => Number(value) || 0);
+  }, [scenarioResult]);
+
+  const deficitYears = useMemo(
+    () => (deficitPath.length ? Array.from({ length: deficitPath.length }, (_, idx) => year + idx) : []),
+    [deficitPath, year],
+  );
+
+  const gdpSeries = useMemo(() => {
+    if (!scenarioResult?.accounting?.gdpPath) {
+      return [];
+    }
+    return scenarioResult.accounting.gdpPath.map((value: number | string) => Number(value) || 0);
+  }, [scenarioResult]);
+
+  const macroDeltaSeries = useMemo(() => {
+    if (!scenarioResult?.macro?.deltaGDP) {
+      return [];
+    }
+    return scenarioResult.macro.deltaGDP.map((value: number | string) => Number(value) || 0);
+  }, [scenarioResult]);
+
+  const macroDeltaPercentSeries = useMemo(() => {
+    if (!macroDeltaSeries.length || !gdpSeries.length) {
+      return [];
+    }
+    const length = Math.min(macroDeltaSeries.length, gdpSeries.length);
+    const result: number[] = [];
+    for (let i = 0; i < length; i += 1) {
+      const gdp = gdpSeries[i];
+      const delta = macroDeltaSeries[i];
+      result.push(gdp !== 0 ? delta / gdp : 0);
+    }
+    return result;
+  }, [gdpSeries, macroDeltaSeries]);
+
+  const macroYears = useMemo(
+    () => (macroDeltaPercentSeries.length ? Array.from({ length: macroDeltaPercentSeries.length }, (_, idx) => year + idx) : []),
+    [macroDeltaPercentSeries, year],
+  );
+
+  const hasDeficitSeries = deficitPath.length > 0;
+  const hasMacroSeries = macroDeltaPercentSeries.length > 0;
+  const deficitStartYear = deficitYears[0] ?? year;
+  const deficitEndYear = deficitYears.length > 1 ? deficitYears[deficitYears.length - 1] : deficitStartYear;
+  const macroStartYear = macroYears[0] ?? year;
+  const macroEndYear = macroYears.length > 1 ? macroYears[macroYears.length - 1] : macroStartYear;
+  const deficitRangeLabel = hasDeficitSeries
+    ? deficitYears.length > 1
+      ? `${deficitStartYear} → ${deficitEndYear}`
+      : `${deficitStartYear}`
+    : null;
+  const macroRangeLabel = hasMacroSeries
+    ? macroYears.length > 1
+      ? `${macroStartYear} → ${macroEndYear}`
+      : `${macroStartYear}`
+    : null;
+  const macroPrimaryValue = hasMacroSeries ? macroDeltaPercentSeries[0] : 0;
+  const macroLatestValue = hasMacroSeries
+    ? macroDeltaPercentSeries[macroDeltaPercentSeries.length - 1]
+    : macroPrimaryValue;
 
   const treemapData = useMemo(
     () => masses.map((mission) => {
@@ -1043,6 +1144,74 @@ useEffect(() => {
                 </div>
               )}
             </div>
+            {(scenarioResult || scenarioLoading) && (
+              <div className="scenario-insights" role="region" aria-label={t('build.scoreboard')}>
+                <div className="insight-card card trajectory-card">
+                  <div className="trajectory-header">
+                    <div className="trajectory-title">{t('build.deficit_trajectory')}</div>
+                    {deficitRangeLabel && <div className="trajectory-range">{deficitRangeLabel}</div>}
+                  </div>
+                  {hasDeficitSeries ? (
+                    <>
+                      <DeficitTrajectoryChart
+                        baseline={baselineDeficitPath}
+                        scenario={deficitPath}
+                        years={deficitYears}
+                        className="trajectory-chart"
+                        height={220}
+                      />
+                      <div className="trajectory-meta" aria-hidden="true">
+                        <div className="trajectory-metric">
+                          <span>{deficitStartYear}</span>
+                          <strong>{formatBillionsLabel(deficitPath[0])}</strong>
+                        </div>
+                        <div className="trajectory-metric">
+                          <span>{deficitEndYear}</span>
+                          <strong>{formatBillionsLabel(deficitPath[deficitPath.length - 1])}</strong>
+                        </div>
+                      </div>
+                      <div className="trajectory-legend">
+                        <span className="legend-item">
+                          <span className="legend-dot legend-dot--baseline" />
+                          {t('build.baseline')}
+                        </span>
+                        <span className="legend-item">
+                          <span className="legend-dot legend-dot--scenario" />
+                          {t('build.scenario')}
+                        </span>
+                      </div>
+                    </>
+                  ) : (
+                    <p className="trajectory-empty">{t('build.no_deficit_data')}</p>
+                  )}
+                </div>
+                <div className="insight-card card macro-card">
+                  <div className="macro-header">
+                    <div className="macro-title">{t('build.gdp_growth_delta')}</div>
+                    {macroRangeLabel && <div className="macro-range">{macroRangeLabel}</div>}
+                  </div>
+                  {hasMacroSeries ? (
+                    <>
+                      <div className="macro-primary">{formatMacroPercent(macroPrimaryValue)}</div>
+                      <div className="macro-secondary" aria-hidden="true">
+                        <span>
+                          {macroStartYear}: {formatMacroPercent(macroPrimaryValue)}
+                        </span>
+                        {macroYears.length > 1 && (
+                          <span>
+                            {macroEndYear}: {formatMacroPercent(macroLatestValue)}
+                          </span>
+                        )}
+                      </div>
+                      <Sparkline values={macroDeltaPercentSeries} className="sparkline" strokeWidth={2} />
+                      <div className="macro-hint">{t('build.gdp_growth_hint')}</div>
+                    </>
+                  ) : (
+                    <p className="macro-empty">{t('build.no_macro_data')}</p>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="right-panel">

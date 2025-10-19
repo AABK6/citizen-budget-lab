@@ -647,6 +647,154 @@ html[data-fr-theme='dark'] .brand-logo-dark { display: block }
     min-height: 0;
 }
 
+.scenario-insights {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.insight-card.card {
+    border-radius: 16px;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    border-color: rgba(148, 163, 184, 0.3);
+    box-shadow: 0 20px 48px rgba(15, 23, 42, 0.16);
+}
+
+html[data-fr-theme='dark'] .insight-card.card {
+    border-color: rgba(148, 163, 184, 0.25);
+    box-shadow: 0 20px 48px rgba(8, 11, 24, 0.6);
+}
+
+.trajectory-header,
+.macro-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+}
+
+.trajectory-title,
+.macro-title {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.trajectory-range,
+.macro-range {
+    color: var(--muted);
+    font-size: 0.875rem;
+}
+
+.trajectory-chart {
+    width: 100%;
+}
+
+.trajectory-meta {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.trajectory-metric {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+.trajectory-metric strong {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--fg);
+}
+
+.trajectory-legend {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: 0.75rem;
+    color: var(--muted);
+}
+
+.legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    display: inline-block;
+    background: var(--muted);
+    opacity: 0.8;
+}
+
+.legend-dot--baseline {
+    background: #9fa9c7;
+}
+
+.legend-dot--scenario {
+    background: #1d4ed8;
+}
+
+html[data-fr-theme='dark'] .legend-dot--baseline {
+    background: rgba(148, 163, 184, 0.6);
+}
+
+html[data-fr-theme='dark'] .legend-dot--scenario {
+    background: #7aa2ff;
+}
+
+.trajectory-empty,
+.macro-empty {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--muted);
+}
+
+.macro-primary {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--fg);
+}
+
+.macro-secondary {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+.macro-hint {
+    font-size: 0.8rem;
+    color: var(--muted);
+}
+
+.sparkline {
+    width: 100%;
+    min-height: 80px;
+    color: #1d4ed8;
+}
+
+html[data-fr-theme='dark'] .sparkline {
+    color: #7aa2ff;
+}
+
+@media (max-width: 1200px) {
+    .scenario-insights {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
 .info-pill {
     display: flex;
     justify-content: space-between;
