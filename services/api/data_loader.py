@@ -738,7 +738,26 @@ def load_lego_config() -> dict:
     return _read_file_json(LEGO_PIECES_JSON)
 
 
+def _read_static_lego_baseline(year: int) -> dict | None:
+    path = os.path.join(DATA_DIR, "cache", f"lego_baseline_{year}.json")
+    if not os.path.exists(path):
+        return None
+    try:
+        data = _read_file_json(path)
+    except Exception:
+        return None
+    if isinstance(data, dict):
+        return data
+    return None
+
+
 def load_lego_baseline(year: int) -> dict | None:
+    settings = get_settings()
+    static_data: dict | None = None
+    if settings.lego_baseline_static:
+        static_data = _read_static_lego_baseline(year)
+        if static_data:
+            return static_data
     if wh.warehouse_available():
         try:
             snap = wh.lego_baseline(year)
@@ -746,13 +765,9 @@ def load_lego_baseline(year: int) -> dict | None:
                 return snap
         except Exception:
             pass
-    path = os.path.join(DATA_DIR, "cache", f"lego_baseline_{year}.json")
-    if os.path.exists(path):
-        try:
-            return _read_file_json(path)
-        except Exception:
-            return None
-    return None
+    if static_data is not None:
+        return static_data
+    return _read_static_lego_baseline(year)
 
 
 def lego_pieces_with_baseline(year: int, scope: str = "S13") -> List[dict]:
@@ -760,11 +775,13 @@ def lego_pieces_with_baseline(year: int, scope: str = "S13") -> List[dict]:
     mission_by_piece, _ = mission_bridges()
     # Prefer warehouse baseline if available; fallback to warmed JSON
     baseline = None
-    try:
-        if wh.warehouse_available():
-            baseline = wh.lego_baseline(year)
-    except Exception:
-        baseline = None
+    settings = get_settings()
+    if not settings.lego_baseline_static:
+        try:
+            if wh.warehouse_available():
+                baseline = wh.lego_baseline(year)
+        except Exception:
+            baseline = None
     if not baseline:
         baseline = load_lego_baseline(year)
     amounts: dict[str, float | None] = {}
@@ -1079,13 +1096,15 @@ def mission_to_cofog_weights(mission_code: str, cofog_to_mission: Dict[str, List
 
 def _builder_mission_totals(year: int) -> Dict[str, float]:
     # Prefer warehouse aggregation when available
-    try:
-        if wh.warehouse_available():
-            rows = wh.lego_baseline_mission(year)
-            if rows:
-                return {str(r.get("mission_code")): float(r.get("amount_eur") or 0.0) for r in rows}
-    except Exception:
-        pass
+    settings = get_settings()
+    if not settings.lego_baseline_static:
+        try:
+            if wh.warehouse_available():
+                rows = wh.lego_baseline_mission(year)
+                if rows:
+                    return {str(r.get("mission_code")): float(r.get("amount_eur") or 0.0) for r in rows}
+        except Exception:
+            pass
 
     baseline = load_lego_baseline(year)
     if not baseline:
@@ -1247,15 +1266,16 @@ def run_scenario(dsl_b64: str, *, lens: str | None = None) -> tuple[str, Account
     gdp_series = [gdp_series_map.get(baseline_year + i, list(gdp_series_map.values())[-1]) for i in range(horizon_years)]
     shocks_pct_gdp: Dict[str, List[float]] = {}
     # Preload LEGO baseline/config to support piece.* targets
-    warehouse_ok = wh.warehouse_available()
-    allow_fallback = os.getenv("ALLOW_SCENARIO_BASELINE_FALLBACK", "0") in ("1", "true", "True")
+    settings = get_settings()
+    warehouse_ok = False
+    if not settings.lego_baseline_static:
+        warehouse_ok = wh.warehouse_available()
+    allow_fallback = settings.lego_baseline_static or os.getenv("ALLOW_SCENARIO_BASELINE_FALLBACK", "0") in ("1", "true", "True")
 
     lego_bl = None
     if warehouse_ok:
         lego_bl = wh.lego_baseline(baseline_year)
-        if not lego_bl:
-            lego_bl = load_lego_baseline(baseline_year)
-    elif allow_fallback:
+    if not lego_bl and allow_fallback:
         lego_bl = load_lego_baseline(baseline_year)
 
     if not lego_bl:

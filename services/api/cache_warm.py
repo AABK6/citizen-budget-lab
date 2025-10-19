@@ -39,7 +39,7 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 DATA_DIR = os.path.join(ROOT, "data")
 CACHE_DIR = os.path.join(DATA_DIR, "cache")
 LOG = logging.getLogger("cbl.warmers")
-DEFAULT_PLF_2026_URL = "https://www.budget.gouv.fr/files/uploads/extract/2024/plf2026/plafonds_missions.xlsx"
+DEFAULT_PLF_2026_URL = "https://www.budget.gouv.fr/documentation/file-download/30589"
 
 
 def _ensure_dir(path: str) -> None:
