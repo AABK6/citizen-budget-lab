@@ -810,6 +810,7 @@ def lego_pieces_with_baseline(year: int, scope: str = "S13") -> List[dict]:
                 "id": pid,
                 "label": p.get("label"),
                 "type": p.get("type"),
+                "description": p.get("description"),
                 "amount_eur": amounts.get(pid),
                 "share": shares.get(pid),
                 "cofog_majors": cofmaj,

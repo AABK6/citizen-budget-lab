@@ -32,30 +32,34 @@ type TreemapProps = {
 const defaultColors = ['#2563eb', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#ef4444', '#6366f1', '#14b8a6', '#a855f7', '#d946ef'];
 const EPSILON = 1e-6;
 
-const CustomTooltip = ({ active, payload, mode }: any) => {
-  if (active && payload && payload.length) {
-    const { name, pieces, amount, share } = payload[0].payload;
-    const valueLine = mode === 'share'
-      ? `${(payload[0].value * 100).toFixed(1)}% of baseline`
-      : `€${(payload[0].value / 1e9).toFixed(1)}B`;
-    const secondaryLine = mode === 'share'
-      ? `€${(amount / 1e9).toFixed(1)}B baseline`
-      : `${(share * 100).toFixed(1)}% of baseline`;
-    return (
-      <div className="custom-tooltip">
-        <p className="label">{`${name}`}</p>
-        <p className="intro">{valueLine}</p>
-        <p className="secondary">{secondaryLine}</p>
-        <ul className="tooltip-pieces">
-          {pieces.slice(0, 3).map((piece: any) => (
-            <li key={piece.id}>{piece.label}</li>
-          ))}
-        </ul>
-      </div>
-    );
+const CustomTooltip = ({ active, payload }: any) => {
+  if (!active || !payload || !payload.length) {
+    return null;
   }
 
-  return null;
+  const { name, pieces } = payload[0].payload;
+  const hasDescriptions = Array.isArray(pieces) && pieces.length > 0;
+
+  return (
+    <div className="custom-tooltip">
+      <p className="label">{name}</p>
+      {hasDescriptions && (
+        <ul className="tooltip-pieces">
+          {pieces.slice(0, 4).map((piece: any) => {
+            const label = piece.label || piece.id;
+            const description = piece.description || '';
+            return (
+              <li key={piece.id}>
+                <span className="tooltip-piece-label">{label}</span>
+                {description && <span className="tooltip-piece-separator">:</span>}
+                {description && <span className="tooltip-piece-description">{description}</span>}
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
+  );
 };
 
 const CustomizedContent = (props: any) => {

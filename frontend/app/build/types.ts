@@ -1,6 +1,7 @@
 export type LegoPiece = {
   id: string;
   label: string;
+  description?: string;
   type: 'expenditure' | 'revenue';
   cofogMajors: string[];
   missions: MissionWeight[];

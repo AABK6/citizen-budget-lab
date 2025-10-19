@@ -200,6 +200,7 @@ class LegoPieceType:
     id: str
     label: str
     type: str
+    description: str | None
     amountEur: float | None
     share: float | None
     cofogMajors: list[str]
@@ -654,6 +655,7 @@ class Query:
                 id=i["id"],
                 label=i.get("label") or i["id"],
                 type=i.get("type") or "expenditure",
+                description=i.get("description"),
                 amountEur=i.get("amount_eur"),
                 share=i.get("share"),
                 cofogMajors=[str(x) for x in (i.get("cofog_majors") or [])],
@@ -793,6 +795,7 @@ class Query:
                                 id=pid,
                                 label=str(ent.get("label") or pid),
                                 type=typ,
+                                description=ent.get("description"),
                                 amountEur=(float(amt) if isinstance(amt, (int, float)) else None),
                                 share=(float(ent.get("share")) if isinstance(ent.get("share"), (int, float)) else None),
                                 cofogMajors=[],
@@ -836,6 +839,7 @@ class Query:
                     id=str(ent.get("id")),
                     label=str(ent.get("id")),
                     type=piece_type,
+                    description=ent.get("description"),
                     amountEur=(float(amount) if isinstance(amount, (int, float)) else None),
                     share=(float(ent.get("share")) if isinstance(ent.get("share"), (int, float)) else None),
                     cofogMajors=[],

@@ -11,6 +11,7 @@ export const buildPageQuery = `
     legoPieces(year: $year) {
       id
       label
+      description
       type
       cofogMajors
       missions { code weight }
