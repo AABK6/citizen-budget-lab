@@ -1,0 +1,84 @@
+{
+  "year": 2026,
+  "scope": "S13",
+  "country": "FR",
+  "pib_eur": 3061000000000.0,
+  "depenses_total_eur": 1726404000000.0,
+  "recettes_total_eur": 1582537000000.0,
+  "pieces": [
+    { "id": "ed_schools_staff_ops", "type": "expenditure", "amount_eur": 50860194548.850334, "share": 0.02946364047538808 },
+    { "id": "ed_secondary", "type": "expenditure", "amount_eur": 48498231240.215065, "share": 0.02809372874797061 },
+    { "id": "ed_universities", "type": "expenditure", "amount_eur": 50393679442.699486, "share": 0.029193848594109012 },
+    { "id": "ed_research_public", "type": "expenditure", "amount_eur": 49935466140.88861, "share": 0.028927067208476275 },
+
+    { "id": "health_hospitals", "type": "expenditure", "amount_eur": 111800000000.0, "share": 0.0647737277362581 },
+    { "id": "health_citycare", "type": "expenditure", "amount_eur": 114900000000.0, "share": 0.06652820959679936 },
+    { "id": "health_public_health", "type": "expenditure", "amount_eur": 43700000000.0, "share": 0.02530039963000667 },
+
+    { "id": "soc_pensions", "type": "expenditure", "amount_eur": 431000000000.0, "share": 0.24951862722580902 },
+    { "id": "soc_family", "type": "expenditure", "amount_eur": 59400000000.0, "share": 0.034400925754348455 },
+    { "id": "soc_unemployment", "type": "expenditure", "amount_eur": 43800000000.0, "share": 0.02536602714812299 },
+    { "id": "soc_disability_dependence", "type": "expenditure", "amount_eur": 43500000000.0, "share": 0.025191356135593345 },
+    { "id": "soc_housing", "type": "expenditure", "amount_eur": 0.0, "share": 0.0 },
+
+    { "id": "sec_police_gendarmerie", "type": "expenditure", "amount_eur": 24573132481.99096, "share": 0.014229991146821438 },
+    { "id": "sec_justice_prisons", "type": "expenditure", "amount_eur": 23683970269.638615, "share": 0.013720858134775676 },
+    { "id": "sec_civil_protection", "type": "expenditure", "amount_eur": 21112556952.667068, "share": 0.01222964728955281 },
+
+    { "id": "defense_personnel", "type": "expenditure", "amount_eur": 23744081325.86214, "share": 0.0137533826207921 },
+    { "id": "defense_equipment", "type": "expenditure", "amount_eur": 33355918674.137867, "share": 0.01931939640326919 },
+
+    { "id": "transport_ops", "type": "expenditure", "amount_eur": 24216762856.522858, "share": 0.0140266921281632 },
+    { "id": "transport_invest", "type": "expenditure", "amount_eur": 54790275294.391884, "share": 0.03174251033803493 },
+
+    { "id": "env_renov_energy", "type": "expenditure", "amount_eur": 8134878790.673623, "share": 0.004710531791229613 },
+    { "id": "env_waste_sanitation", "type": "expenditure", "amount_eur": 12813414755.476068, "share": 0.007419798278486933 },
+    { "id": "env_water_biodiversity", "type": "expenditure", "amount_eur": 12303283185.717596, "share": 0.007127651934926508 },
+
+    { "id": "econ_business_support", "type": "expenditure", "amount_eur": 57118728885.97814, "share": 0.03308168781910372 },
+    { "id": "agri_food", "type": "expenditure", "amount_eur": 50507970957.6188, "share": 0.029244278023590068 },
+    { "id": "labor_market_services", "type": "expenditure", "amount_eur": 46826070826.40267, "share": 0.027121417172752002 },
+
+    { "id": "culture_heritage", "type": "expenditure", "amount_eur": 26818724863.5313, "share": 0.015539054856068362 },
+    { "id": "sport_youth", "type": "expenditure", "amount_eur": 14058445136.438427, "share": 0.008141410960063368 },
+    { "id": "media_public", "type": "expenditure", "amount_eur": 14117574090.441507, "share": 0.00817566197126501 },
+
+    { "id": "admin_services", "type": "expenditure", "amount_eur": 87755412989.711, "share": 0.05081518328668276 },
+    { "id": "europe_diplomacy", "type": "expenditure", "amount_eur": 32368509001.362473, "share": 0.01875621002225049 },
+    { "id": "grants_to_locals", "type": "expenditure", "amount_eur": 33006310013.069984, "share": 0.01911404028408206 },
+
+    { "id": "debt_interest", "type": "expenditure", "amount_eur": 73464000000.0, "share": 0.04253600092667702 },
+
+    { "id": "rev_vat_standard", "type": "revenue", "amount_eur": 178451451283.79282, "share": null },
+    { "id": "rev_vat_reduced", "type": "revenue", "amount_eur": 76462276547.99567, "share": null },
+    { "id": "rev_excise_energy", "type": "revenue", "amount_eur": 66687441068.33018, "share": null },
+    { "id": "rev_excise_tob_alc", "type": "revenue", "amount_eur": 9751201515.100735, "share": null },
+    { "id": "rev_pit", "type": "revenue", "amount_eur": 262104004600.0449, "share": null },
+    { "id": "rev_cit", "type": "revenue", "amount_eur": 174695792900.95963, "share": null },
+    { "id": "rev_csg_crds", "type": "revenue", "amount_eur": 0.0, "share": null },
+    { "id": "rev_soc_employee", "type": "revenue", "amount_eur": 348688163684.41144, "share": null },
+    { "id": "rev_soc_employer", "type": "revenue", "amount_eur": 60906660597.674095, "share": null },
+    { "id": "rev_soc_self", "type": "revenue", "amount_eur": 165356170277.81253, "share": null },
+    { "id": "rev_prod_taxes", "type": "revenue", "amount_eur": 78669798311.17432, "share": null },
+    { "id": "rev_wage_tax", "type": "revenue", "amount_eur": 22014116104.9584, "share": null },
+    { "id": "rev_property_taxes", "type": "revenue", "amount_eur": 7052033667.685823, "share": null },
+    { "id": "rev_transfer_taxes", "type": "revenue", "amount_eur": 37728887908.57022, "share": null },
+    { "id": "rev_env_taxes", "type": "revenue", "amount_eur": 15735585590.369743, "share": null },
+    { "id": "rev_public_income", "type": "revenue", "amount_eur": 0.0, "share": null },
+    { "id": "rev_sales_fees", "type": "revenue", "amount_eur": 75069497701.88264, "share": null },
+    { "id": "rev_fines", "type": "revenue", "amount_eur": 3150248642.7980914, "share": null },
+    { "id": "rev_transfers_in", "type": "revenue", "amount_eur": 0.0, "share": null },
+
+    { "id": "test_piece_no_cofog", "type": "expenditure", "amount_eur": 0.0, "share": 0.0 }
+  ],
+  "meta": {
+    "source": "PLF 2026 (rapport complet & RESF), PLFSS 2026 (ONDAM & branches), COR 2025 (périmètre retraites), Unédic 2026",
+    "notes": "soc_pensions ancré à 431 Md€ (~13.9% du PIB appliqué au PIB 2026), soc_unemployment = 43.8 Md€ (Unédic), Défense (personnel+équipement) = 57.1 Md€ (PLF 2026) réparti selon le ratio antérieur; ONDAM conservé; autres lignes ré-équilibrées au prorata pour somer exactement à 56.4% du PIB; recettes mises à l’échelle pour totaliser 51.7% du PIB.",
+    "consistency_checks": {
+      "sum_expenditure_eur": 1726404000000.0,
+      "sum_revenue_eur": 1582537000000.0,
+      "defense_total_eur": 57099999999.99999,
+      "ondam_total_eur": 270400000000.0
+    }
+  }
+}

@@ -764,8 +764,14 @@ class Query:
         bl: dict
         try:
             from . import warehouse_client as _wh
+            try:
+                from .settings import get_settings as _get_settings  # lazy import
 
-            if _wh.warehouse_available():
+                use_static = _get_settings().lego_baseline_static
+            except Exception:
+                use_static = False
+
+            if not use_static and _wh.warehouse_available():
                 wh_bl = _wh.lego_baseline(year)
                 if isinstance(wh_bl, dict) and wh_bl.get("pieces"):
                     # Compute totals by type
@@ -813,32 +819,42 @@ class Query:
 
         bl = load_lego_baseline(year) or {}
         # If scope mismatches, we still return what we have; clients can detect gaps
-        pieces = [
-            LegoPieceType(
-                id=str(ent.get("id")),
-                label=str(ent.get("id")),
-                type=str(ent.get("type")),
-                amountEur=(ent.get("amount_eur") if isinstance(ent.get("amount_eur"), (int, float)) else None),
-                share=(ent.get("share") if isinstance(ent.get("share"), (int, float)) else None),
-                cofogMajors=[],
-                missions=[
-                    MissionWeightType(code=str(m.get("code")), weight=float(m.get("weight", 0.0)))
-                    for m in (ent.get("missions") or [])
-                    if isinstance(m, dict) and m.get("code")
-                ],
-                beneficiaries={},
-                examples=[],
-                sources=[],
-                locked=False,
+        dep_total = 0.0
+        rec_total = 0.0
+        pieces: list[LegoPieceType] = []
+        for ent in bl.get("pieces", []):
+            amount = ent.get("amount_eur")
+            piece_type = str(ent.get("type"))
+            if isinstance(amount, (int, float)):
+                if piece_type == "expenditure":
+                    dep_total += float(amount)
+                elif piece_type == "revenue":
+                    rec_total += float(amount)
+            pieces.append(
+                LegoPieceType(
+                    id=str(ent.get("id")),
+                    label=str(ent.get("id")),
+                    type=piece_type,
+                    amountEur=(float(amount) if isinstance(amount, (int, float)) else None),
+                    share=(float(ent.get("share")) if isinstance(ent.get("share"), (int, float)) else None),
+                    cofogMajors=[],
+                    missions=[
+                        MissionWeightType(code=str(m.get("code")), weight=float(m.get("weight", 0.0)))
+                        for m in (ent.get("missions") or [])
+                        if isinstance(m, dict) and m.get("code")
+                    ],
+                    beneficiaries={},
+                    examples=[],
+                    sources=[],
+                    locked=False,
+                )
             )
-            for ent in bl.get("pieces", [])
-        ]
         return LegoBaselineType(
             year=int(bl.get("year", year)),
             scope=ScopeEnum(str(bl.get("scope", scope.value))),
             pib=float(bl.get("pib_eur", 0.0)),
-            depensesTotal=float(bl.get("depenses_total_eur", 0.0)),
-            recettesTotal=float(bl.get("recettes_total_eur", 0.0)),
+            depensesTotal=float(bl.get("depenses_total_eur", dep_total)),
+            recettesTotal=float(bl.get("recettes_total_eur", rec_total)),
             pieces=pieces,
         )
 
