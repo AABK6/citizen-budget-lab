@@ -22,38 +22,44 @@ export type MassCategoryListProps = {
 
 export function MassCategoryList({ categories, onSelect, formatCurrency, formatShare, displayMode }: MassCategoryListProps) {
   return (
-    <>
-      <div className="panel-header">Spending Targets &amp; Reforms</div>
+    <div className="space-y-3 p-1">
+      <div className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-4 px-2">Spending Targets &amp; Reforms</div>
       {categories.map((category, index) => {
         const accent = category.color || '#2563eb';
-        const tint = tintBackground(accent, 0.16);
+        const tint = tintBackground(accent, 0.12);
         return (
-        <div
-          key={category.id ?? index}
-          className="mission-card"
-          onClick={() => onSelect(category)}
-          style={{ '--card-accent': accent } as CSSProperties}
-        >
-          <div className="mission-card__body">
-            <div className="mission-card__identity">
-              <span className="mission-card__icon" aria-hidden="true" style={{ backgroundColor: tint, color: accent }}>
-                {category.icon || '🏛️'}
-              </span>
-              <div className="mission-card__titles">
-                <div className="mission-card__title">{category.name}</div>
-                <div className="mission-card__metric">
+          <div
+            key={category.id ?? index}
+            className="group relative bg-white hover:bg-white/90 border border-transparent hover:border-blue-200 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer overflow-hidden"
+            onClick={() => onSelect(category)}
+            style={{ '--card-accent': accent } as CSSProperties}
+          >
+            <div className="p-4 flex items-center gap-4">
+              <div className="relative">
+                <span
+                  className="flex items-center justify-center w-12 h-12 rounded-xl text-2xl transition-transform group-hover:scale-110 duration-300"
+                  aria-hidden="true"
+                  style={{ backgroundColor: tint, color: accent }}
+                >
+                  {category.icon || '🏛️'}
+                </span>
+              </div>
+
+              <div className="flex-1 min-w-0">
+                <div className="font-bold text-gray-900 truncate group-hover:text-blue-700 transition-colors">{category.name}</div>
+                <div className="text-sm font-medium text-gray-500">
                   {displayMode === 'share' ? formatShare(category.share) : formatCurrency(category.amount)}
                 </div>
               </div>
+
+              <i className="material-icons text-gray-300 group-hover:text-blue-400 transition-colors" aria-hidden="true">chevron_right</i>
             </div>
-            <i className="material-icons mission-card__chevron" aria-hidden="true">chevron_right</i>
+
+            {/* Hover Actions Hint */}
+            <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-blue-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
-          <div className="mission-card__footer">
-            <span className="mission-card__action">Set target</span>
-            <span className="mission-card__action">View reforms</span>
-          </div>
-        </div>
-      )})}
-    </>
+        )
+      })}
+    </div>
   );
 }

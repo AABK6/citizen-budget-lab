@@ -30,6 +30,11 @@ import { MassCategoryPanel } from './components/MassCategoryPanel';
 import { RevenueCategoryList } from './components/RevenueCategoryList';
 import { RevenueCategoryPanel } from './components/RevenueCategoryPanel';
 import { computeDeficitTotals } from '@/lib/fiscal';
+import { HUD } from '@/components/layout/HUD';
+import { ReformDrawer } from '@/components/layout/ReformDrawer';
+
+const cloneCategories = (categories: MassCategory[]) =>
+  categories.map((category) => ({ ...category }));
 
 const fallbackTreemapColors = ['#2563eb', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#ef4444', '#6366f1', '#14b8a6', '#a855f7', '#d946ef'];
 const revenueColorPalette = ['#0ea5e9', '#f97316', '#9333ea', '#16a34a', '#dc2626', '#facc15', '#0f766e', '#7c3aed', '#22c55e', '#2563eb'];
@@ -45,6 +50,7 @@ export default function BuildPageClient() {
   const router = useRouter();
   const pathname = usePathname();
   const { state, actions } = useBuildState(INITIAL_DSL_OBJECT.baseline_year);
+  const [ghostMode, setGhostMode] = useState(false);
   const {
     year,
     initialLoading,
@@ -386,7 +392,24 @@ export default function BuildPageClient() {
       const allPieces: LegoPiece[] = data.legoPieces.map((p: any) => ({ ...p, amountEur: baselineAmounts[p.id] || 0 }));
 
       const spending = allPieces.filter((p) => p.type === 'expenditure');
-      const revenue = allPieces.filter((p) => p.type === 'revenue');
+      // Exclude borrowing (emprunt) and internal transfers to show true fiscal balance
+      const revenue = allPieces.filter((p) =>
+        p.type === 'revenue' &&
+        !p.id.toLowerCase().includes('emprunt') &&
+        p.id !== 'rev_transfers_in'
+      );
+
+      // Add adjustment for refunds and gross data corrections
+      revenue.push({
+        id: 'rev_adjustments',
+        type: 'revenue',
+        label: 'Remboursements & Corrections',
+        description: 'Remboursements, dégrèvements, et corrections de données brutes.',
+        amountEur: -300e9, // -300B adjustment
+        mapping: {},
+        beneficiaries: {},
+        sources: []
+      } as any);
 
       const missionLabelMap: Record<string, MissionLabel> = {};
       (data.missionLabels || []).forEach((label: MissionLabel) => {
@@ -492,9 +515,9 @@ export default function BuildPageClient() {
   }, [fetchData]);
 
   // Run scenario initially and whenever DSL changes
-useEffect(() => {
-  runScenario();
-}, [dslObject, runScenario]);
+  useEffect(() => {
+    runScenario();
+  }, [dslObject, runScenario]);
 
   const handleCategoryClick = async (category: MassCategory) => {
     toggleRevenuePanel(false);
@@ -752,13 +775,15 @@ useEffect(() => {
 
   const treemapData = useMemo(
     () => masses.map((mission) => {
-      const metric = displayMode === 'share' ? mission.share : mission.amount;
+      const metric = ghostMode
+        ? (displayMode === 'share' ? mission.baselineShare : mission.baselineAmount)
+        : (displayMode === 'share' ? mission.share : mission.amount);
       return {
         ...mission,
-        value: Math.max(metric, 0),
+        value: Math.max(metric ?? 0, 0),
       };
     }),
-    [masses, displayMode],
+    [masses, displayMode, ghostMode],
   );
 
   const treemapColors = useMemo(
@@ -777,6 +802,15 @@ useEffect(() => {
     return map;
   }, [revenuePieces]);
 
+  const totalSpending = useMemo(() => masses.reduce((sum, m) => sum + Math.max(m.amount, 0), 0), [masses]);
+  const totalRevenue = useMemo(() => {
+    return revenuePieces.reduce((sum, p) => sum + (p.amountEur || 0), 0);
+  }, [revenuePieces]);
+
+  // Calculate deficit from pieces to ensure consistency with filtered revenue
+  const calculatedDeficit = totalSpending - totalRevenue;
+  const calculatedDeficitRatio = calculatedDeficit / (scenarioResult?.accounting?.gdpPath?.[0] ?? 2800e9);
+
   if (initialLoading) {
     return <BuildPageSkeleton />;
   }
@@ -787,361 +821,201 @@ useEffect(() => {
 
   return (
     <div className="build-page-container">
-      <div className="mission-control" role="region" aria-label="Mission control toolbar">
-        <div className="mission-cluster mission-cluster--left">
-          <div className="mission-header-bar">
-            
-            
-            <div className="mission-year" aria-label="Scenario baseline year">
-              <i className="material-icons" aria-hidden="true">calendar_today</i>
-              <span>{year}</span>
-            </div>
-          </div>
-        </div>
+      <HUD
+        deficit={calculatedDeficit}
+        revenue={totalRevenue}
+        spending={totalSpending}
+        deficitPercentage={calculatedDeficitRatio * 100}
+        aggregationLens={aggregationLens}
+        displayMode={displayMode}
+        lens={lens}
+        ghostMode={ghostMode}
+        canUndo={canUndo}
+        canRedo={canRedo}
+        onLensSwitch={(lens) => handleLensSwitch(lens as AggregationLens)}
+        onDisplayModeChange={setDisplayMode}
+        onViewLensChange={setLens}
+        onGhostModeToggle={() => setGhostMode(!ghostMode)}
+        onUndo={undo}
+        onRedo={redo}
+        onReset={reset}
+        onShare={handleShare}
+      />
 
-        <div className="mission-cluster mission-cluster--center">
-          <div className="control-stack">
-            <div className="aggregation-toggle" role="group" aria-label="Budget lens">
-              <button
-                type="button"
-                className={`toggle-btn ${aggregationLens === 'MISSION' ? 'active' : ''}`}
-                onClick={() => handleLensSwitch('MISSION')}
-                aria-pressed={aggregationLens === 'MISSION'}
-              >
-                Administrative lens
-              </button>
-              <button
-                type="button"
-                className={`toggle-btn ${aggregationLens === 'COFOG' ? 'active' : ''}`}
-                onClick={() => handleLensSwitch('COFOG')}
-                aria-pressed={aggregationLens === 'COFOG'}
-              >
-                COFOG lens
-              </button>
-            </div>
-            <div className="display-toggle" role="group" aria-label="Display mode">
-              <span className="display-prefix">Display:</span>
-              <button
-                type="button"
-                className={`toggle-btn ${displayMode === 'amount' ? 'active' : ''}`}
-                onClick={() => setDisplayMode('amount')}
-                aria-pressed={displayMode === 'amount'}
-              >
-                <span className="toggle-icon" aria-hidden="true">€</span>
-                <span className="toggle-label">Amounts</span>
-              </button>
-              <button
-                type="button"
-                className={`toggle-btn ${displayMode === 'share' ? 'active' : ''}`}
-                onClick={() => setDisplayMode('share')}
-                aria-pressed={displayMode === 'share'}
-              >
-                <span className="toggle-icon" aria-hidden="true">%</span>
-                <span className="toggle-label">Shares</span>
-              </button>
-            </div>
-            <div className="view-switcher" role="tablist" aria-label="Treemap view">
-              <button
-                type="button"
-                role="tab"
-                className={`lens-option ${lens === 'mass' ? 'active' : ''}`}
-                onClick={() => setLens('mass')}
-                aria-selected={lens === 'mass'}
-              >
-                By mission
-              </button>
-              <button
-                type="button"
-                role="tab"
-                className={`lens-option ${lens === 'family' ? 'active' : ''}`}
-                onClick={() => setLens('family')}
-                aria-selected={lens === 'family'}
-              >
-                By family
-              </button>
-              <button
-                type="button"
-                role="tab"
-                className={`lens-option ${lens === 'reform' ? 'active' : ''}`}
-                onClick={() => setLens('reform')}
-                aria-selected={lens === 'reform'}
-              >
-                By reform
-              </button>
-            </div>
-          </div>
-        </div>
+      <div className="w-full pt-6">
 
-        <div className="mission-cluster mission-cluster--right">
-          <div className="mission-history" role="group" aria-label="Scenario history controls">
-            <button type="button" className="ghost-btn ghost-btn--muted" onClick={undo} disabled={!canUndo}>
-              <i className="material-icons" aria-hidden="true">undo</i>
-              Undo
-            </button>
-            <button type="button" className="ghost-btn ghost-btn--muted" onClick={redo} disabled={!canRedo}>
-              <i className="material-icons" aria-hidden="true">redo</i>
-              Redo
-            </button>
-            <button type="button" className="ghost-btn ghost-btn--muted" onClick={reset}>
-              <i className="material-icons" aria-hidden="true">refresh</i>
-              Reset
-            </button>
-          </div>
-          <button type="button" className="ghost-btn" onClick={handleShare}>
-            <i className="material-icons" aria-hidden="true">link</i>
-            Share
-          </button>
-        </div>
-      </div>
-
-      <div className="main-content-stage">
-        <div className="main-content">
-          <div className="left-panel">
-            {lens === 'mass' && !isPanelExpanded && (
-              <MassCategoryList
-                categories={masses}
-                onSelect={handleCategoryClick}
-                formatCurrency={formatCurrency}
-                formatShare={formatShare}
-                displayMode={displayMode}
-              />
-            )}
-            {lens === 'mass' && isPanelExpanded && selectedCategory && (
-              <MassCategoryPanel
-                category={selectedCategory}
-                targetPercent={targetPercent}
-                targetRangeMax={targetRangeMax}
-                onTargetPercentChange={setTargetPercent}
-                onRangeChange={handleTargetRangeChange}
-                onApplyTarget={handleApplyTarget}
-                onClearTarget={() => {
-                  setTargetPercent(0);
-                  setTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
-                }}
-                onClose={handleBackClick}
-                suggestedLevers={suggestedLevers}
-                onLeverToggle={(lever) =>
-                  (isLeverInDsl(lever.id) ? removeLeverFromDsl(lever.id) : addLeverToDsl(lever))
-                }
-                isLeverSelected={isLeverInDsl}
-                popularIntents={popularIntents}
-                onIntentClick={handleIntentClick}
-                formatCurrency={formatCurrency}
-                formatShare={formatShare}
-                displayMode={displayMode}
-              />
-            )}
-            {lens === 'family' && (
-              <>
-                <div className="panel-header">Reforms by Family</div>
-                {Object.entries(policyLevers.reduce((acc, lever) => {
-                  const family = lever.family || 'Other';
-                  if (!acc[family]) {
-                    acc[family] = [];
+        <div className="main-content-stage">
+          <div className="main-content">
+            <div className="left-panel">
+              {lens === 'mass' && !isPanelExpanded && (
+                <MassCategoryList
+                  categories={masses}
+                  onSelect={handleCategoryClick}
+                  formatCurrency={formatCurrency}
+                  formatShare={formatShare}
+                  displayMode={displayMode}
+                />
+              )}
+              {lens === 'mass' && isPanelExpanded && selectedCategory && (
+                <MassCategoryPanel
+                  category={selectedCategory}
+                  targetPercent={targetPercent}
+                  targetRangeMax={targetRangeMax}
+                  onTargetPercentChange={setTargetPercent}
+                  onRangeChange={handleTargetRangeChange}
+                  onApplyTarget={handleApplyTarget}
+                  onClearTarget={() => {
+                    setTargetPercent(0);
+                    setTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
+                  }}
+                  onClose={handleBackClick}
+                  suggestedLevers={suggestedLevers}
+                  onLeverToggle={(lever) =>
+                    (isLeverInDsl(lever.id) ? removeLeverFromDsl(lever.id) : addLeverToDsl(lever))
                   }
-                  acc[family].push(lever);
-                  return acc;
-                }, {} as Record<string, PolicyLever[]>)).map(([family, levers]) => (
-                  <div key={family} className="spending-category">
-                    <div className="category-header" onClick={() => handleFamilyClick(family)}>
-                      <div className="category-name">{family}</div>
-                    </div>
-                    {expandedFamilies.includes(family) && (
-                      <div className="reforms-section">
-                        {levers.map((reform, index) => (
-                          <div key={index} className={`reform-item ${isLeverInDsl(reform.id) ? 'applied' : ''}`}>
-                            <div className="reform-details">
-                              <div className="reform-name">{reform.label}</div>
-                              <div className="reform-description">{reform.description}</div>
-                            </div>
-                            <div className="reform-actions">
-                              <div className="reform-impact">
-                                <span className={
-                                  reform.fixedImpactEur && reform.fixedImpactEur > 0 ? 'impact-positive' : 'impact-negative'
-                                }>
-                                  {formatCurrency(reform.fixedImpactEur || 0)}
-                                </span>
+                  isLeverSelected={isLeverInDsl}
+                  popularIntents={popularIntents}
+                  onIntentClick={handleIntentClick}
+                  formatCurrency={formatCurrency}
+                  formatShare={formatShare}
+                  displayMode={displayMode}
+                />
+              )}
+              {lens === 'family' && (
+                <>
+                  <div className="panel-header">Reforms by Family</div>
+                  {Object.entries(policyLevers.reduce((acc, lever) => {
+                    const family = lever.family || 'Other';
+                    if (!acc[family]) {
+                      acc[family] = [];
+                    }
+                    acc[family].push(lever);
+                    return acc;
+                  }, {} as Record<string, PolicyLever[]>)).map(([family, levers]) => (
+                    <div key={family} className="spending-category">
+                      <div className="category-header" onClick={() => handleFamilyClick(family)}>
+                        <div className="category-name">{family}</div>
+                      </div>
+                      {expandedFamilies.includes(family) && (
+                        <div className="reforms-section">
+                          {levers.map((reform, index) => (
+                            <div key={index} className={`reform-item ${isLeverInDsl(reform.id) ? 'applied' : ''}`}>
+                              <div className="reform-details">
+                                <div className="reform-name">{reform.label}</div>
+                                <div className="reform-description">{reform.description}</div>
                               </div>
-                              <button
-                                className={`fr-btn fr-btn--${isLeverInDsl(reform.id) ? 'secondary' : 'primary'}`}
-                                onClick={() =>
-                                  (isLeverInDsl(reform.id) ? removeLeverFromDsl(reform.id) : addLeverToDsl(reform))
-                                }
-                              >
-                                {isLeverInDsl(reform.id) ? 'Remove' : 'Add'}
-                              </button>
+                              <div className="reform-actions">
+                                <div className="reform-impact">
+                                  <span className={
+                                    reform.fixedImpactEur && reform.fixedImpactEur > 0 ? 'impact-positive' : 'impact-negative'
+                                  }>
+                                    {formatCurrency(reform.fixedImpactEur || 0)}
+                                  </span>
+                                </div>
+                                <button
+                                  className={`fr-btn fr-btn--${isLeverInDsl(reform.id) ? 'secondary' : 'primary'}`}
+                                  onClick={() =>
+                                    (isLeverInDsl(reform.id) ? removeLeverFromDsl(reform.id) : addLeverToDsl(reform))
+                                  }
+                                >
+                                  {isLeverInDsl(reform.id) ? 'Remove' : 'Add'}
+                                </button>
+                              </div>
                             </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </>
-            )}
-            {lens === 'reform' && (
-              <>
-                <div className="panel-header">All Reforms</div>
-                <div className="reforms-section">
-                  {policyLevers.map((reform, index) => (
-                    <div key={index} className={`reform-item ${isLeverInDsl(reform.id) ? 'applied' : ''}`}>
-                      <div className="reform-details">
-                        <div className="reform-name">{reform.label}</div>
-                        <div className="reform-description">{reform.description}</div>
-                      </div>
-                      <div className="reform-actions">
-                        <div className="reform-impact">
-                          <span className={
-                            reform.fixedImpactEur && reform.fixedImpactEur > 0 ? 'impact-positive' : 'impact-negative'
-                          }>
-                            {formatCurrency(reform.fixedImpactEur || 0)}
-                          </span>
+                          ))}
                         </div>
-                        <button
-                          className={`fr-btn fr-btn--${isLeverInDsl(reform.id) ? 'secondary' : 'primary'}`}
-                          onClick={() =>
-                            (isLeverInDsl(reform.id) ? removeLeverFromDsl(reform.id) : addLeverToDsl(reform))
-                          }
-                        >
-                          {isLeverInDsl(reform.id) ? 'Remove' : 'Add'}
-                        </button>
-                      </div>
+                      )}
                     </div>
                   ))}
-                </div>
-              </>
-            )}
-          </div>
+                </>
+              )}
+              {lens === 'reform' && (
+                <ReformDrawer
+                  reforms={policyLevers}
+                  isLeverInDsl={isLeverInDsl}
+                  onLeverToggle={(reform) =>
+                    (isLeverInDsl(reform.id) ? removeLeverFromDsl(reform.id) : addLeverToDsl(reform))
+                  }
+                  formatCurrency={formatCurrency}
+                />
+              )}
+            </div>
 
-          <div className="center-panel">
-            <div className="treemap-header">
-              <div className="treemap-title-block">
-                <h2 className="treemap-title">{t('chart.treemap') || 'Budget allocation'}</h2>
-                <p className="treemap-subtitle">
-                  {displayMode === 'share' ? 'Viewing share of baseline (%)' : 'Viewing annual amounts (€B)'}
-                </p>
+            <div className="center-panel">
+              <div className="treemap-header">
+                <div className="treemap-title-block">
+                  <h2 className="treemap-title">{t('chart.treemap') || 'Budget allocation'}</h2>
+                  <p className="treemap-subtitle">
+                    {displayMode === 'share' ? 'Viewing share of baseline (%)' : 'Viewing annual amounts (€B)'}
+                  </p>
+                </div>
+              </div>
+              <div className="treemap-divider" aria-hidden="true" />
+              <div className="treemap-container">
+                <TreemapChart
+                  data={treemapData}
+                  colors={treemapColors}
+                  resolutionData={scenarioResult?.resolution.byMass || []}
+                  mode={displayMode}
+                  onSelect={(item) => {
+                    if (lens !== 'mass') {
+                      setLens('mass');
+                    }
+                    handleCategoryClick(item as MassCategory);
+                  }}
+                />
+
+                {scenarioError && (
+                  <div className="scenario-inline-error scenario-inline-error--floating" role="alert">
+                    {scenarioError}
+                  </div>
+                )}
               </div>
             </div>
-            <div className="treemap-divider" aria-hidden="true" />
-            <div className="treemap-container">
-              <TreemapChart
-                data={treemapData}
-                colors={treemapColors}
-                resolutionData={scenarioResult?.resolution.byMass || []}
-                mode={displayMode}
-                onSelect={(item) => {
-                  if (lens !== 'mass') {
-                    setLens('mass');
+
+            <div className="right-panel">
+              {isRevenuePanelExpanded && selectedRevenueCategory ? (
+                <RevenueCategoryPanel
+                  category={selectedRevenueCategory}
+                  visual={revenueVisuals.get(selectedRevenueCategory.id)}
+                  targetPercent={revenueTargetPercent}
+                  targetRangeMax={revenueTargetRangeMax}
+                  onTargetPercentChange={setRevenueTargetPercent}
+                  onRangeChange={handleRevenueRangeChange}
+                  onApplyTarget={handleApplyRevenueTarget}
+                  onClearTarget={() => {
+                    setRevenueTargetPercent(0);
+                    setRevenueTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
+                  }}
+                  onBack={handleRevenueBackClick}
+                  suggestedLevers={suggestedLevers}
+                  onLeverToggle={(lever) =>
+                    (isLeverInDsl(lever.id) ? removeLeverFromDsl(lever.id) : addLeverToDsl(lever))
                   }
-                  handleCategoryClick(item as MassCategory);
-                }}
-              />
-              
-              {scenarioError && (
-                <div className="scenario-inline-error scenario-inline-error--floating" role="alert">
-                  {scenarioError}
-                </div>
+                  isLeverSelected={isLeverInDsl}
+                  popularIntents={popularIntents}
+                  onIntentClick={handleIntentClick}
+                  formatCurrency={formatCurrency}
+                />
+              ) : (
+                <RevenueCategoryList
+                  categories={revenuePieces}
+                  onSelect={handleRevenueCategoryClick}
+                  formatCurrency={formatCurrency}
+                  visuals={revenueVisuals}
+                />
               )}
             </div>
           </div>
+        </div>
 
-          <div className="right-panel">
-            {isRevenuePanelExpanded && selectedRevenueCategory ? (
-              <RevenueCategoryPanel
-                category={selectedRevenueCategory}
-                visual={revenueVisuals.get(selectedRevenueCategory.id)}
-                targetPercent={revenueTargetPercent}
-                targetRangeMax={revenueTargetRangeMax}
-                onTargetPercentChange={setRevenueTargetPercent}
-                onRangeChange={handleRevenueRangeChange}
-                onApplyTarget={handleApplyRevenueTarget}
-                onClearTarget={() => {
-                  setRevenueTargetPercent(0);
-                  setRevenueTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
-                }}
-                onBack={handleRevenueBackClick}
-                suggestedLevers={suggestedLevers}
-                onLeverToggle={(lever) =>
-                  (isLeverInDsl(lever.id) ? removeLeverFromDsl(lever.id) : addLeverToDsl(lever))
-                }
-                isLeverSelected={isLeverInDsl}
-                popularIntents={popularIntents}
-                onIntentClick={handleIntentClick}
-                formatCurrency={formatCurrency}
-              />
-            ) : (
-              <RevenueCategoryList
-                categories={revenuePieces}
-                onSelect={handleRevenueCategoryClick}
-                formatCurrency={formatCurrency}
-                visuals={revenueVisuals}
-              />
-            )}
+        {shareFeedback && (
+          <div className="snackbar snackbar--bottom" role="status">
+            <i className="material-icons" aria-hidden="true">check_circle</i>
+            {shareFeedback}
           </div>
-        </div>
+        )}
       </div>
-
-      <div className="scenario-status-bar" role="region" aria-live="polite">
-        <div className="status-summary">
-          <div className="status-heading">Scenario impact</div>
-          <div className="status-metrics">
-            <div className="status-metric">
-              <span className="status-label">{t('score.deficit_y0')}</span>
-              <span className="status-value">
-                {scenarioLoading
-                  ? '—'
-                  : latestDeficit !== null
-                    ? formatDeficitWithRatio(latestDeficit, latestDeficitRatio)
-                    : 'Not run'}
-              </span>
-            </div>
-            <div className="status-metric">
-              <span className="status-label">{t('build.resolution')}</span>
-              <span className="status-value">
-                {scenarioLoading
-                  ? '—'
-                  : hasResolution
-                    ? `${Math.round(resolutionPct * 100)}%`
-                    : 'Not run'}
-              </span>
-            </div>
-          </div>
-        </div>
-        <div className="status-actions">
-          {scenarioLoading && (
-            <div className="status-feedback" role="status">
-              <i className="material-icons spin" aria-hidden="true">autorenew</i>
-              Running scenario…
-            </div>
-          )}
-          {!scenarioLoading && scenarioError && (
-            <div className="status-feedback status-feedback--error" role="alert">
-              <i className="material-icons" aria-hidden="true">error</i>
-              {scenarioError}
-            </div>
-          )}
-          {!scenarioLoading && scenarioResult && !scenarioError && (
-            <div className="status-feedback status-feedback--success" role="status">
-              <i className="material-icons" aria-hidden="true">check_circle</i>
-              Updated with latest run
-            </div>
-          )}
-          {!scenarioLoading && !scenarioResult && !scenarioError && (
-            <div className="status-feedback" role="status">
-              Scenario not yet run
-            </div>
-          )}
-        </div>
-      </div>
-
-      {shareFeedback && (
-        <div className="snackbar snackbar--bottom" role="status">
-          <i className="material-icons" aria-hidden="true">check_circle</i>
-          {shareFeedback}
-        </div>
-      )}
     </div>
   );
 }
-  const cloneCategories = (categories: MassCategory[]) =>
-    categories.map((category) => ({ ...category }));
