@@ -44,8 +44,25 @@ export function MassCategoryPanel({
   const isExpanded = targetRangeMax > defaultRange;
   const percentLabel = `${targetPercent > 0 ? '+' : targetPercent < 0 ? '' : ''}${targetPercent.toFixed(1)}%`;
   const baselineAmount = category.baselineAmount ?? category.amount ?? 0;
-  const rawAmount = (baselineAmount) * targetPercent / 100;
-  const amountLabel = `${rawAmount > 0 ? '+' : ''}${formatCurrency(rawAmount)}`;
+  const targetAmount = (baselineAmount) * targetPercent / 100;
+
+  // Calculate Resolved Amount from selected reforms
+  const resolvedAmount = suggestedLevers
+    .filter(l => isLeverSelected(l.id))
+    .reduce((sum, l) => sum + (l.fixedImpactEur || 0), 0);
+
+  // Unresolved is the difference between the Target and the Resolved reforms
+  // Note: targetAmount is signed (negative for cuts). resolvedAmount is also signed (negative for savings).
+  // If target is -5B and resolved is -2B, unresolved is -3B.
+  // If target is -5B and resolved is -6B, unresolved is 0 (or surplus).
+  const unresolvedAmount = targetAmount - resolvedAmount;
+
+  // Context: Top 3 pieces
+  const topPieces = [...(category.pieces || [])]
+    .sort((a, b) => (b.amountEur || 0) - (a.amountEur || 0))
+    .slice(0, 3);
+
+  const amountLabel = `${targetAmount > 0 ? '+' : ''}${formatCurrency(targetAmount)}`;
   const rangeLabel = isExpanded ? '±25% ◂' : '±10% ▸';
   const clampToRange = (value: number) => Math.max(-targetRangeMax, Math.min(targetRangeMax, value));
   const roundToStep = (value: number) => Math.round(value / percentStep) * percentStep;
@@ -86,31 +103,29 @@ export function MassCategoryPanel({
 
   return (
     <>
-      <button
-        className="mb-4 px-4 py-2 text-sm font-medium text-gray-600 bg-white/40 hover:bg-white/70 backdrop-blur-md rounded-xl transition-all shadow-sm hover:shadow-md border border-white/30 flex items-center gap-2 group"
-        onClick={onClose}
-      >
-        <i className="material-icons text-sm transition-transform group-hover:-translate-x-1" aria-hidden="true">arrow_back</i>
-        Back
-      </button>
-
-      <div className="relative overflow-hidden rounded-3xl border border-white/40 shadow-2xl bg-white/60 backdrop-blur-2xl transition-all duration-300" style={accentStyle}>
+      <div className="relative flex flex-col h-full overflow-hidden rounded-3xl border border-white/40 shadow-2xl bg-white/60 backdrop-blur-2xl transition-all duration-300" style={accentStyle}>
         {/* Decorative gradient background */}
         <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent pointer-events-none" />
 
         {/* Header Section */}
-        <div className="relative p-6 border-b border-gray-100/50">
-          <div className="flex items-start gap-4">
+        <div className="relative p-4 border-b border-gray-100/50 shrink-0">
+          <div className="flex items-center gap-3">
+            <button
+              className="p-2 -ml-2 text-gray-500 hover:text-gray-700 hover:bg-black/5 rounded-lg transition-colors"
+              onClick={onClose}
+            >
+              <i className="material-icons text-xl">arrow_back</i>
+            </button>
             <span
-              className="flex items-center justify-center w-12 h-12 rounded-xl text-2xl shadow-inner"
+              className="flex items-center justify-center w-10 h-10 rounded-xl text-xl shadow-inner"
               aria-hidden="true"
               style={{ backgroundColor: iconTint, color: headerColor }}
             >
               {category.icon || '🏛️'}
             </span>
             <div className="flex-1 min-w-0">
-              <h2 className="text-xl font-bold text-gray-900 truncate leading-tight">{category.name}</h2>
-              <div className="mt-1 text-sm font-medium text-gray-500 flex items-center gap-2">
+              <h2 className="text-lg font-bold text-gray-900 truncate leading-tight">{category.name}</h2>
+              <div className="text-xs font-medium text-gray-500 flex items-center gap-2">
                 <span>{formatCurrency(category.amount)}</span>
                 <span className="w-1 h-1 rounded-full bg-gray-300" />
                 <span>{formatShare(category.share)}</span>
@@ -119,10 +134,10 @@ export function MassCategoryPanel({
           </div>
         </div>
 
-        {/* Controls Section */}
-        <div className="relative p-6 space-y-6">
+        {/* Controls Section - Scrollable Area */}
+        <div className="relative flex-1 overflow-y-auto p-4 space-y-6 min-h-0">
 
-          {/* Target Control */}
+          {/* The Equation: Target vs Reforms */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold uppercase tracking-wider text-gray-500">Budget Target</label>
@@ -135,61 +150,85 @@ export function MassCategoryPanel({
               </button>
             </div>
 
-            <div className="bg-gray-50/50 rounded-xl p-4 border border-gray-100 shadow-inner">
-              <div className="flex items-center gap-4 mb-4">
-                <button
-                  type="button"
-                  className="w-8 h-8 flex items-center justify-center rounded-full bg-white shadow-sm border border-gray-200 text-gray-600 hover:text-blue-600 hover:border-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                  onClick={() => handleNudge(-1)}
-                  disabled={atMin}
-                  aria-label="Decrease target"
-                >
-                  <i className="material-icons text-sm">remove</i>
-                </button>
+            {/* Slider Control */}
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-white shadow-sm border border-gray-200 text-gray-600 hover:text-blue-600 hover:border-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={() => handleNudge(-1)}
+                disabled={atMin}
+              >
+                <i className="material-icons text-sm">remove</i>
+              </button>
+              <div className="flex-1 relative h-8 flex items-center">
+                <input
+                  type="range"
+                  className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                  min={-targetRangeMax}
+                  max={targetRangeMax}
+                  step={percentStep}
+                  value={targetPercent}
+                  onChange={handleSliderChange}
+                />
+              </div>
+              <button
+                type="button"
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-white shadow-sm border border-gray-200 text-gray-600 hover:text-blue-600 hover:border-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={() => handleNudge(1)}
+                disabled={atMax}
+              >
+                <i className="material-icons text-sm">add</i>
+              </button>
+            </div>
 
-                <div className="flex-1 relative h-10 flex items-center">
-                  <input
-                    type="range"
-                    className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
-                    min={-targetRangeMax}
-                    max={targetRangeMax}
-                    step={percentStep}
-                    value={targetPercent}
-                    onChange={handleSliderChange}
-                    aria-label="Target percentage"
-                  />
+            {/* The Gap Visualization */}
+            <div className="bg-gray-50 rounded-xl p-3 border border-gray-200 shadow-inner space-y-2">
+              <div className="flex justify-between items-end">
+                <div className="text-xs font-medium text-gray-600">Total Effort</div>
+                <div className={`text-lg font-mono font-bold ${targetAmount > 0 ? 'text-red-600' : targetAmount < 0 ? 'text-green-600' : 'text-gray-400'}`}>
+                  {formatCurrency(targetAmount)}
                 </div>
-
-                <button
-                  type="button"
-                  className="w-8 h-8 flex items-center justify-center rounded-full bg-white shadow-sm border border-gray-200 text-gray-600 hover:text-blue-600 hover:border-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                  onClick={() => handleNudge(1)}
-                  disabled={atMax}
-                  aria-label="Increase target"
-                >
-                  <i className="material-icons text-sm">add</i>
-                </button>
               </div>
 
-              <div className="flex items-baseline justify-between" aria-live="polite">
-                <div className={`text-2xl font-mono font-bold ${targetPercent > 0 ? 'text-red-600' : targetPercent < 0 ? 'text-green-600' : 'text-gray-700'}`}>
-                  {percentLabel}
+              {/* Bar Chart */}
+              <div className="h-3 bg-gray-200 rounded-full overflow-hidden flex relative">
+                {/* Resolved Part */}
+                <div
+                  className="h-full bg-green-500 transition-all duration-500"
+                  style={{ width: `${Math.min(100, Math.abs(resolvedAmount / (targetAmount || 1)) * 100)}%` }}
+                />
+                {/* Unresolved Part (Hatched) */}
+                <div
+                  className="h-full bg-gray-300 transition-all duration-500 relative"
+                  style={{
+                    width: `${Math.max(0, Math.min(100, Math.abs(unresolvedAmount / (targetAmount || 1)) * 100))}%`,
+                    backgroundImage: 'linear-gradient(45deg, rgba(0,0,0,0.1) 25%, transparent 25%, transparent 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1) 75%, transparent 75%, transparent)',
+                    backgroundSize: '8px 8px'
+                  }}
+                />
+              </div>
+
+              <div className="flex justify-between text-[10px]">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 rounded-full bg-green-500" />
+                  <span className="text-gray-600">Resolved: <b>{formatCurrency(resolvedAmount)}</b></span>
                 </div>
-                <div className="text-sm font-medium text-gray-500">
-                  {amountLabel}
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 rounded-full bg-gray-300" style={{ backgroundImage: 'linear-gradient(45deg, rgba(0,0,0,0.1) 25%, transparent 25%, transparent 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1) 75%, transparent 75%, transparent)', backgroundSize: '4px 4px' }} />
+                  <span className="text-gray-600">Unresolved: <b>{formatCurrency(unresolvedAmount)}</b></span>
                 </div>
               </div>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex gap-2 pt-1">
               <button
-                className="flex-1 py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-sm shadow-blue-200 transition-all active:scale-[0.98]"
+                className="flex-1 py-1.5 px-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg shadow-sm shadow-blue-200 transition-all active:scale-[0.98]"
                 onClick={onApplyTarget}
               >
                 Apply Target
               </button>
               <button
-                className="px-4 py-2 text-gray-600 hover:text-gray-900 font-medium hover:bg-gray-100 rounded-lg transition-colors"
+                className="px-3 py-1.5 text-gray-600 hover:text-gray-900 text-sm font-medium hover:bg-gray-100 rounded-lg transition-colors"
                 onClick={handleClear}
               >
                 Reset
@@ -200,12 +239,12 @@ export function MassCategoryPanel({
           {/* Reforms Section */}
           <div className="space-y-3">
             <div className="text-xs font-bold uppercase tracking-wider text-gray-500">Available Reforms</div>
-            <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
+            <div className="space-y-2">
               {suggestedLevers.map((reform) => (
                 <div
                   key={reform.id}
                   className={`group relative p-3 rounded-xl border transition-all duration-200 ${isLeverSelected(reform.id)
-                    ? 'bg-blue-50/80 border-blue-200 shadow-sm'
+                    ? 'bg-green-50/80 border-green-200 shadow-sm'
                     : 'bg-white/60 border-gray-100 hover:border-gray-200 hover:bg-white/80'
                     }`}
                 >
@@ -220,10 +259,10 @@ export function MassCategoryPanel({
                     </div>
                   </div>
 
-                  <div className="mt-3 flex justify-end">
+                  <div className="mt-2 flex justify-end">
                     <button
-                      className={`text-xs font-medium px-3 py-1.5 rounded-lg transition-colors ${isLeverSelected(reform.id)
-                        ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                      className={`text-xs font-medium px-3 py-1 rounded-lg transition-colors ${isLeverSelected(reform.id)
+                        ? 'bg-green-100 text-green-700 hover:bg-green-200'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200 group-hover:bg-white group-hover:shadow-sm'
                         }`}
                       onClick={() => onLeverToggle(reform)}

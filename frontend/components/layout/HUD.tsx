@@ -1,7 +1,9 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { SolvencyMeter } from "../visualizations/SolvencyMeter";
+import { TickingNumber } from "../ui/TickingNumber";
 
 interface HUDProps {
     deficit: number; // in Billions
@@ -49,13 +51,24 @@ export const HUD: React.FC<HUDProps> = ({
         <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-xl border-b border-white/20 shadow-lg supports-[backdrop-filter]:bg-white/60 transition-all duration-300">
             <div className="max-w-[1920px] mx-auto px-6 py-3 flex items-center justify-between gap-6">
                 {/* Left: Brand & Primary Controls */}
-                <div className="flex items-center gap-8">
-                    <div className="flex flex-col shrink-0">
-                        <div className="font-black text-xl text-dsfr-blue tracking-tighter leading-none">
-                            MISSION CONTROL
+                <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-3 shrink-0">
+                        <div className="relative w-8 h-8">
+                            <Image
+                                src="/citizenbudgetlogo.png"
+                                alt="Logo"
+                                fill
+                                className="object-contain"
+                                priority
+                            />
                         </div>
-                        <div className="text-[9px] font-bold text-muted uppercase tracking-[0.2em] leading-none mt-1">
-                            Citizen Budget Lab
+                        <div className="flex flex-col">
+                            <div className="font-black text-lg text-gray-900 tracking-tight leading-none">
+                                Budget Citoyen
+                            </div>
+                            <div className="text-[9px] font-bold text-dsfr-blue uppercase tracking-[0.1em] leading-none mt-0.5">
+                                Mission Control
+                            </div>
                         </div>
                     </div>
 
@@ -130,10 +143,15 @@ export const HUD: React.FC<HUDProps> = ({
                         </span>
                         <div className="flex items-baseline gap-2">
                             <span className={`text-xl font-mono font-bold tracking-tight leading-none ${deficit > 0 ? 'text-red-600' : 'text-green-600'}`}>
-                                {deficit > 0 ? '-' : '+'}{Math.abs(deficit / 1e9).toFixed(1)}B€
+                                {deficit > 0 ? '-' : '+'}
+                                <TickingNumber
+                                    value={Math.abs(deficit / 1e9)}
+                                    format={(v: number) => v.toFixed(1)}
+                                />
+                                B€
                             </span>
                             <span className="text-xs font-medium text-gray-500">
-                                ({deficitPercentage.toFixed(1)}% GDP)
+                                (<TickingNumber value={deficitPercentage} format={(v: number) => v.toFixed(1)} />% GDP)
                             </span>
                         </div>
                     </div>
@@ -181,7 +199,7 @@ const MetricBox = ({ label, value, color, icon }: { label: string; value: number
         <div className="flex flex-col">
             <span className="text-[9px] font-bold uppercase text-muted tracking-wider mb-0.5">{label}</span>
             <span className={`text-lg font-mono font-bold leading-none ${color}`}>
-                {value.toFixed(1)}B€
+                <TickingNumber value={value} format={(v: number) => v.toFixed(1)} />B€
             </span>
         </div>
     </div>

@@ -46,7 +46,8 @@ const TARGET_PERCENT_STEP = 0.5;
 const EPSILON = 1e-6;
 
 export default function BuildPageClient() {
-  const { t } = useI18n();
+  // const { t } = useI18n();
+  const t = (k: string) => k;
   const router = useRouter();
   const pathname = usePathname();
   const { state, actions } = useBuildState(INITIAL_DSL_OBJECT.baseline_year);
@@ -771,7 +772,7 @@ export default function BuildPageClient() {
   const resolutionPct = hasResolution ? resolutionPctRaw : 0;
 
   const treemapData = useMemo(
-    () => masses.map((mission) => {
+    () => (masses || []).map((mission) => {
       const metric = ghostMode
         ? (displayMode === 'share' ? mission.baselineShare : mission.baselineAmount)
         : (displayMode === 'share' ? mission.share : mission.amount);
@@ -790,7 +791,7 @@ export default function BuildPageClient() {
 
   const revenueVisuals = useMemo(() => {
     const map = new Map<string, { color: string; icon: string }>();
-    revenuePieces.forEach((piece, index) => {
+    (revenuePieces || []).forEach((piece, index) => {
       map.set(piece.id, {
         color: revenueColorPalette[index % revenueColorPalette.length],
         icon: revenueIcons[index % revenueIcons.length],
@@ -800,11 +801,11 @@ export default function BuildPageClient() {
   }, [revenuePieces]);
 
   const totalSpending = useMemo(() => {
-    const sum = masses.reduce((acc, m) => acc + Math.max(m.amount, 0), 0);
+    const sum = (masses || []).reduce((acc, m) => acc + Math.max(m.amount, 0), 0);
     return sum > 0 ? sum : baselineTotals.spending;
   }, [masses, baselineTotals.spending]);
   const totalRevenue = useMemo(() => {
-    const sum = revenuePieces.reduce((acc, p) => acc + (p.amountEur || 0), 0);
+    const sum = (revenuePieces || []).reduce((acc, p) => acc + (p.amountEur || 0), 0);
     return sum > 0 ? sum : baselineTotals.revenue;
   }, [baselineTotals.revenue, revenuePieces]);
 
@@ -844,7 +845,7 @@ export default function BuildPageClient() {
         onShare={handleShare}
       />
 
-      <div className="w-full pt-6">
+      <div className="w-full pt-6 flex-1 min-h-0 flex flex-col">
 
         <div className="main-content-stage">
           <div className="main-content">
@@ -886,7 +887,7 @@ export default function BuildPageClient() {
               {lens === 'family' && (
                 <>
                   <div className="panel-header">Reforms by Family</div>
-                  {Object.entries(policyLevers.reduce((acc, lever) => {
+                  {Object.entries((policyLevers || []).reduce((acc, lever) => {
                     const family = lever.family || 'Other';
                     if (!acc[family]) {
                       acc[family] = [];
@@ -953,25 +954,27 @@ export default function BuildPageClient() {
                 </div>
               </div>
               <div className="treemap-divider" aria-hidden="true" />
-              <div className="treemap-container">
-                <TreemapChart
-                  data={treemapData}
-                  colors={treemapColors}
-                  resolutionData={scenarioResult?.resolution.byMass || []}
-                  mode={displayMode}
-                  onSelect={(item) => {
-                    if (lens !== 'mass') {
-                      setLens('mass');
-                    }
-                    handleCategoryClick(item as MassCategory);
-                  }}
-                />
+              <div className="treemap-container relative flex-1 min-h-0 w-full">
+                <div className="absolute inset-0">
+                  <TreemapChart
+                    data={treemapData}
+                    colors={treemapColors}
+                    resolutionData={scenarioResult?.resolution?.byMass || []}
+                    mode={displayMode}
+                    onSelect={(item) => {
+                      if (lens !== 'mass') {
+                        setLens('mass');
+                      }
+                      handleCategoryClick(item as MassCategory);
+                    }}
+                  />
 
-                {scenarioError && (
-                  <div className="scenario-inline-error scenario-inline-error--floating" role="alert">
-                    {scenarioError}
-                  </div>
-                )}
+                  {scenarioError && (
+                    <div className="scenario-inline-error scenario-inline-error--floating" role="alert">
+                      {scenarioError}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
