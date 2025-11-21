@@ -84,6 +84,11 @@ export default function BuildPageClient() {
     MISSION: [],
     COFOG: [],
   });
+  const [baselineTotals, setBaselineTotals] = useState<{ spending: number; revenue: number }>({
+    spending: 0,
+    revenue: 0,
+  });
+  const [baselineGdp, setBaselineGdp] = useState<number | null>(null);
   const [baselineMassDataByLens, setBaselineMassDataByLens] = useState<Record<AggregationLens, MassCategory[]>>({
     MISSION: [],
     COFOG: [],
@@ -392,24 +397,7 @@ export default function BuildPageClient() {
       const allPieces: LegoPiece[] = data.legoPieces.map((p: any) => ({ ...p, amountEur: baselineAmounts[p.id] || 0 }));
 
       const spending = allPieces.filter((p) => p.type === 'expenditure');
-      // Exclude borrowing (emprunt) and internal transfers to show true fiscal balance
-      const revenue = allPieces.filter((p) =>
-        p.type === 'revenue' &&
-        !p.id.toLowerCase().includes('emprunt') &&
-        p.id !== 'rev_transfers_in'
-      );
-
-      // Add adjustment for refunds and gross data corrections
-      revenue.push({
-        id: 'rev_adjustments',
-        type: 'revenue',
-        label: 'Remboursements & Corrections',
-        description: 'Remboursements, dégrèvements, et corrections de données brutes.',
-        amountEur: -300e9, // -300B adjustment
-        mapping: {},
-        beneficiaries: {},
-        sources: []
-      } as any);
+      const revenue = allPieces.filter((p) => p.type === 'revenue');
 
       const missionLabelMap: Record<string, MissionLabel> = {};
       (data.missionLabels || []).forEach((label: MissionLabel) => {
@@ -479,6 +467,15 @@ export default function BuildPageClient() {
         policyLevers: data.policyLevers,
         popularIntents: data.popularIntents,
       });
+
+      const spendingTotal = Number(data.legoBaseline?.depensesTotal ?? 0);
+      const revenueTotal = Number(data.legoBaseline?.recettesTotal ?? 0);
+      setBaselineTotals({
+        spending: Number.isFinite(spendingTotal) ? spendingTotal : 0,
+        revenue: Number.isFinite(revenueTotal) ? revenueTotal : 0,
+      });
+      const gdpVal = Number(data.legoBaseline?.pib ?? 0);
+      setBaselineGdp(Number.isFinite(gdpVal) && gdpVal > 0 ? gdpVal : null);
 
     } catch (err: any) {
       setError(err.message || 'Failed to fetch data');
@@ -802,14 +799,19 @@ export default function BuildPageClient() {
     return map;
   }, [revenuePieces]);
 
-  const totalSpending = useMemo(() => masses.reduce((sum, m) => sum + Math.max(m.amount, 0), 0), [masses]);
+  const totalSpending = useMemo(() => {
+    const sum = masses.reduce((acc, m) => acc + Math.max(m.amount, 0), 0);
+    return sum > 0 ? sum : baselineTotals.spending;
+  }, [masses, baselineTotals.spending]);
   const totalRevenue = useMemo(() => {
-    return revenuePieces.reduce((sum, p) => sum + (p.amountEur || 0), 0);
-  }, [revenuePieces]);
+    const sum = revenuePieces.reduce((acc, p) => acc + (p.amountEur || 0), 0);
+    return sum > 0 ? sum : baselineTotals.revenue;
+  }, [baselineTotals.revenue, revenuePieces]);
 
   // Calculate deficit from pieces to ensure consistency with filtered revenue
   const calculatedDeficit = totalSpending - totalRevenue;
-  const calculatedDeficitRatio = calculatedDeficit / (scenarioResult?.accounting?.gdpPath?.[0] ?? 2800e9);
+  const gdpForRatio = scenarioResult?.accounting?.gdpPath?.[0] ?? baselineGdp ?? 2800e9;
+  const calculatedDeficitRatio = calculatedDeficit / gdpForRatio;
 
   if (initialLoading) {
     return <BuildPageSkeleton />;

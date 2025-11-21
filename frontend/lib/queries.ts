@@ -2,6 +2,9 @@
 export const buildPageQuery = `
   query BuildPageData($year: Int!) {
     legoBaseline(year: $year) {
+      pib
+      depensesTotal
+      recettesTotal
       pieces {
         id
         amountEur
