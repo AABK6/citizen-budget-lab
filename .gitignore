@@ -55,4 +55,5 @@ warehouse/dbt_packages/
 cookies.txt
 
 .gemini/
+.github/
 gha-creds-*.json
