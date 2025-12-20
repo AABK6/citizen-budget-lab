@@ -300,6 +300,38 @@ html[data-fr-theme='dark'] .brand-logo-dark {
     min-height: 0;
 }
 
+.main-content {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 380px 1fr 350px;
+    gap: 12px;
+    overflow: hidden;
+}
+
+.left-panel,
+.right-panel {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.center-panel {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    position: relative;
+    overflow: hidden;
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
 .mission-control {
     background: #ffffff;
     border-bottom: 1px solid rgba(15, 23, 42, 0.06);
@@ -457,78 +489,6 @@ html[data-fr-theme='dark'] .brand-logo-dark {
     gap: 12px;
     flex-wrap: nowrap;
 }
-
-.mission-cluster--right {
-    justify-content: flex-end;
-    gap: 12px;
-}
-
-.mission-history {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
-
-@keyframes spin {
-    from {
-        transform: rotate(0deg);
-    }
-
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-.main-content {
-    flex: 1;
-    display: grid;
-    grid-template-columns: minmax(220px, 280px) minmax(0, 3fr) minmax(200px, 240px);
-    gap: 8px;
-    min-height: 0;
-}
-
-.center-panel {
-    position: relative;
-    background-color: #ffffff;
-    border-radius: 18px;
-    border: 1px solid rgba(148, 163, 184, 0.25);
-    padding: 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    min-height: 0;
-    box-shadow: inset 0 12px 12px -12px rgba(15, 23, 42, 0.12), inset 0 -12px 12px -12px rgba(15, 23, 42, 0.12);
-}
-
-.left-panel,
-.right-panel {
-    position: relative;
-    background-color: #ffffff;
-    border-radius: 18px;
-    border: 1px solid rgba(148, 163, 184, 0.25);
-    padding: clamp(12px, 1.6vw, 18px);
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    overflow-y: auto;
-    box-shadow: inset 0 12px 12px -12px rgba(15, 23, 42, 0.12), inset 0 -12px 12px -12px rgba(15, 23, 42, 0.12);
-    scrollbar-width: thin;
-    scrollbar-color: rgba(148, 163, 184, 0.5) transparent;
-    min-height: 0;
-}
-
-.left-panel::-webkit-scrollbar,
-.right-panel::-webkit-scrollbar {
-    width: 6px;
-}
-
-.left-panel::-webkit-scrollbar-thumb,
-.right-panel::-webkit-scrollbar-thumb {
-    background: rgba(148, 163, 184, 0.5);
-    border-radius: 999px;
-}
-
-
 
 .panel-header {
     position: sticky;
