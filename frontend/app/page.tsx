@@ -1,5 +1,145 @@
-import { redirect } from 'next/navigation'
+"use client"
 
-export default function Home() {
-  redirect('/build')
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { AreaChart, Area, Line, ComposedChart, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, Legend } from 'recharts'
+
+const data = [
+  { year: '2019', deficit: 3.0, interest: 32 },
+  { year: '2020', deficit: 8.9, interest: 29 },
+  { year: '2021', deficit: 6.5, interest: 31 },
+  { year: '2022', deficit: 4.8, interest: 42 },
+  { year: '2023', deficit: 5.5, interest: 50 },
+  { year: '2024', deficit: 6.1, interest: 55 },
+  { year: '2025', deficit: 6.2, interest: 62 },
+];
+
+export default function LandingPage() {
+  const router = useRouter()
+  const [isExiting, setIsExiting] = useState(false)
+
+  const handleEnter = () => {
+    setIsExiting(true)
+    setTimeout(() => {
+      router.push('/build')
+    }, 800)
+  }
+
+  return (
+    <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-slate-950 font-['Outfit']">
+
+      {/* Background Ambience */}
+      <div className={`absolute inset-0 z-0 transition-opacity duration-1000 ${isExiting ? 'opacity-0' : 'opacity-100'}`}>
+        <div className="absolute top-0 left-0 w-full h-full bg-[url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop')] bg-cover bg-center opacity-10 mix-blend-overlay grayscale"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/95 via-slate-900/90 to-slate-950"></div>
+      </div>
+
+      <div className={`relative z-10 max-w-6xl px-8 w-full grid lg:grid-cols-2 gap-16 items-center transition-all duration-700 ${isExiting ? 'scale-105 opacity-0' : 'scale-100 opacity-100'}`}>
+
+        {/* Left Column: The Narrative */}
+        <div className="text-left space-y-10">
+          <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-slate-800/50 border border-slate-700/50 text-slate-300 text-xs font-bold tracking-widest backdrop-blur-md">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-pulse absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-50"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+            </span>
+            URGENCE BUDGÉTAIRE
+          </div>
+
+          <h1 className="text-5xl lg:text-7xl font-extrabold tracking-tight leading-[1.1] text-white">
+            L'Impasse. <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">
+              À vous de décider.
+            </span>
+          </h1>
+
+          <div className="space-y-6 text-lg text-slate-400 leading-relaxed font-light max-w-xl">
+            <p>
+              La procédure parlementaire s'est enrayée. Faute de majorité pour construire un compromis, le budget est bloqué.
+            </p>
+            <p>
+              Pendant ce temps, la dette s'alourdit et la <strong className="text-red-400 font-medium">charge des intérêts explose</strong>, menaçant à terme le financement de nos écoles, de notre sécurité et de notre modèle social.
+            </p>
+            <div className="pt-4 border-l-2 border-indigo-500/50 pl-6">
+              <p className="italic text-slate-300 font-serif text-xl">
+                "Quand le système politique ne parvient plus à trancher, c'est aux citoyens de montrer la voie."
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={handleEnter}
+            className="group relative px-8 py-5 bg-white text-slate-900 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105 shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)] w-full md:w-auto overflow-hidden"
+          >
+            <span className="relative z-10 flex items-center gap-3 justify-center">
+              Construire le Budget
+              <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </span>
+          </button>
+        </div>
+
+        {/* Right Column: The Crisis Visualization */}
+        <div className="relative bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-8 shadow-2xl">
+          <div className="flex justify-between items-end mb-8">
+            <div>
+              <h3 className="text-white font-bold text-xl mb-1">La Double Peine</h3>
+              <p className="text-slate-500 text-sm">Déficit (Barres) vs Charge de la Dette (Ligne)</p>
+            </div>
+            <div className="text-right">
+              <span className="block text-3xl font-bold text-red-500">55 Md€</span>
+              <span className="text-xs text-slate-500 uppercase tracking-wide">Intérêts payés en 2024</span>
+            </div>
+          </div>
+
+          <div className="h-72 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <ComposedChart data={data}>
+                <defs>
+                  <linearGradient id="gradDeficit" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#64748b" stopOpacity={0.5} />
+                    <stop offset="100%" stopColor="#64748b" stopOpacity={0.1} />
+                  </linearGradient>
+                </defs>
+                <XAxis dataKey="year" stroke="#475569" fontSize={12} tickLine={false} axisLine={false} />
+                <YAxis yAxisId="left" hide domain={[0, 10]} />
+                <YAxis yAxisId="right" orientation="right" hide domain={[0, 80]} />
+                <Tooltip
+                  contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#fff' }}
+                />
+                <ReferenceLine yAxisId="left" y={3} stroke="#10b981" strokeDasharray="3 3" label={{ value: '3%', fill: '#10b981', fontSize: 10 }} />
+
+                {/* Deficit Bar */}
+                <Area
+                  yAxisId="left"
+                  type="monotone"
+                  dataKey="deficit"
+                  name="Déficit (% PIB)"
+                  fill="url(#gradDeficit)"
+                  stroke="none"
+                />
+
+                {/* Interest Line - The Killer Metric */}
+                <Line
+                  yAxisId="right"
+                  type="monotone"
+                  dataKey="interest"
+                  name="Charge Dette (Md€)"
+                  stroke="#f87171"
+                  strokeWidth={4}
+                  dot={{ r: 4, fill: '#f87171', strokeWidth: 2, stroke: '#fff' }}
+                />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="mt-6 text-xs text-slate-500 text-center">
+            Source: Insee, Projections Bercy • La charge de la dette est devenue le 2ème budget de l'État.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  )
 }
