@@ -5,9 +5,10 @@ interface ReformCatalogModalProps {
     onClose: () => void;
     onSelectReform: (reform: PolicyLever) => void;
     levers: PolicyLever[];
+    onHoverReform?: (reformId: string | null) => void;
 }
 
-export function ReformCatalogModal({ isOpen, onClose, onSelectReform, levers }: ReformCatalogModalProps) {
+export function ReformCatalogModal({ isOpen, onClose, onSelectReform, levers, onHoverReform }: ReformCatalogModalProps) {
     if (!isOpen) return null;
 
     return (
@@ -40,6 +41,8 @@ export function ReformCatalogModal({ isOpen, onClose, onSelectReform, levers }: 
                             <button
                                 key={lever.id}
                                 onClick={() => { onSelectReform(lever); }}
+                                onMouseEnter={() => onHoverReform?.(lever.id)}
+                                onMouseLeave={() => onHoverReform?.(null)}
                                 className="group flex flex-col text-left p-4 bg-white border border-gray-200 hover:border-violet-300 rounded-xl shadow-sm hover:shadow-md transition-all relative overflow-hidden"
                             >
                                 <div className="absolute left-0 top-0 bottom-0 w-1 bg-violet-500 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -51,7 +54,18 @@ export function ReformCatalogModal({ isOpen, onClose, onSelectReform, levers }: 
                                         {(lever.fixedImpactEur || 0) > 0 ? '+' : ''}{((lever.fixedImpactEur || 0) / 1e9).toFixed(1)} Md€
                                     </span>
                                 </div>
-                                <p className="text-sm text-slate-500 line-clamp-2">{lever.description || "Pas de description disponible."}</p>
+                                <p className="text-sm text-slate-500 line-clamp-2 mb-3">{lever.description || "Pas de description disponible."}</p>
+
+                                <div className="flex items-center gap-3 pt-3 border-t border-slate-100 w-full">
+                                    <div className="flex items-center gap-1 text-[10px] uppercase font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded">
+                                        <span className="material-icons text-[12px]">account_balance_wallet</span>
+                                        Pouvoir d'Achat: <span className="text-slate-600">--</span>
+                                    </div>
+                                    <div className="flex items-center gap-1 text-[10px] uppercase font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded">
+                                        <span className="material-icons text-[12px]">trending_up</span>
+                                        Croissance: <span className="text-slate-600">--</span>
+                                    </div>
+                                </div>
                             </button>
                         ))}
                     </div>

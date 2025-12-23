@@ -9,16 +9,17 @@
 
 ### Steps
 1.  **Visual Foundation (Styles)** (✅ *Done*)
-    *   [ ] Verify `globals.css` implements the "Premium Glass" token set (Navy/Emerald/Violet).
-    *   [ ] Verify `Inter` and `Outfit` fonts are loading correctly.
+    *   [x] Verify `globals.css` implements the "Premium Glass" token set (Navy/Emerald/Violet).
+    *   [x] Verify `Inter` and `Outfit` fonts are loading correctly.
 2.  **Landing Page Implementation** (✅ *Done*)
-    *   [ ] **Crisis Visualization**: Add a simplified sparkline/chart showing the deficit/debt trajectory exploding in 2019-2026. "Show, don't just tell."
-    *   [ ] **Narrative context**: "Vous êtes député. Le déficit dérape..."
-    *   [ ] **CTA**: "Entrer dans l'Hémicycle" triggers a "Door Opening" transition/sound effect.
+    *   [x] **Crisis Visualization**: Add a simplified sparkline/chart showing the deficit/debt trajectory exploding in 2024-2026. "Show, don't just tell."
+    *   [x] **Narrative context**: "Vous êtes député. Le déficit dérape..."
+    *   [x] **Party/Difficulty Selection** (Optional V2): "Choose your difficulty" (Majority MP vs Opposition). For now, standard "Budget Minister" role.
+    *   [x] **CTA**: "Entrer dans l'Hémicycle" triggers a "Door Opening" transition/sound effect.
 
 ### Checks & Validation
-*   [ ] User landing on `localhost:3000` sees the briefing, not a redirect.
-*   [ ] The "Crisis Graph" is immediately visible and alarming.
+*   [x] User landing on `localhost:3000` sees the briefing, not a redirect.
+*   [x] The "Crisis Graph" is immediately visible and alarming.
 
 ---
 
@@ -26,24 +27,23 @@
 **Goal**: Create a unified, single-screen "Command Center" that places the Deficit at the heart of the experience.
 
 ### Steps
-1.  **Global HUD (Scoreboard)** (✅ *Started*)
-    *   [ ] **Refactor**: Remove old `HUD` and `StatCards` components from the top of the Build page.
-    *   [ ] **Implement `Scoreboard.tsx`**:
+1.  **Global HUD (Scoreboard)** (✅ *Done*)
+    *   [x] **Refactor**: Remove old `HUD` and `StatCards` components from the top of the Build page.
+    *   [x] **Implement `Scoreboard.tsx`**:
         *   **Center**: Absolute Deficit (€) and Deficit % GDP. Large, legible font.
         *   **Left**: Total Spending (Dépenses) with sparkline/trend.
         *   **Right**: Total Revenue (Recettes) with sparkline/trend.
         *   **Feedback**: Animated counters that tick up/down when values change.
-        *   **Political Capital (Preview)**: Add a placeholder bar for "Soutien Populaire" (Political Capital) next to the Resolution Meter. Even if static now, reserving space is key.
-    *   [ ] **Check**: Ensure `computeDeficitTotals` is correctly imported and values match the baseline on load.
-2.  **Layout Structure (Three-Pane)** (✅ *Started*)
-    *   [ ] **Left Panel (Dépenses)**:
+    *   [x] **Check**: Ensure `computeDeficitTotals` is correctly imported and values match the baseline on load.
+2.  **Layout Structure (Three-Pane)** (✅ *Done*)
+    *   [x] **Left Panel (Dépenses)**:
         *   Sticky Header: "Catalogue des Réformes" button (Prominent, Violet).
         *   List: Missions (Admin Lens). Remove filters for "Family" or "Lens".
-    *   [ ] **Center Panel (Visualization)**:
+    *   [x] **Center Panel (Visualization)**:
         *   **Treemap**: Maximize height. Remove "Budget Allocation" titles.
         *   **News Ticker Area**: Reserve bottom 40px for the "Newsfeed" scrolling text.
         *   **Overlay**: Simple toggle for `€` vs `%` at bottom-left.
-    *   [ ] **Right Panel (Recettes)**:
+    *   [x] **Right Panel (Recettes)**:
         *   List: Revenue Sources (Taxes).
 3.  **Visual Polish**:
     *   [ ] Update Panel backgrounds to white with subtle border/shadow (`shadow-sm`).
@@ -70,8 +70,9 @@
     *   [ ] **Stats**: Show "Cost in Political Capital" (e.g., -10 pts) on the card (even if mechanic is fake for now).
     *   [ ] **Filtering**: Tabs for "Retraites", "Fiscalité", "Education".
 2.  **Interaction Design**:
-    *   [ ] **Hover Preview (The Ghost)**: When hovering a reform card *before* clicking, specific bars in the Treemap and the HUD Deficit Bar should "ghost" to show the potential impact. This teaches the user the consequence before the commitment.
+    *   [x] **Hover Preview (The Ghost)**: When hovering a reform card *before* clicking, specific bars in the Treemap and the HUD Deficit Bar should "ghost" to show the potential impact. This teaches the user the consequence before the commitment.
     *   [ ] **Batch Selection**: Allow selecting multiple reforms, then "Sign Budget Bill" to apply all at once.
+    *   [ ] **Impact Engine Metrics**: Show placeholders for "Growth" and "Purchasing Power" on cards.
 
 ### Checks & Validation
 *   [ ] Can open/close modal.
@@ -169,9 +170,25 @@
 
 ---
 
+## � Epic 8: Onboarding (The Guided Tour)
+**Goal**: Explain the complex UI mechanics to a first-time user without overwhelming them.
+
+### Steps
+1.  **Tutorial State**:
+    *   [ ] Check `localStorage` for `hasSeenTutorial`. If false, trigger the tour on `/build` load.
+2.  **Step-by-Step Flow**:
+    *   **Step 1: The Objective (HUD)**. "Voici votre mission : Ramener le déficit sous 3%." (Highlight Scoreboard).
+    *   **Step 2: The Map (Treemap)**. "Ceci est le budget de l'État. Chaque carré est une mission." (Highlight Treemap).
+    *   **Step 3: The Tools (Catalog)**. "Utilisez le catalogue pour activer des réformes majeures." (Highlight Button).
+    *   **Step 4: The Details (Panels)**. "Ou cliquez sur une mission pour ajuster manuellement."
+3.  **Reset Mechanism**:
+    *   [ ] Add a "Revoir le Tutoriel" option in a Help menu or footer.
+
+---
+
 ## 🚀 Execution Strategy
-1.  **Validate Phase 1 & 2** (Current State): Fix the build error (duplicate import), ensure Landing Page -> Build Page flow works.
-2.  **Refine Dashboard**: Polish the Panel aesthetics and map the Reviewer's feedback (e.g. ensure `computeDeficitTotals` logic is sound).
-3.  **Enhance Catalog**: Add the filtering logic if list is too long.
+1.  **Validate Phases 1 & 2** (✅ Done): Landing and Cockpit are live.
+2.  **Implement Tutorial (Epic 8)**: Create the onboarding overlay to guide the user.
+3.  **Enhance Catalog (Epic 3)**: Add the "Ghost Preview" and "Objective Impacts".
 4.  **Polish**: Add the "Game Juice" animations.
 5.  **Research**: Launch parallel task to source IPP/OFCE coefficients for Epic 6.

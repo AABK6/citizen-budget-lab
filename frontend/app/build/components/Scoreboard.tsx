@@ -7,6 +7,7 @@ interface ScoreboardProps {
     onReset: () => void;
     onShare: () => void;
     year: number;
+    previewDeficit?: number | null;
 }
 
 const formatCurrencyShort = (amount: number) => {
@@ -22,6 +23,7 @@ export function Scoreboard({
     onReset,
     onShare,
     year,
+    previewDeficit,
 }: ScoreboardProps) {
 
     // Extract critical metrics from the scenario result (or fallback to baseline)
@@ -65,6 +67,10 @@ export function Scoreboard({
     const isDeficitBad = stats.deficit < -3.0; // Arbitrary visualization threshold (e.g. -3% GDP is huge)
     // Actually, usually deficit is negative balance. So < 0 is red.
 
+    // Preview Logic
+    const showPreview = previewDeficit !== undefined && previewDeficit !== null && previewDeficit !== stats.deficit;
+    const previewDiff = showPreview ? (previewDeficit! - stats.deficit) : 0;
+
     return (
         <div className="w-full bg-white/80 backdrop-blur-md border-b border-white/50 shadow-sm sticky top-0 z-50 px-6 py-4 flex items-center justify-between font-['Outfit']">
 
@@ -80,11 +86,25 @@ export function Scoreboard({
                 {/* Primary Metric: BALANCE / DEFICIT */}
                 <div className="flex flex-col">
                     <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Solde Public</span>
-                    <div className="flex items-baseline gap-2">
-                        <span className={`text-3xl font-extrabold tracking-tight ${stats.deficit < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
+                    <div className="flex items-baseline gap-3">
+                        {/* Current Value */}
+                        <span id="scoreboard-deficit" className={`text-3xl font-extrabold tracking-tight transition-all duration-300 ${showPreview ? 'opacity-40 blur-[1px]' : ''} ${stats.deficit < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
                             {stats.deficit > 0 ? '+' : ''}{formatCurrencyShort(stats.deficit)}
                         </span>
-                        {stats.deficitRatio !== null && (
+
+                        {/* Ghost / Preview Value */}
+                        {showPreview && (
+                            <div className="flex flex-col animate-in fade-in slide-in-from-bottom-2 duration-200">
+                                <span className={`text-3xl font-extrabold tracking-tight ${previewDeficit! < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
+                                    {previewDeficit! > 0 ? '+' : ''}{formatCurrencyShort(previewDeficit!)}
+                                </span>
+                                <span className={`text-xs font-bold ${previewDiff > 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+                                    {previewDiff > 0 ? '▲' : '▼'} Impact: {previewDiff > 0 ? '+' : ''}{formatCurrencyShort(previewDiff)}
+                                </span>
+                            </div>
+                        )}
+
+                        {!showPreview && stats.deficitRatio !== null && (
                             <span className={`text-sm font-medium ${stats.deficitRatio < -0.03 ? 'text-red-500' : 'text-slate-500'}`}>
                                 {formatPercent(stats.deficitRatio)} du PIB
                             </span>

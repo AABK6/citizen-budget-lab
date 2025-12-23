@@ -17,7 +17,10 @@ import {
   LegoPiece,
   PolicyLever,
   PopularIntent,
+  MassCategory,
+  MissionLabel,
   MassLabel,
+  AggregationLens,
 } from './types';
 import { useBuildState } from './useBuildState';
 import { runScenarioForDsl } from '@/lib/permalink';
@@ -27,7 +30,9 @@ import { RevenueCategoryList } from './components/RevenueCategoryList';
 import { RevenueCategoryPanel } from './components/RevenueCategoryPanel';
 import { computeDeficitTotals } from '@/lib/fiscal';
 import { Scoreboard } from './components/Scoreboard';
-import { ReformCatalogModal } from './components/ReformCatalogModal';
+import { ReformSidebarList } from './components/ReformSidebarList';
+import { TutorialOverlay } from './components/TutorialOverlay';
+import { NewsTicker } from './components/NewsTicker';
 
 const cloneCategories = (categories: MassCategory[]) =>
   categories.map((category) => ({ ...category }));
@@ -49,6 +54,7 @@ export default function BuildPageClient() {
   const { state, actions } = useBuildState(INITIAL_DSL_OBJECT.baseline_year);
   const [ghostMode, setGhostMode] = useState(false);
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
+  const [previewReformId, setPreviewReformId] = useState<string | null>(null);
   const {
     year,
     initialLoading,
@@ -768,6 +774,26 @@ export default function BuildPageClient() {
   const hasResolution = typeof resolutionPctRaw === 'number';
   const resolutionPct = hasResolution ? resolutionPctRaw : 0;
 
+  // Ghost Preview Logic
+  const previewDeficit = useMemo(() => {
+    if (!previewReformId || latestDeficit === null) return null;
+    const lever = policyLevers.find(l => l.id === previewReformId);
+    if (!lever) return null;
+
+    // Impact is usually positive for savings (Deficit Reduction)
+    // Balance (Solde) is negative.
+    // If we save +10Md, Balance goes from -140 to -130.
+    // So: NewBalance = CurrentBalance + Impact.
+    // However, we must check if the lever is ALREADY active.
+    // If active, preview would be "Removing it" -> Balance - Impact.
+    // But currently Catalog doesn't easily show active state for preview.
+    // Let's assume preview is for *toggling*. 
+    const isAlreadyActive = isLeverInDsl(lever.id);
+    const impact = lever.fixedImpactEur || 0;
+
+    return latestDeficit + (isAlreadyActive ? -impact : impact);
+  }, [previewReformId, latestDeficit, policyLevers, isLeverInDsl]);
+
   const treemapData = useMemo(
     () => (masses || []).map((mission) => {
       const metric = ghostMode
@@ -827,66 +853,87 @@ export default function BuildPageClient() {
         onReset={reset}
         onShare={handleShare}
         year={year}
+        previewDeficit={previewDeficit}
       />
 
       <div className="w-full flex-1 min-h-0 flex flex-col overflow-hidden relative">
         <div className="flex-1 grid grid-cols-[380px_1fr_350px] gap-4 p-4 min-h-0">
 
           {/* LEFT PANEL: SPENDING */}
-          <div className="flex flex-col bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            {/* Reform Catalog Trigger */}
-            <div className="p-4 border-b border-slate-100 bg-slate-50/50">
-              <button
-                onClick={() => setIsCatalogOpen(true)}
-                className="w-full py-3 px-4 bg-violet-600 hover:bg-violet-700 text-white rounded-xl font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
-              >
-                <span className="material-icons text-sm">auto_fix_high</span>
-                Catalogue des Réformes
-              </button>
-            </div>
+          <div className="flex flex-col bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative">
 
-            <div className="flex-1 overflow-y-auto">
-              {!isPanelExpanded ? (
-                <MassCategoryList
-                  categories={masses}
-                  onSelect={handleCategoryClick}
-                  formatCurrency={formatCurrency}
-                  formatShare={formatShare}
-                  displayMode={displayMode}
-                />
-              ) : (
-                selectedCategory && (
-                  <MassCategoryPanel
-                    category={selectedCategory}
-                    targetPercent={targetPercent}
-                    targetRangeMax={targetRangeMax}
-                    onTargetPercentChange={setTargetPercent}
-                    onRangeChange={handleTargetRangeChange}
-                    onApplyTarget={handleApplyTarget}
-                    onClearTarget={() => {
-                      setTargetPercent(0);
-                      setTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
-                    }}
-                    onClose={handleBackClick}
-                    suggestedLevers={suggestedLevers}
-                    onLeverToggle={(lever) =>
-                      (isLeverInDsl(lever.id) ? removeLeverFromDsl(lever.id) : addLeverToDsl(lever))
-                    }
-                    isLeverSelected={isLeverInDsl}
-                    popularIntents={popularIntents}
-                    onIntentClick={handleIntentClick}
-                    formatCurrency={formatCurrency}
-                    formatShare={formatShare}
-                    displayMode={displayMode}
-                  />
-                )
-              )}
-            </div>
+            {isCatalogOpen ? (
+              <ReformSidebarList
+                onClose={() => setIsCatalogOpen(false)}
+                levers={policyLevers}
+                onSelectReform={(lever) => {
+                  if (!isLeverInDsl(lever.id)) {
+                    addLeverToDsl(lever);
+                  } else {
+                    removeLeverFromDsl(lever.id);
+                  }
+                }}
+                onHoverReform={setPreviewReformId}
+                isLeverSelected={isLeverInDsl}
+              />
+            ) : (
+              <>
+                {/* Reform Catalog Trigger */}
+                <div className="p-4 border-b border-slate-100 bg-slate-50/50">
+                  <button
+                    onClick={() => setIsCatalogOpen(true)}
+                    id="reform-catalog-btn"
+                    className="w-full py-3 px-4 bg-violet-600 hover:bg-violet-700 text-white rounded-xl font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                  >
+                    <span className="material-icons text-sm">auto_fix_high</span>
+                    Catalogue des Réformes
+                  </button>
+                </div>
+
+                <div className="flex-1 overflow-y-auto" id="left-panel-list">
+                  {!isPanelExpanded ? (
+                    <MassCategoryList
+                      categories={masses}
+                      onSelect={handleCategoryClick}
+                      formatCurrency={formatCurrency}
+                      formatShare={formatShare}
+                      displayMode={displayMode}
+                    />
+                  ) : (
+                    selectedCategory && (
+                      <MassCategoryPanel
+                        category={selectedCategory}
+                        targetPercent={targetPercent}
+                        targetRangeMax={targetRangeMax}
+                        onTargetPercentChange={setTargetPercent}
+                        onRangeChange={handleTargetRangeChange}
+                        onApplyTarget={handleApplyTarget}
+                        onClearTarget={() => {
+                          setTargetPercent(0);
+                          setTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
+                        }}
+                        onClose={handleBackClick}
+                        suggestedLevers={suggestedLevers}
+                        onLeverToggle={(lever) =>
+                          (isLeverInDsl(lever.id) ? removeLeverFromDsl(lever.id) : addLeverToDsl(lever))
+                        }
+                        isLeverSelected={isLeverInDsl}
+                        popularIntents={popularIntents}
+                        onIntentClick={handleIntentClick}
+                        formatCurrency={formatCurrency}
+                        formatShare={formatShare}
+                        displayMode={displayMode}
+                      />
+                    )
+                  )}
+                </div>
+              </>
+            )}
           </div>
 
           {/* CENTER PANEL: TREEMAP */}
-          <div className="flex flex-col bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden relative">
-            <div className="absolute inset-0 p-1">
+          <div id="treemap-container" className="flex flex-col bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden relative">
+            <div className="flex-1 relative p-1 min-h-0">
               <TreemapChart
                 data={treemapData}
                 colors={treemapColors}
@@ -899,22 +946,25 @@ export default function BuildPageClient() {
                   handleCategoryClick(item as MassCategory);
                 }}
               />
+
+              {/* Minimal view toggles at bottom left */}
+              <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur rounded-lg shadow-sm border border-slate-200 p-1 flex gap-1 z-10">
+                <button
+                  onClick={() => setDisplayMode('amount')}
+                  className={`px-3 py-1 rounded text-xs font-bold ${displayMode === 'amount' ? 'bg-blue-100 text-blue-700' : 'text-slate-500 hover:bg-slate-50'}`}
+                >
+                  €
+                </button>
+                <button
+                  onClick={() => setDisplayMode('share')}
+                  className={`px-3 py-1 rounded text-xs font-bold ${displayMode === 'share' ? 'bg-blue-100 text-blue-700' : 'text-slate-500 hover:bg-slate-50'}`}
+                >
+                  %
+                </button>
+              </div>
             </div>
-            {/* Minimal view toggles at bottom left */}
-            <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur rounded-lg shadow-sm border border-slate-200 p-1 flex gap-1 z-10">
-              <button
-                onClick={() => setDisplayMode('amount')}
-                className={`px-3 py-1 rounded text-xs font-bold ${displayMode === 'amount' ? 'bg-blue-100 text-blue-700' : 'text-slate-500 hover:bg-slate-50'}`}
-              >
-                €
-              </button>
-              <button
-                onClick={() => setDisplayMode('share')}
-                className={`px-3 py-1 rounded text-xs font-bold ${displayMode === 'share' ? 'bg-blue-100 text-blue-700' : 'text-slate-500 hover:bg-slate-50'}`}
-              >
-                %
-              </button>
-            </div>
+
+            <NewsTicker />
           </div>
 
           {/* RIGHT PANEL: REVENUE */}
@@ -964,17 +1014,9 @@ export default function BuildPageClient() {
           </div>
         )}
 
-        <ReformCatalogModal
-          isOpen={isCatalogOpen}
-          onClose={() => setIsCatalogOpen(false)}
-          levers={policyLevers}
-          onSelectReform={(lever) => {
-            // Toggle logic: add if not present
-            if (!isLeverInDsl(lever.id)) {
-              addLeverToDsl(lever);
-            }
-          }}
-        />
+
+
+        <TutorialOverlay onComplete={() => { }} />
 
       </div>
     </div>
