@@ -193,12 +193,14 @@ export function RevenueCategoryPanel({
 
             <div className="flex gap-2">
               <button
+                id="revenue-apply-target"
                 className="flex-1 py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-sm shadow-blue-200 transition-all active:scale-[0.98]"
                 onClick={onApplyTarget}
               >
                 Apply Target
               </button>
               <button
+                id="revenue-reset-target"
                 className="px-4 py-2 text-gray-600 hover:text-gray-900 font-medium hover:bg-gray-100 rounded-lg transition-colors"
                 onClick={handleClear}
               >

@@ -222,12 +222,14 @@ export function MassCategoryPanel({
 
             <div className="flex gap-2 pt-1">
               <button
+                id="mass-apply-target"
                 className="flex-1 py-1.5 px-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg shadow-sm shadow-blue-200 transition-all active:scale-[0.98]"
                 onClick={onApplyTarget}
               >
                 Apply Target
               </button>
               <button
+                id="mass-reset-target"
                 className="px-3 py-1.5 text-gray-600 hover:text-gray-900 text-sm font-medium hover:bg-gray-100 rounded-lg transition-colors"
                 onClick={handleClear}
               >

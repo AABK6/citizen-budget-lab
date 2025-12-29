@@ -946,7 +946,7 @@ export default function BuildPageClient() {
           </div>
 
           {/* RIGHT PANEL: REVENUE */}
-          <div className="flex flex-col bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+          <div id="right-panel-revenue" className="flex flex-col bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div className="flex-1 overflow-y-auto">
               {!isRevenuePanelExpanded ? (
                 <RevenueCategoryList
