@@ -12,10 +12,12 @@ from typing import Dict
 
 DATA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data", "cache"))
 META_PATH = os.path.join(DATA_DIR, "scenarios_meta.json")
-DSL_PATH = os.path.join(DATA_DIR, "scenarios_dsl.json")
+
+VOTES_PATH = os.path.join(DATA_DIR, "votes.json")
 
 scenario_store: Dict[str, Dict[str, str]] = {}
 scenario_dsl_store: Dict[str, str] = {}
+votes_store: list[Dict] = []
 
 
 def _ensure_dir() -> None:
@@ -23,14 +25,18 @@ def _ensure_dir() -> None:
 
 
 def _load() -> None:
-    global scenario_store, scenario_dsl_store
+    global scenario_store, scenario_dsl_store, votes_store
     _ensure_dir()
     try:
         if os.path.exists(META_PATH):
             with open(META_PATH, "r", encoding="utf-8") as f:
                 obj = json.load(f)
                 if isinstance(obj, dict):
-                    scenario_store = {str(k): {"title": str(v.get("title") or ""), "description": str(v.get("description") or "")} for k, v in obj.items() if isinstance(v, dict)}
+                    scenario_store = {
+                        str(k): {"title": str(v.get("title") or ""), "description": str(v.get("description") or "")}
+                        for k, v in obj.items()
+                        if isinstance(v, dict)
+                    }
     except Exception:
         scenario_store = {}
     try:
@@ -41,6 +47,16 @@ def _load() -> None:
                     scenario_dsl_store = {str(k): str(v) for k, v in obj.items() if isinstance(v, str)}
     except Exception:
         scenario_dsl_store = {}
+    try:
+        if os.path.exists(VOTES_PATH):
+            with open(VOTES_PATH, "r", encoding="utf-8") as f:
+                obj = json.load(f)
+                if isinstance(obj, list):
+                    votes_store = obj
+                else:
+                    votes_store = []
+    except Exception:
+        votes_store = []
 
 
 def _save() -> None:
@@ -55,6 +71,11 @@ def _save() -> None:
             json.dump(scenario_dsl_store, f, ensure_ascii=False, indent=2)
     except Exception:
         pass
+    try:
+        with open(VOTES_PATH, "w", encoding="utf-8") as f:
+            json.dump(votes_store, f, ensure_ascii=False, indent=2)
+    except Exception:
+        pass
 
 
 def set_meta(sid: str, title: str | None = None, description: str | None = None) -> None:
@@ -64,6 +85,15 @@ def set_meta(sid: str, title: str | None = None, description: str | None = None)
 
 def set_dsl(sid: str, dsl_b64: str) -> None:
     scenario_dsl_store[sid] = dsl_b64
+    _save()
+
+
+def add_vote(sid: str, meta: Dict) -> None:
+    votes_store.append({
+        "scenarioId": sid,
+        "timestamp": meta.get("timestamp"),
+        "meta": meta
+    })
     _save()
 
 

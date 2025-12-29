@@ -35,10 +35,11 @@
         *   **Right**: Total Revenue (Recettes) with sparkline/trend.
         *   **Feedback**: Animated counters that tick up/down when values change.
     *   [x] **Check**: Ensure `computeDeficitTotals` is correctly imported and values match the baseline on load.
-2.  **Layout Structure (Three-Pane)** (✅ *Done*)
-    *   [x] **Left Panel (Dépenses)**:
-        *   Sticky Header: "Catalogue des Réformes" button (Prominent, Violet).
-        *   List: Missions (Admin Lens). Remove filters for "Family" or "Lens".
+2.  **Layout Structure (Three-Pane)** (✅ *In Progress*)
+    *   [x] **Unified Left Panel (Multimodal)**:
+        *   **Tabs**: "Missions" vs "Réformes". Switch views instantly.
+        *   **Consistency**: Both views use identical list/card styling.
+        *   **Drill-down**: Clicking a mission opens details; clicking a reform behaves like a toggle (or opens details if needed).
     *   [x] **Center Panel (Visualization)**:
         *   **Treemap**: Maximize height. Remove "Budget Allocation" titles.
         *   **News Ticker Area**: Reserve bottom 40px for the "Newsfeed" scrolling text.
@@ -67,17 +68,17 @@
         *   Title & Description.
         *   **Impact Badge**: Green for Savings (positive impact), Red for Cost.
         *   **Action**: "Adopt" / "Repeal" toggle button.
-    *   [ ] **Stats**: Show "Cost in Political Capital" (e.g., -10 pts) on the card (even if mechanic is fake for now).
+    *   [x] **Stats**: Show "Cost in Political Capital" (e.g., -10 pts) on the card (even if mechanic is fake for now).
     *   [ ] **Filtering**: Tabs for "Retraites", "Fiscalité", "Education".
 2.  **Interaction Design**:
     *   [x] **Hover Preview (The Ghost)**: When hovering a reform card *before* clicking, specific bars in the Treemap and the HUD Deficit Bar should "ghost" to show the potential impact. This teaches the user the consequence before the commitment.
     *   [ ] **Batch Selection**: Allow selecting multiple reforms, then "Sign Budget Bill" to apply all at once.
-    *   [ ] **Impact Engine Metrics**: Show placeholders for "Growth" and "Purchasing Power" on cards.
+    *   [x] **Impact Engine Metrics**: Show placeholders for "Growth" and "Purchasing Power" on cards.
 
 ### Checks & Validation
-*   [ ] Can open/close modal.
-*   [ ] Hovering a reform shows where it hits in the budget (Educational).
-*   [ ] Selecting a reform updates the Deficit in the HUD immediately.
+*   [x] Can open/close modal.
+*   [x] Hovering a reform shows where it hits in the budget (Educational).
+*   [x] Selecting a reform updates the Deficit in the HUD immediately.
 
 ---
 
@@ -86,13 +87,13 @@
 
 ### Steps
 1.  **Resolution Meter**:
-    *   [ ] Visual bar in the HUD showing progress towards a "balanced budget" or "target".
-    *   [ ] Animate fill width on change.
+    *   [x] Visual bar in the HUD showing progress towards a "balanced budget" or "target".
+    *   [x] Animate fill width on change.
 2.  **Notification Snacks**:
-    *   [ ] When a reform is applied: Show a toast at the bottom center.
+    *   [x] When a reform is applied: Show a toast at the bottom center.
         *   *Example*: "✅ Réforme des Retraites appliquée : +12 Md€ d'économies".
 3.  **Positive Reinforcement**:
-    *   [ ] If Deficit drops below key thresholds (3%, 0%), trigger a subtle confetti or "Success" glow on the HUD.
+    *   [x] If Deficit drops below key thresholds (3%, 0%), trigger a subtle confetti or "Success" glow on the HUD.
 
 ### Checks & Validation
 *   [ ] Animations are smooth (60fps).
@@ -100,95 +101,67 @@
 
 ---
 
-## 📅 Epic 5: Simplification & Cleanup
+## 📅 Epic 5: Simplification & Cleanup (✅ Done)
 **Goal**: Remove "Explorer" baggage. Focus on the game.
 
 ### Steps
 1.  **Remove Navigation**:
-    *   [ ] Hide/Remove links to `/explore`, `/procurement` from the main UI (though verify routes still exist for advanced users).
+    *   [x] Hide/Remove links to `/explore`, `/procurement` from the main UI.
 2.  **Lens Lockdown**:
-    *   [ ] Hardcode lens to `ADMIN` (Missions).
-    *   [ ] Remove `LensSwitcher` logic from `BuildPageClient` to simplify state.
+    *   [x] Hardcode lens to `ADMIN` (Missions).
+    *   [x] Remove `LensSwitcher` logic from `BuildPageClient` to simplify state.
 3.  **Code Cleanup**:
-    *   [ ] Remove unused imports in `BuildPageClient`.
-    *   [ ] Fix duplicate imports (e.g. `computeDeficitTotals`).
+    *   [x] Remove unused imports in `BuildPageClient`.
+    *   [x] Fix duplicate imports.
 
 ---
 
-## � Epic 6: Advanced Game Mechanics (Phase 4)
-**Goal**: Deepen the simulation with political consequences, narrative feedback, and viral hooks.
+## 🧠 Epic 6: Objective Impact Engine
+**Goal**: COMPLETELY REMOVE "Political Capital". Replace with objective, modeled trade-offs to show WHO is impacted and HOW.
 
-### Idea 1: The "Objective Impact" Engine (Replacing Political Capital)
-**Goal**: Replace subjective "Political Capital" with rigorous, modeled economic impacts.
-*   **Concept**: Every reform has concrete consequences on:
-    *   **Purchasing Power (Pouvoir d'Achat)**: Impact on household disposable income (Decile 1 vs Decile 10).
-    *   **Growth (Croissance)**: Short-term shock vs Long-term potential.
-    *   **Inequality (Gini)**: How the budget shifts the curve.
-*   **UI**: A "Dashboard of Consequences" that updates alongside the Deficit.
-*   **Data Strategy**: We need to ingest coefficients from authoritative models (e.g., Institut des Politiques Publiques, OFCE, Trésor).
+### Data Requirements (Deep Research)
+1.  **Direct Impact Metrics**:
+    *   **Population**: Number of households/businesses impacted.
+    *   **Redistribution**: Vertical equity (Decile 1 vs Decile 10 impacts).
+    *   **Macro**: GDP multiplier (short term) and employment count.
+    *   **Sustainability**: CO2 emissions impact (optional, if available).
+2.  **Implementation**:
+    *   **Research**: Deep dive for coefficients from IPP, OFCE, Trésor for key reforms (Retraites, TVA, ISF, CICE).
+    *   [x] **Schema Update**: `PolicyLever` extended to include `impactStruct`.
+    *   **Backend**: Populate `_LEVER_CATALOG` with estimated coefficients.
+    *   **UI Update**: Update `ReformCatalogModal` to show these "Real Impacts" cards.
 
-### Idea 2: The "Newsfeed" (Narrative)
-*   **Concept**: Immediate qualitative feedback on quantitative decisions.
-*   **Mechanic**:
-    *   Triggered on specific budget moves.
-    *   *Cut Education* -> "Breaking: Teachers' Union announces general strike! 📉"
-    *   *Raises Taxes* -> "Economy: MEDEF warns of investment freeze. 📉"
-*   **UI**: A scrolling ticker at the bottom or a "Notification Feed" drawer.
-
-### Idea 3: "Budget Wrapped" (Virality)
-*   **Concept**: A shareable "receipt" of your simulation.
-*   **Content**:
-    *   "My 2026 Budget":
-    *   ✅ Deficit Fixed (+€20B)
-    *   🔥 Biggest Winner: [Decile 1 or 10]
-    *   🛡️ Top Priority: [Mission Name]
-*   **Tech**: Generate an image on the client side (using `html2canvas` or similar) for easy Twitter/LinkedIn sharing.
-
-### Idea 4: Challenge Scenarios
-*   **Concept**: Pre-configured starting states with specific win conditions.
-2.  **UI**: A "Dashboard of Consequences" that updates alongside the Deficit.
-3.  **Data Strategy**: We need to ingest coefficients from authoritative models (e.g., Institut des Politiques Publiques, OFCE, Trésor).
-
-### Checks & Validation
-*   [ ] The "Dashboard of Consequences" is visible and updates dynamically.
-*   [ ] Impact metrics are clearly attributed to specific reforms.
+### Tasks
+1.  [x] **Schema**: Verify `ImpactStructType` exists in API.
+2.  [ ] **Data Population**: Add plausible estimates to top 20 reforms in `policy_catalog.py`.
+3.  [ ] **UI Components**: Create `ImpactBadge` and `DistributionChart` components for the Reform Card.
+4.  [ ] **Frontend**: Swap "Political Capital" points for these rich metrics in the Catalog.
 
 ---
 
-## 📅 Epic 7: Data & Modeling (Deep Research)
-**Goal**: Ground the simulation in reality. Avoid "fake numbers".
+## 🗳️ Epic 7: The "End Game" & Onboarding
+**Goal**: Wrap the simulation with a meaningful conclusion and a guided start.
 
-### Steps
-1.  **Redistribution Coefficients**:
-    *   [ ] Research/Ingest impact tables for major tax reforms (VAT, Income Tax, CSG) by decile.
-    *   [ ] *Source*: IPP (Institut des Politiques Publiques) annual assessments.
-2.  **Detailed Employment/Growth Multipliers**:
-    *   [ ] Find fiscal multipliers for specific types of spending (Investment vs Transfer).
-    *   [ ] *Source*: OFCE / IMF papers on French fiscal multipliers.
-3.  **Reform Catalog Update**:
-    *   [ ] Populate the `incidence` field in `PolicyLever` with these real-world coefficients.
+### The Vote (End Game)
+*   **No "Game Over"**: Even if the deficit is 4%, the user can "Submit".
+*   **Tasks**:
+    *   [x] **Vote Checkpoint**: Replace "Share" with "Signer le Budget".
+    *   [x] **Debrief Screen**: Modal summary before submission.
+    *   [x] **Persistence**: Backend stores final state.
 
----
-
-## � Epic 8: Onboarding (The Guided Tour)
-**Goal**: Explain the complex UI mechanics to a first-time user without overwhelming them.
-
-### Steps
-1.  **Tutorial State**:
-    *   [ ] Check `localStorage` for `hasSeenTutorial`. If false, trigger the tour on `/build` load.
-2.  **Step-by-Step Flow**:
-    *   **Step 1: The Objective (HUD)**. "Voici votre mission : Ramener le déficit sous 3%." (Highlight Scoreboard).
-    *   **Step 2: The Map (Treemap)**. "Ceci est le budget de l'État. Chaque carré est une mission." (Highlight Treemap).
-    *   **Step 3: The Tools (Catalog)**. "Utilisez le catalogue pour activer des réformes majeures." (Highlight Button).
-    *   **Step 4: The Details (Panels)**. "Ou cliquez sur une mission pour ajuster manuellement."
-3.  **Reset Mechanism**:
-    *   [ ] Add a "Revoir le Tutoriel" option in a Help menu or footer.
+### The Guided Tour (Onboarding)
+*   **Goal**: Explain mechanics to first-time users.
+*   **Tasks**:
+    *   [x] **Tutorial State**: Check `localStorage` for `hasSeenTutorial`.
+    *   [x] **Step-by-Step Flow**: HUD -> Treemap -> Catalog -> Details.
+    *   [ ] **Reset Mechanism**: Add "Revoir le Tutoriel" option.
 
 ---
 
 ## 🚀 Execution Strategy
 1.  **Validate Phases 1 & 2** (✅ Done): Landing and Cockpit are live.
-2.  **Implement Tutorial (Epic 8)**: Create the onboarding overlay to guide the user.
-3.  **Enhance Catalog (Epic 3)**: Add the "Ghost Preview" and "Objective Impacts".
-4.  **Polish**: Add the "Game Juice" animations.
-5.  **Research**: Launch parallel task to source IPP/OFCE coefficients for Epic 6.
+2.  **Simplify & Cleanup** (✅ Done): Epic 5 complete.
+3.  **Vote Mechanics** (✅ Done): Epic 7 (Part 1) complete.
+4.  **Implement Objective Impacts (Epic 6)**: *Current Focus*. Populate data and update UI.
+5.  **Final Polish**: Animations/Tutorial Reset.
+

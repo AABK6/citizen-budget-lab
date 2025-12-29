@@ -23,6 +23,13 @@ _LEVER_CATALOG: List[dict] = [
         "sources": ["Cour des comptes 2023", "PLF 2026 orientation documents"],
         "params_schema": {},
         "dimension": "cp",
+        "impact": {
+            "householdsImpacted": 17000000,
+            "decile1ImpactEur": -150,
+            "decile10ImpactEur": -480,
+            "gdpImpactPct": -0.05,
+            "jobsImpactCount": -2000
+        }
     },
     {
         "id": "plf2026_mission_justice_efficiency",
@@ -91,7 +98,14 @@ _LEVER_CATALOG: List[dict] = [
         "feasibility": {"law": True, "adminLagMonths": 12, "notes": "Requires new tax law; politically symbolic and contested."},
         "conflicts_with": [],
         "sources": ["Institut Montaigne [1]"],
-        "params_schema": {}
+        "params_schema": {},
+        "impact": {
+            "householdsImpacted": 350000,
+            "decile1ImpactEur": 0,
+            "decile10ImpactEur": -12000,
+            "gdpImpactPct": -0.02,
+            "jobsImpactCount": -500
+        }
     },
     {
         "id": "high_income_surtax",
@@ -115,7 +129,14 @@ _LEVER_CATALOG: List[dict] = [
         "feasibility": {"law": True, "adminLagMonths": 6, "notes": "Needs new tax law; complex to define 'excess' profits and avoid capital flight."},
         "conflicts_with": [],
         "sources": ["Oxfam France [6]"],
-        "params_schema": {}
+        "params_schema": {},
+        "impact": {
+            "householdsImpacted": 0,
+            "decile1ImpactEur": 0,
+            "decile10ImpactEur": -200,  # Indirect via dividends
+            "gdpImpactPct": -0.05,
+            "jobsImpactCount": -2000
+        }
     },
     {
         "id": "end_flat_tax",
@@ -127,7 +148,14 @@ _LEVER_CATALOG: List[dict] = [
         "feasibility": {"law": True, "adminLagMonths": 6, "notes": "Implemented via finance law; may affect investment behavior."},
         "conflicts_with": [],
         "sources": ["Fondation iFRAP [8]"],
-        "params_schema": {}
+        "params_schema": {},
+        "impact": {
+            "householdsImpacted": 4000000,
+            "decile1ImpactEur": 0,
+            "decile10ImpactEur": -850,
+            "gdpImpactPct": -0.03,
+            "jobsImpactCount": -1000
+        }
     },
     {
         "id": "expand_ftt",
@@ -163,7 +191,14 @@ _LEVER_CATALOG: List[dict] = [
         "feasibility": {"law": True, "adminLagMonths": 6, "notes": "Implemented via tax law; politically sensitive (yellow-vest protests)."},
         "conflicts_with": [],
         "sources": ["Oxfam France [6]"],
-        "params_schema": {}
+        "params_schema": {},
+        "impact": {
+            "householdsImpacted": 25000000,  # Broad impact
+            "decile1ImpactEur": -80,
+            "decile10ImpactEur": -250,
+            "gdpImpactPct": -0.1,
+            "jobsImpactCount": -5000
+        }
     },
     {
         "id": "cap_research_credit",
@@ -175,7 +210,14 @@ _LEVER_CATALOG: List[dict] = [
         "feasibility": {"law": True, "adminLagMonths": 6, "notes": "Change in tax code; risk of pushback from industry and research sectors."},
         "conflicts_with": [],
         "sources": ["La Finance Pour Tous [16]"],
-        "params_schema": {}
+        "params_schema": {},
+        "impact": {
+            "householdsImpacted": 0,
+            "decile1ImpactEur": 0,
+            "decile10ImpactEur": 0,
+            "gdpImpactPct": -0.08,
+            "jobsImpactCount": -15000  # R&D jobs
+        }
     },
     {
         "id": "reduce_home_services_credit",
@@ -331,7 +373,14 @@ _LEVER_CATALOG: List[dict] = [
         "feasibility": {"law": True, "adminLagMonths": 6, "notes": "Major pension reform requiring law; phased implementation over several years."},
         "conflicts_with": ["lower_retirement_age_62", "lower_retirement_age_60"],
         "sources": ["Est."],
-        "params_schema": {}
+        "params_schema": {},
+        "impact": {
+            "householdsImpacted": 1600000,
+            "decile1ImpactEur": -800,
+            "decile10ImpactEur": -200, 
+            "gdpImpactPct": 0.1,
+            "jobsImpactCount": 200000
+        }
     },
     {
         "id": "lower_retirement_age_62",
@@ -343,7 +392,14 @@ _LEVER_CATALOG: List[dict] = [
         "feasibility": {"law": True, "adminLagMonths": 6, "notes": "Would require overturning recent law; extremely costly and likely violates EU fiscal commitments."},
         "conflicts_with": ["raise_retirement_age_65"],
         "sources": ["BFMTV [23]"],
-        "params_schema": {}
+        "params_schema": {},
+        "impact": {
+            "householdsImpacted": 800000,  # Those retiring earlier per year
+            "decile1ImpactEur": 600,
+            "decile10ImpactEur": 2200,
+            "gdpImpactPct": -0.4,
+            "jobsImpactCount": -300000  # Detailed Estimates vary widely; massive labor supply shock
+        }
     },
     {
         "id": "lower_retirement_age_60",
@@ -379,7 +435,14 @@ _LEVER_CATALOG: List[dict] = [
         "feasibility": {"law": True, "adminLagMonths": 12, "notes": "Reform via statute or in pension law; unions strongly resist, and savings materialize gradually."},
         "conflicts_with": [],
         "sources": ["Est."],
-        "params_schema": {}
+        "params_schema": {},
+        "impact": {
+            "householdsImpacted": 250000,
+            "decile1ImpactEur": 0,
+            "decile10ImpactEur": -400,
+            "gdpImpactPct": 0.0,
+            "jobsImpactCount": 0
+        }
     },
     {
         "id": "freeze_pension_indexation",
@@ -499,7 +562,14 @@ _LEVER_CATALOG: List[dict] = [
         "feasibility": {"law": True, "adminLagMonths": 6, "notes": "Change in Social Security or budget law; directly affects low-income renters, likely controversial."},
         "conflicts_with": [],
         "sources": ["L'Express [31]"],
-        "params_schema": {}
+        "params_schema": {},
+        "impact": {
+            "householdsImpacted": 3000000,
+            "decile1ImpactEur": -350,
+            "decile10ImpactEur": 0,
+            "gdpImpactPct": -0.05,
+            "jobsImpactCount": 0
+        }
     },
     {
         "id": "cut_family_benefits",
@@ -607,7 +677,14 @@ _LEVER_CATALOG: List[dict] = [
         "feasibility": {"law": False, "adminLagMonths": 0, "notes": "Can be decided by executive (no index raise decree); immediate savings but triggers labor discontent."},
         "conflicts_with": ["raise_civil_service_pay"],
         "sources": ["L'Express [35]"],
-        "params_schema": {}
+        "params_schema": {},
+        "impact": {
+            "householdsImpacted": 5700000,
+            "decile1ImpactEur": -200, 
+            "decile10ImpactEur": -500,
+            "gdpImpactPct": -0.1,
+            "jobsImpactCount": 0
+        }
     },
     {
         "id": "freeze_civil_service_promotions",
@@ -631,7 +708,14 @@ _LEVER_CATALOG: List[dict] = [
         "feasibility": {"law": False, "adminLagMonths": 1, "notes": "Implemented by government decree; politically popular among workers but very costly to the budget."},
         "conflicts_with": ["freeze_civil_service_pay"],
         "sources": ["Official est."],
-        "params_schema": {}
+        "params_schema": {},
+        "impact": {
+            "householdsImpacted": 5700000,
+            "decile1ImpactEur": 300,
+            "decile10ImpactEur": 800,
+            "gdpImpactPct": 0.2,
+            "jobsImpactCount": 5000
+        }
     },
     {
         "id": "cut_public_workforce",
@@ -643,7 +727,14 @@ _LEVER_CATALOG: List[dict] = [
         "feasibility": {"law": False, "adminLagMonths": 24, "notes": "Policy decision enforced via hiring freezes; savings accrue gradually as workforce declines."},
         "conflicts_with": [],
         "sources": ["L'Express [42]"],
-        "params_schema": {}
+        "params_schema": {},
+        "impact": {
+            "householdsImpacted": 50000,
+            "decile1ImpactEur": -50,
+            "decile10ImpactEur": -50,
+            "gdpImpactPct": -0.05,
+            "jobsImpactCount": -50000
+        }
     },
     {
         "id": "cut_agencies",

@@ -6,7 +6,7 @@ import { gqlRequest } from '@/lib/graphql';
 import { parseDsl, serializeDsl } from '@/lib/dsl';
 import { ErrorDisplay } from '@/components/ErrorDisplay';
 import { BuildPageSkeleton } from '@/components/BuildPageSkeleton';
-import { buildPageQuery, suggestLeversQuery, getScenarioDslQuery } from '@/lib/queries';
+import { buildPageQuery, suggestLeversQuery, getScenarioDslQuery, submitVoteMutation } from '@/lib/queries';
 import { TreemapChart } from '@/components/Treemap';
 import { useHistory } from '@/lib/useHistory';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
@@ -32,6 +32,7 @@ import { computeDeficitTotals } from '@/lib/fiscal';
 import { Scoreboard } from './components/Scoreboard';
 import { ReformSidebarList } from './components/ReformSidebarList';
 import { TutorialOverlay } from './components/TutorialOverlay';
+import { DebriefModal } from './components/DebriefModal';
 import { NewsTicker } from './components/NewsTicker';
 
 const cloneCategories = (categories: MassCategory[]) =>
@@ -54,6 +55,7 @@ export default function BuildPageClient() {
   const { state, actions } = useBuildState(INITIAL_DSL_OBJECT.baseline_year);
   const [ghostMode, setGhostMode] = useState(false);
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
+  const [isDebriefOpen, setIsDebriefOpen] = useState(false);
   const [previewReformId, setPreviewReformId] = useState<string | null>(null);
   const {
     year,
@@ -79,7 +81,6 @@ export default function BuildPageClient() {
     lens,
     expandedFamilies,
     scenarioId,
-    aggregationLens,
     massLabels,
     missionLabels,
   } = state;
@@ -99,6 +100,8 @@ export default function BuildPageClient() {
   });
 
   const [shareFeedback, setShareFeedback] = useState<string | null>(null);
+  const [tutorialRunId, setTutorialRunId] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState<'missions' | 'reforms'>('missions');
   const {
     setInitialLoading,
     setScenarioLoading,
@@ -136,7 +139,7 @@ export default function BuildPageClient() {
   const searchParamsString = searchParams.toString();
   const scenarioIdRef = useRef<string | null>(scenarioId);
   const latestRunRef = useRef(0);
-  const aggregationLensRef = useRef<AggregationLens>(aggregationLens);
+
 
   const addPieceToBucket = (bucket: Map<string, LegoPiece[]>, key: string, piece: LegoPiece) => {
     const existing = bucket.get(key);
@@ -220,9 +223,7 @@ export default function BuildPageClient() {
     scenarioIdRef.current = scenarioId;
   }, [scenarioId]);
 
-  useEffect(() => {
-    aggregationLensRef.current = aggregationLens;
-  }, [aggregationLens]);
+
 
   useEffect(() => {
     if (!scenarioResult) {
@@ -318,23 +319,10 @@ export default function BuildPageClient() {
       ...prev,
       [lensFromResult]: finalCategories,
     }));
-    if (aggregationLensRef.current === lensFromResult) {
+    if (lensFromResult === 'MISSION') {
       setMasses(finalCategories);
     }
   }, [baselineMassDataByLens, massLabels, missionLabels, scenarioResult, setMassDataByLens, setMasses]);
-
-  useEffect(() => {
-    const lensFromDsl = String(dslObject.assumptions?.lens || 'MISSION').toUpperCase() as AggregationLens;
-    if ((lensFromDsl === 'MISSION' || lensFromDsl === 'COFOG') && lensFromDsl !== aggregationLens) {
-      setAggregationLens(lensFromDsl);
-      const nextMasses = massDataByLens[lensFromDsl] ?? [];
-      setMasses(nextMasses);
-      if (selectedCategory && !nextMasses.some((mass) => mass.id === selectedCategory.id)) {
-        setSelectedCategory(null);
-        togglePanel(false);
-      }
-    }
-  }, [aggregationLens, dslObject, massDataByLens, selectedCategory, setAggregationLens, setMasses, setSelectedCategory, togglePanel]);
 
   useEffect(() => {
     const urlScenarioId = new URLSearchParams(searchParamsString).get('scenarioId');
@@ -362,7 +350,7 @@ export default function BuildPageClient() {
     setScenarioLoading(true);
     setScenarioError(null);
     try {
-      const result = await runScenarioForDsl(dslString, aggregationLens);
+      const result = await runScenarioForDsl(dslString, 'MISSION');
       if (latestRunRef.current !== runToken) {
         return;
       }
@@ -384,7 +372,7 @@ export default function BuildPageClient() {
         setScenarioLoading(false);
       }
     }
-  }, [aggregationLens, dslString, pathname, router, searchParamsString, setScenarioError, setScenarioLoading, setScenarioResult]);
+  }, [dslString, pathname, router, searchParamsString, setScenarioError, setScenarioLoading, setScenarioResult]);
 
   const fetchData = useCallback(async () => {
     setInitialLoading(true);
@@ -452,18 +440,12 @@ export default function BuildPageClient() {
       const missionAllocations = toAllocations(data.builderMassesAdmin ?? null, missionFallbackTotals);
       const missionCategories = buildCategories(missionAllocations, missionPieceMap, missionLabelMap, '🏛️');
 
-      const cofogAllocations = toAllocations(data.builderMassesCofog ?? null, cofogFallbackTotals);
-      const cofogCategories = buildCategories(cofogAllocations, cofogPieceMap, massLabelMap, '📊');
-
       const missionBaseline = cloneCategories(missionCategories);
-      const cofogBaseline = cloneCategories(cofogCategories);
-      setBaselineMassDataByLens({ MISSION: missionBaseline, COFOG: cofogBaseline });
+      setBaselineMassDataByLens({ MISSION: missionBaseline, COFOG: [] });
 
       const missionCurrent = cloneCategories(missionBaseline);
-      const cofogCurrent = cloneCategories(cofogBaseline);
-      setMassDataByLens({ MISSION: missionCurrent, COFOG: cofogCurrent });
-      const lensForCategories = aggregationLensRef.current;
-      setMasses(lensForCategories === 'COFOG' ? cofogCurrent : missionCurrent);
+      setMassDataByLens({ MISSION: missionCurrent, COFOG: [] });
+      setMasses(missionCurrent);
 
       setData({
         spendingPieces: spending,
@@ -487,29 +469,8 @@ export default function BuildPageClient() {
     }
   }, [setData, setError, setInitialLoading, setLabels, setMassDataByLens, setMasses, setScenarioError, year]);
 
-  const handleLensSwitch = (nextLens: AggregationLens) => {
-    if (nextLens === aggregationLens) {
-      return;
-    }
-    setAggregationLens(nextLens);
-    const nextMasses = massDataByLens[nextLens] ?? [];
-    setMasses(nextMasses);
-    setSelectedCategory(null);
-    togglePanel(false);
-    setTargetPercent(0);
-    setTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
-    setSelectedRevenueCategory(null);
-    toggleRevenuePanel(false);
-    setRevenueTargetPercent(0);
-    setRevenueTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
-    setDslObject({
-      ...dslObject,
-      assumptions: {
-        ...dslObject.assumptions,
-        lens: nextLens,
-      },
-    });
-  };
+
+
 
   useEffect(() => {
     fetchData();
@@ -521,6 +482,7 @@ export default function BuildPageClient() {
   }, [dslObject, runScenario]);
 
   const handleCategoryClick = async (category: MassCategory) => {
+    setActiveTab('missions');
     toggleRevenuePanel(false);
     setSelectedRevenueCategory(null);
     setSelectedCategory(category);
@@ -614,9 +576,7 @@ export default function BuildPageClient() {
       if (!Number.isFinite(amount) || Math.abs(amount) < 1) {
         return { ...currentDsl, actions: otherActions };
       }
-      const targetKey = aggregationLens === 'COFOG'
-        ? `cofog.${massId}`
-        : `mission.${massId.toUpperCase().startsWith('M_') ? massId.toUpperCase() : massId}`;
+      const targetKey = `mission.${massId.toUpperCase().startsWith('M_') ? massId.toUpperCase() : massId}`;
       // Keep role unset so backend treats this target as an actionable mass delta.
       const newAction: DslAction = {
         id: `target_${massId}`,
@@ -733,6 +693,10 @@ export default function BuildPageClient() {
   };
 
   const formatShare = (value: number) => `${(value * 100).toFixed(1)}%`;
+
+  const handleRunTutorial = useCallback(() => {
+    setTutorialRunId((prev) => (prev ?? 0) + 1);
+  }, []);
 
   const handleShare = useCallback(async () => {
     if (!scenarioIdRef.current) {
@@ -851,7 +815,8 @@ export default function BuildPageClient() {
         scenarioResult={scenarioResult}
         baselineTotals={baselineTotals}
         onReset={reset}
-        onShare={handleShare}
+        onShare={() => setIsDebriefOpen(true)}
+        onRunTutorial={handleRunTutorial}
         year={year}
         previewDeficit={previewDeficit}
       />
@@ -859,76 +824,89 @@ export default function BuildPageClient() {
       <div className="w-full flex-1 min-h-0 flex flex-col overflow-hidden relative">
         <div className="flex-1 grid grid-cols-[380px_1fr_350px] gap-4 p-4 min-h-0">
 
+
+
           {/* LEFT PANEL: SPENDING */}
           <div className="flex flex-col bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative">
 
-            {isCatalogOpen ? (
-              <ReformSidebarList
-                onClose={() => setIsCatalogOpen(false)}
-                levers={policyLevers}
-                onSelectReform={(lever) => {
-                  if (!isLeverInDsl(lever.id)) {
-                    addLeverToDsl(lever);
-                  } else {
-                    removeLeverFromDsl(lever.id);
-                  }
-                }}
-                onHoverReform={setPreviewReformId}
-                isLeverSelected={isLeverInDsl}
-              />
-            ) : (
-              <>
-                {/* Reform Catalog Trigger */}
-                <div className="p-4 border-b border-slate-100 bg-slate-50/50">
-                  <button
-                    onClick={() => setIsCatalogOpen(true)}
-                    id="reform-catalog-btn"
-                    className="w-full py-3 px-4 bg-violet-600 hover:bg-violet-700 text-white rounded-xl font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
-                  >
-                    <span className="material-icons text-sm">auto_fix_high</span>
-                    Catalogue des Réformes
-                  </button>
-                </div>
+            {/* Unified Header with Tabs */}
+            <div className="p-3 border-b border-slate-100 bg-white z-10">
+              <div className="flex bg-slate-100/80 p-1 rounded-xl" id="left-panel-tabs">
+                <button
+                  onClick={() => { setActiveTab('missions'); setIsCatalogOpen(false); }}
+                  className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'missions'
+                    ? 'bg-white text-slate-800 shadow-sm'
+                    : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'
+                    }`}
+                >
+                  <span className="material-icons text-base">account_balance</span>
+                  Missions
+                </button>
+                <button
+                  onClick={() => { setActiveTab('reforms'); setIsCatalogOpen(true); }}
+                  className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'reforms'
+                    ? 'bg-white text-violet-700 shadow-sm'
+                    : 'text-slate-500 hover:text-violet-600 hover:bg-white/50'
+                    }`}
+                >
+                  <span className="material-icons text-base">auto_fix_high</span>
+                  Réformes
+                </button>
+              </div>
+            </div>
 
-                <div className="flex-1 overflow-y-auto" id="left-panel-list">
-                  {!isPanelExpanded ? (
-                    <MassCategoryList
-                      categories={masses}
-                      onSelect={handleCategoryClick}
+            <div className="flex-1 overflow-y-auto bg-slate-50/30" id="left-panel-list">
+              {activeTab === 'reforms' ? (
+                <ReformSidebarList
+                  levers={policyLevers}
+                  onSelectReform={(lever) => {
+                    if (!isLeverInDsl(lever.id)) {
+                      addLeverToDsl(lever);
+                    } else {
+                      removeLeverFromDsl(lever.id);
+                    }
+                  }}
+                  onHoverReform={setPreviewReformId}
+                  isLeverSelected={isLeverInDsl}
+                />
+              ) : (
+                !isPanelExpanded ? (
+                  <MassCategoryList
+                    categories={masses}
+                    onSelect={handleCategoryClick}
+                    formatCurrency={formatCurrency}
+                    formatShare={formatShare}
+                    displayMode={displayMode}
+                  />
+                ) : (
+                  selectedCategory && (
+                    <MassCategoryPanel
+                      category={selectedCategory}
+                      targetPercent={targetPercent}
+                      targetRangeMax={targetRangeMax}
+                      onTargetPercentChange={setTargetPercent}
+                      onRangeChange={handleTargetRangeChange}
+                      onApplyTarget={handleApplyTarget}
+                      onClearTarget={() => {
+                        setTargetPercent(0);
+                        setTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
+                      }}
+                      onClose={handleBackClick}
+                      suggestedLevers={suggestedLevers}
+                      onLeverToggle={(lever) =>
+                        (isLeverInDsl(lever.id) ? removeLeverFromDsl(lever.id) : addLeverToDsl(lever))
+                      }
+                      isLeverSelected={isLeverInDsl}
+                      popularIntents={popularIntents}
+                      onIntentClick={handleIntentClick}
                       formatCurrency={formatCurrency}
                       formatShare={formatShare}
                       displayMode={displayMode}
                     />
-                  ) : (
-                    selectedCategory && (
-                      <MassCategoryPanel
-                        category={selectedCategory}
-                        targetPercent={targetPercent}
-                        targetRangeMax={targetRangeMax}
-                        onTargetPercentChange={setTargetPercent}
-                        onRangeChange={handleTargetRangeChange}
-                        onApplyTarget={handleApplyTarget}
-                        onClearTarget={() => {
-                          setTargetPercent(0);
-                          setTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
-                        }}
-                        onClose={handleBackClick}
-                        suggestedLevers={suggestedLevers}
-                        onLeverToggle={(lever) =>
-                          (isLeverInDsl(lever.id) ? removeLeverFromDsl(lever.id) : addLeverToDsl(lever))
-                        }
-                        isLeverSelected={isLeverInDsl}
-                        popularIntents={popularIntents}
-                        onIntentClick={handleIntentClick}
-                        formatCurrency={formatCurrency}
-                        formatShare={formatShare}
-                        displayMode={displayMode}
-                      />
-                    )
-                  )}
-                </div>
-              </>
-            )}
+                  )
+                )
+              )}
+            </div>
           </div>
 
           {/* CENTER PANEL: TREEMAP */}
@@ -1014,10 +992,26 @@ export default function BuildPageClient() {
           </div>
         )}
 
+        <TutorialOverlay onComplete={() => { }} startSignal={tutorialRunId} />
 
-
-        <TutorialOverlay onComplete={() => { }} />
-
+        <DebriefModal
+          isOpen={isDebriefOpen}
+          onClose={() => setIsDebriefOpen(false)}
+          onConfirmVote={async () => {
+            try {
+              if (scenarioResult?.id) {
+                await gqlRequest(submitVoteMutation, { scenarioId: scenarioResult.id });
+                alert("Votre vote a été enregistré ! \n\nMerci d'avoir participé à l'Atelier du Budget.");
+              }
+            } catch (e) {
+              console.error(e);
+              alert("Erreur lors de l'enregistrement du vote.");
+            }
+            setIsDebriefOpen(false);
+          }}
+          scenarioResult={scenarioResult}
+          deficit={latestDeficit}
+        />
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useRef, useEffect } from 'react';
 import type { ScenarioResult } from '@/lib/types';
 
 interface ScoreboardProps {
@@ -6,6 +6,7 @@ interface ScoreboardProps {
     baselineTotals: { spending: number; revenue: number };
     onReset: () => void;
     onShare: () => void;
+    onRunTutorial?: () => void;
     year: number;
     previewDeficit?: number | null;
 }
@@ -22,6 +23,7 @@ export function Scoreboard({
     baselineTotals,
     onReset,
     onShare,
+    onRunTutorial,
     year,
     previewDeficit,
 }: ScoreboardProps) {
@@ -63,6 +65,27 @@ export function Scoreboard({
 
         return { deficit, spending, revenue, deficitRatio, resolution };
     }, [scenarioResult, baselineTotals]);
+
+    // Confetti Effect on Milestones
+    const prevDeficitRatio = useRef(stats.deficitRatio);
+    const hasTriggeredSuccess = useRef(false);
+
+    useEffect(() => {
+        if (stats.deficitRatio !== null && prevDeficitRatio.current !== null) {
+            // Check if we just crossed -3% (from worse to better)
+            if (prevDeficitRatio.current < -0.03 && stats.deficitRatio >= -0.03 && !hasTriggeredSuccess.current) {
+                import('canvas-confetti').then((confetti) => {
+                    confetti.default({
+                        particleCount: 100,
+                        spread: 70,
+                        origin: { y: 0.6 }
+                    });
+                });
+                hasTriggeredSuccess.current = true;
+            }
+        }
+        prevDeficitRatio.current = stats.deficitRatio;
+    }, [stats.deficitRatio]);
 
     const isDeficitBad = stats.deficit < -3.0; // Arbitrary visualization threshold (e.g. -3% GDP is huge)
     // Actually, usually deficit is negative balance. So < 0 is red.
@@ -129,6 +152,15 @@ export function Scoreboard({
 
             {/* RIGHT: Actions */}
             <div className="flex items-center gap-3">
+                {onRunTutorial && (
+                    <button
+                        onClick={onRunTutorial}
+                        className="p-2 text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+                        title="Relancer le tutoriel"
+                    >
+                        <span className="material-icons">help_outline</span>
+                    </button>
+                )}
                 <button
                     onClick={onReset}
                     className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"

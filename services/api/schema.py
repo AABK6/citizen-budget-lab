@@ -310,6 +310,15 @@ class PolicyFamilyEnum(str, enum.Enum):
     OTHER = "OTHER"
 
 
+
+@strawberry.type
+class ImpactStructType:
+    householdsImpacted: int | None = None
+    decile1ImpactEur: float | None = None
+    decile10ImpactEur: float | None = None
+    gdpImpactPct: float | None = None
+    jobsImpactCount: int | None = None
+
 @strawberry.type
 class PolicyLeverType:
     id: str
@@ -325,6 +334,7 @@ class PolicyLeverType:
     popularity: float | None = None
     massMapping: JSON | None = None
     missionMapping: JSON | None = None
+    impact: ImpactStructType | None = None
 
 
 @strawberry.type
@@ -1494,6 +1504,19 @@ class Mutation:
         try:
             from .store import set_meta
             set_meta(str(id), title, description)
+            return True
+        except Exception:
+            return False
+
+    @strawberry.mutation
+    def submitVote(self, scenarioId: strawberry.ID, userEmail: Optional[str] = None) -> bool:  # noqa: N802
+        try:
+            from .store import add_vote
+            import time
+            add_vote(str(scenarioId), {
+                "timestamp": time.time(),
+                "userEmail": userEmail or "anonymous",
+            })
             return True
         except Exception:
             return False

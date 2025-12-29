@@ -38,6 +38,13 @@ export type PolicyLever = {
   popularity?: number;
   massMapping?: Record<string, number> | undefined;
   missionMapping?: Record<string, number> | undefined;
+  impact?: {
+    householdsImpacted?: number;
+    decile1ImpactEur?: number;
+    decile10ImpactEur?: number;
+    gdpImpactPct?: number;
+    jobsImpactCount?: number;
+  };
 };
 
 export type PopularIntent = {

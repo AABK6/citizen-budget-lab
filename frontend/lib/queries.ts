@@ -24,11 +24,7 @@ export const buildPageQuery = `
       amountEur
       share
     }
-    builderMassesCofog: builderMasses(year: $year, lens: COFOG) {
-      massId
-      amountEur
-      share
-    }
+
     massLabels {
       id
       displayLabel
@@ -50,6 +46,13 @@ export const buildPageQuery = `
       fixedImpactEur
       massMapping
       missionMapping
+      impact {
+        householdsImpacted
+        decile1ImpactEur
+        decile10ImpactEur
+        gdpImpactPct
+        jobsImpactCount
+      }
     }
     popularIntents {
       id
@@ -102,5 +105,11 @@ export const getScenarioDslQuery = `
     scenario(id: $id) {
       dsl
     }
+  }
+`;
+
+export const submitVoteMutation = `
+  mutation SubmitVote($scenarioId: ID!, $userEmail: String) {
+    submitVote(scenarioId: $scenarioId, userEmail: $userEmail)
   }
 `;

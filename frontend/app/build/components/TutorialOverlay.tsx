@@ -21,9 +21,9 @@ const STEPS: TutorialStep[] = [
         position: 'right',
     },
     {
-        targetId: 'reform-catalog-btn',
+        targetId: 'left-panel-tabs',
         title: 'Leviers d\'Action',
-        content: 'Ouvrez le catalogue pour appliquer des réformes structurelles majeures (Retraites, Impôts...).',
+        content: 'Basculez entre les "Missions" (dépenses par ministère) et les "Réformes" (mesures structurelles comme les retraites ou la fiscalité).',
         position: 'bottom',
     },
     {
@@ -34,7 +34,13 @@ const STEPS: TutorialStep[] = [
     }
 ];
 
-export function TutorialOverlay({ onComplete }: { onComplete: () => void }) {
+export function TutorialOverlay({
+    onComplete,
+    startSignal,
+}: {
+    onComplete: () => void;
+    startSignal?: number | null;
+}) {
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
     const [isVisible, setIsVisible] = useState(false);
     const currentStep = STEPS[currentStepIndex];
@@ -48,6 +54,12 @@ export function TutorialOverlay({ onComplete }: { onComplete: () => void }) {
             onComplete();
         }
     }, [onComplete]);
+
+    useEffect(() => {
+        if (startSignal === null || startSignal === undefined) return;
+        setCurrentStepIndex(0);
+        setIsVisible(true);
+    }, [startSignal]);
 
     const handleNext = () => {
         if (currentStepIndex < STEPS.length - 1) {
