@@ -928,6 +928,17 @@ class Query:
                     popularity=float(it.get("popularity", 0.0)),
                     massMapping=it.get("mass_mapping") or {},
                     missionMapping=it.get("mission_mapping") or {},
+                    impact=(
+                        ImpactStructType(
+                            householdsImpacted=it["impact"].get("householdsImpacted"),
+                            decile1ImpactEur=it["impact"].get("decile1ImpactEur"),
+                            decile10ImpactEur=it["impact"].get("decile10ImpactEur"),
+                            gdpImpactPct=it["impact"].get("gdpImpactPct"),
+                            jobsImpactCount=it["impact"].get("jobsImpactCount"),
+                        )
+                        if it.get("impact")
+                        else None
+                    ),
                 )
             )
         return out
@@ -1057,6 +1068,17 @@ class Query:
                     shortLabel=str(it.get("short_label") or ""),
                     popularity=float(it.get("popularity", 0.0)),
                     massMapping=it.get("mass_mapping") or {},
+                    impact=(
+                        ImpactStructType(
+                            householdsImpacted=it["impact"].get("householdsImpacted"),
+                            decile1ImpactEur=it["impact"].get("decile1ImpactEur"),
+                            decile10ImpactEur=it["impact"].get("decile10ImpactEur"),
+                            gdpImpactPct=it["impact"].get("gdpImpactPct"),
+                            jobsImpactCount=it["impact"].get("jobsImpactCount"),
+                        )
+                        if it.get("impact")
+                        else None
+                    ),
                 )
             )
         return out

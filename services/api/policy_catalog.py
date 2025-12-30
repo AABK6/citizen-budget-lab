@@ -454,7 +454,14 @@ _LEVER_CATALOG: List[dict] = [
         "feasibility": {"law": True, "adminLagMonths": 3, "notes": "Change enacted via Social Security law; immediate budget relief but reduces retirees’ purchasing power."},
         "conflicts_with": [],
         "sources": ["L'Express [26]"],
-        "params_schema": {}
+        "params_schema": {},
+        "impact": {
+            "householdsImpacted": 17000000,
+            "decile1ImpactEur": -150,
+            "decile10ImpactEur": -450,
+            "gdpImpactPct": -0.1,
+            "jobsImpactCount": -2000
+        }
     },
     {
         "id": "align_public_private_pensions",
@@ -502,7 +509,14 @@ _LEVER_CATALOG: List[dict] = [
         "feasibility": {"law": True, "adminLagMonths": 6, "notes": "Implemented via unemployment insurance regulations (backed by law or decree); opposed by unions but already partly in effect."},
         "conflicts_with": ["expand_unemployment_benefits"],
         "sources": ["Le Monde [28]"],
-        "params_schema": {}
+        "params_schema": {},
+        "impact": {
+            "householdsImpacted": 2500000,
+            "decile1ImpactEur": -400,
+            "decile10ImpactEur": 0,
+            "gdpImpactPct": -0.05,
+            "jobsImpactCount": 15000
+        }
     },
     {
         "id": "expand_unemployment_benefits",
@@ -986,7 +1000,14 @@ _LEVER_CATALOG: List[dict] = [
       "feasibility": {"law": True, "adminLagMonths": 3, "notes": "EU-conform; high political salience."},
       "conflicts_with": ["vat_normal_plus1", "vat_intermediate_12_5"],
       "sources": ["Workbook 20251017, Recettes"],
-      "params_schema": {}
+      "params_schema": {},
+      "impact": {
+          "householdsImpacted": 30000000,
+          "decile1ImpactEur": -250,
+          "decile10ImpactEur": -600,
+          "gdpImpactPct": -0.2,
+          "jobsImpactCount": -10000
+      }
     },
     {
       "id": "vat_intermediate_12_5",
@@ -1082,7 +1103,14 @@ _LEVER_CATALOG: List[dict] = [
       "feasibility": {"law": True, "adminLagMonths": 9, "notes": "Large reform; distributional offset needed."},
       "conflicts_with": ["restore_taxe_habitation_top20"],
       "sources": ["Workbook 20251017, Recettes"],
-      "params_schema": {}
+      "params_schema": {},
+      "impact": {
+          "householdsImpacted": 30000000,
+          "decile1ImpactEur": -200,
+          "decile10ImpactEur": -1500,
+          "gdpImpactPct": -0.3,
+          "jobsImpactCount": -15000
+      }
     },
     {
       "id": "airline_ticket_tax_increase",

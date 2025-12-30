@@ -1,4 +1,8 @@
 import type { PolicyLever } from '../types';
+import { ImpactBadge } from '@/components/reform/ImpactBadge';
+import { DistributionChart } from '@/components/reform/DistributionChart';
+import { Users, AlertTriangle } from 'lucide-react'; // Retain or add needed icons if any
+
 
 interface ReformCatalogModalProps {
     isOpen: boolean;
@@ -58,42 +62,36 @@ export function ReformCatalogModal({ isOpen, onClose, onSelectReform, levers, on
 
                                 <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-slate-100 w-full mt-auto">
                                     {lever.impact ? (
-                                        <>
-                                            {/* Purchasing Power - Show D1 (Low Income) and D10 (High Income) if distinct, else just one */}
+                                        <div className="w-full grid gap-2">
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                {/* GDP Impact */}
+                                                {lever.impact.gdpImpactPct !== undefined && lever.impact.gdpImpactPct !== 0 && (
+                                                    <ImpactBadge type="gdp" value={lever.impact.gdpImpactPct} />
+                                                )}
+
+                                                {/* Jobs Impact */}
+                                                {lever.impact.jobsImpactCount !== undefined && lever.impact.jobsImpactCount !== 0 && (
+                                                    <ImpactBadge type="jobs" value={lever.impact.jobsImpactCount} />
+                                                )}
+
+                                                {/* Households Impact */}
+                                                {lever.impact.householdsImpacted !== undefined && lever.impact.householdsImpacted > 0 && (
+                                                    <ImpactBadge type="households" value={lever.impact.householdsImpacted} />
+                                                )}
+                                            </div>
+
+                                            {/* Distribution Chart */}
                                             {(lever.impact.decile1ImpactEur !== undefined || lever.impact.decile10ImpactEur !== undefined) && (
-                                                <div className="flex items-center gap-1.5 text-[10px] uppercase font-bold text-slate-500 bg-slate-50 px-2 py-1 rounded border border-slate-100" title="Impact Pouvoir d'Achat (Bas vs Haut revenus)">
-                                                    <span className="material-icons text-[12px] text-slate-400">account_balance_wallet</span>
-                                                    <span>PA:</span>
-                                                    <span className={lever.impact.decile1ImpactEur && lever.impact.decile1ImpactEur > 0 ? "text-emerald-600" : "text-red-500"}>
-                                                        {lever.impact.decile1ImpactEur !== undefined ? (lever.impact.decile1ImpactEur > 0 ? '+' : '') + lever.impact.decile1ImpactEur + '€' : '?'}
-                                                    </span>
-                                                    <span className="text-slate-300">/</span>
-                                                    <span className={lever.impact.decile10ImpactEur && lever.impact.decile10ImpactEur > 0 ? "text-emerald-600" : "text-red-500"}>
-                                                        {lever.impact.decile10ImpactEur !== undefined ? (lever.impact.decile10ImpactEur > 0 ? '+' : '') + lever.impact.decile10ImpactEur + '€' : '?'}
-                                                    </span>
-                                                </div>
+                                                <DistributionChart
+                                                    d1={lever.impact.decile1ImpactEur || 0}
+                                                    d10={lever.impact.decile10ImpactEur || 0}
+                                                />
                                             )}
-
-                                            {/* GDP Impact */}
-                                            {lever.impact.gdpImpactPct !== undefined && lever.impact.gdpImpactPct !== 0 && (
-                                                <div className={`flex items-center gap-1 text-[10px] uppercase font-bold px-2 py-1 rounded border ${lever.impact.gdpImpactPct > 0 ? 'bg-blue-50 text-blue-700 border-blue-100' : 'bg-orange-50 text-orange-700 border-orange-100'}`} title="Impact sur le PIB">
-                                                    <span className="material-icons text-[12px]">trending_up</span>
-                                                    PIB {lever.impact.gdpImpactPct > 0 ? '+' : ''}{lever.impact.gdpImpactPct}%
-                                                </div>
-                                            )}
-
-                                            {/* Jobs Impact */}
-                                            {lever.impact.jobsImpactCount !== undefined && lever.impact.jobsImpactCount !== 0 && (
-                                                <div className={`flex items-center gap-1 text-[10px] uppercase font-bold px-2 py-1 rounded border ${lever.impact.jobsImpactCount > 0 ? 'bg-indigo-50 text-indigo-700 border-indigo-100' : 'bg-red-50 text-red-700 border-red-100'}`} title="Impact Emploi">
-                                                    <span className="material-icons text-[12px]">work</span>
-                                                    {lever.impact.jobsImpactCount > 0 ? '+' : ''}{Math.round(lever.impact.jobsImpactCount / 1000)}k Emplois
-                                                </div>
-                                            )}
-                                        </>
+                                        </div>
                                     ) : (
-                                        <div className="flex items-center gap-1 text-[10px] uppercase font-bold text-slate-300 bg-slate-50 px-2 py-1 rounded">
-                                            <span className="material-icons text-[12px]">hourglass_empty</span>
-                                            Analyse d'impact en cours
+                                        <div className="flex items-center gap-1.5 text-xs font-medium text-slate-400 bg-slate-50 px-3 py-1.5 rounded-md border border-slate-100 w-full justify-center">
+                                            <AlertTriangle className="w-3.5 h-3.5" />
+                                            <span>Impact non modélisé</span>
                                         </div>
                                     )}
                                 </div>

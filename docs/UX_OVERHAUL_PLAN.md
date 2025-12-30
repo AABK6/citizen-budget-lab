@@ -133,9 +133,9 @@
 
 ### Tasks
 1.  [x] **Schema**: Verify `ImpactStructType` exists in API.
-2.  [ ] **Data Population**: Add plausible estimates to top 20 reforms in `policy_catalog.py`.
-3.  [ ] **UI Components**: Create `ImpactBadge` and `DistributionChart` components for the Reform Card.
-4.  [ ] **Frontend**: Swap "Political Capital" points for these rich metrics in the Catalog.
+2.  [x] **Data Population**: Add plausible estimates to top 20 reforms in `policy_catalog.py`.
+3.  [x] **UI Components**: Create `ImpactBadge` and `DistributionChart` components for the Reform Card.
+4.  [x] **Frontend**: Swap "Political Capital" points for these rich metrics in the Catalog.
 
 ---
 
@@ -154,7 +154,7 @@
 *   **Tasks**:
     *   [x] **Tutorial State**: Check `localStorage` for `hasSeenTutorial`.
     *   [x] **Step-by-Step Flow**: HUD -> Treemap -> Catalog -> Details.
-    *   [ ] **Reset Mechanism**: Add "Revoir le Tutoriel" option.
+    *   [x] **Reset Mechanism**: Add "Revoir le Tutoriel" option.
 
 ---
 
