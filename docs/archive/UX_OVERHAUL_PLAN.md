@@ -1,5 +1,7 @@
 # Citizen Budget Lab — UX/UI Overhaul Implementation Plan
 
+> Archived: historical UX plan kept for reference. For current docs, see `docs/README.md`.
+
 **Vision**: Transform the application into *"L'Atelier du Budget"* — a high-stakes, serious game where the user plays a French MP negotiating the 2026 Budget. The experience must be immersive, rigorous, and visually premium ("Glassmorphism").
 
 ---

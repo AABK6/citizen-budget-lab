@@ -1,5 +1,7 @@
 # Tutorial review
 
+> Archived: historical review kept for reference. For current docs, see `docs/README.md`.
+
 ## Findings
 - Tutorial metadata (targetId/position) is not used; the overlay stays centered so users are not guided to the intended controls. (frontend/app/build/components/TutorialOverlay.tsx)
 - Step copy shows garbled accents/encoding, which hurts clarity on first login. (frontend/app/build/components/TutorialOverlay.tsx)

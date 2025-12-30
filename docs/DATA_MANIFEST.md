@@ -77,7 +77,12 @@ This document provides a central inventory of all data sources, configuration fi
 *   **Mission Credits (`state_budget_mission_{YEAR}.csv`):**
     * 2025 snapshot refreshed from `plf25-depenses-2025-selon-destination` (ODS) on 2025-09-21 producing 46 rows + `.meta.json` with field provenance.
 *   **PLF 2026 Ceilings (`plf_2026_plafonds.csv`):**
-    * Official machine-readable workbooks are not yet published. We fetched the July 2025 Article 48 dossier (`documentation/file-download/30420`) and archived it under `data/cache/plf_2026_plafonds.pdf`, but automated extraction does not yield a clean mission table. The warmer therefore continues to emit the curated sample workbook (3-row sanity fixture) until the government releases structured data.
+    * The dedicated warmer `services/api/cache_warm.py:warm_plf_2026_plafonds` normalizes the "plafonds" (ceilings) by mission into a minimal CSV (`year`, `mission_code`, `mission_label`, `plf_ceiling_eur`, `source`) under `data/cache/plf_2026_plafonds.csv` (+ `.meta.json` provenance sidecar).
+    * Source selection:
+        * By default, it downloads the official XLSX/PDF from the Assemblée/Budget portal (defaulting to `DEFAULT_PLF_2026_URL` in code).
+        * You can override via `PLF_2026_PLAFONDS_URL` (URL **or** local path).
+        * If download is unavailable, it falls back to the bundled deterministic sample workbook `data/reference/plf_2026_plafonds_sample.xlsx` so CI remains hermetic.
+    * The warehouse keeps a small deterministic seed at `warehouse/seeds/plf_2026_plafonds.csv` as a sanity fixture; replace it with the full official mission table when a stable machine-readable source is available.
 *   **LEGO Baseline (`lego_baseline_2026.json`):**
     * See §1.2 — warmed for 2026 with Eurostat SDMX sources; meta includes warning strings for any fallback use.
 *   **Eurostat COFOG Shares (`eu_cofog_shares_{YEAR}.json`, `eu_cofog_subshares_{YEAR}.json`):**

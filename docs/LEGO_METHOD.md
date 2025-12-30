@@ -26,6 +26,7 @@ Expenditure Mapping (COFOG × NA_ITEM)
 - Each expenditure LEGO piece in `data/lego_pieces.json` has a mapping:
   - `mapping.cofog`: list of COFOG codes with weights (e.g., 09.1 for primary education).
   - `mapping.na_item`: list of ESA transaction categories with weights (e.g., D.1 wages, P.2 intermediate consumption, P.51g investment, D.62 social benefits, D.632 social transfers in kind).
+  - `mapping.mission` (optional): administrative attribution to State missions (weights summing to 1.0). Used by the ADMIN lens.
 - Computation (bucket distribution):
   - We collect all buckets (COFOG major × NA_ITEM) used by pieces, fetch each bucket once from `GOV_10A_EXP` via SDMX XML, then distribute the bucket’s total to pieces by normalized mapping weights (cofog weight × na_item weight). We sum across buckets per piece.
 - Shares are computed across all expenditure pieces to aid visualization and distance‑to‑budget metrics.
@@ -56,11 +57,13 @@ Beneficiary Categories
 Policy Levers → Mass Attribution (V1)
 
 - Each Policy Lever is defined with a fixed, pre-estimated impact (`fixed_impact_eur`).
-  - `family`: high‑level grouping (PENSIONS, TAXES, HEALTH, DEFENSE, STAFFING, SUBSIDIES, CLIMATE, SOCIAL_SECURITY, PROCUREMENT, OPERATIONS, OTHER).
+  - `family`: high-level grouping (PENSIONS, TAXES, HEALTH, EDUCATION, DEFENCE, ECOLOGY, JUSTICE, UNEMPLOYMENT, PUBLIC_ADMIN, DEBT, LOCAL_GOV, OTHER).
+    - Also supported in the API schema: `TAX_EXPENDITURES` for niche/targeted tax expenditures.
   - `params_schema`: this is now typically empty, as levers are non-parametric.
   - `mapping`: defines how the lever's fixed impact attributes to different COFOG masses.
   - `feasibility`: tags `{ law: bool, admin_lag_months: int, notes: string }` surfaced in the UI.
   - `conflicts_with`: list of lever ids to guard double counting.
+- Depending on the lens, a lever can carry both a functional attribution (`massMapping` / COFOG) and an administrative attribution (`missionMapping`). The API schema supports both mappings; the active lens determines which mapping is used for allocation displays.
 - Applying a lever produces a `PolicyEffect` with:
   - `delta_eur`: the fixed accounting impact at horizon.
   - `mass_attribution`: how the delta paints across masses (for ribbons on the Lens Switch).
@@ -147,4 +150,5 @@ Consistency & Validation
 Versioning
 
 - This document and the config are versioned in git; any change to mappings or elasticities should bump a minor version in `data/lego_pieces.json.version` and be noted in the changelog.
+- Any manual edits (e.g., baseline override for adopted budgets) must be documented in `docs/CHANGELOG.md` and referenced in `DATA_MANIFEST.md`.
  - Add a `policy_catalog.version` and include it in share‑card permalinks to ensure reproducibility; invalidate OG caches when this changes.

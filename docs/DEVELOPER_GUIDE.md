@@ -133,169 +133,27 @@ The API includes two caching layers:
 
 ---
 
-### **3. GraphQL API**
+### **3. GraphQL & Schema Management**
 
 -   **Source of Truth:** The canonical schema is `graphql/schema.sdl.graphql`. This is the contract for all client-server communication and is used for frontend code generation.
 -   **Playground:** [http://127.0.0.1:8000/graphql](http://127.0.0.1:8000/graphql)
 
-#### **3.1. Verified Schema (SDL)**
+#### **3.1. Canonical Schema (SDL)**
+
+- **Source of truth:** `graphql/schema.sdl.graphql` (used for frontend codegen).
+- **Contract:** CI enforces that the runtime schema matches the canonical SDL via `services/api/tests/test_schema_contract.py`.
+
+For quick orientation, the core enums used across the app are:
 
 ```graphql
-# Canonical SDL for codegen. Keep in sync with graphql/schema.sdl.graphql
-
-schema { query: Query, mutation: Mutation }
-
 enum BasisEnum { CP AE }
 enum LensEnum { ADMIN COFOG BENEFICIARY }
-
-scalar JSON
-
-"""
-MVP+ (LEGO Builder) additions
-"""
-
 enum ScopeEnum { S13 CENTRAL }
-
-type LegoPiece { id: ID!, label: String!, type: String!, amountEur: Float, share: Float, beneficiaries: JSON!, examples: [String!]!, sources: [String!]!, locked: Boolean! }
-type LegoBaseline { year: Int!, scope: ScopeEnum!, pib: Float!, depensesTotal: Float!, recettesTotal: Float!, pieces: [LegoPiece!]! }
-type DistanceByPiece { id: ID!, shareDelta: Float! }
-type Distance { score: Float!, byPiece: [DistanceByPiece!]! }
-
-type MissionAllocation { code: String!, label: String!, amountEur: Float!, share: Float! }
-type Allocation { mission: [MissionAllocation!]!, cofog: [MissionAllocation!], beneficiary: [MissionAllocation!] }
-
-type Supplier { siren: String!, name: String! }
-type ProcurementItem { supplier: Supplier!, amountEur: Float!, cpv: String, procedureType: String, locationCode: String, sourceUrl: String }
-
-type Accounting {
-  deficitPath: [Float!]!
-  debtPath: [Float!]!
-  commitmentsPath: [Float!]
-  deficitDeltaPath: [Float!]
-  debtDeltaPath: [Float!]
-  baselineDeficitPath: [Float!]
-  baselineDebtPath: [Float!]
-  gdpPath: [Float!]
-  deficitRatioPath: [Float!]
-  baselineDeficitRatioPath: [Float!]
-  debtRatioPath: [Float!]
-  baselineDebtRatioPath: [Float!]
-}
-type Compliance { eu3pct: [String!]!, eu60pct: [String!]!, netExpenditure: [String!]!, localBalance: [String!]! }
-type Macro { deltaGDP: [Float!]!, deltaEmployment: [Float!]!, deltaDeficit: [Float!]!, assumptions: JSON! }
-
-type DecileImpact { d: Int!, deltaNetIncomePct: Float! }
-type Distribution { decile: [DecileImpact!]!, giniDelta: Float!, povertyRateDeltaPp: Float!, assumptions: JSON! }
-
-type Source { id: ID!, datasetName: String!, url: String!, license: String!, refreshCadence: String!, vintage: String! }
-
-input RunScenarioInput { dsl: String! }
-type ShareSummary { title: String!, deficit: Float!, debtDeltaPct: Float, highlight: String, resolutionPct: Float, masses: JSON, eu3: String, eu60: String }
-  type RunScenarioPayload { id: ID!, scenarioId: ID!, accounting: Accounting!, compliance: Compliance!, macro: Macro!, distribution: Distribution, distanceScore: Float, shareSummary: ShareSummary, resolution: ResolutionType, warnings: [String!], dsl: String }
-
-type ScenarioCompareResult {
-    a: RunScenarioPayload!
-    b: RunScenarioPayload
-    waterfall: JSON!
-    ribbons: JSON!
-    pieceLabels: JSON!
-    massLabels: JSON!
-}
-
-"2025-09-22 update:" The `RunScenarioPayload.accounting` object now always includes baseline-plus-delta data. `deficitPath` / `debtPath` provide the summed totals for convenience, the `baseline*` and `*Delta` arrays let clients distinguish the automatic baseline from the mechanical and macro impacts returned by the engine, and `gdpPath`/`*RatioPath` expose the underlying GDP and ratio projections for UI display.
-
-type EUCountryCofog { country: String!, code: String!, label: String!, amountEur: Float!, share: Float! }
-type FiscalPath { years: [Int!]!, deficitRatio: [Float!]!, debtRatio: [Float!]! }
-
-type MassTargetType { massId: String!, targetDeltaEur: Float!, specifiedDeltaEur: Float! }
-type ResolutionType { overallPct: Float!, byMass: [MassTargetType!]! }
-
-enum PolicyFamilyEnum {
-    PENSIONS
-    TAXES
-    HEALTH
-    DEFENSE
-    STAFFING
-    SUBSIDIES
-    CLIMATE
-    SOCIAL_SECURITY
-    PROCUREMENT
-    OPERATIONS
-    OTHER
-}
-
-type PolicyLeverType {
-    id: ID!
-    family: PolicyFamilyEnum!
-    label: String!
-    description: String
-    paramsSchema: JSON!
-    fixedImpactEur: Float
-    feasibility: JSON!
-    conflictsWith: [ID!]!
-    sources: [String!]!
-    shortLabel: String
-    popularity: Float
-    massMapping: JSON
-}
-
-type MassLabelType {
-    id: ID!
-    displayLabel: String!
-    description: String
-    examples: [String!]!
-    synonyms: [String!]!
-}
-
-type IntentType {
-    id: ID!
-    label: String!
-    emoji: String
-    massId: String!
-    seed: JSON!
-    popularity: Float!
-    tags: [String!]!
-}
-
-  type Query {
-    allocation(year: Int!, basis: BasisEnum = CP, lens: LensEnum = ADMIN): Allocation!
-    procurement(year: Int!, region: String!, cpvPrefix: String, procedureType: String, minAmountEur: Float, maxAmountEur: Float): [ProcurementItem!]!
-    sources: [Source!]!
-    sirene(siren: String!): JSON!
-    inseeSeries(dataset: String!, series: [String!]!, sinceYear: Int): JSON!
-    dataGouvSearch(query: String!, pageSize: Int = 5): JSON!
-    communes(department: String!): JSON!
-    euCofogCompare(year: Int!, countries: [String!]!, level: Int = 1): [EUCountryCofog!]!
-    euFiscalPath(country: String!, years: [Int!]!): FiscalPath!
-
-    # MVP+: LEGO Builder
-    legoPieces(year: Int!, scope: ScopeEnum = S13): [LegoPiece!]!
-    legoBaseline(year: Int!, scope: ScopeEnum = S13): LegoBaseline!
-    legoDistance(year: Int!, dsl: String!, scope: ScopeEnum = S13): Distance!
-    shareCard(scenarioId: ID!): ShareSummary!
-    scenarioCompare(a: ID!, b: ID): ScenarioCompareResult!
-    policyLevers(family: PolicyFamilyEnum, search: String): [PolicyLeverType!]!
-    massLabels: [MassLabelType!]!
-    popularIntents(limit: Int = 6): [IntentType!]!
-    suggestLevers(massId: String!, limit: Int = 5): [PolicyLeverType!]!
-    scenario(id: ID!): RunScenarioPayload!
-  }
-
-type Mutation {
-  runScenario(input: RunScenarioInput!): RunScenarioPayload!
-  saveScenario(id: ID!, title: String, description: String): Boolean!
-  deleteScenario(id: ID!): Boolean!
-}
 ```
 
-#### 3.2. Current Runtime Additions
+#### **3.2. Current Runtime Additions**
 
-The runtime schema exposes a small set of fields tailored to permalink workflows:
-
-- `RunScenarioPayload.dsl: String` — the canonical base64 DSL is echoed back to support permalinks and share pages.
-- `Query.scenario(id: ID!): RunScenarioPayload!` — resolves a previously run scenario by id using the in-memory store and replays it to produce the payload.
-
-These entries are reflected in the SDL snippet above so that code generation stays in sync with the running API.
+The `runScenario` mutation returns a JSON blob used by the front-end to display results.
 
 Macro baselines
 
@@ -312,26 +170,36 @@ Macro baselines
 
 ### **4. Secrets & Environment Variables**
 
--   **Setup:** Copy `.env.example` to `.env` and fill in the values. The `.env` file is git-ignored.
+-   **Setup:** Create a `.env` file and fill in the values. The `.env` file is git-ignored.
 -   **Source of Truth:** All available variables are defined in `services/api/settings.py`.
 
-| Variable                        | Description                                                                                             | Required |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------- | -------- |
-| `INSEE_CLIENT_ID`               | OAuth client ID from api.insee.fr for BDM and SIRENE APIs.                                              | **Yes**  |
-| `INSEE_CLIENT_SECRET`           | OAuth client secret for INSEE APIs.                                                                     | **Yes**  |
-| `HTTP_TIMEOUT`                  | Timeout in seconds for upstream HTTP requests. Default: `15`.                                           | No       |
-| `HTTP_RETRIES`                  | Number of retry attempts for failed HTTP requests. Default: `3`.                                        | No       |
-| `EUROSTAT_COOKIE`               | Optional cookie string for accessing gated Eurostat endpoints.                                          | No       |
-| `CORS_ALLOW_ORIGINS`            | Comma-separated list of allowed origins for CORS. Default: `http://localhost:3000`.                     | No       |
-| `NET_EXP_REFERENCE_RATE`        | Annual growth rate for the Net Expenditure Rule compliance check. Default: `0.015`.                     | No       |
-| `WAREHOUSE_ENABLED`             | Toggle for using the dbt/DuckDB warehouse. Default: `1` (on). Set to `0` to disable.                    | No       |
-| `WAREHOUSE_DUCKDB_PATH`         | Path to the DuckDB database file. Default: `data/warehouse.duckdb`.                                     | No       |
-| `WAREHOUSE_COFOG_OVERRIDE`      | Force API to use warehouse for COFOG data, even if heuristics fail. Default: `0` (off).                 | No       |
-| `LOG_LEVEL`                     | Logging level for the API server. Default: `INFO`.                                                      | No       |
-| `SENTRY_DSN`                    | DSN for Sentry error reporting.                                                                         | No       |
-| `PROCUREMENT_ENRICH_SIRENE`     | Enable/disable SIRENE enrichment for procurement data. Default: `1` (on).                               | No       |
-| `MACRO_IRFS_PATH`               | Override the default path to the macroeconomic IRF parameters JSON file.                                | No       |
-| `LOCAL_BAL_TOLERANCE_EUR`       | Tolerance in Euros for local government balance checks. Default: `0`.                                   | No       |
+#### **4.1. Required Secrets (.env)**
+
+| Variable | Description | Required? |
+| --- | --- | --- |
+| `INSEE_CLIENT_ID` | Client ID for the INSEE API. | Yes |
+| `INSEE_CLIENT_SECRET` | Client Secret for the INSEE API. | Yes |
+| `HTTP_TIMEOUT` | Timeout in seconds for upstream HTTP requests. Default: `15`. | No |
+| `HTTP_RETRIES` | Number of retries for upstream API calls. Default: `3`. | No |
+| `EUROSTAT_BASE` | Override base URL for Eurostat JSON API. Default: `https://ec.europa.eu/eurostat/wdds/rest/data/v2.1/json`. | No |
+| `EUROSTAT_SDMX_BASE` | Override base URL for Eurostat SDMX endpoints. Default: `https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1`. | No |
+| `EUROSTAT_LANG` | Preferred language for Eurostat labels. Default: `en`. | No |
+| `EUROSTAT_COOKIE` | Optional cookie string for accessing gated Eurostat endpoints. | No |
+| `CORS_ALLOW_ORIGINS` | Comma-separated list of origins for CORS. | No |
+| `NET_EXP_REFERENCE_RATE` | Annual growth rate for the Net Expenditure Rule compliance check. Default: `0.015`. | No |
+| `LEGO_BASELINE_STATIC` | Force LEGO baseline to use the warmed JSON snapshot even when the warehouse is enabled. Default: `1` (on). | No |
+| `MACRO_BASELINE_STATIC` | Force macro/baseline series to load from local snapshots (CSV/JSON) even when warehouse is enabled. Default: same as `LEGO_BASELINE_STATIC`. | No |
+| `PLF_2026_PLAFONDS_URL` | Override URL (or local path) for the PLF 2026 mission ceilings source used by the warmer. | No |
+| `WAREHOUSE_ENABLED` | If `1`, use the dbt warehouse for baseline and allocations. Default: `1` (on). | No |
+| `WAREHOUSE_TYPE` | Warehouse backend (`duckdb` or `postgres`). Default: `duckdb`. | No |
+| `WAREHOUSE_PG_DSN` | Postgres DSN used when `WAREHOUSE_TYPE=postgres`. | No |
+| `WAREHOUSE_DUCKDB_PATH` | Path to DuckDB file. Default: `data/warehouse.duckdb`. | No |
+| `WAREHOUSE_COFOG_OVERRIDE` | Force warehouse COFOG data even when parity heuristics fail. Default: `0` (off). | No |
+| `LOG_LEVEL` | Python logging level. Default: `INFO`. | No |
+| `SENTRY_DSN` | Sentry DSN for error reporting. | No |
+| `PROCUREMENT_ENRICH_SIRENE` | If `1`, enrich procurement data using SIRENE. Default: `1` (on). | No |
+| `MACRO_IRFS_PATH` | Override path to `macro_irfs.json`. | No |
+| `LOCAL_BAL_TOLERANCE_EUR` | Floating tolerance for balance checks. Default: `0`. | No |
 
 ---
 

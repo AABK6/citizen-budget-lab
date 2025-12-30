@@ -2,6 +2,12 @@
 
 Ce dossier contient la documentation technique et fonctionnelle du projet **Citizen Budget Lab**. Voici un guide rapide pour vous orienter.
 
+## 📌 Point d'entrée
+
+*   **[`README.md`](./README.md)**
+    *   **Quoi :** Index court (anglais) vers les docs "current" + conventions d'archivage.
+    *   **Pour qui :** Toute personne qui arrive sur le repo.
+
 ## 📘 Documentation Générale
 
 *   **[`PRODUCT_SPEC.md`](./PRODUCT_SPEC.md)**
@@ -26,26 +32,29 @@ Ce dossier contient la documentation technique et fonctionnelle du projet **Citi
     *   **Quoi :** Historique et plan de la refonte technique majeure (migration vers un data warehouse dbt).
     *   **Pour qui :** Tech leads (utile pour comprendre l'état actuel de la dette technique).
 
-## 🎨 Design & UX
-
-*   **[`UX_OVERHAUL_PLAN.md`](./UX_OVERHAUL_PLAN.md)**
-    *   **Quoi :** Le plan détaillé de la refonte graphique "Premium Glass" et de l'"expérience député" (gamification).
-    *   **Pour qui :** Designers et développeurs frontend.
-
-*   **[`tutorial-review.md`](./tutorial-review.md)**
-    *   **Quoi :** Audit et plan d'amélioration pour le tutoriel d'onboarding utilisateur.
-    *   **Pour qui :** Designers UX et développeurs frontend.
-
 ## 📂 Références & Migrations
 
 *   **[`plf_missions_programmes.md`](./plf_missions_programmes.md)**
     *   **Quoi :** Nomenclature officielle des missions et programmes du PLF 2025/2026 utilisée dans l'application.
     *   **Pour qui :** Data teams vérifiant les correspondances budgétaires.
 
-*   **[`admin_lens_migration.md`](./admin_lens_migration.md)**
-    *   **Quoi :** Plan technique pour passer d'une vue purement fonctionnelle (COFOG) à une vue administrative (Missions de l'État) dans l'interface de construction.
-    *   **Pour qui :** Développeurs backend et frontend.
+*   **[`ADMIN_LENS.md`](./ADMIN_LENS.md)**
+    *   **Quoi :** Documentation "source-of-truth" sur la vue administrative (Missions) : données, mappings, APIs (GraphQL) et points d'attention.
+    *   **Pour qui :** Développeurs backend/frontend + data.
 
-*   **[`1. Mise à jour du __baseline__...docx`](./1.%20Mise%20à%20jour%20du%20__baseline__%20(Budget%202026%20officiel,%20incluant%20PLFSS%20adopté).docx)**
-    *   **Quoi :** Document source (Word) contenant les chiffres officiels et les amendements pour le budget 2026, intégré manuellement en décembre 2025.
-    *   **Pour qui :** Référence pour la validation des données 2026.
+## 🗄️ Archives
+
+*   **[`archive/README.md`](./archive/README.md)**
+    *   **Quoi :** Index des documents obsolètes ou purement historiques.
+
+*   **[`archive/UX_OVERHAUL_PLAN.md`](./archive/UX_OVERHAUL_PLAN.md)**
+    *   **Quoi :** Plan de refonte UX/UI (historique).
+
+*   **[`archive/tutorial-review.md`](./archive/tutorial-review.md)**
+    *   **Quoi :** Audit du tutoriel d'onboarding (historique).
+
+*   **[`archive/design_mockups/`](./archive/design_mockups/)**
+    *   **Quoi :** Mockups HTML pour la refonte du builder (historique).
+
+*   **[`archive/admin_lens_migration.md`](./archive/admin_lens_migration.md)**
+    *   **Quoi :** Ancien plan de migration (historique) vers la vue administrative.
