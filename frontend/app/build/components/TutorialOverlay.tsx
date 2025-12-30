@@ -1,4 +1,5 @@
 import { useEffect, useState, useLayoutEffect, useCallback, useRef } from 'react';
+import { createPortal } from 'react-dom';
 
 export type TutorialStep = {
     targetId: string; // DOM ID to highlight
@@ -10,37 +11,43 @@ export type TutorialStep = {
 const STEPS: TutorialStep[] = [
     {
         targetId: 'scoreboard-deficit',
-        title: 'Votre Mission',
-        content: 'Le déficit public est hors de contrôle. Votre objectif est de le ramener sous la barre du déficit autorisé (3% du PIB).',
+        title: 'Votre Mission : Réduire le Déficit',
+        content: 'Le déficit public est hors de contrôle. Votre objectif est de le ramener sous la barre des 3% du PIB.',
         position: 'bottom',
     },
     {
         targetId: 'treemap-container',
         title: 'Le Budget de l’État',
-        content: 'Au centre, visualisez l’ensemble des dépenses. La taille des blocs est proportionnelle aux montants. Cliquez sur un bloc pour agir dessus.',
-        position: 'bottom',
+        content: 'Au centre, visualisez l’ensemble des dépenses publiques. La taille des blocs est proportionnelle aux montants. Cliquez sur un bloc pour agir dessus.',
+        position: 'right',
     },
     {
         targetId: 'left-panel-tabs',
-        title: 'Leviers d’Action',
-        content: 'À gauche, basculez entre les "Missions" (budgets des ministères) et les "Réformes" (mesures structurelles).',
+        title: 'Vos Leviers d’Action',
+        content: 'Ici, basculez entre les "Missions" (budgets des ministères) et les "Réformes" (mesures structurelles comme les retraites).',
         position: 'right',
     },
     {
         targetId: 'left-panel-list',
         title: 'Ajuster les Dépenses',
-        content: 'Sélectionnez une ligne pour définir un objectif d’économie (ex: -10%). N’oubliez pas de valider avec le bouton "Apply Target" !',
+        content: 'Sélectionnez une mission pour définir un objectif d’économie (ex: -5%). Chaque milliard compte !',
         position: 'right',
     },
     {
         targetId: 'right-panel-revenue',
         title: 'Côté Recettes',
-        content: 'À droite, trouvez des nouvelles ressources. Vous pouvez augmenter certains impôts ou réduire des niches fiscales pour combler le trou.',
+        content: 'À droite, trouvez de nouvelles ressources. Augmentez certaines taxes ou réduisez les niches fiscales pour combler le trou.',
         position: 'left',
+    },
+    {
+        targetId: 'scoreboard-resolution',
+        title: 'Suivez vos Progrès',
+        content: 'Cette barre se remplit à mesure que vous vous rapprochez de l’équilibre. Bonne chance, Monsieur le Ministre.',
+        position: 'bottom',
     }
 ];
 
-const TUTORIAL_VERSION = 'v2';
+const TUTORIAL_VERSION = 'v3';
 const STORAGE_KEY = `has_seen_tutorial_${TUTORIAL_VERSION}`;
 
 export function TutorialOverlay({
@@ -52,20 +59,22 @@ export function TutorialOverlay({
 }) {
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
     const [isVisible, setIsVisible] = useState(false);
+    const [targetRect, setTargetRect] = useState<DOMRect | null>(null);
     const [popoverStyle, setPopoverStyle] = useState<React.CSSProperties>({});
     const popoverRef = useRef<HTMLDivElement>(null);
 
     const currentStep = STEPS[currentStepIndex];
 
     useEffect(() => {
-        // Check localStorage with versioning
         const hasSeen = localStorage.getItem(STORAGE_KEY);
         if (!hasSeen) {
             setIsVisible(true);
         } else {
-            onComplete();
+            // Ensure we don't block the UI if seen
+            // onComplete(); 
+            // Note: onComplete might trigger something, let's just stay hidden.
         }
-    }, [onComplete]);
+    }, []); // Only check on mount
 
     useEffect(() => {
         if (startSignal === null || startSignal === undefined) return;
@@ -73,106 +82,106 @@ export function TutorialOverlay({
         setIsVisible(true);
     }, [startSignal]);
 
-    // Position the popover relative to the target
-    const updatePosition = useCallback(() => {
+    // Update Layout Logic
+    const updateLayout = useCallback(() => {
         if (!isVisible || !currentStep) return;
 
         const targetEl = document.getElementById(currentStep.targetId);
-
         if (!targetEl) {
-            // If target not found immediately, we can't position yet.
-            // We'll rely on the retry mechanism in useLayoutEffect.
-            // But if we must render, fallback to center.
+            // Fallback center if target lost
+            setTargetRect(null);
             setPopoverStyle({
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
                 position: 'fixed'
             });
-            return false; // Signal that we failed to anchor
+            return;
         }
 
-        // Auto-scroll to target with a slight delay to ensure UI is ready
+        // Scroll into view if needed
         targetEl.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
 
         const rect = targetEl.getBoundingClientRect();
-        const gap = 16;
-        const popoverWidth = 320;
+        setTargetRect(rect);
 
-        // Default Preference
+        const gap = 24;
+        const popoverWidth = 360;
+        const popoverHeight = 200; // Approx estimation for placement
+
         let prefPos = currentStep.position || 'bottom';
-        let style: React.CSSProperties = { position: 'fixed' };
+        let top = 0;
+        let left = 0;
 
-        // Helper to calculate coords for a given position
-        const calcCoords = (pos: string) => {
-            const coords: any = {};
+        // Calculate positions
+        const checkPos = (pos: string) => {
             switch (pos) {
                 case 'right':
-                    coords.top = rect.top + (rect.height / 2) - 100;
-                    coords.left = rect.right + gap;
-                    break;
+                    return {
+                        top: rect.top + (rect.height / 2) - 100, // Vertically centered-ish
+                        left: rect.right + gap
+                    };
                 case 'left':
-                    coords.top = rect.top + (rect.height / 2) - 100;
-                    coords.left = rect.left - popoverWidth - gap;
-                    break;
+                    return {
+                        top: rect.top + (rect.height / 2) - 100,
+                        left: rect.left - popoverWidth - gap
+                    };
                 case 'top':
-                    coords.top = rect.top - gap - 300; // Estimated height
-                    coords.left = rect.left + (rect.width / 2) - (popoverWidth / 2);
-                    break;
+                    return {
+                        top: rect.top - gap - popoverHeight, // Assume height
+                        left: rect.left + (rect.width / 2) - (popoverWidth / 2)
+                    };
                 case 'bottom':
                 default:
-                    coords.top = rect.bottom + gap;
-                    coords.left = rect.left + (rect.width / 2) - (popoverWidth / 2);
-                    break;
+                    return {
+                        top: rect.bottom + gap,
+                        left: rect.left + (rect.width / 2) - (popoverWidth / 2)
+                    };
             }
-            return coords;
         };
 
-        let coords = calcCoords(prefPos);
+        let coords = checkPos(prefPos);
 
-        // Simple Flip Logic if off-screen (Vertical only for now)
-        if (prefPos === 'bottom' && coords.top > window.innerHeight - 250) {
-            // Flip to top if bottom is too tight
-            const topCoords = calcCoords('top');
-            // If top is better (has more space > 0), use it. 
-            // Better yet, just force a safe bottom position or stick to top
-            style.top = Math.max(10, rect.top - 10 - 250); // rough calc
-            style.left = coords.left;
-        } else {
-            style.top = coords.top;
-            style.left = coords.left;
+        // Simple boundary checks (flip if needed)
+        const pad = 20;
+        if (prefPos === 'bottom' && coords.top + popoverHeight > window.innerHeight - pad) {
+            coords = checkPos('top');
+        } else if (prefPos === 'top' && coords.top < pad) {
+            coords = checkPos('bottom');
+        } else if (prefPos === 'right' && coords.left + popoverWidth > window.innerWidth - pad) {
+            coords = checkPos('left');
+        } else if (prefPos === 'left' && coords.left < pad) {
+            coords = checkPos('right');
         }
 
-        // Horizontal Clamp
-        if (typeof style.left === 'number') {
-            style.left = Math.max(10, Math.min(window.innerWidth - popoverWidth - 10, style.left));
-        }
+        // Hard Clamps
+        coords.top = Math.max(pad, Math.min(window.innerHeight - pad - 100, coords.top));
+        coords.left = Math.max(pad, Math.min(window.innerWidth - popoverWidth - pad, coords.left));
 
-        // Vertical Clamp (Final Safety)
-        if (typeof style.top === 'number') {
-            style.top = Math.max(10, Math.min(window.innerHeight - 250, style.top));
-        }
+        setPopoverStyle({
+            top: coords.top,
+            left: coords.left,
+            position: 'fixed',
+            width: popoverWidth,
+        });
 
-        setPopoverStyle(style);
-        return true; // Anchored successfully
     }, [currentStep, isVisible]);
 
     useLayoutEffect(() => {
-        let attempts = 0;
-        const maxAttempts = 10;
+        if (!isVisible) return;
+        updateLayout();
+        // Retry a few times in case of layout shifts
+        const id = setInterval(updateLayout, 200);
+        const timeout = setTimeout(() => clearInterval(id), 2000);
 
-        const tryLocate = () => {
-            const success = updatePosition();
-            if (!success && attempts < maxAttempts) {
-                attempts++;
-                requestAnimationFrame(tryLocate);
-            }
+        window.addEventListener('resize', updateLayout);
+        return () => {
+            window.removeEventListener('resize', updateLayout);
+            clearInterval(id);
+            clearTimeout(timeout);
         };
+    }, [updateLayout, currentStepIndex, isVisible]);
 
-        tryLocate();
-        window.addEventListener('resize', updatePosition);
-        return () => window.removeEventListener('resize', updatePosition);
-    }, [updatePosition, currentStepIndex]); // Re-run when step changes
 
     const handleNext = () => {
         if (currentStepIndex < STEPS.length - 1) {
@@ -194,71 +203,121 @@ export function TutorialOverlay({
         onComplete();
     };
 
-    const handleSkip = () => {
-        handleClose();
-    };
-
     if (!isVisible || !currentStep) return null;
 
-    return (
-        <div className="fixed inset-0 z-[100] pointer-events-none font-['Outfit']">
-            {/* Semi-transparent background */}
-            <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-[1px] transition-opacity" />
+    return createPortal(
+        <div className="fixed inset-0 z-[9999] pointer-events-auto font-['Outfit']">
 
-            {/* Anchored Card */}
+            {/* SVG Spotlight Mask */}
+            <svg className="absolute inset-0 w-full h-full pointer-events-none transition-all duration-500 ease-in-out">
+                <defs>
+                    <mask id="spotlight-mask">
+                        <rect x="0" y="0" width="100%" height="100%" fill="white" />
+                        {targetRect && (
+                            <rect
+                                x={targetRect.left - 8}
+                                y={targetRect.top - 8}
+                                width={targetRect.width + 16}
+                                height={targetRect.height + 16}
+                                fill="black"
+                                rx="12"
+                                className="transition-all duration-500 ease-in-out"
+                            />
+                        )}
+                    </mask>
+                </defs>
+                {/* Dark Overlay with Hole */}
+                <rect
+                    x="0"
+                    y="0"
+                    width="100%"
+                    height="100%"
+                    fill="rgba(15, 23, 42, 0.65)"
+                    mask="url(#spotlight-mask)"
+                    className="backdrop-blur-[2px]"
+                />
+
+                {/* Highlight Border around target */}
+                {targetRect && (
+                    <rect
+                        x={targetRect.left - 8}
+                        y={targetRect.top - 8}
+                        width={targetRect.width + 16}
+                        height={targetRect.height + 16}
+                        fill="none"
+                        stroke="rgba(255, 255, 255, 0.6)"
+                        strokeWidth="2"
+                        strokeDasharray="8 4"
+                        rx="12"
+                        className="animate-pulse"
+                    />
+                )}
+            </svg>
+
+            {/* Content Popover */}
             <div
                 ref={popoverRef}
-                className="absolute bg-white rounded-2xl shadow-2xl p-6 pointer-events-auto border border-slate-200 w-[320px] transition-all duration-300 ease-out"
+                className="absolute bg-white/90 backdrop-blur-xl border border-white/50 shadow-[0_20px_60px_-10px_rgba(0,0,0,0.3)] rounded-2xl p-6 transition-all duration-500 ease-in-out flex flex-col gap-4"
                 style={popoverStyle}
             >
-                {/* Arrow / Connector could go here if we calculated it precisely */}
-
-                <div className="flex justify-between items-start mb-4">
-                    <span className="text-xs font-bold text-blue-600 uppercase tracking-wider mt-1">
-                        Tutoriel {currentStepIndex + 1} / {STEPS.length}
-                    </span>
+                {/* Header / Step Indicator */}
+                <div className="flex items-center justify-between">
+                    <div className="flex gap-1.5">
+                        {STEPS.map((_, idx) => (
+                            <div
+                                key={idx}
+                                className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentStepIndex ? 'w-6 bg-blue-600' : 'w-1.5 bg-slate-300'}`}
+                            />
+                        ))}
+                    </div>
                     <button
                         onClick={handleClose}
-                        className="text-slate-400 hover:text-slate-600 p-1 hover:bg-slate-100 rounded-full transition-colors"
-                        title="Fermer"
+                        className="text-slate-400 hover:text-slate-600 transition-colors"
                     >
                         <span className="material-icons text-sm">close</span>
                     </button>
                 </div>
 
-                <h3 className="text-xl font-bold text-slate-900 mb-2 leading-tight">
-                    {currentStep.title}
-                </h3>
-                <p className="text-slate-600 mb-6 text-sm leading-relaxed">
-                    {currentStep.content}
-                </p>
+                {/* Content */}
+                <div>
+                    <h3 className="text-xl font-bold text-slate-900 mb-2 leading-tight">
+                        {currentStep.title}
+                    </h3>
+                    <p className="text-slate-600 text-[15px] leading-relaxed">
+                        {currentStep.content}
+                    </p>
+                </div>
 
-                <div className="flex justify-between items-center gap-3">
+                {/* Actions */}
+                <div className="flex items-center justify-between pt-2">
                     <button
-                        onClick={handleSkip}
-                        className="text-xs font-medium text-slate-400 hover:text-slate-600 underline decoration-slate-300 underline-offset-2"
+                        onClick={handleClose}
+                        className="text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors"
                     >
                         Passer
                     </button>
 
-                    <div className="flex gap-2">
+                    <div className="flex gap-3">
                         {currentStepIndex > 0 && (
                             <button
                                 onClick={handleBack}
-                                className="px-3 py-1.5 text-slate-600 hover:text-slate-900 font-medium text-sm hover:bg-slate-100 rounded-lg transition-colors"
+                                className="px-4 py-2 rounded-xl text-slate-700 font-bold hover:bg-slate-100 transition-colors text-sm"
                             >
                                 Retour
                             </button>
                         )}
                         <button
                             onClick={handleNext}
-                            className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-sm shadow-md shadow-blue-500/20 transition-all hover:scale-105"
+                            className="px-6 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold shadow-lg shadow-blue-500/25 transition-all hover:scale-[1.02] text-sm"
                         >
-                            {currentStepIndex === STEPS.length - 1 ? 'Terminer' : 'Suivant'}
+                            {currentStepIndex === STEPS.length - 1 ? 'C\'est parti !' : 'Suivant'}
                         </button>
                     </div>
                 </div>
             </div>
-        </div>
+
+            {/* Click interceptor for outside clicks to advance? Optional, sticking to buttons for now */}
+        </div>,
+        document.body
     );
 }

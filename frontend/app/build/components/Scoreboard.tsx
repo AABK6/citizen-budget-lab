@@ -137,7 +137,7 @@ export function Scoreboard({
             </div>
 
             {/* CENTER: Resolution Meter */}
-            <div className="flex-1 max-w-lg mx-8 flex flex-col justify-center">
+            <div id="scoreboard-resolution" className="flex-1 max-w-lg mx-8 flex flex-col justify-center">
                 <div className="flex justify-between text-xs font-semibold text-slate-500 mb-1">
                     <span>Objectif Résolution</span>
                     <span>{Math.round(stats.resolution * 100)}%</span>
