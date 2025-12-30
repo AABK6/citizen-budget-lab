@@ -41,6 +41,8 @@ export const buildPageQuery = `
     policyLevers {
       id
       family
+      budgetSide
+      majorAmendment
       label
       description
       fixedImpactEur

@@ -11,3 +11,4 @@ This changelog records **documentation** and **data pipeline conventions** chang
 - Stopped duplicating full GraphQL SDL in `DEVELOPER_GUIDE.md`; canonical SDL lives in `graphql/schema.sdl.graphql`.
 - Introduced `ADMIN_LENS.md` as the maintained documentation for the Missions (ADMIN) lens.
 - Added archival conventions (`docs/archive/`).
+- Applied conservative fiscal impact estimates for PLF/PLFSS 2026 amendment levers using `docs/French Budget Analyst Fiscal Impact.md`.

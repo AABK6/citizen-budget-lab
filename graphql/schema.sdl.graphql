@@ -91,9 +91,17 @@ enum PolicyFamilyEnum {
     OTHER
 }
 
+enum BudgetSideEnum {
+    SPENDING
+    REVENUE
+    BOTH
+}
+
 type PolicyLeverType {
     id: ID!
     family: PolicyFamilyEnum!
+    budgetSide: BudgetSideEnum!
+    majorAmendment: Boolean
     label: String!
     description: String
     paramsSchema: JSON!

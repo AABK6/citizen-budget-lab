@@ -22,7 +22,7 @@ This document provides a central inventory of all data sources, configuration fi
 
 *   **Purpose:** Defines the list of concrete, named policy reforms available in the "Policy Workshop". Each lever has a fixed, pre-estimated budgetary impact.
 *   **Source File:** `services/api/policy_catalog.py`
-*   **Status:** **Exists and is populated.** Updated on **2025-12-30** with 38 new major amendments from PLF/PLFSS 2026 debates.
+*   **Status:** **Exists and is populated.** Updated on **2025-12-30** with 38 new major amendments from PLF/PLFSS 2026 debates; conservative impact estimates filled on **2025-12-30** from `docs/French Budget Analyst Fiscal Impact.md`.
 *   **Pipeline:** This is a static Python file. To add more reforms, this file must be edited manually with data from credible sources (e.g., government reports, economic analyses).
 
 ### 1.4. Revenue Splits

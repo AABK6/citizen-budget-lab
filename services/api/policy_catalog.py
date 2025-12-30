@@ -53,7 +53,7 @@ _LEVER_CATALOG: List[dict] = [
         "description": 'Réduire le plafond des dépenses ouvrant droit au crédit d’impôt pour l’emploi à domicile de 12\xa0000\xa0€ à 10\xa0000\xa0€ par an, limitant l’avantage fiscal accordé[10].',
         "major_amendment": True,
         "sources": ['Assemblée\xa0nat., PLF 2026[10]'],
-        "fixed_impact_eur": 0,
+        "fixed_impact_eur": 110000000,
         "mass_mapping": {},
         "feasibility": {'law': True, 'adminLagMonths': 6},
         "conflicts_with": [],
@@ -79,7 +79,7 @@ _LEVER_CATALOG: List[dict] = [
         "description": 'Prolonger jusqu’à fin\xa02028 l’exonération d’impôt sur le revenu des pourboires perçus par les salariés (notamment dans la restauration), mesure initialement temporaire[12].',
         "major_amendment": True,
         "sources": ['Assemblée\xa0nat., PLF 2026[12]'],
-        "fixed_impact_eur": 0,
+        "fixed_impact_eur": -30000000,
         "mass_mapping": {},
         "feasibility": {'law': True, 'adminLagMonths': 6},
         "conflicts_with": [],
@@ -92,7 +92,7 @@ _LEVER_CATALOG: List[dict] = [
         "description": 'Maintenir au-delà de 2026 la contribution fiscale additionnelle sur les très hauts revenus (instaurée initialement en 2012), au lieu de la laisser expirer fin\xa02025[13].',
         "major_amendment": True,
         "sources": ['Assemblée\xa0nat., PLF 2026[13]'],
-        "fixed_impact_eur": 0,
+        "fixed_impact_eur": 2000000000,
         "mass_mapping": {},
         "feasibility": {'law': True, 'adminLagMonths': 6},
         "conflicts_with": [],
@@ -131,7 +131,7 @@ _LEVER_CATALOG: List[dict] = [
         "description": 'Conserver l’exonération d’impôt sur le revenu pour les indemnités journalières versées lors d’un arrêt maladie de longue durée (affection longue durée), alors qu’une fiscalisation était envisagée[16].',
         "major_amendment": True,
         "sources": ['Assemblée\xa0nat., PLF\xa02026[17]'],
-        "fixed_impact_eur": 0,
+        "fixed_impact_eur": -150000000,
         "mass_mapping": {},
         "feasibility": {'law': True, 'adminLagMonths': 6},
         "conflicts_with": [],
@@ -144,7 +144,7 @@ _LEVER_CATALOG: List[dict] = [
         "description": 'Préserver l’avantage fiscal accordé aux familles au titre des frais de scolarité des enfants (collège, lycée, supérieur), alors que sa suppression était initialement prévue[17].',
         "major_amendment": True,
         "sources": ['Assemblée\xa0nat., PLF\xa02026[17]'],
-        "fixed_impact_eur": 0,
+        "fixed_impact_eur": -250000000,
         "mass_mapping": {},
         "feasibility": {'law': True, 'adminLagMonths': 6},
         "conflicts_with": [],
@@ -170,7 +170,7 @@ _LEVER_CATALOG: List[dict] = [
         "description": 'Augmenter le taux et/ou la durée de la contribution exceptionnelle appliquée aux bénéfices des grandes entreprises, afin de solliciter davantage les grands groupes qui ont réalisé des profits importants[19].',
         "major_amendment": True,
         "sources": ['Assemblée\xa0nat., PLF\xa02026[19]'],
-        "fixed_impact_eur": 0,
+        "fixed_impact_eur": 6000000000,
         "mass_mapping": {},
         "feasibility": {'law': True, 'adminLagMonths': 6},
         "conflicts_with": [],
@@ -192,11 +192,11 @@ _LEVER_CATALOG: List[dict] = [
     {
         "id": 'amend_double_gafam_tax',
         "family": 'TAXES',
-        "label": 'Doublement de la taxe GAFAM (de\xa03\xa0% à\xa06\xa0%)',
-        "description": 'Porter de 3\xa0% à 6\xa0% le taux de la taxe sur les services numériques (dite «\xa0taxe GAFAM\xa0») afin de doubler les recettes provenant des grandes entreprises du numérique opérant en France[21].',
+        "label": 'Taxe GAFAM renforcée (de\xa03\xa0% à\xa015\xa0%)',
+        "description": 'Porter de 3\xa0% à 15\xa0% le taux de la taxe sur les services numériques, en relevant le seuil d’application à 2\xa0Md€ de chiffre d’affaires mondial pour concentrer la mesure sur les très grands groupes[21].',
         "major_amendment": True,
         "sources": ['Assemblée\xa0nat., PLF\xa02026[21]'],
-        "fixed_impact_eur": 0,
+        "fixed_impact_eur": 2400000000,
         "mass_mapping": {},
         "feasibility": {'law': True, 'adminLagMonths': 6},
         "conflicts_with": [],
@@ -222,7 +222,7 @@ _LEVER_CATALOG: List[dict] = [
         "description": 'Augmenter drastiquement le taux de la taxe sur les rachats d’actions (ou «\xa0buybacks\xa0») des entreprises, en le faisant passer de 8\xa0% à 33\xa0%, afin de décourager ces pratiques et de générer des recettes fiscales supplémentaires[24].',
         "major_amendment": True,
         "sources": ['Assemblée\xa0nat., PLF\xa02026[24]'],
-        "fixed_impact_eur": 0,
+        "fixed_impact_eur": 2000000000,
         "mass_mapping": {},
         "feasibility": {'law': True, 'adminLagMonths': 6},
         "conflicts_with": [],
@@ -261,7 +261,7 @@ _LEVER_CATALOG: List[dict] = [
         "description": 'Augmenter le plafond de bénéfice taxable au taux réduit de 15\xa0% d’impôt sur les sociétés pour les PME, en le faisant passer de 42\xa0500\xa0€ à 100\xa0000\xa0€ de profit, afin d’élargir le nombre de petites entreprises bénéficiant du taux d’IS réduit[27].',
         "major_amendment": True,
         "sources": ['Assemblée\xa0nat., PLF\xa02026[27]'],
-        "fixed_impact_eur": 0,
+        "fixed_impact_eur": -200000000,
         "mass_mapping": {},
         "feasibility": {'law': True, 'adminLagMonths': 6},
         "conflicts_with": [],
@@ -274,7 +274,7 @@ _LEVER_CATALOG: List[dict] = [
         "description": 'Restreindre le dispositif d’exonération partielle des droits de succession/donation «\xa0pacte Dutreil\xa0» aux seuls biens professionnels (entreprises effectivement actives), et allonger la durée d’engagement de conservation des titres de 4 à 6 ans[28].',
         "major_amendment": True,
         "sources": ['Assemblée\xa0nat., PLF\xa02026[28]'],
-        "fixed_impact_eur": 0,
+        "fixed_impact_eur": 2000000000,
         "mass_mapping": {},
         "feasibility": {'law': True, 'adminLagMonths': 6},
         "conflicts_with": [],
@@ -288,7 +288,7 @@ _LEVER_CATALOG: List[dict] = [
         "major_amendment": True,
         "sources": ['PLFSS\xa02026 adopté[1]'],
         "fixed_impact_eur": -3000000000,
-        "mass_mapping": {},
+        "mass_mapping": {'07': 1.0},
         "feasibility": {'law': True, 'adminLagMonths': 6},
         "conflicts_with": [],
         "params_schema": {},
@@ -300,8 +300,8 @@ _LEVER_CATALOG: List[dict] = [
         "description": 'Suspendre jusqu’en janvier\xa02028 la poursuite de la réforme des retraites de 2023 : le relèvement progressif de l’âge légal (vers 64\xa0ans) et de la durée de cotisation sont mis en pause. Par exemple, la génération 1964 ne verra pas son âge légal passer à 64\xa0ans mais pourra partir à 62\xa0ans et 9\xa0mois[29].',
         "major_amendment": True,
         "sources": ['PLFSS\xa02026 adopté[29]'],
-        "fixed_impact_eur": 0,
-        "mass_mapping": {},
+        "fixed_impact_eur": -500000000,
+        "mass_mapping": {'10': 1.0},
         "feasibility": {'law': True, 'adminLagMonths': 6},
         "conflicts_with": [],
         "params_schema": {},
@@ -313,8 +313,8 @@ _LEVER_CATALOG: List[dict] = [
         "description": 'Instaurer un nouveau congé de naissance, s’ajoutant aux congés maternité et paternité existants, d’une durée au choix du salarié de un mois (à 70\xa0% du salaire) ou deux mois (à 60\xa0%). Ce congé pourra être pris en deux fois et vise à renforcer le soutien à la parentalité[30].',
         "major_amendment": True,
         "sources": ['PLFSS\xa02026 adopté[30]'],
-        "fixed_impact_eur": 0,
-        "mass_mapping": {},
+        "fixed_impact_eur": -300000000,
+        "mass_mapping": {'10': 1.0},
         "feasibility": {'law': True, 'adminLagMonths': 6},
         "conflicts_with": [],
         "params_schema": {},
@@ -327,7 +327,7 @@ _LEVER_CATALOG: List[dict] = [
         "major_amendment": True,
         "sources": ['PLFSS\xa02026, art.81[31]'],
         "fixed_impact_eur": 0,
-        "mass_mapping": {},
+        "mass_mapping": {'10': 1.0},
         "feasibility": {'law': True, 'adminLagMonths': 6},
         "conflicts_with": [],
         "params_schema": {},
@@ -340,7 +340,7 @@ _LEVER_CATALOG: List[dict] = [
         "major_amendment": True,
         "sources": ['PLFSS\xa02026, AN[2]'],
         "fixed_impact_eur": -5000000000,
-        "mass_mapping": {},
+        "mass_mapping": {'10': 1.0},
         "feasibility": {'law': True, 'adminLagMonths': 6},
         "conflicts_with": [],
         "params_schema": {},
@@ -352,8 +352,9 @@ _LEVER_CATALOG: List[dict] = [
         "description": 'Annuler la mesure envisagée de suppression de l’exonération de cotisations sociales pour les nouveaux contrats d’apprentissage. Autrement dit, les employeurs d’apprentis continueront à bénéficier de l’allègement actuel, aucune cotisation nouvelle ne sera créée[2].',
         "major_amendment": True,
         "sources": ['PLFSS\xa02026, AN[2]'],
-        "fixed_impact_eur": 0,
+        "fixed_impact_eur": -1000000000,
         "mass_mapping": {},
+        "budget_side": "REVENUE",
         "feasibility": {'law': True, 'adminLagMonths': 6},
         "conflicts_with": [],
         "params_schema": {},
@@ -365,8 +366,9 @@ _LEVER_CATALOG: List[dict] = [
         "description": 'Retirer la disposition qui visait à instaurer une nouvelle cotisation patronale sur la part patronale des titres-restaurant. En conséquence, les entreprises ne seront pas soumises en 2026 à une charge supplémentaire sur les tickets-resto distribués à leurs salariés[2].',
         "major_amendment": True,
         "sources": ['PLFSS\xa02026, AN[2]'],
-        "fixed_impact_eur": 0,
+        "fixed_impact_eur": -900000000,
         "mass_mapping": {},
+        "budget_side": "REVENUE",
         "feasibility": {'law': True, 'adminLagMonths': 6},
         "conflicts_with": [],
         "params_schema": {},
@@ -379,7 +381,7 @@ _LEVER_CATALOG: List[dict] = [
         "major_amendment": True,
         "sources": ['PLFSS\xa02026, débats[32]'],
         "fixed_impact_eur": 0,
-        "mass_mapping": {},
+        "mass_mapping": {'07': 1.0},
         "feasibility": {'law': True, 'adminLagMonths': 6},
         "conflicts_with": [],
         "params_schema": {},
@@ -393,6 +395,7 @@ _LEVER_CATALOG: List[dict] = [
         "sources": ['PLFSS\xa02026 adopté[3]'],
         "fixed_impact_eur": 1500000000,
         "mass_mapping": {},
+        "budget_side": "REVENUE",
         "feasibility": {'law': True, 'adminLagMonths': 6},
         "conflicts_with": [],
         "params_schema": {},
@@ -406,6 +409,7 @@ _LEVER_CATALOG: List[dict] = [
         "sources": ['PLFSS\xa02026 adopté[4]'],
         "fixed_impact_eur": 1000000000,
         "mass_mapping": {},
+        "budget_side": "REVENUE",
         "feasibility": {'law': True, 'adminLagMonths': 6},
         "conflicts_with": [],
         "params_schema": {},
@@ -419,6 +423,7 @@ _LEVER_CATALOG: List[dict] = [
         "sources": ['PLFSS\xa02026 amend.\xa0AN[33]'],
         "fixed_impact_eur": -150000000,
         "mass_mapping": {},
+        "budget_side": "REVENUE",
         "feasibility": {'law': True, 'adminLagMonths': 6},
         "conflicts_with": [],
         "params_schema": {},
@@ -432,6 +437,7 @@ _LEVER_CATALOG: List[dict] = [
         "sources": ['PLFSS\xa02026 adopté[34]'],
         "fixed_impact_eur": 0,
         "mass_mapping": {},
+        "budget_side": "REVENUE",
         "feasibility": {'law': True, 'adminLagMonths': 6},
         "conflicts_with": [],
         "params_schema": {},
@@ -577,6 +583,7 @@ _LEVER_CATALOG: List[dict] = [
         "description": 'Augmenter progressivement les taxes sur les émissions de carbone (carburants, gaz...) en restaurant la trajectoire de la taxe carbone.',
         "fixed_impact_eur": 3000000000,
         "mass_mapping": {},
+        "budget_side": "REVENUE",
         "feasibility": {'law': True, 'adminLagMonths': 6, 'notes': 'Implemented via tax law; politically sensitive (yellow-vest protests).'},
         "conflicts_with": [],
         "sources": ['Oxfam France [6]'],
@@ -835,6 +842,7 @@ _LEVER_CATALOG: List[dict] = [
         "description": 'Augmenter les taux de cotisation (salariale et/ou patronale) qui financent les retraites.',
         "fixed_impact_eur": 10000000000,
         "mass_mapping": {},
+        "budget_side": "REVENUE",
         "feasibility": {'law': True, 'adminLagMonths': 3, 'notes': 'Change via Social Security financing law; effectively a tax increase on labor, facing resistance from employers and workers.'},
         "conflicts_with": [],
         "sources": ['Est.'],
@@ -1212,6 +1220,7 @@ _LEVER_CATALOG: List[dict] = [
         "description": "Prélever de nouvelles taxes écologiques (ex: sur les billets d'avion, le kérosène, ou les livraisons e-commerce).",
         "fixed_impact_eur": 600000000,
         "mass_mapping": {},
+        "budget_side": "REVENUE",
         "feasibility": {'law': True, 'adminLagMonths': 18, 'notes': 'Would ideally be coordinated at EU level (especially for kerosene); implementation could be slow due to negotiations.'},
         "conflicts_with": [],
         "sources": ['Bayrou plan [11]'],
@@ -1429,6 +1438,7 @@ _LEVER_CATALOG: List[dict] = [
         "description": "Augmenter le barème de la taxe de solidarité ('taxe Chirac') sur les billets d'avion.",
         "fixed_impact_eur": 3700000000,
         "mass_mapping": {},
+        "budget_side": "REVENUE",
         "feasibility": {'law': True, 'adminLagMonths': 6, 'notes': 'EU/state aid coordination may arise.'},
         "conflicts_with": [],
         "sources": ['Workbook 20251017, Recettes'],
@@ -1441,6 +1451,7 @@ _LEVER_CATALOG: List[dict] = [
         "description": 'Instaurer un péage kilométrique (hors autoroutes) pour les poids lourds (transport de marchandises).',
         "fixed_impact_eur": 1000000000,
         "mass_mapping": {},
+        "budget_side": "REVENUE",
         "feasibility": {'law': True, 'adminLagMonths': 12, 'notes': 'Infrastructure & enforcement cost; EU coordination.'},
         "conflicts_with": [],
         "sources": ['Workbook 20251017, Recettes'],
@@ -1643,6 +1654,33 @@ _LEVER_CATALOG: List[dict] = [
 
 # --- Helper Functions ---
 
+def _normalize_budget_side(lever: dict) -> str:
+    side = str(lever.get("budget_side") or "").upper()
+    if side in {"SPENDING", "REVENUE", "BOTH"}:
+        return side
+
+    family = str(lever.get("family") or "").upper()
+    if family in {"TAXES", "TAX_EXPENDITURES"}:
+        return "REVENUE"
+    if lever.get("mass_mapping") or lever.get("mission_mapping"):
+        return "SPENDING"
+    if family in {"PENSIONS", "HEALTH", "DEFENSE", "STAFFING", "SUBSIDIES", "PROCUREMENT", "OPERATIONS"}:
+        return "SPENDING"
+
+    return "SPENDING"
+
+
+def _normalized_lever(lever: dict) -> dict:
+    normalized = dict(lever)
+    normalized["budget_side"] = _normalize_budget_side(lever)
+    normalized["major_amendment"] = bool(lever.get("major_amendment", False))
+    return normalized
+
+
+def levers_by_id() -> Dict[str, dict]:
+    return {str(lever.get("id")): _normalized_lever(lever) for lever in _LEVER_CATALOG}
+
+
 def list_policy_levers(family: Optional[str] = None, search: Optional[str] = None) -> List[dict]:
     """
     Return a filtered list of policy levers.
@@ -1653,18 +1691,19 @@ def list_policy_levers(family: Optional[str] = None, search: Optional[str] = Non
     search_q = search.lower().strip() if search else None
     
     for lever in _LEVER_CATALOG:
+        normalized = _normalized_lever(lever)
         # Filter by family
-        if family and lever.get("family") != family:
+        if family and normalized.get("family") != family:
             continue
-            
+
         # Filter by search query
         if search_q:
-            label = str(lever.get("label", "")).lower()
-            desc = str(lever.get("description", "")).lower()
+            label = str(normalized.get("label", "")).lower()
+            desc = str(normalized.get("description", "")).lower()
             if search_q not in label and search_q not in desc:
                 continue
         
-        results.append(lever)
+        results.append(normalized)
         
     return results
 
@@ -1678,6 +1717,9 @@ def suggest_levers_for_mass(mass_id: str, limit: int = 5) -> List[dict]:
     mass_id_clean = mass_id.replace("M_", "") # Strip prefix if present for COFOG 
     
     for lever in _LEVER_CATALOG:
+        normalized = _normalized_lever(lever)
+        if normalized.get("budget_side") == "REVENUE":
+            continue
         mapping = lever.get("mass_mapping") or {}
         
         # 1. Direct match in mapping
@@ -1692,7 +1734,7 @@ def suggest_levers_for_mass(mass_id: str, limit: int = 5) -> List[dict]:
         
         # 2. Family match heuristics (optional)
         # e.g. M_HEALTH -> HEALTH family
-        family = lever.get("family", "")
+        family = normalized.get("family", "")
         if "HEALTH" in mass_id_clean and family == "HEALTH":
             match = True
         elif "DEFENSE" in mass_id_clean and family == "DEFENSE":
@@ -1701,7 +1743,7 @@ def suggest_levers_for_mass(mass_id: str, limit: int = 5) -> List[dict]:
              match = True
              
         if match:
-            results.append(lever)
+            results.append(normalized)
             
     # Sort by popularity if available, otherwise fixed_impact
     results.sort(key=lambda x: (x.get("popularity") or 0.0), reverse=True)

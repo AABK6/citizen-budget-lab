@@ -46,6 +46,9 @@ const TARGET_PERCENT_DEFAULT_RANGE = 10;
 const TARGET_PERCENT_EXPANDED_RANGE = 25;
 const TARGET_PERCENT_STEP = 0.5;
 const EPSILON = 1e-6;
+const revenueFamilies = new Set(['TAXES', 'TAX_EXPENDITURES']);
+const resolveBudgetSide = (lever: PolicyLever) =>
+  lever.budgetSide ?? (revenueFamilies.has(lever.family) ? 'REVENUE' : 'SPENDING');
 
 export default function BuildPageClient() {
   // const { t } = useI18n();
@@ -99,9 +102,19 @@ export default function BuildPageClient() {
     COFOG: [],
   });
 
+  const spendingLevers = useMemo(
+    () => policyLevers.filter((lever) => resolveBudgetSide(lever) !== 'REVENUE'),
+    [policyLevers],
+  );
+  const revenueLevers = useMemo(
+    () => policyLevers.filter((lever) => resolveBudgetSide(lever) === 'REVENUE'),
+    [policyLevers],
+  );
+
   const [shareFeedback, setShareFeedback] = useState<string | null>(null);
   const [tutorialRunId, setTutorialRunId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<'missions' | 'reforms'>('missions');
+  const [activeRevenueTab, setActiveRevenueTab] = useState<'revenues' | 'reforms'>('revenues');
   const {
     setInitialLoading,
     setScenarioLoading,
@@ -515,7 +528,7 @@ export default function BuildPageClient() {
 
   const addLeverToDsl = (lever: PolicyLever) => {
     setDslObject(currentDslObject => {
-      const isRevenue = lever.family === 'TAXES';
+    const isRevenue = resolveBudgetSide(lever) === 'REVENUE';
       const op = (isRevenue
         ? ((lever.fixedImpactEur || 0) >= 0 ? 'increase' : 'decrease')
         : ((lever.fixedImpactEur || 0) >= 0 ? 'decrease' : 'increase')) as 'increase' | 'decrease';
@@ -647,6 +660,7 @@ export default function BuildPageClient() {
   };
 
   const handleRevenueCategoryClick = async (category: LegoPiece) => {
+    setActiveRevenueTab('revenues');
     togglePanel(false);
     setSelectedCategory(null);
     const pieceId = category.id;
@@ -668,13 +682,12 @@ export default function BuildPageClient() {
     setSelectedRevenueCategory(category);
     toggleRevenuePanel(true);
 
-    const revenueLevers = policyLevers.filter(lever => {
-      if (lever.family !== 'TAXES') return false;
+    const revenueLeversForCategory = revenueLevers.filter(lever => {
       if (!lever.massMapping) return true;
       const weight = lever.massMapping[category.id];
       return typeof weight === 'number' && weight > 0;
     });
-    setSuggestedLevers(revenueLevers);
+    setSuggestedLevers(revenueLeversForCategory);
   };
 
   const handleRevenueBackClick = () => {
@@ -832,7 +845,7 @@ export default function BuildPageClient() {
 
 
           {/* LEFT PANEL: SPENDING */}
-          <div className="flex flex-col bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative">
+          <div className="flex flex-col min-h-0 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative">
 
             {/* Unified Header with Tabs */}
             <div className="p-3 border-b border-slate-100 bg-white z-10">
@@ -860,10 +873,12 @@ export default function BuildPageClient() {
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto bg-slate-50/30" id="left-panel-list">
+            <div className="flex-1 min-h-0 overflow-y-auto bg-slate-50/30" id="left-panel-list">
               {activeTab === 'reforms' ? (
                 <ReformSidebarList
-                  levers={policyLevers}
+                  title="Réformes de dépenses"
+                  subtitle="Coupes, investissements et ajustements budgétaires"
+                  levers={spendingLevers}
                   onSelectReform={(lever) => {
                     if (!isLeverInDsl(lever.id)) {
                       addLeverToDsl(lever);
@@ -951,39 +966,88 @@ export default function BuildPageClient() {
           </div>
 
           {/* RIGHT PANEL: REVENUE */}
-          <div id="right-panel-revenue" className="flex flex-col bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div className="flex-1 overflow-y-auto">
-              {!isRevenuePanelExpanded ? (
-                <RevenueCategoryList
-                  categories={revenuePieces}
-                  onSelect={handleRevenueCategoryClick}
-                  formatCurrency={formatCurrency}
-                  visuals={revenueVisuals}
+          <div id="right-panel-revenue" className="flex flex-col min-h-0 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div className="p-3 border-b border-slate-100 bg-white z-10">
+              <div className="flex bg-slate-100/80 p-1 rounded-xl">
+                <button
+                  onClick={() => {
+                    setActiveRevenueTab('revenues');
+                    toggleRevenuePanel(false);
+                    setSelectedRevenueCategory(null);
+                  }}
+                  className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold transition-all ${activeRevenueTab === 'revenues'
+                    ? 'bg-white text-slate-800 shadow-sm'
+                    : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'
+                    }`}
+                >
+                  <span className="material-icons text-base">payments</span>
+                  Recettes
+                </button>
+                <button
+                  onClick={() => {
+                    setActiveRevenueTab('reforms');
+                    toggleRevenuePanel(false);
+                    setSelectedRevenueCategory(null);
+                  }}
+                  className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold transition-all ${activeRevenueTab === 'reforms'
+                    ? 'bg-white text-blue-700 shadow-sm'
+                    : 'text-slate-500 hover:text-blue-600 hover:bg-white/50'
+                    }`}
+                >
+                  <span className="material-icons text-base">receipt_long</span>
+                  Réformes
+                </button>
+              </div>
+            </div>
+            <div className="flex-1 min-h-0 overflow-y-auto">
+              {activeRevenueTab === 'reforms' ? (
+                <ReformSidebarList
+                  title="Réformes de recettes"
+                  subtitle="Fiscalité, cotisations et ressources affectées"
+                  levers={revenueLevers}
+                  onSelectReform={(lever) => {
+                    if (!isLeverInDsl(lever.id)) {
+                      addLeverToDsl(lever);
+                    } else {
+                      removeLeverFromDsl(lever.id);
+                    }
+                  }}
+                  onHoverReform={setPreviewReformId}
+                  isLeverSelected={isLeverInDsl}
                 />
               ) : (
-                selectedRevenueCategory && (
-                  <RevenueCategoryPanel
-                    category={selectedRevenueCategory}
-                    visual={revenueVisuals.get(selectedRevenueCategory.id)}
-                    targetPercent={revenueTargetPercent}
-                    targetRangeMax={revenueTargetRangeMax}
-                    onTargetPercentChange={setRevenueTargetPercent}
-                    onRangeChange={handleRevenueRangeChange}
-                    onApplyTarget={handleApplyRevenueTarget}
-                    onClearTarget={() => {
-                      setRevenueTargetPercent(0);
-                      setRevenueTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
-                    }}
-                    onBack={handleRevenueBackClick}
-                    suggestedLevers={suggestedLevers}
-                    onLeverToggle={(lever) =>
-                      (isLeverInDsl(lever.id) ? removeLeverFromDsl(lever.id) : addLeverToDsl(lever))
-                    }
-                    isLeverSelected={isLeverInDsl}
-                    popularIntents={popularIntents}
-                    onIntentClick={handleIntentClick}
+                !isRevenuePanelExpanded ? (
+                  <RevenueCategoryList
+                    categories={revenuePieces}
+                    onSelect={handleRevenueCategoryClick}
                     formatCurrency={formatCurrency}
+                    visuals={revenueVisuals}
                   />
+                ) : (
+                  selectedRevenueCategory && (
+                    <RevenueCategoryPanel
+                      category={selectedRevenueCategory}
+                      visual={revenueVisuals.get(selectedRevenueCategory.id)}
+                      targetPercent={revenueTargetPercent}
+                      targetRangeMax={revenueTargetRangeMax}
+                      onTargetPercentChange={setRevenueTargetPercent}
+                      onRangeChange={handleRevenueRangeChange}
+                      onApplyTarget={handleApplyRevenueTarget}
+                      onClearTarget={() => {
+                        setRevenueTargetPercent(0);
+                        setRevenueTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
+                      }}
+                      onBack={handleRevenueBackClick}
+                      suggestedLevers={suggestedLevers}
+                      onLeverToggle={(lever) =>
+                        (isLeverInDsl(lever.id) ? removeLeverFromDsl(lever.id) : addLeverToDsl(lever))
+                      }
+                      isLeverSelected={isLeverInDsl}
+                      popularIntents={popularIntents}
+                      onIntentClick={handleIntentClick}
+                      formatCurrency={formatCurrency}
+                    />
+                  )
                 )
               )}
             </div>

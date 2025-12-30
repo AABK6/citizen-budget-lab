@@ -34,6 +34,8 @@ export type PolicyLever = {
   description?: string;
   fixedImpactEur?: number;
   family: string;
+  budgetSide?: 'SPENDING' | 'REVENUE' | 'BOTH';
+  majorAmendment?: boolean;
   shortLabel?: string;
   popularity?: number;
   massMapping?: Record<string, number> | undefined;

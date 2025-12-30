@@ -310,6 +310,12 @@ class PolicyFamilyEnum(str, enum.Enum):
     OTHER = "OTHER"
 
 
+@strawberry.enum
+class BudgetSideEnum(str, enum.Enum):
+    SPENDING = "SPENDING"
+    REVENUE = "REVENUE"
+    BOTH = "BOTH"
+
 
 @strawberry.type
 class ImpactStructType:
@@ -323,6 +329,8 @@ class ImpactStructType:
 class PolicyLeverType:
     id: str
     family: PolicyFamilyEnum
+    budgetSide: BudgetSideEnum
+    majorAmendment: bool | None = None
     label: str
     description: str | None
     paramsSchema: JSON
@@ -917,6 +925,8 @@ class Query:
                 PolicyLeverType(
                     id=str(it.get("id")),
                     family=PolicyFamilyEnum(str(it.get("family", "OTHER"))),
+                    budgetSide=BudgetSideEnum(str(it.get("budget_side", "SPENDING"))),
+                    majorAmendment=bool(it.get("major_amendment", False)),
                     label=str(it.get("label")),
                     description=str(it.get("description") or ""),
                     paramsSchema=it.get("params_schema") or {},
@@ -1058,6 +1068,8 @@ class Query:
                 PolicyLeverType(
                     id=str(it.get("id")),
                     family=PolicyFamilyEnum(str(it.get("family", "OTHER"))),
+                    budgetSide=BudgetSideEnum(str(it.get("budget_side", "SPENDING"))),
+                    majorAmendment=bool(it.get("major_amendment", False)),
                     label=str(it.get("label")),
                     description=str(it.get("description") or ""),
                     paramsSchema=it.get("params_schema") or {},

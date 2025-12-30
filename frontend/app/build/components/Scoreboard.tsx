@@ -109,29 +109,33 @@ export function Scoreboard({
                 {/* Primary Metric: BALANCE / DEFICIT */}
                 <div className="flex flex-col">
                     <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Solde Public</span>
-                    <div className="flex items-baseline gap-3">
-                        {/* Current Value */}
-                        <span id="scoreboard-deficit" className={`text-3xl font-extrabold tracking-tight transition-all duration-300 ${showPreview ? 'opacity-40 blur-[1px]' : ''} ${stats.deficit < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
-                            {stats.deficit > 0 ? '+' : ''}{formatCurrencyShort(stats.deficit)}
-                        </span>
+                    <div className="flex flex-col">
+                        <div className="flex items-baseline gap-3">
+                            {/* Current Value */}
+                            <span id="scoreboard-deficit" className={`text-3xl font-extrabold tracking-tight transition-all duration-300 ${showPreview ? 'opacity-40 blur-[1px]' : ''} ${stats.deficit < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
+                                {stats.deficit > 0 ? '+' : ''}{formatCurrencyShort(stats.deficit)}
+                            </span>
 
-                        {/* Ghost / Preview Value */}
-                        {showPreview && (
-                            <div className="flex flex-col animate-in fade-in slide-in-from-bottom-2 duration-200">
-                                <span className={`text-3xl font-extrabold tracking-tight ${previewDeficit! < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
+                            {/* Ghost / Preview Value */}
+                            {showPreview && (
+                                <span className={`text-3xl font-extrabold tracking-tight animate-in fade-in slide-in-from-bottom-2 duration-200 ${previewDeficit! < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
                                     {previewDeficit! > 0 ? '+' : ''}{formatCurrencyShort(previewDeficit!)}
                                 </span>
-                                <span className={`text-xs font-bold ${previewDiff > 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+                            )}
+                        </div>
+                        <div className="min-h-5">
+                            {showPreview ? (
+                                <span className={`text-xs font-bold leading-tight ${previewDiff > 0 ? 'text-emerald-500' : 'text-red-500'}`}>
                                     {previewDiff > 0 ? '▲' : '▼'} Impact: {previewDiff > 0 ? '+' : ''}{formatCurrencyShort(previewDiff)}
                                 </span>
-                            </div>
-                        )}
-
-                        {!showPreview && stats.deficitRatio !== null && (
-                            <span className={`text-sm font-medium ${stats.deficitRatio < -0.03 ? 'text-red-500' : 'text-slate-500'}`}>
-                                {formatPercent(stats.deficitRatio)} du PIB
-                            </span>
-                        )}
+                            ) : stats.deficitRatio !== null ? (
+                                <span className={`text-sm font-medium leading-tight ${stats.deficitRatio < -0.03 ? 'text-red-500' : 'text-slate-500'}`}>
+                                    {formatPercent(stats.deficitRatio)} du PIB
+                                </span>
+                            ) : (
+                                <span className="text-sm text-transparent">.</span>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
