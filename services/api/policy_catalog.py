@@ -1639,3 +1639,71 @@ _LEVER_CATALOG: List[dict] = [
         "params_schema": {},
     },
 ]
+
+
+# --- Helper Functions ---
+
+def list_policy_levers(family: Optional[str] = None, search: Optional[str] = None) -> List[dict]:
+    """
+    Return a filtered list of policy levers.
+    """
+    results = []
+    
+    # Normalize inputs
+    search_q = search.lower().strip() if search else None
+    
+    for lever in _LEVER_CATALOG:
+        # Filter by family
+        if family and lever.get("family") != family:
+            continue
+            
+        # Filter by search query
+        if search_q:
+            label = str(lever.get("label", "")).lower()
+            desc = str(lever.get("description", "")).lower()
+            if search_q not in label and search_q not in desc:
+                continue
+        
+        results.append(lever)
+        
+    return results
+
+
+def suggest_levers_for_mass(mass_id: str, limit: int = 5) -> List[dict]:
+    """
+    Return a list of policy levers relevant to a specific budget mass/mission.
+    Heuristic: check mass_mapping keys or family relevance.
+    """
+    results = []
+    mass_id_clean = mass_id.replace("M_", "") # Strip prefix if present for COFOG 
+    
+    for lever in _LEVER_CATALOG:
+        mapping = lever.get("mass_mapping") or {}
+        
+        # 1. Direct match in mapping
+        # COFOG keys are usually 01, 02...
+        # Mission keys might be mapped later.
+        # For now, simplistic check if any key roughly matches
+        match = False
+        for k in mapping.keys():
+            if k in mass_id_clean or mass_id_clean in k:
+                match = True
+                break
+        
+        # 2. Family match heuristics (optional)
+        # e.g. M_HEALTH -> HEALTH family
+        family = lever.get("family", "")
+        if "HEALTH" in mass_id_clean and family == "HEALTH":
+            match = True
+        elif "DEFENSE" in mass_id_clean and family == "DEFENSE":
+            match = True
+        elif "EDU" in mass_id_clean and family == "STAFFING":
+             match = True
+             
+        if match:
+            results.append(lever)
+            
+    # Sort by popularity if available, otherwise fixed_impact
+    results.sort(key=lambda x: (x.get("popularity") or 0.0), reverse=True)
+    
+    return results[:limit]
