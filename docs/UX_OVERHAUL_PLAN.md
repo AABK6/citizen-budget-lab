@@ -162,6 +162,5 @@
 1.  **Validate Phases 1 & 2** (✅ Done): Landing and Cockpit are live.
 2.  **Simplify & Cleanup** (✅ Done): Epic 5 complete.
 3.  **Vote Mechanics** (✅ Done): Epic 7 (Part 1) complete.
-4.  **Implement Objective Impacts (Epic 6)**: *Current Focus*. Populate data and update UI.
-5.  **Final Polish**: Animations/Tutorial Reset.
-
+4.  **Implement Objective Impacts (Epic 6)** (✅ Done): Impact Engine is live with real data.
+5.  **Final Polish** (✅ Done): Animations, Reform Toasts, and Tutorial Reset implemented.

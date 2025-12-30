@@ -532,6 +532,7 @@ export default function BuildPageClient() {
         actions: [...currentDslObject.actions, newAction],
       };
     });
+    setShareFeedback(`✅ "${lever.label}" appliquée`);
   };
 
   const removeLeverFromDsl = (leverId: string) => {
@@ -541,6 +542,10 @@ export default function BuildPageClient() {
         actions: currentDslObject.actions.filter((a: DslAction) => a.id !== leverId),
       };
     });
+    const lever = policyLevers.find(l => l.id === leverId);
+    if (lever) {
+      setShareFeedback(`❌ "${lever.label}" retirée`);
+    }
   };
 
   const isLeverInDsl = (leverId: string) => {
