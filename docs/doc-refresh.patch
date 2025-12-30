@@ -1,0 +1,147 @@
+From 839b1d2b7e9d80d1eacb0c86a1bb56ce7a7b1f10 Mon Sep 17 00:00:00 2001
+From: ChatGPT <policy@parispeaceforum.org>
+Date: 2025-12-31
+Subject: [PATCH] docs: refresh + reorganize current vs archive
+
+---
+ docs/DATA_MANIFEST.md                  |  28 +++++-----
+ docs/DEVELOPER_GUIDE.md                |  19 ++++++-
+ docs/REFACTOR_PLAN.md                  |   8 +++
+ docs/LEGO_METHOD.md                    |   6 ++
+ docs/current/README.md                 |  18 +++++++
+ docs/current/ADMIN_LENS_STATUS.md      |  40 +++++++++++++++
+ docs/CHANGELOG_DOCS.md                 |  10 ++++
+ docs/archive/admin_lens_migration.md   |  0
+ 8 files changed, 116 insertions(+), 15 deletions(-)
+ create mode 100644 docs/current/README.md
+ create mode 100644 docs/current/ADMIN_LENS_STATUS.md
+ create mode 100644 docs/CHANGELOG_DOCS.md
+ rename docs/{admin_lens_migration.md => archive/admin_lens_migration.md} (100%)
+
+diff --git a/docs/DATA_MANIFEST.md b/docs/DATA_MANIFEST.md
+index 92c1a8d..f91d2b8 100644
+--- a/docs/DATA_MANIFEST.md
++++ b/docs/DATA_MANIFEST.md
+@@ -1,12 +1,14 @@
+- The Citizen Budget Lab uses **consolidated general government (APU)** data as its baseline, covering *all* public administrations (central state, local, and social security) (S13). Core budget inputs are pulled from official sources (Eurostat SDMX feeds) to ensure every “LEGO” budget piece aligns with real expenditures and revenues. The **2026 baseline** was pre-loaded from these sources (a cached `lego_baseline_2026.json` was generated on 2025-09-22) but the PLF ceilings remained a manual/placeholder import.
++The Citizen Budget Lab uses **consolidated general government (APU, S13)** data as its baseline (central + local + social security). Core budget inputs are taken from official sources (Eurostat SDMX for S13 series, INSEE, and the French government PLF/PLFSS workbooks). A warmed LEGO baseline snapshot for 2026 is available as `data/cache/lego_baseline_2026.json` (aligned to the Assemblée-adopted PLF/PLFSS in the 2025-12-30 remediation run). The repository also now contains an ingestable PLF ceilings seed to support mission-level ceilings in the warehouse.
+@@
+- **PLF 2026 ceilings** – previously the PLF ceilings file was an ad hoc fixture. The warmer CLI had a TODO for PDF/XLS parsing to extract official mission/programme ceilings.
++**PLF 2026 ceilings** – the repository includes a warehouse seed with PLF 2026 mission ceilings (`warehouse/seeds/plf_2026_plafonds.csv`) and the warmers now parse PLF/PLFSS PDF/XLS workbooks into normalised CSVs. The seed currently contains mission-level rows and is used by dbt seeds.
+@@
+- **Policy catalog** — the project ships a minimal set of levers with illustrative `fixed_impact_eur` values. The catalog is intentionally conservative and partly manual.
++**Policy catalog** — the project ships a comprehensive policy catalog: `services/api/policy_catalog.py` now contains an extensive set of named levers (including the main amendments discussed in the 2026 parliamentary procedure) with `major_amendment` flags.
+@@
+- **Macro IRFs & kernels** — currently placeholder IRFs live in `data/macro_irfs.json` and require calibration.
++**Macro IRFs & kernels** — `data/macro_irfs.json` remains present as the kernel configuration for the macro module and still contains conservative placeholder IRFs; calibration to OFCE/INSEE/PLF assumptions should be performed before relying on macro effects.
+diff --git a/docs/DEVELOPER_GUIDE.md b/docs/DEVELOPER_GUIDE.md
+index 51a47be..c8e31ad 100644
+--- a/docs/DEVELOPER_GUIDE.md
++++ b/docs/DEVELOPER_GUIDE.md
+@@ -45,6 +45,18 @@
+ 2.2. Semantic Layer (dbt)
+ 
+ -   **Overview:** The dbt project lives in `warehouse/` and uses DuckDB by default. It reads the warmed CSVs from `data/cache/` to produce the semantic models used by the API.
++
++    **Important env flags (defaults shown):**
++    - `WAREHOUSE_ENABLED` (default `1`) — when set to `0`, the API falls back to static CSV/JSON inputs. See `services/api/settings.py`.
++    - `LEGO_BASELINE_STATIC` (default `1`) — when true, the LEGO baseline is read from `data/cache/lego_baseline_{year}.json`; set to `0` to force warehouse reads.
++
++    These flags determine whether the API reads live dbt models or cached JSON.
+@@
+ -   vars:
+ -     'dbt_date:time_zone': 'UTC'
+ -     state_budget_sample: 'data/sample_state_budget.csv'
+ -     state_budget_glob: 'data/cache/state_budget_mission_*.csv'
+ -     procurement_sample: 'data/sample_procurement.csv'
+ -     procurement_glob: 'data/cache/procurement_contracts_*.csv'
+ -     lego_pieces_json: 'data/lego_pieces.json'
+ -     lego_baseline_glob: 'data/cache/lego_baseline_*.json'
+ -     gdp_series_csv: 'data/gdp_series.csv'
+ -     baseline_deficit_debt_csv: 'data/baseline_deficit_debt.csv'
+ -     plf_2026_plafonds_csv: 'warehouse/seeds/plf_2026_plafonds.csv'
++  - **PLF 2026 seed note:** a dbt seed `warehouse/seeds/plf_2026_plafonds.csv` provides mission ceilings for 2026; dbt references it by default. Replace it via the PLF warmer for updated workbooks.
+diff --git a/docs/REFACTOR_PLAN.md b/docs/REFACTOR_PLAN.md
+index 91bafcd..a12d01a 100644
+--- a/docs/REFACTOR_PLAN.md
++++ b/docs/REFACTOR_PLAN.md
+@@ -7,6 +7,14 @@
+ ## 2. Task Ledger
++
++**Note:** The administrative (mission/programme) lens is implemented: `data/lego_pieces.json` includes mission mappings and `data/ux_labels.json` exposes mission labels. The warehouse includes a PLF ceilings seed (`plf_2026_plafonds.csv`). See `ADMIN_LENS_STATUS.md` for up-to-date details.
+diff --git a/docs/LEGO_METHOD.md b/docs/LEGO_METHOD.md
+index e412b5f..e02dfc8 100644
+--- a/docs/LEGO_METHOD.md
++++ b/docs/LEGO_METHOD.md
+@@ -3,6 +3,12 @@
+ - From MVP+ onward, the LEGO layer powers two synchronized lenses:
+   - Masses (Budget Playground): big functional/admin blocks with Budget Dials and pending state.
+   - Named Reforms (Policy Workshop): hierarchical families → levers that compose and attribute onto masses.
++
++Note: The LEGO configuration now contains **mission mappings** for pieces (`mapping.mission` in `data/lego_pieces.json`), enabling the administrative (mission/programme) lens to be the primary aggregation for the Build workshop. Mission labels/icons are in `data/ux_labels.json`.
+diff --git a/docs/current/README.md b/docs/current/README.md
+new file mode 100644
+index 0000000..a10944e
+--- /dev/null
++++ b/docs/current/README.md
+@@ -0,0 +1,18 @@
++# Docs — Citizen Budget Lab (current)
++
++This folder contains the **current, authoritative** documentation for the project.
++
++**Files**
++- `DATA_MANIFEST.md` — canonical explanation of warmed inputs, seeds and data flow.
++- `DEVELOPER_GUIDE.md` — developer onboarding, warmers, dbt and local dev steps.
++- `REFACTOR_PLAN.md` — architectural log.
++- `LEGO_METHOD.md` — methodology for LEGO pieces, mapping and elasticities.
++- `ADMIN_LENS_STATUS.md` — short status note on the mission (admin) lens.
++
++**Archive**
++Old or historical docs are in `../archive/` to preserve traceability.
++
++If you change any doc in `current/`, please add a short entry to `CHANGELOG_DOCS.md`.
+diff --git a/docs/current/ADMIN_LENS_STATUS.md b/docs/current/ADMIN_LENS_STATUS.md
+new file mode 100644
+index 0000000..51b44f0
+--- /dev/null
++++ b/docs/current/ADMIN_LENS_STATUS.md
+@@ -0,0 +1,40 @@
++# Administrative Lens — Current Status
++
++**Status:** Implemented and active for Build workshop & scenario engine.
++
++## Implemented features
++- `data/lego_pieces.json` contains `mapping.mission` entries per piece.
++- `data/ux_labels.json` contains mission labels/icons used by UI.
++- Warehouse seed `warehouse/seeds/plf_2026_plafonds.csv` provides mission ceilings.
++- GraphQL + API: `legoPieces` endpoint surfaces mission metadata.
++- Backward compatibility: COFOG data retained; admin lens default.
++
++## Remaining / planned
++- Parametric estimators for mission-targeted levers (`impact_estimator.py` backlog).
++- Continuous IRF calibration (`data/macro_irfs.json` placeholders).
++
++## Where to look
++- Mission mapping → `data/lego_pieces.json`
++- UX mission labels → `data/ux_labels.json`
++- PLF ceilings seed → `warehouse/seeds/plf_2026_plafonds.csv`
++- dbt project → `warehouse/dbt_project.yml`
++- API → `services/api/data_loader.py`
++
++**Note:** The original detailed checklist lives in `../archive/admin_lens_migration.md`.
+diff --git a/docs/CHANGELOG_DOCS.md b/docs/CHANGELOG_DOCS.md
+new file mode 100644
+index 0000000..5df9a23
+--- /dev/null
++++ b/docs/CHANGELOG_DOCS.md
+@@ -0,0 +1,10 @@
++# Docs Changelog
++
++- 2025-12-31: Reorganized `/docs` into `current/` and `archive/`. Added `ADMIN_LENS_STATUS.md` and `README.md`.
++- 2025-12-30: Updated REFACTOR_PLAN.md for remediation completion.
+diff --git a/docs/admin_lens_migration.md b/docs/archive/admin_lens_migration.md
+similarity index 100%
+rename from docs/admin_lens_migration.md
+rename to docs/archive/admin_lens_migration.md
+-- 
+2.43.0
