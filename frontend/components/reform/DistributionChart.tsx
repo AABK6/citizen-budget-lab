@@ -36,7 +36,7 @@ export const DistributionChart: React.FC<DistributionChartProps> = ({ d1, d10 })
     return (
         <div className="w-full pt-2 mt-2 border-t border-slate-100">
             <div className="text-[10px] uppercase tracking-wide text-slate-400 mb-2 font-semibold flex justify-between">
-                <span>Impact Pouvoir d'Achat</span>
+                <span>Impact Pouvoir d&apos;Achat</span>
                 <span className="font-normal normal-case text-slate-300">(par an)</span>
             </div>
             {renderBar(d1, "10% Pauvres")}

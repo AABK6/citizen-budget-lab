@@ -102,7 +102,7 @@ export function ReformCatalogModal({ isOpen, onClose, onSelectReform, levers, on
 
                 {/* Footer */}
                 <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 text-xs text-center text-gray-400">
-                    Sélectionner une réforme pour l'ajouter à votre plan budgétaire.
+                    Sélectionner une réforme pour l&apos;ajouter à votre plan budgétaire.
                 </div>
             </div>
         </div>

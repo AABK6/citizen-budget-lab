@@ -1361,18 +1361,32 @@ def run_scenario(dsl_b64: str, *, lens: str | None = None) -> tuple[str, Account
 
         for lid in applied_ids:
             lever_def = levers_by_id_map[lid]
-            impact = lever_def.get("fixed_impact_eur")
-            if not isinstance(impact, (int, float)):
+            impact = lever_def.get("impact_schedule_eur") or lever_def.get("fixed_impact_eur")
+            
+            impact_schedule: List[float] = []
+            if isinstance(impact, (int, float)):
+                impact_schedule = [float(impact)] * horizon_years
+            elif isinstance(impact, list):
+                # If list is shorter than horizon, pad with last value
+                schedule = [float(x) for x in impact]
+                if not schedule:
+                    impact_schedule = [0.0] * horizon_years
+                else:
+                    last_val = schedule[-1]
+                    if len(schedule) < horizon_years:
+                        schedule.extend([last_val] * (horizon_years - len(schedule)))
+                    impact_schedule = schedule[:horizon_years]
+            else:
                 continue
 
-            # A positive impact is a saving (reduces deficit), a negative one is a cost (increases deficit)
-            delta = -impact
             lever_dim = _dimension_for_action(lever_def)
             if lever_dim == "tax":
                 lever_dim = "cp"
             ledger = specified_deltas["ae" if lever_dim == "ae" else "cp"]
-            # Levers are always recurring over the horizon
+            
             for i in range(horizon_years):
+                # A positive impact is a saving (reduces deficit), a negative one is a cost (increases deficit)
+                delta = -impact_schedule[i]
                 ledger[i] += delta
 
             # Attribute to macro shocks using raw COFOG mapping when available
@@ -1385,9 +1399,11 @@ def run_scenario(dsl_b64: str, *, lens: str | None = None) -> tuple[str, Account
                 major = str(mass_code).split(".")[0][:2]
                 if not major:
                     continue
-                shock_eur = delta * weight_val
+                
                 if lever_dim != "ae":
                     for i in range(horizon_years):
+                        delta = -impact_schedule[i]
+                        shock_eur = delta * weight_val
                         shocks_pct_gdp.setdefault(major, [0.0] * horizon_years)[i] += 100.0 * shock_eur / gdp_series[i]
 
             mission_mapping = lever_def.get("mission_mapping") or convert_mass_mapping_to_missions(raw_mass_mapping)
@@ -1399,8 +1415,13 @@ def run_scenario(dsl_b64: str, *, lens: str | None = None) -> tuple[str, Account
                 if weight_val == 0:
                     continue
                 target_dim = "ae" if lever_dim == "ae" else "cp"
-                resolution_specified_by_mission_dim[target_dim][mission_code] += -impact * weight_val
-                resolution_specified_by_mission_total[mission_code] += -impact * weight_val
+                # For resolution (progress bars), we typically use the Year 0 impact or an average? 
+                # Currently the UI progress bars are single-value. Using Year 0 is standard for budget building.
+                # However, if Year 0 is small (ramp-up), it might mislead.
+                # Let's stick to Year 0 for the resolution meter to match the "2026 budget" exercise,
+                # but the deficit trajectory will show the long term pain.
+                resolution_specified_by_mission_dim[target_dim][mission_code] += -impact_schedule[0] * weight_val
+                resolution_specified_by_mission_total[mission_code] += -impact_schedule[0] * weight_val
 
     # Pieces
     for act in actions:

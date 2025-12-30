@@ -51,8 +51,7 @@ const resolveBudgetSide = (lever: PolicyLever) =>
   lever.budgetSide ?? (revenueFamilies.has(lever.family) ? 'REVENUE' : 'SPENDING');
 
 export default function BuildPageClient() {
-  // const { t } = useI18n();
-  const t = (k: string) => k;
+  const { t } = useI18n();
   const router = useRouter();
   const pathname = usePathname();
   const { state, actions } = useBuildState(INITIAL_DSL_OBJECT.baseline_year);
@@ -858,7 +857,7 @@ export default function BuildPageClient() {
                     }`}
                 >
                   <span className="material-icons text-base">account_balance</span>
-                  Missions
+                  {t('build.mass_dials')}
                 </button>
                 <button
                   onClick={() => { setActiveTab('reforms'); setIsCatalogOpen(true); }}
@@ -868,7 +867,7 @@ export default function BuildPageClient() {
                     }`}
                 >
                   <span className="material-icons text-base">auto_fix_high</span>
-                  Réformes
+                  {t('build.piece_dials')}
                 </button>
               </div>
             </div>
@@ -876,8 +875,8 @@ export default function BuildPageClient() {
             <div className="flex-1 min-h-0 overflow-y-auto bg-slate-50/30" id="left-panel-list">
               {activeTab === 'reforms' ? (
                 <ReformSidebarList
-                  title="Réformes de dépenses"
-                  subtitle="Coupes, investissements et ajustements budgétaires"
+                  title={t('build.piece_dials')}
+                  subtitle="Ajustements structurels et réformes"
                   levers={spendingLevers}
                   onSelectReform={(lever) => {
                     if (!isLeverInDsl(lever.id)) {
@@ -981,7 +980,7 @@ export default function BuildPageClient() {
                     }`}
                 >
                   <span className="material-icons text-base">payments</span>
-                  Recettes
+                  {t('build.revenues')}
                 </button>
                 <button
                   onClick={() => {
@@ -995,15 +994,15 @@ export default function BuildPageClient() {
                     }`}
                 >
                   <span className="material-icons text-base">receipt_long</span>
-                  Réformes
+                  {t('build.piece_dials')}
                 </button>
               </div>
             </div>
             <div className="flex-1 min-h-0 overflow-y-auto">
               {activeRevenueTab === 'reforms' ? (
                 <ReformSidebarList
-                  title="Réformes de recettes"
-                  subtitle="Fiscalité, cotisations et ressources affectées"
+                  title={t('build.piece_dials')}
+                  subtitle="Fiscalité et ressources collectives"
                   levers={revenueLevers}
                   onSelectReform={(lever) => {
                     if (!isLeverInDsl(lever.id)) {
@@ -1070,7 +1069,7 @@ export default function BuildPageClient() {
             try {
               if (scenarioResult?.id) {
                 await gqlRequest(submitVoteMutation, { scenarioId: scenarioResult.id });
-                alert("Votre vote a été enregistré ! \n\nMerci d'avoir participé à l'Atelier du Budget.");
+                alert("Votre vote a été enregistré ! \n\nMerci d'avoir participé à l'Hémicycle citoyen.");
               }
             } catch (e) {
               console.error(e);

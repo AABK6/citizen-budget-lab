@@ -38,18 +38,23 @@ export default function LandingPage() {
 
         {/* Left Column: The Narrative */}
         <div className="text-left space-y-10">
-          <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-slate-800/50 border border-slate-700/50 text-slate-300 text-xs font-bold tracking-widest backdrop-blur-md">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-pulse absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-50"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-            </span>
-            URGENCE BUDGÉTAIRE
+          <div className="flex flex-col gap-4">
+            <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-slate-800/50 border border-slate-700/50 text-slate-300 text-xs font-bold tracking-widest backdrop-blur-md w-fit">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-pulse absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-50"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+              </span>
+              DÉBAT NATIONAL
+            </div>
+            <div className="text-slate-500 text-sm font-medium tracking-tight">
+              Déjà <span className="text-slate-300 font-bold">4 812</span> citoyens ont exprimé leurs préférences pour éclairer le débat.
+            </div>
           </div>
 
           <h1 className="text-5xl lg:text-7xl font-extrabold tracking-tight leading-[1.1] text-white">
-            L'Impasse. <br />
+            L&apos;État est bloqué. <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">
-              À vous de décider.
+              Prenez les clés.
             </span>
           </h1>
 
@@ -58,11 +63,11 @@ export default function LandingPage() {
               La procédure parlementaire s'est enrayée. Faute de majorité pour construire un compromis, le budget est bloqué.
             </p>
             <p>
-              Pendant ce temps, la dette s'alourdit et la <strong className="text-red-400 font-medium">charge des intérêts explose</strong>, menaçant à terme le financement de nos écoles, de notre sécurité et de notre modèle social.
+              Entre impératifs financiers, besoins sociaux criants et enjeux climatiques, l&apos;équilibre est précaire. Chaque choix est un arbitrage difficile entre des contraintes multiples et souvent contradictoires.
             </p>
             <div className="pt-4 border-l-2 border-indigo-500/50 pl-6">
               <p className="italic text-slate-300 font-serif text-xl">
-                "Quand le système politique ne parvient plus à trancher, c'est aux citoyens de montrer la voie."
+                &quot;Quand la politique s&apos;arrête, la délibération citoyenne commence. Confrontez-vous aux réalités et dessinez votre propre issue.&quot;
               </p>
             </div>
           </div>
@@ -72,7 +77,7 @@ export default function LandingPage() {
             className="group relative px-8 py-5 bg-white text-slate-900 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105 shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)] w-full md:w-auto overflow-hidden"
           >
             <span className="relative z-10 flex items-center gap-3 justify-center">
-              Construire le Budget
+              Entrer dans l&apos;Hémicycle
               <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
@@ -135,7 +140,7 @@ export default function LandingPage() {
           </div>
 
           <div className="mt-6 text-xs text-slate-500 text-center">
-            Source: Insee, Projections Bercy • La charge de la dette est devenue le 2ème budget de l'État.
+            Source: Insee, Projections Bercy • La charge de la dette est devenue le 2ème budget de l&apos;État.
           </div>
         </div>
 

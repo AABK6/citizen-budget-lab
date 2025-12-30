@@ -11,38 +11,38 @@ export type TutorialStep = {
 const STEPS: TutorialStep[] = [
     {
         targetId: 'scoreboard-deficit',
-        title: 'Votre Mission : Réduire le Déficit',
-        content: 'Le déficit public est hors de contrôle. Votre objectif est de le ramener sous la barre des 3% du PIB.',
+        title: 'Votre Vision : Dessiner l&apos;Avenir',
+        content: 'Il n&apos;y a pas de bon ou de mauvais budget, seulement des choix de société. Vos arbitrages dessineront l&apos;avenir du pays.',
         position: 'bottom',
     },
     {
         targetId: 'treemap-container',
-        title: 'Le Budget de l’État',
-        content: 'Au centre, visualisez l’ensemble des dépenses publiques. La taille des blocs est proportionnelle aux montants. Cliquez sur un bloc pour agir dessus.',
+        title: 'Le Miroir des Priorités',
+        content: 'Visualisez les dépenses publiques. La taille des blocs reflète le poids de chaque politique dans la vie des citoyens.',
         position: 'right',
     },
     {
         targetId: 'left-panel-tabs',
-        title: 'Vos Leviers d’Action',
-        content: 'Ici, basculez entre les "Missions" (budgets des ministères) et les "Réformes" (mesures structurelles comme les retraites).',
+        title: 'Orientations & Réformes',
+        content: 'Ici, basculez entre vos "Orientations" (le cap politique) et les "Mesures" (les leviers concrets pour les réaliser).',
         position: 'right',
     },
     {
         targetId: 'left-panel-list',
-        title: 'Ajuster les Dépenses',
-        content: 'Sélectionnez une mission pour définir un objectif d’économie (ex: -5%). Chaque milliard compte !',
+        title: 'Exprimer vos Préférences',
+        content: 'Sélectionnez une orientation pour fixer un objectif. C&apos;est ici que vous déterminez les domaines à renforcer ou à économiser.',
         position: 'right',
     },
     {
         targetId: 'right-panel-revenue',
-        title: 'Côté Recettes',
-        content: 'À droite, trouvez de nouvelles ressources. Augmentez certaines taxes ou réduisez les niches fiscales pour combler le trou.',
+        title: 'Financer vos Choix',
+        content: 'À droite, arbitrez les ressources. Fiscalité, cotisations ou recettes diverses : trouvez l&apos;équilibre qui correspond à vos valeurs.',
         position: 'left',
     },
     {
         targetId: 'scoreboard-resolution',
-        title: 'Suivez vos Progrès',
-        content: 'Cette barre se remplit à mesure que vous vous rapprochez de l’équilibre. Bonne chance, Monsieur le Ministre.',
+        title: 'Indice de Cohérence',
+        content: 'Cet indice mesure l&apos;écart entre vos ambitions et les mesures concrètes votées. Une vision sans financement reste une promesse.',
         position: 'bottom',
     }
 ];
@@ -310,7 +310,7 @@ export function TutorialOverlay({
                             onClick={handleNext}
                             className="px-6 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold shadow-lg shadow-blue-500/25 transition-all hover:scale-[1.02] text-sm"
                         >
-                            {currentStepIndex === STEPS.length - 1 ? 'C\'est parti !' : 'Suivant'}
+                            {currentStepIndex === STEPS.length - 1 ? 'C&apos;est parti !' : 'Suivant'}
                         </button>
                     </div>
                 </div>

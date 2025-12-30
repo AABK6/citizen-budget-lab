@@ -37,7 +37,7 @@ const familyLabels: Record<string, string> = {
     DEFENSE: 'Défense',
     CLIMATE: 'Transition écologique',
     PROCUREMENT: 'Achats publics',
-    OPERATIONS: "Fonctionnement de l'État",
+    OPERATIONS: "Fonctionnement de l&apos;État",
     SUBSIDIES: 'Subventions',
     OTHER: 'Autres',
 };
@@ -218,7 +218,7 @@ export function ReformSidebarList({
                     ) : (
                         <span className="text-[10px] font-bold text-slate-300 bg-slate-50 px-2 py-1 rounded-md flex items-center gap-1 self-start">
                             <span className="material-icons text-[10px]">hourglass_empty</span>
-                            Impact en cours d'analyse
+                            Impact en cours d&apos;analyse
                         </span>
                     )}
                 </div>
@@ -330,7 +330,7 @@ export function ReformSidebarList({
                         renderFamilyGroup(groupByFamily(remainingLevers), { defaultOpen: false })
                     ) : (
                         <div className="px-2 text-xs text-slate-400 italic">
-                            Pas d'autres réformes à afficher.
+                            Pas d&apos;autres réformes à afficher.
                         </div>
                     )}
                 </div>
