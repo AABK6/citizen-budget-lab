@@ -1,8 +1,8 @@
 # Refactoring Plan: Architectural Stability and Feature Completion
 
-_Last updated: 2025-09-22_
+_Last updated: 2025-12-30_
 
-> **Status:** The remediation program is complete. The dbt warehouse is now the single source of truth, PLF 2026 data flows end-to-end, and Phase 3 UX polish (permalinks, the builder refactor, `/compare`) is live. The scenario engine subsequently gained explicit baseline + delta fiscal paths so the UI can display absolute deficits without client-side guesswork. This plan is retained as an architectural log and an operational checklist.
+> **Status:** The remediation program is complete. The dbt warehouse is now the single source of truth, PLF 2026 data flows end-to-end, and Phase 3 UX polish (permalinks, the builder refactor, `/compare`) is live. The scenario engine subsequently gained explicit baseline + delta fiscal paths so the UI can display absolute deficits without client-side guesswork. **(Update 2025-12-30: 2026 data manually refreshed to align with adopted budget.)** This plan is retained as an architectural log and an operational checklist.
 
 This document mirrors the canonical roadmap in `current_dev_plan.md`. It exists so engineers have a single place to track the remediation work that eliminated the "two-engine" architecture, ingested PLF 2026 data, and finished the outstanding UX features.
 

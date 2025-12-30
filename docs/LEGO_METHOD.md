@@ -129,6 +129,8 @@ Reproducibility
 
    (Under the hood: SDMX XML calls to `GOV_10A_EXP`, `GOV_10A_TAXAG`, and `GOV_10A_MAIN`. Env: `EUROSTAT_SDMX_BASE` and optional `EUROSTAT_COOKIE`.)
 
+   *> Note: The 2026 baseline was manually updated on 2025-12-30 to reflect the official PLF/PLFSS 2026 figures, overriding the Eurostat warmer output until official statistics are available.*
+
 3) Inspect outputs under `data/cache/lego_baseline_2026.json` including `depenses_total_eur`, `recettes_total_eur`, and per‑piece amounts; see `meta.warning` for any fallbacks/proxies.
 4) Query via GraphQL:
 
