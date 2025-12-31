@@ -60,7 +60,7 @@ export default function LandingPage() {
 
           <div className="space-y-6 text-lg text-slate-400 leading-relaxed font-light max-w-xl">
             <p>
-              La procédure parlementaire s'est enrayée. Faute de majorité pour construire un compromis, le budget est bloqué.
+              La procédure parlementaire s&apos;est enrayée. Faute de majorité pour construire un compromis, le budget est bloqué.
             </p>
             <p>
               Entre impératifs financiers, besoins sociaux criants et enjeux climatiques, l&apos;équilibre est précaire. Chaque choix est un arbitrage difficile entre des contraintes multiples et souvent contradictoires.

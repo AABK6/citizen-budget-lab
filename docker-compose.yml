@@ -23,12 +23,11 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-      args:
-        # Build-time injection for Next.js client to call API by service name
-        NEXT_PUBLIC_GRAPHQL_URL: http://api:8000/graphql
     image: citizen-budget-lab/frontend:dev
+    environment:
+      # Runtime proxy target for the Next.js API route.
+      GRAPHQL_URL: http://api:8000/graphql
     depends_on:
       - api
     ports:
       - "3000:3000"
-

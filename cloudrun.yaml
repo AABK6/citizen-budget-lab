@@ -1,0 +1,14 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: citizen-budget-lab
+spec:
+  template:
+    spec:
+      containers:
+      - image: gcr.io/reviewflow-nrciu/citizen-budget-frontend
+        ports:
+        - containerPort: 3000
+      - image: gcr.io/reviewflow-nrciu/citizen-budget-api
+        ports:
+        - containerPort: 8000

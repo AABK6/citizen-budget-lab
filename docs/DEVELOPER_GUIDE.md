@@ -246,3 +246,80 @@ Note: Settings are resolved at instantiation time. To change feature flags like 
   ```
 
   Add your GraphQL documents under `graphql/queries/*.graphql` and `graphql/mutations/*.graphql` to generate typed operations. The frontend has an npm script `npm run codegen` wired to the root config.
+
+---
+
+### **6. Deployment (Google Cloud Run)**
+
+The application is deployed as two separate services on Google Cloud Run, providing a scalable and independent architecture for the backend and frontend.
+
+*   **Backend URL**: [https://citizen-budget-api-613407570343.europe-west1.run.app](https://citizen-budget-api-613407570343.europe-west1.run.app)
+*   **Frontend URL**: [https://citizen-budget-frontend-613407570343.europe-west1.run.app](https://citizen-budget-frontend-613407570343.europe-west1.run.app)
+
+#### **6.1. Architecture**
+
+1.  **Backend (`citizen-budget-api`)**: A Python FastAPI container that serves the GraphQL API. It includes a read-only `warehouse.duckdb` file baked into the image, containing all necessary simulation data.
+2.  **Frontend (`citizen-budget-frontend`)**: A Node.js container running the Next.js application. It renders the user interface and makes calls to the backend API.
+
+#### **6.2. Build & Deploy Process**
+
+The deployment process requires building and pushing container images to an artifact registry (like Google Container Registry) and then deploying them to Cloud Run.
+
+**Prerequisites:**
+
+*   `gcloud` CLI installed and authenticated.
+*   A GCP project with Cloud Build, Cloud Run, and Artifact Registry APIs enabled.
+
+**Step 1: Prepare Data Warehouse (Mandatory)**
+
+The backend container requires a fully built data warehouse. This must be done locally before building the image.
+
+```bash
+# 1. Install Python dependencies and dbt
+make dbt-install
+
+# 2. Fetch baseline data from sources (Eurostat, etc.)
+make warm-all
+
+# 3. Build the DuckDB warehouse file
+make dbt-build
+```
+
+**Step 2: Build & Deploy Backend**
+
+The backend is deployed from the root of the repository. A `.gcloudignore` file is used to ensure the `data/warehouse.duckdb` file is included in the upload.
+
+```bash
+# Build the container image using Cloud Build
+gcloud builds submit --tag gcr.io/[PROJECT_ID]/citizen-budget-api --file services/api/Dockerfile .
+
+# Deploy the image to Cloud Run
+gcloud run deploy citizen-budget-api \
+  --image gcr.io/[PROJECT_ID]/citizen-budget-api \
+  --project [PROJECT_ID] \
+  --region europe-west1 \
+  --allow-unauthenticated \
+  --port 8000
+```
+*Replace `[PROJECT_ID]` with your GCP project ID.*
+
+**Step 3: Build & Deploy Frontend**
+
+The frontend deployment requires the backend's URL to be injected as an environment variable at runtime.
+
+```bash
+# Build the container image from the 'frontend' directory
+cd frontend
+gcloud builds submit --tag gcr.io/[PROJECT_ID]/citizen-budget-frontend .
+cd ..
+
+# Deploy the image to Cloud Run, setting the API URL
+gcloud run deploy citizen-budget-frontend \
+  --image gcr.io/[PROJECT_ID]/citizen-budget-frontend \
+  --project [PROJECT_ID] \
+  --region europe-west1 \
+  --allow-unauthenticated \
+  --port 3000 \
+  --set-env-vars GRAPHQL_URL=[BACKEND_URL]/graphql
+```
+*Replace `[PROJECT_ID]` and `[BACKEND_URL]` with the appropriate values.*

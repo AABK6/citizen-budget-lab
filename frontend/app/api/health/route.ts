@@ -1,12 +1,8 @@
 import { NextResponse } from 'next/server'
-
-function backendBase(): string {
-  const url = process.env.NEXT_PUBLIC_GRAPHQL_URL || 'http://localhost:8000/graphql'
-  return url.replace(/\/?graphql$/i, '')
-}
+import { resolveBackendBase } from '@/lib/backend'
 
 export async function GET() {
-  const base = backendBase()
+  const base = resolveBackendBase()
   const target = `${base}/health`
   try {
     const r = await fetch(target, { cache: 'no-store' })
@@ -17,4 +13,3 @@ export async function GET() {
     return NextResponse.json({ ok: false, target: base, error: String(e) }, { status: 503 })
   }
 }
-

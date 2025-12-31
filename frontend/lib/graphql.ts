@@ -1,5 +1,5 @@
 // Always use a same-origin proxy endpoint to avoid CORS/mixed-content issues.
-// Next.js rewrites map `/api/graphql` to the real backend URL (see next.config.js).
+// The /api/graphql route forwards requests at runtime to GRAPHQL_URL.
 export const GRAPHQL_URL = '/api/graphql'
 
 export async function gqlRequest(query: string, variables?: Record<string, any>): Promise<any> {

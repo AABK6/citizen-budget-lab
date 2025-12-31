@@ -8,9 +8,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-      args:
-        NEXT_PUBLIC_GRAPHQL_URL: http://host.docker.internal:8000/graphql
+    environment:
+      GRAPHQL_URL: http://host.docker.internal:8000/graphql
     # For Docker Desktop on Linux hosts, you may need the extra_hosts mapping below:
     # extra_hosts:
     #   - "host.docker.internal:host-gateway"
-

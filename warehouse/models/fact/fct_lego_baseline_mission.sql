@@ -77,4 +77,4 @@ with_share as (
 )
 select * from with_share
 order by year, mission_code
-;
+

@@ -1,9 +1,10 @@
 import { NextRequest } from 'next/server'
+import { resolveGraphqlUrl } from '@/lib/backend'
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
   const scenarioId = searchParams.get('scenarioId') || 'demo'
-  const endpoint = process.env.NEXT_PUBLIC_GRAPHQL_URL || 'http://localhost:8000/graphql'
+  const endpoint = resolveGraphqlUrl()
   const gql = `query($id:ID!){ shareCard(scenarioId:$id){ title deficit debtDeltaPct highlight resolutionPct masses eu3 eu60 } }`
 
   let title = `Scenario ${scenarioId.substring(0,8)}`
@@ -79,4 +80,3 @@ export async function GET(req: NextRequest) {
 </svg>`
   return new Response(svg, { headers: { 'Content-Type': 'image/svg+xml' } })
 }
-

@@ -9,13 +9,13 @@ Prerequisites
 
 Setup
 
-- Copy `.env.local.example` to `.env.local` and adjust `NEXT_PUBLIC_GRAPHQL_URL` if needed.
-  - The frontend always calls `/api/graphql` (same origin). `next.config.js` rewrites that path to the backend GraphQL URL.
-  - `NEXT_PUBLIC_GRAPHQL_URL` controls the rewrite destination only. If unset, it defaults to `http://localhost:8000/graphql`.
+- Copy `.env.local.example` to `.env.local` and adjust `GRAPHQL_URL` if needed.
+  - The frontend always calls `/api/graphql` (same origin). The `/api/graphql` route forwards at runtime to the backend URL.
+  - `GRAPHQL_URL` controls the proxy destination. If unset, it defaults to `http://localhost:8000/graphql` (fallbacks also accept `NEXT_PUBLIC_GRAPHQL_URL` for legacy setups).
 
 Healthcheck
 
-- The frontend exposes `GET /api/health`, which proxies `${NEXT_PUBLIC_GRAPHQL_URL}/health` and returns `{ ok, backend, warehouse }`.
+- The frontend exposes `GET /api/health`, which proxies `${GRAPHQL_URL}/health` and returns `{ ok, backend, warehouse }`.
 - A small badge appears in the header showing API/warehouse status (green = OK, yellow = warming, red = down).
 - Install deps and run dev server:
 
