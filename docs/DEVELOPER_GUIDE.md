@@ -197,6 +197,10 @@ Macro baselines
 | `WAREHOUSE_COFOG_OVERRIDE` | Force warehouse COFOG data even when parity heuristics fail. Default: `0` (off). | No |
 | `LOG_LEVEL` | Python logging level. Default: `INFO`. | No |
 | `SENTRY_DSN` | Sentry DSN for error reporting. | No |
+| `VOTES_STORE` | Vote storage backend (`file`, `sqlite`, `postgres`). Default: `file`. | No |
+| `VOTES_FILE_PATH` | Path to JSON file for vote storage (file backend). Default: `data/cache/votes.json`. | No |
+| `VOTES_SQLITE_PATH` | Path to SQLite file for vote storage (sqlite backend). Default: `data/cache/votes.sqlite3`. | No |
+| `VOTES_DB_DSN` | Postgres DSN for vote storage when `VOTES_STORE=postgres`. | No |
 | `PROCUREMENT_ENRICH_SIRENE` | If `1`, enrich procurement data using SIRENE. Default: `1` (on). | No |
 | `MACRO_IRFS_PATH` | Override path to `macro_irfs.json`. | No |
 | `LOCAL_BAL_TOLERANCE_EUR` | Floating tolerance for balance checks. Default: `0`. | No |

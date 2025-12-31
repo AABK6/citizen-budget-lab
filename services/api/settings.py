@@ -62,6 +62,12 @@ class Settings:
     # Local balance tolerance (EUR) when checking compliance for subsectors
     local_balance_tolerance_eur: float = float(os.getenv("LOCAL_BAL_TOLERANCE_EUR", "0"))
 
+    # Voter preferences storage
+    votes_store: str = os.getenv("VOTES_STORE", "file")  # file|sqlite|postgres
+    votes_db_dsn: str | None = os.getenv("VOTES_DB_DSN")
+    votes_sqlite_path: str = os.getenv("VOTES_SQLITE_PATH", os.path.join("data", "cache", "votes.sqlite3"))
+    votes_file_path: str = os.getenv("VOTES_FILE_PATH", os.path.join("data", "cache", "votes.json"))
+
 
 def get_settings() -> Settings:
     # Load .env once at first import

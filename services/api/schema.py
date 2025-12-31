@@ -104,6 +104,13 @@ class RunScenarioPayload:
 
 
 @strawberry.type
+class VoteSummaryType:
+    scenarioId: strawberry.ID
+    votes: int
+    lastVoteTs: float | None = None
+
+
+@strawberry.type
 class SourceType:
     id: str
     datasetName: str
@@ -1057,6 +1064,23 @@ class Query:
             return []
         return out
 
+    @strawberry.field
+    def voteSummary(self, limit: int = 25) -> list[VoteSummaryType]:  # noqa: N802
+        try:
+            from .votes_store import get_vote_store
+
+            summaries = get_vote_store().summary(limit=limit)
+            return [
+                VoteSummaryType(
+                    scenarioId=strawberry.ID(s.scenario_id),
+                    votes=int(s.votes),
+                    lastVoteTs=s.last_vote_ts,
+                )
+                for s in summaries
+            ]
+        except Exception:
+            return []
+
     # Suggest levers for a mass id
     @strawberry.field
     def suggestLevers(self, massId: str, limit: int = 5) -> list["PolicyLeverType"]:  # noqa: N802
@@ -1545,12 +1569,10 @@ class Mutation:
     @strawberry.mutation
     def submitVote(self, scenarioId: strawberry.ID, userEmail: Optional[str] = None) -> bool:  # noqa: N802
         try:
-            from .store import add_vote
+            from .votes_store import get_vote_store
             import time
-            add_vote(str(scenarioId), {
-                "timestamp": time.time(),
-                "userEmail": userEmail or "anonymous",
-            })
+            meta = {"timestamp": time.time()}
+            get_vote_store().add_vote(str(scenarioId), userEmail, meta)
             return True
         except Exception:
             return False
