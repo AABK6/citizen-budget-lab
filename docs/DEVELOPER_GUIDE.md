@@ -7,7 +7,7 @@
 #### **1.1. Prerequisites**
 
 *   **Python:** 3.13.x (matches CI; 3.12 remains supported if you prefer an older interpreter)
-*   **Node.js:** 18+ (as used in CI)
+*   **Node.js:** 20+ (aligns with frontend build tooling)
 *   **Docker & Docker Compose:** For running services in containers.
 *   **dbt-cli:** Required for managing the data warehouse. See section 2.3.
 

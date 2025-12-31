@@ -4,7 +4,7 @@ This app uses the official French Government Design System (DSFR) for styling (f
 
 Prerequisites
 
-- Node 18+
+- Node 20+
 - API running locally (default `http://localhost:8000/graphql`, see `README_DEV.md`)
 
 Setup

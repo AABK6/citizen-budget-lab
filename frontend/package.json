@@ -16,7 +16,6 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@types/canvas-confetti": "^1.9.0",
-    "@types/recharts": "^1.8.29",
     "canvas-confetti": "^1.9.4",
     "cross-fetch": "4.0.0",
     "echarts": "^5.5.0",
