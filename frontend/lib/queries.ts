@@ -115,3 +115,11 @@ export const submitVoteMutation = `
     submitVote(scenarioId: $scenarioId, userEmail: $userEmail)
   }
 `;
+
+export const voteSummaryQuery = `
+  query VoteSummary {
+    voteSummary(limit: 1000) {
+      votes
+    }
+  }
+`;
