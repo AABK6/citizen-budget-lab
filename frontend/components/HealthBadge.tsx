@@ -34,8 +34,8 @@ export function HealthBadge() {
   const missing = (h?.warehouse?.missing || []).length
   const color = ok ? (ready ? '#1f7a1f' : '#e6a700') : '#d32f2f'
   const title = ok
-    ? (ready ? 'API OK • Warehouse ready' : `API OK • Warehouse warming (${missing} missing)`) 
-    : (err ? `API DOWN • ${err}` : 'API DOWN')
+    ? (ready ? 'API OK • Entrepôt prêt' : `API OK • Entrepôt en préparation (${missing} manquants)`)
+    : (err ? `API indisponible • ${err}` : 'API indisponible')
 
   return (
     <span title={title} aria-label={title} style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem' }}>
@@ -44,4 +44,3 @@ export function HealthBadge() {
     </span>
   )
 }
-

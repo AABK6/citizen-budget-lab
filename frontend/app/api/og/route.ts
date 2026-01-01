@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
   const endpoint = resolveGraphqlUrl()
   const gql = `query($id:ID!){ shareCard(scenarioId:$id){ title deficit debtDeltaPct highlight resolutionPct masses eu3 eu60 } }`
 
-  let title = `Scenario ${scenarioId.substring(0,8)}`
+  let title = `Scénario ${scenarioId.substring(0,8)}`
   let deficit = 0
   let debtPct = 0
   let highlight = ''
@@ -47,10 +47,10 @@ export async function GET(req: NextRequest) {
     `
   }).join('')
 
-  const deficitText = `${deficit >= 0 ? '+' : ''}${(deficit/1e9).toFixed(2)} B EUR`
+  const deficitText = `${deficit >= 0 ? '+' : ''}${(deficit/1e9).toFixed(2)} Md€`
   const highlightText = highlight || '-'
   const wm = resolutionPct < 0.999 ? `
-    <text x=\"600\" y=\"560\" text-anchor=\"middle\" fill=\"rgba(255,255,255,0.08)\" font-size=\"88\" font-family=\"Arial\" transform=\"rotate(-15,600,560)\">Specified ${(resolutionPct*100).toFixed(0)}%</text>
+    <text x=\"600\" y=\"560\" text-anchor=\"middle\" fill=\"rgba(255,255,255,0.08)\" font-size=\"88\" font-family=\"Arial\" transform=\"rotate(-15,600,560)\">Financé ${(resolutionPct*100).toFixed(0)}%</text>
   ` : ''
   const eu3Color = eu3 === 'ok' ? '#23c552' : '#ff5c5c'
   const eu60Color = eu60 === 'info' ? '#f0c000' : (eu60 === 'above' ? '#ff5c5c' : '#23c552')
@@ -66,16 +66,16 @@ export async function GET(req: NextRequest) {
   <text x=\"1100\" y=\"76\" fill=\"#9ad\" font-size=\"16\" font-family=\"Arial\">3%</text>
   <circle cx=\"1080\" cy=\"110\" r=\"14\" fill=\"${eu60Color}\" />
   <text x=\"1100\" y=\"116\" fill=\"#9ad\" font-size=\"16\" font-family=\"Arial\">60%</text>
-  <text x=\"60\" y=\"150\" fill=\"#9ad\" font-size=\"22\" font-family=\"Arial, Helvetica, sans-serif\">Deficit (Y1)</text>
+  <text x=\"60\" y=\"150\" fill=\"#9ad\" font-size=\"22\" font-family=\"Arial, Helvetica, sans-serif\">Déficit (A1)</text>
   <text x=\"60\" y=\"180\" fill=\"#fff\" font-size=\"34\" font-family=\"Arial, Helvetica, sans-serif\">${deficitText}</text>
-  <text x=\"300\" y=\"150\" fill=\"#9ad\" font-size=\"22\" font-family=\"Arial, Helvetica, sans-serif\">Debt Delta (H)</text>
-  <text x=\"300\" y=\"180\" fill=\"#fff\" font-size=\"28\" font-family=\"Arial, Helvetica, sans-serif\">${debtPct.toFixed(2)} pp</text>
-  <text x=\"60\" y=\"210\" fill=\"#9ad\" font-size=\"22\" font-family=\"Arial, Helvetica, sans-serif\">Twin bars (top masses)</text>
+  <text x=\"300\" y=\"150\" fill=\"#9ad\" font-size=\"22\" font-family=\"Arial, Helvetica, sans-serif\">Δ dette (H)</text>
+  <text x=\"300\" y=\"180\" fill=\"#fff\" font-size=\"28\" font-family=\"Arial, Helvetica, sans-serif\">${debtPct.toFixed(2)} pts</text>
+  <text x=\"60\" y=\"210\" fill=\"#9ad\" font-size=\"22\" font-family=\"Arial, Helvetica, sans-serif\">Barres jumelles (masses principales)</text>
   ${rows}
-  <text x=\"800\" y=\"210\" fill=\"#9ad\" font-size=\"22\" font-family=\"Arial, Helvetica, sans-serif\">Highlight</text>
+  <text x=\"800\" y=\"210\" fill=\"#9ad\" font-size=\"22\" font-family=\"Arial, Helvetica, sans-serif\">Point saillant</text>
   <text x=\"800\" y=\"240\" fill=\"#fff\" font-size=\"20\" font-family=\"Arial, Helvetica, sans-serif\">${highlightText}</text>
   ${wm}
-  <text x=\"60\" y=\"600\" fill=\"#9ad\" font-size=\"16\" font-family=\"Arial, Helvetica, sans-serif\">Methods v0 · Policy catalog v0</text>
+  <text x=\"60\" y=\"600\" fill=\"#9ad\" font-size=\"16\" font-family=\"Arial, Helvetica, sans-serif\">Méthodes v0 · Catalogue des politiques v0</text>
   <text x=\"960\" y=\"600\" fill=\"#9ad\" font-size=\"16\" font-family=\"Arial, Helvetica, sans-serif\">citizenbudgetlab.org</text>
 </svg>`
   return new Response(svg, { headers: { 'Content-Type': 'image/svg+xml' } })

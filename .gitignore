@@ -53,6 +53,7 @@ warehouse/dbt_packages/
 
 # Miscellaneous
 cookies.txt
+firebase-debug.log
 
 .gemini/
 .github/

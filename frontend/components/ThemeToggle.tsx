@@ -25,9 +25,8 @@ export function ThemeToggle() {
   }
 
   return (
-    <button className="fr-btn fr-btn--tertiary-no-outline fr-icon-theme-fill fr-btn--icon-left" onClick={toggle} aria-label="Toggle theme">
+    <button className="fr-btn fr-btn--tertiary-no-outline fr-icon-theme-fill fr-btn--icon-left" onClick={toggle} aria-label="Changer de thème">
       {theme === 'dark' ? 'Thème sombre' : 'Thème clair'}
     </button>
   )
 }
-

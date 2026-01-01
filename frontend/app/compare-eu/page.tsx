@@ -24,7 +24,7 @@ export default function CompareEUPage() {
       const q = `query($y: Int!, $cs: [String!]!) { euCofogCompare(year: $y, countries: $cs) { country code label share } }`
       const js = await gqlRequest(q, { y: year, cs: countryList })
       setData(js.euCofogCompare)
-    } catch (e: any) { setError(e?.message || 'Failed to load') }
+    } catch (e: any) { setError(e?.message || 'Échec du chargement') }
     finally { setLoading(false) }
   }, [countryList, year])
 
@@ -32,19 +32,19 @@ export default function CompareEUPage() {
 
   return (
     <div className="stack">
-      <h2 className="fr-h2">Compare EU — COFOG Shares</h2>
+      <h2 className="fr-h2">Comparer l'UE — parts COFOG</h2>
       <div className="row gap">
         <div className="fr-input-group">
-          <label className="fr-label" htmlFor="eu-year">Year</label>
+          <label className="fr-label" htmlFor="eu-year">Année</label>
           <input id="eu-year" className="fr-input" type="number" value={year} onChange={e => setYear(Number(e.target.value))} />
         </div>
         <div className="fr-input-group" style={{ minWidth: 320 }}>
-          <label className="fr-label" htmlFor="eu-countries">Countries (CSV)</label>
+          <label className="fr-label" htmlFor="eu-countries">Pays (CSV)</label>
           <input id="eu-countries" className="fr-input" value={countries} onChange={e => setCountries(e.target.value)} />
         </div>
-        <button className="fr-btn" onClick={load}>Apply</button>
+        <button className="fr-btn" onClick={load}>Appliquer</button>
       </div>
-      {loading && <p>Loading…</p>}
+      {loading && <p>Chargement…</p>}
       {error && <p className="error">{error}</p>}
       {!loading && !error && data?.length > 0 && (
         <EUCompareChart data={data} />

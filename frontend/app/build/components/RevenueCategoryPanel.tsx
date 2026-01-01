@@ -103,7 +103,7 @@ export function RevenueCategoryPanel({
         onClick={onBack}
       >
         <i className="material-icons text-sm transition-transform group-hover:-translate-x-1" aria-hidden="true">arrow_back</i>
-        Back
+        Retour
       </button>
 
       <div className="relative overflow-hidden rounded-3xl border border-white/40 shadow-2xl bg-white/60 backdrop-blur-2xl transition-all duration-300" style={accentStyle}>
@@ -135,7 +135,7 @@ export function RevenueCategoryPanel({
           {/* Target Control */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-bold uppercase tracking-wider text-gray-500">Revenue Target</label>
+              <label className="text-xs font-bold uppercase tracking-wider text-gray-500">Objectif de recettes</label>
               <button
                 type="button"
                 className="text-xs font-medium text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded transition-colors"
@@ -152,7 +152,7 @@ export function RevenueCategoryPanel({
                   className="w-8 h-8 flex items-center justify-center rounded-full bg-white shadow-sm border border-gray-200 text-gray-600 hover:text-blue-600 hover:border-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={() => handleNudge(-1)}
                   disabled={atMin}
-                  aria-label="Decrease target"
+                  aria-label="Diminuer l'objectif"
                 >
                   <i className="material-icons text-sm">remove</i>
                 </button>
@@ -166,7 +166,7 @@ export function RevenueCategoryPanel({
                     step={percentStep}
                     value={targetPercent}
                     onChange={handleSliderChange}
-                    aria-label="Target percentage"
+                    aria-label="Pourcentage cible"
                   />
                 </div>
 
@@ -175,7 +175,7 @@ export function RevenueCategoryPanel({
                   className="w-8 h-8 flex items-center justify-center rounded-full bg-white shadow-sm border border-gray-200 text-gray-600 hover:text-blue-600 hover:border-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={() => handleNudge(1)}
                   disabled={atMax}
-                  aria-label="Increase target"
+                  aria-label="Augmenter l'objectif"
                 >
                   <i className="material-icons text-sm">add</i>
                 </button>
@@ -197,21 +197,21 @@ export function RevenueCategoryPanel({
                 className="flex-1 py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-sm shadow-blue-200 transition-all active:scale-[0.98]"
                 onClick={onApplyTarget}
               >
-                Apply Target
+                Appliquer l'objectif
               </button>
               <button
                 id="revenue-reset-target"
                 className="px-4 py-2 text-gray-600 hover:text-gray-900 font-medium hover:bg-gray-100 rounded-lg transition-colors"
                 onClick={handleClear}
               >
-                Reset
+                Réinitialiser
               </button>
             </div>
           </div>
 
           {/* Reforms Section */}
           <div className="space-y-3">
-            <div className="text-xs font-bold uppercase tracking-wider text-gray-500">Available Measures</div>
+            <div className="text-xs font-bold uppercase tracking-wider text-gray-500">Mesures disponibles</div>
             <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
               {(filteredLevers.length ? filteredLevers : suggestedLevers).map((reform) => (
                 <div
@@ -240,7 +240,7 @@ export function RevenueCategoryPanel({
                         }`}
                       onClick={() => onLeverToggle(reform)}
                     >
-                      {isLeverSelected(reform.id) ? 'Remove' : 'Add'}
+                      {isLeverSelected(reform.id) ? 'Retirer' : 'Ajouter'}
                     </button>
                   </div>
                 </div>
@@ -251,7 +251,7 @@ export function RevenueCategoryPanel({
           {/* Popular Reforms */}
           {relevantIntents.length > 0 && (
             <div className="space-y-3">
-              <div className="text-xs font-bold uppercase tracking-wider text-gray-500">Popular Scenarios</div>
+              <div className="text-xs font-bold uppercase tracking-wider text-gray-500">Scénarios populaires</div>
               <div className="flex flex-wrap gap-2">
                 {relevantIntents.map((intent) => (
                   <button

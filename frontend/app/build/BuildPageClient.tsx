@@ -346,7 +346,7 @@ export default function BuildPageClient() {
             const { scenario } = await gqlRequest(getScenarioDslQuery, { id: urlScenarioId });
             setDslObject(parseDsl(atob(scenario.dsl)));
           } catch (err) {
-            setError('Failed to load scenario');
+            setError('Échec du chargement du scénario');
           }
         };
         fetchDsl();
@@ -378,7 +378,7 @@ export default function BuildPageClient() {
       }
       scenarioIdRef.current = scenarioData?.id ?? null;
     } catch (err: any) {
-      setScenarioError(err.message || 'Failed to run scenario');
+      setScenarioError(err.message || 'Échec de l\'exécution du scénario');
     } finally {
       if (latestRunRef.current === runToken) {
         setScenarioLoading(false);
@@ -476,7 +476,7 @@ export default function BuildPageClient() {
       setBaselineGdp(Number.isFinite(gdpVal) && gdpVal > 0 ? gdpVal : null);
 
     } catch (err: any) {
-      setError(err.message || 'Failed to fetch data');
+      setError(err.message || 'Échec du chargement des données');
       setInitialLoading(false);
     }
   }, [setData, setError, setInitialLoading, setLabels, setMassDataByLens, setMasses, setScenarioError, year]);
@@ -521,7 +521,7 @@ export default function BuildPageClient() {
       const data = await gqlRequest(suggestLeversQuery, { massId });
       setSuggestedLevers(data.suggestLevers);
     } catch (err: any) {
-      setError(err.message || 'Failed to fetch suggestions');
+      setError(err.message || 'Échec du chargement des suggestions');
     }
   };
 
@@ -698,7 +698,7 @@ export default function BuildPageClient() {
 
   const formatCurrency = (amount: number) => {
     const sign = amount < 0 ? '-' : '';
-    return `${sign}€${(Math.abs(amount) / 1e9).toFixed(1)}B`;
+    return `${sign}${(Math.abs(amount) / 1e9).toFixed(1)} Md€`;
   };
 
   const formatDeficitWithRatio = (amount: number, ratio: number | null) => {
@@ -717,7 +717,7 @@ export default function BuildPageClient() {
 
   const handleShare = useCallback(async () => {
     if (!scenarioIdRef.current) {
-      setShareFeedback('Run the scenario to generate a shareable link.');
+      setShareFeedback('Lancez le scénario pour générer un lien partageable.');
       return;
     }
     try {
@@ -725,9 +725,9 @@ export default function BuildPageClient() {
       params.set('scenarioId', scenarioIdRef.current);
       const url = `${window.location.origin}${pathname}${params.toString() ? `?${params.toString()}` : ''}`;
       await navigator.clipboard.writeText(url);
-      setShareFeedback('Scenario link copied to clipboard.');
+      setShareFeedback('Lien du scénario copié dans le presse-papiers.');
     } catch (err) {
-      setShareFeedback('Unable to copy link.');
+      setShareFeedback('Impossible de copier le lien.');
     }
   }, [pathname, searchParamsString]);
 

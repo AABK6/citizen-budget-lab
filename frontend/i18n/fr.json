@@ -19,13 +19,13 @@
   "lens.admin": "Administratif",
   "lens.cofog": "COFOG",
   "chart.sunburst": "Rayonnement",
-  "chart.treemap": "Treemap",
+  "chart.treemap": "Carte arborescente",
   "chart.stacked": "Barres empilées",
 
   "loading": "Chargement…",
   "error.generic": "Échec du chargement",
   "stats.total": "Total",
-  "stats.yoy": "YoY",
+  "stats.yoy": "Var. annuelle",
   "stats.na": "n/d"
   ,
   "whatif.title": "Et si… — Constructeur de scénario",

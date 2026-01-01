@@ -10,7 +10,7 @@ export type StatCard = {
 
 export function StatCards({ items }: { items: StatCard[] }) {
   return (
-    <div className="row gap" aria-label="statistics">
+    <div className="row gap" aria-label="statistiques">
       {items.map((it, idx) => (
         <div key={idx} className="card" style={{ padding: '.75rem 1rem' }}>
           <div style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>{it.label}</div>

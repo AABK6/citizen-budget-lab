@@ -14,14 +14,14 @@ type Challenge = {
 const challenges: Challenge[] = [
   {
     id: 'reduce-debt',
-    title: 'Reduce the Debt',
-    description: 'Reduce the national debt by 10% in 5 years.',
+    title: 'Réduire la dette',
+    description: 'Réduire la dette nationale de 10 % en 5 ans.',
     dsl: 'version: 0.1\nbaseline_year: 2026\nassumptions: { horizon_years: 5 }\nactions:\n  - id: p1\n    target: piece.ed_schools_staff_ops\n    op: decrease\n    amount_eur: 10000000000\n    recurring: true\n',
   },
   {
     id: 'boost-economy',
-    title: 'Boost the Economy',
-    description: 'Increase GDP by 5% in 5 years.',
+    title: 'Relancer l\'économie',
+    description: 'Augmenter le PIB de 5 % en 5 ans.',
     dsl: 'version: 0.1\nbaseline_year: 2026\nassumptions: { horizon_years: 5 }\nactions:\n  - id: p1\n    target: piece.rev_vat_standard\n    op: decrease\n    amount_eur: 20000000000\n    recurring: true\n',
   },
 ];
@@ -45,7 +45,7 @@ export default function ChallengesPage() {
 
   return (
     <div className="container">
-      <h1>Challenges</h1>
+      <h1>Défis</h1>
       <div className="stack">
         {challenges.map(challenge => (
           <div
@@ -57,7 +57,7 @@ export default function ChallengesPage() {
           >
             <h2>{challenge.title}</h2>
             <p>{challenge.description}</p>
-            {loadingId === challenge.id && <p className="loading-hint">Preparing scenario…</p>}
+            {loadingId === challenge.id && <p className="loading-hint">Préparation du scénario…</p>}
           </div>
         ))}
       </div>

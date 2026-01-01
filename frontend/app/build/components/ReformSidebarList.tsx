@@ -78,7 +78,7 @@ const featuredBadgeOverrides: Record<string, { icon: string; label: string }> = 
     amend_raise_buyback_tax: { icon: 'swap_horiz', label: 'Rachats' },
     amend_tighten_pacte_dutreil: { icon: 'family_restroom', label: 'Dutreil' },
     amend_ifi_to_fortune_improductive: { icon: 'real_estate_agent', label: 'Fortune' },
-    amend_return_exit_tax: { icon: 'flight_takeoff', label: 'Exit tax' },
+    amend_return_exit_tax: { icon: 'flight_takeoff', label: 'Taxe de sortie' },
     amend_one_time_donation_exemption: { icon: 'card_giftcard', label: 'Dons' },
     amend_home_service_credit_cap: { icon: 'home', label: 'Services' },
     amend_extend_tips_exemption: { icon: 'restaurant', label: 'Pourboires' },

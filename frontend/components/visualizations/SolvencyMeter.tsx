@@ -24,7 +24,7 @@ export const SolvencyMeter: React.FC<SolvencyMeterProps> = ({
     return (
         <div className="flex flex-col gap-1 min-w-[140px]">
             <div className="flex justify-between text-xs font-bold uppercase tracking-wider text-muted">
-                <span>Solvency</span>
+                <span>Solvabilité</span>
                 <span className={isSafe ? "text-green-600" : "text-red-600"}>
                     {deficitPercentage.toFixed(1)}%
                 </span>
@@ -34,7 +34,7 @@ export const SolvencyMeter: React.FC<SolvencyMeterProps> = ({
                 <div
                     className="absolute top-0 bottom-0 w-0.5 bg-black/20 z-10"
                     style={{ left: `${targetPosition}%` }}
-                    title="Target: 3%"
+                    title="Cible : 3 %"
                 />
 
                 {/* Progress Bar */}

@@ -45,9 +45,9 @@ export default function ExplorePage() {
 
   const columns = useMemo(() => [
     { key: 'code', label: 'Code' },
-    { key: 'label', label: 'Label' },
-    { key: 'amountEur', label: 'Amount (EUR)', format: (v: number) => v.toLocaleString(undefined, { maximumFractionDigits: 0 }) },
-    { key: 'share', label: 'Share', format: (v: number) => (v * 100).toFixed(2) + '%' }
+    { key: 'label', label: 'Libellé' },
+    { key: 'amountEur', label: 'Montant (EUR)', format: (v: number) => v.toLocaleString(undefined, { maximumFractionDigits: 0 }) },
+    { key: 'share', label: 'Part', format: (v: number) => (v * 100).toFixed(2) + '%' }
   ], [])
 
   useEffect(() => {
@@ -93,7 +93,7 @@ export default function ExplorePage() {
         <YearPicker value={year} onChange={setYear} label={t('label.year')} />
         <Select label={t('explore.basis')} value={basis} onChange={v => setBasis(v as Basis)} options={[{ label: t('basis.cp'), value: 'CP' }, { label: t('basis.ae'), value: 'AE' }]} />
         <Select label={t('explore.lens')} value={lens} onChange={v => setLens(v as Lens)} options={[{ label: t('lens.admin'), value: 'ADMIN' }, { label: t('lens.cofog'), value: 'COFOG' }]} />
-        <span title="ADMIN: central budget missions/programmes (État). COFOG: functional classification across S13 (consolidated)." aria-label="Lens info">ⓘ</span>
+        <span title="ADMIN : missions/programmes budgétaires de l'État. COFOG : classification fonctionnelle S13 (consolidé)." aria-label="Info lentille">ⓘ</span>
         <Select label={t('explore.chart')} value={chartType} onChange={v => setChartType(v as any)} options={[
           { label: t('chart.sunburst'), value: 'sunburst' },
           { label: t('chart.treemap'), value: 'treemap' },
@@ -104,7 +104,7 @@ export default function ExplorePage() {
             <legend className="fr-fieldset__legend--regular" id="rd-toggle-legend">Options</legend>
             <div className="fr-checkbox-group">
               <input type="checkbox" id="exclude-rd" checked={excludeRD} onChange={e => setExcludeRD(e.target.checked)} />
-              <label className="fr-label" htmlFor="exclude-rd" title="Tax refunds/reliefs (VAT refunds, property-tax reliefs, credits). Reduces net revenue; not a functional outlay.">Exclude RD</label>
+              <label className="fr-label" htmlFor="exclude-rd" title="Remboursements/dégrèvements (TVA, taxes locales, crédits d'impôt). Réduisent les recettes nettes ; pas une dépense fonctionnelle.">Exclure RD</label>
             </div>
           </fieldset>
         )}
@@ -157,8 +157,8 @@ export default function ExplorePage() {
           />
           {drillRows && (
             <div className="row gap">
-              <button className="fr-btn fr-btn--secondary" onClick={() => { setDrillRows(null); setSelectedCode(null) }}>Back</button>
-              <span>{lens === 'ADMIN' ? `Programmes in mission ${selectedCode}` : `COFOG subfunctions of ${selectedCode}`}</span>
+              <button className="fr-btn fr-btn--secondary" onClick={() => { setDrillRows(null); setSelectedCode(null) }}>Retour</button>
+              <span>{lens === 'ADMIN' ? `Programmes de la mission ${selectedCode}` : `Sous-fonctions COFOG de ${selectedCode}`}</span>
             </div>
           )}
           {drillRows

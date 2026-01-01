@@ -20,11 +20,11 @@ export default function SourcesPage() {
   const [q, setQ] = useState('')
 
   const columns = useMemo(() => [
-    { key: 'datasetName', label: 'Dataset' },
-    { key: 'license', label: 'License' },
+    { key: 'datasetName', label: 'Jeu de données' },
+    { key: 'license', label: 'Licence' },
     { key: 'refreshCadence', label: 'Cadence' },
-    { key: 'vintage', label: 'Vintage' },
-    { key: 'url', label: 'Link', render: (v: string) => <a href={v} target="_blank" rel="noreferrer">Open</a> }
+    { key: 'vintage', label: 'Millésime' },
+    { key: 'url', label: 'Lien', render: (v: string) => <a href={v} target="_blank" rel="noreferrer">Ouvrir</a> }
   ], [])
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export default function SourcesPage() {
         const data = await gqlRequest(`{ sources { id datasetName url license refreshCadence vintage } }`)
         if (!cancelled) setRows(data.sources)
       } catch (e: any) {
-        if (!cancelled) setError(e?.message || 'Failed to load')
+        if (!cancelled) setError(e?.message || 'Échec du chargement')
       } finally {
         if (!cancelled) setLoading(false)
       }
@@ -60,10 +60,10 @@ export default function SourcesPage() {
     <div className="stack">
       <h2>Sources</h2>
       <label className="field">
-        <span>Search</span>
-        <input value={q} onChange={e => setQ(e.target.value)} placeholder="Filter datasets..." />
+        <span>Rechercher</span>
+        <input value={q} onChange={e => setQ(e.target.value)} placeholder="Filtrer les jeux de données…" />
       </label>
-      {loading && <p>Loading…</p>}
+      {loading && <p>Chargement…</p>}
       {error && <p className="error">{error}</p>}
       {!loading && !error && <DataTable columns={columns} rows={filtered} sortable pageSize={10} />}
     </div>

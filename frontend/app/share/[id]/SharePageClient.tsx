@@ -36,7 +36,7 @@ export default function SharePageClient({ scenarioId }: { scenarioId: string }) 
 
   const fetchData = useCallback(async () => {
     if (!scenarioId) {
-      setError('Scenario ID is required')
+      setError('L\'identifiant de scénario est requis')
       setLoading(false)
       return
     }
@@ -48,7 +48,7 @@ export default function SharePageClient({ scenarioId }: { scenarioId: string }) 
       const data = await gqlRequest(getScenarioQuery, { id: scenarioId })
       setScenario(data.scenario)
     } catch (err: any) {
-      setError(err.message || 'Failed to fetch scenario data')
+      setError(err.message || 'Échec du chargement des données du scénario')
     }
 
     setLoading(false)
@@ -59,16 +59,16 @@ export default function SharePageClient({ scenarioId }: { scenarioId: string }) 
   }, [fetchData])
 
   if (loading) {
-    return <div>Loading...</div>
+    return <div>Chargement…</div>
   }
 
   if (error) {
-    return <div>Error: {error}</div>
+    return <div>Erreur : {error}</div>
   }
 
   return (
     <div className="container">
-      <h1>Share Card</h1>
+      <h1>Carte de partage</h1>
       <pre>{JSON.stringify(scenario, null, 2)}</pre>
     </div>
   )

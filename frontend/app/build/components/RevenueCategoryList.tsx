@@ -24,7 +24,7 @@ export type RevenueCategoryListProps = {
 export function RevenueCategoryList({ categories, onSelect, formatCurrency, visuals }: RevenueCategoryListProps) {
   return (
     <div className="space-y-3 p-1">
-      <div className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-4 px-2">Revenue Sources &amp; Reforms</div>
+      <div className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-4 px-2">Sources de recettes &amp; réformes</div>
       {categories.map((piece, index) => {
         const visual = visuals.get(piece.id) || { color: '#0ea5e9', icon: '💶' };
         const tint = tintBackground(visual.color, 0.12);

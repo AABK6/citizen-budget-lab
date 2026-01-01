@@ -133,7 +133,7 @@ export default function ComparePageClient() {
       const data = await gqlRequest(scenarioCompareQuery, { a: aId, b: bId } as Record<string, any>);
       const raw = data.scenarioCompare;
       if (!raw?.a) {
-        throw new Error('Comparison payload missing scenario A');
+        throw new Error('Données de comparaison : scénario A manquant');
       }
       const waterfall: WaterfallEntry[] = Array.isArray(raw.waterfall)
         ? raw.waterfall.map((item: any) => ({
@@ -195,7 +195,7 @@ export default function ComparePageClient() {
         pieceLabels,
       });
     } catch (err: any) {
-      setError(err.message ?? 'Failed to fetch comparison');
+      setError(err.message ?? 'Échec du chargement de la comparaison');
       setPayload(null);
     } finally {
       setLoading(false);
@@ -211,7 +211,7 @@ export default function ComparePageClient() {
       fetchCompare(aParam, bParam);
     } else {
       setPayload(null);
-      setError('Provide a scenarioId in the “A” slot to start the comparison.');
+      setError('Renseignez un scenarioId dans le champ « A » pour démarrer la comparaison.');
       setLoading(false);
     }
   }, [searchParams, fetchCompare]);
@@ -220,7 +220,7 @@ export default function ComparePageClient() {
     (evt: FormEvent<HTMLFormElement>) => {
       evt.preventDefault();
       if (!inputA.trim()) {
-        setError('Scenario A is required');
+        setError('Le scénario A est requis');
         return;
       }
       const params = new URLSearchParams(searchParams.toString());
@@ -299,45 +299,45 @@ export default function ComparePageClient() {
   return (
     <div className="compare-page">
       <header className="compare-header">
-        <h1>Compare &amp; Remix</h1>
+        <h1>Comparer et remixer</h1>
         <p className="compare-tagline">
-          Load two saved scenarios to inspect their fiscal footprints side-by-side, understand the largest deltas by mission, and jump back into the builder for further tweaks.
+          Chargez deux scénarios enregistrés pour comparer leurs effets budgétaires, identifier les écarts majeurs par mission et revenir au constructeur pour affiner.
         </p>
       </header>
 
       <section className="compare-controls">
         <form onSubmit={handleSubmit} className="compare-form">
           <div className="control-group">
-            <label htmlFor="scenario-a">Scenario A</label>
+            <label htmlFor="scenario-a">Scénario A</label>
             <input
               id="scenario-a"
               value={inputA}
               onChange={(evt) => setInputA(evt.target.value)}
-              placeholder="scenarioId (required)"
+              placeholder="scenarioId (obligatoire)"
               className="fr-input"
             />
           </div>
           <div className="control-group">
-            <label htmlFor="scenario-b">Scenario B</label>
+            <label htmlFor="scenario-b">Scénario B</label>
             <input
               id="scenario-b"
               value={inputB}
               onChange={(evt) => setInputB(evt.target.value)}
-              placeholder="scenarioId (optional: leave blank for baseline)"
+              placeholder="scenarioId (optionnel : laisser vide pour la référence)"
               className="fr-input"
             />
           </div>
           <div className="control-actions">
-            <button type="submit" className="fr-btn">Compare</button>
+            <button type="submit" className="fr-btn">Comparer</button>
             <button type="button" className="fr-btn fr-btn--secondary" onClick={handleSwap} disabled={!inputA && !inputB}>
-              Swap
+              Inverser
             </button>
           </div>
         </form>
       </section>
 
       {loading && (
-        <div className="compare-status">Loading comparison…</div>
+        <div className="compare-status">Chargement de la comparaison…</div>
       )}
 
       {!loading && error && (
@@ -349,11 +349,11 @@ export default function ComparePageClient() {
       {!loading && !error && payload && (
         <>
           <section className="compare-summary">
-            <h2>Fiscal Snapshot (Year 1)</h2>
+            <h2>Instantané budgétaire (année 1)</h2>
             {comparisonSummary && (
               <div className="summary-grid">
                 <div className="summary-card">
-                  <h3>Deficit Impact</h3>
+                  <h3>Impact sur le déficit</h3>
                   <p className="summary-delta">{formatDelta(comparisonSummary.deficitFirstYear.diff)}</p>
                   <div className="summary-split">
                     <span>A: {formatCurrency(comparisonSummary.deficitFirstYear.a)}</span>
@@ -361,7 +361,7 @@ export default function ComparePageClient() {
                   </div>
                 </div>
                 <div className="summary-card">
-                  <h3>Commitments (AE)</h3>
+                  <h3>Engagements (AE)</h3>
                   <p className="summary-delta">{formatDelta(comparisonSummary.commitmentsFirstYear.diff)}</p>
                   <div className="summary-split">
                     <span>A: {formatCurrency(comparisonSummary.commitmentsFirstYear.a)}</span>
@@ -369,7 +369,7 @@ export default function ComparePageClient() {
                   </div>
                 </div>
                 <div className="summary-card">
-                  <h3>Resolution Coverage</h3>
+                  <h3>Couverture de la résolution</h3>
                   <p className="summary-delta">{(comparisonSummary.resolutionPct.diff * 100).toFixed(1)}%</p>
                   <div className="summary-split">
                     <span>A: {(comparisonSummary.resolutionPct.a * 100).toFixed(1)}%</span>
@@ -381,24 +381,24 @@ export default function ComparePageClient() {
           </section>
 
           <section className="compare-waterfall">
-            <h2>Largest Mission Deltas</h2>
+            <h2>Plus grands écarts par mission</h2>
             <table className="fr-table compare-table">
               <thead>
                 <tr>
-                  <th>Mission (COFOG major)</th>
-                  <th>Scenario A vs B</th>
+                  <th>Mission (COFOG majeur)</th>
+                  <th>Scénario A vs B</th>
                 </tr>
               </thead>
               <tbody>
                 {topMasses.length === 0 && (
                   <tr>
-                    <td colSpan={2} className="empty">No mission deltas recorded.</td>
+                    <td colSpan={2} className="empty">Aucun écart de mission enregistré.</td>
                   </tr>
                 )}
                 {topMasses.map((entry) => (
                   <tr key={entry.massId}>
                     <td>
-                      <strong>{payload.massLabels[entry.massId] ?? `Mass ${entry.massId}`}</strong>
+                      <strong>{payload.massLabels[entry.massId] ?? `Masse ${entry.massId}`}</strong>
                       <div className="mass-id">#{entry.massId}</div>
                     </td>
                     <td className={entry.deltaEur >= 0 ? 'delta-positive' : 'delta-negative'}>
@@ -411,19 +411,19 @@ export default function ComparePageClient() {
           </section>
 
           <section className="compare-pieces">
-            <h2>Top Piece Contributions</h2>
+            <h2>Principales contributions par mesure</h2>
             <table className="fr-table compare-table">
               <thead>
                 <tr>
-                  <th>Piece</th>
+                  <th>Mesure</th>
                   <th>Mission</th>
-                  <th>Delta</th>
+                  <th>Écart</th>
                 </tr>
               </thead>
               <tbody>
                 {topPieces.length === 0 && (
                   <tr>
-                    <td colSpan={3} className="empty">No piece-level contributions were detected.</td>
+                    <td colSpan={3} className="empty">Aucune contribution par mesure détectée.</td>
                   </tr>
                 )}
                 {topPieces.map((entry) => (
@@ -438,10 +438,10 @@ export default function ComparePageClient() {
           </section>
 
           <section className="compare-macro">
-            <h2>Macro Impacts</h2>
+            <h2>Impacts macroéconomiques</h2>
             <div className="summary-grid">
               <div className="summary-card">
-                <h3>GDP delta (Year 1)</h3>
+                <h3>Écart de PIB (année 1)</h3>
                 <p className="summary-delta">
                   {formatDelta(Number(first(payload.a.macro.deltaGDP)) - Number(first(payload.b.macro.deltaGDP)))}
                 </p>
@@ -451,7 +451,7 @@ export default function ComparePageClient() {
                 </div>
               </div>
               <div className="summary-card">
-                <h3>Employment index (Year 1)</h3>
+                <h3>Indice d'emploi (année 1)</h3>
                 <p className="summary-delta">
                   {(Number(first(payload.a.macro.deltaEmployment)) - Number(first(payload.b.macro.deltaEmployment))).toFixed(2)} pts
                 </p>
@@ -461,7 +461,7 @@ export default function ComparePageClient() {
                 </div>
               </div>
               <div className="summary-card">
-                <h3>Automatic stabilisers</h3>
+                <h3>Stabilisateurs automatiques</h3>
                 <p className="summary-delta">
                   {formatDelta(Number(first(payload.a.macro.deltaDeficit)) - Number(first(payload.b.macro.deltaDeficit)))}
                 </p>
@@ -474,20 +474,20 @@ export default function ComparePageClient() {
           </section>
 
           <section className="compare-remix">
-            <h2>Remix Scenarios</h2>
+            <h2>Remixer les scénarios</h2>
             <div className="remix-grid">
               <div className="remix-card">
-                <h3>Scenario A</h3>
+                <h3>Scénario A</h3>
                 <p>{inputA || payload.a.scenarioId}</p>
                 <Link className="fr-btn fr-btn--secondary" href={`/build?scenarioId=${encodeURIComponent(payload.a.scenarioId)}`}>
-                  Open in Builder
+                  Ouvrir dans le constructeur
                 </Link>
               </div>
               <div className="remix-card">
-                <h3>Scenario B</h3>
+                <h3>Scénario B</h3>
                 <p>{inputB || payload.b.scenarioId}</p>
                 <Link className="fr-btn fr-btn--secondary" href={`/build?scenarioId=${encodeURIComponent(payload.b.scenarioId)}`}>
-                  Open in Builder
+                  Ouvrir dans le constructeur
                 </Link>
               </div>
             </div>

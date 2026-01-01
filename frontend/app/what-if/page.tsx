@@ -77,7 +77,7 @@ export default function WhatIfPage() {
       const data = await gqlRequest(mutation, { dsl })
       setResult(data.runScenario)
     } catch (e: any) {
-      setError(e?.message || 'Failed to run scenario')
+      setError(e?.message || 'Échec de l\'exécution du scénario')
     } finally {
       setLoading(false)
     }
@@ -114,10 +114,10 @@ export default function WhatIfPage() {
     const lastDebtDelta = debtDelta.length ? debtDelta[debtDelta.length - 1] : 0
 
     return [
-      { label: 'Deficit (Y0)', value: deficitWithRatio },
-      { label: 'Δ vs baseline (Y0)', value: signed(deficitDelta[0] ?? 0) },
-      { label: 'Debt (Yend)', value: currency(lastDebtTotal) },
-      { label: 'Δ Debt vs baseline (Yend)', value: signed(lastDebtDelta) },
+      { label: 'Déficit (A0)', value: deficitWithRatio },
+      { label: 'Δ vs référence (A0)', value: signed(deficitDelta[0] ?? 0) },
+      { label: 'Dette (fin)', value: currency(lastDebtTotal) },
+      { label: 'Δ dette vs référence (fin)', value: signed(lastDebtDelta) },
     ]
   }, [result])
 
@@ -128,10 +128,10 @@ export default function WhatIfPage() {
 
   return (
     <div className="stack">
-      <h2 className="fr-h2">{t('whatif.title') || 'What‑if — Scenario Builder'}</h2>
+      <h2 className="fr-h2">{t('whatif.title') || 'Et si… — Constructeur de scénario'}</h2>
       <div className="stack">
         <div className="fr-input-group" style={{ width: '100%' }}>
-          <label className="fr-label" htmlFor="dsl-editor">{t('whatif.dsl') || 'Scenario DSL (YAML)'}</label>
+          <label className="fr-label" htmlFor="dsl-editor">{t('whatif.dsl') || 'DSL du scénario (YAML)'}</label>
           <textarea
             id="dsl-editor"
             className="fr-input"
@@ -142,7 +142,7 @@ export default function WhatIfPage() {
           />
         </div>
         <div className="row gap">
-          <button className="fr-btn" onClick={runScenario} disabled={loading}>{loading ? t('whatif.running') || 'Running…' : t('whatif.run') || 'Run Scenario'}</button>
+          <button className="fr-btn" onClick={runScenario} disabled={loading}>{loading ? t('whatif.running') || 'Exécution…' : t('whatif.run') || 'Lancer le scénario'}</button>
         </div>
       </div>
 
@@ -150,7 +150,7 @@ export default function WhatIfPage() {
 
       {result && (
         <div className="stack">
-          <h3>{t('whatif.results') || 'Results'}</h3>
+          <h3>{t('whatif.results') || 'Résultats'}</h3>
           {stats && <StatCards items={stats} />} 
           <RuleLights eu3pct={result.compliance?.eu3pct} eu60pct={result.compliance?.eu60pct} netExpenditure={result.compliance?.netExpenditure} localBalance={result.compliance?.localBalance} />
           <DeficitPathChart
@@ -159,11 +159,11 @@ export default function WhatIfPage() {
             startYear={chartStartYear}
           />
           <details open>
-            <summary>{t('whatif.accounting') || 'Accounting'}</summary>
+            <summary>{t('whatif.accounting') || 'Comptabilité'}</summary>
             <pre className="code">{JSON.stringify(result.accounting, null, 2)}</pre>
           </details>
           <details>
-            <summary>{t('whatif.compliance') || 'Compliance'}</summary>
+            <summary>{t('whatif.compliance') || 'Conformité'}</summary>
             <pre className="code">{JSON.stringify(result.compliance, null, 2)}</pre>
           </details>
           <details>
@@ -171,7 +171,7 @@ export default function WhatIfPage() {
             <pre className="code">{JSON.stringify(result.macro, null, 2)}</pre>
           </details>
           <details>
-            <summary>{t('whatif.raw') || 'Raw payload'}</summary>
+            <summary>{t('whatif.raw') || 'Données brutes'}</summary>
             <pre className="code">{JSON.stringify(result, null, 2)}</pre>
           </details>
         </div>

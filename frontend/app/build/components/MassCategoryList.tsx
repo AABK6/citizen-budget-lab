@@ -23,7 +23,7 @@ export type MassCategoryListProps = {
 export function MassCategoryList({ categories, onSelect, formatCurrency, formatShare, displayMode }: MassCategoryListProps) {
   return (
     <div className="space-y-3 p-1">
-      <div className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-4 px-2">Spending Targets &amp; Reforms</div>
+      <div className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-4 px-2">Objectifs de dépenses &amp; réformes</div>
       {categories.map((category, index) => {
         const accent = category.color || '#2563eb';
         const tint = tintBackground(accent, 0.12);

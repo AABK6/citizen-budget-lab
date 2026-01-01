@@ -140,7 +140,7 @@ export function MassCategoryPanel({
           {/* The Equation: Target vs Reforms */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-bold uppercase tracking-wider text-gray-500">Budget Target</label>
+              <label className="text-xs font-bold uppercase tracking-wider text-gray-500">Objectif budgétaire</label>
               <button
                 type="button"
                 className="text-xs font-medium text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded transition-colors"
@@ -184,7 +184,7 @@ export function MassCategoryPanel({
             {/* The Gap Visualization */}
             <div className="bg-gray-50 rounded-xl p-3 border border-gray-200 shadow-inner space-y-2">
               <div className="flex justify-between items-end">
-                <div className="text-xs font-medium text-gray-600">Total Effort</div>
+                <div className="text-xs font-medium text-gray-600">Effort total</div>
                 <div className={`text-lg font-mono font-bold ${targetAmount > 0 ? 'text-red-600' : targetAmount < 0 ? 'text-green-600' : 'text-gray-400'}`}>
                   {formatCurrency(targetAmount)}
                 </div>
@@ -211,11 +211,11 @@ export function MassCategoryPanel({
               <div className="flex justify-between text-[10px]">
                 <div className="flex items-center gap-1.5">
                   <div className="w-2 h-2 rounded-full bg-green-500" />
-                  <span className="text-gray-600">Resolved: <b>{formatCurrency(resolvedAmount)}</b></span>
+                  <span className="text-gray-600">Couvert : <b>{formatCurrency(resolvedAmount)}</b></span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <div className="w-2 h-2 rounded-full bg-gray-300" style={{ backgroundImage: 'linear-gradient(45deg, rgba(0,0,0,0.1) 25%, transparent 25%, transparent 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1) 75%, transparent 75%, transparent)', backgroundSize: '4px 4px' }} />
-                  <span className="text-gray-600">Unresolved: <b>{formatCurrency(unresolvedAmount)}</b></span>
+                  <span className="text-gray-600">À couvrir : <b>{formatCurrency(unresolvedAmount)}</b></span>
                 </div>
               </div>
             </div>
@@ -226,21 +226,21 @@ export function MassCategoryPanel({
                 className="flex-1 py-1.5 px-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg shadow-sm shadow-blue-200 transition-all active:scale-[0.98]"
                 onClick={onApplyTarget}
               >
-                Apply Target
+                Appliquer l'objectif
               </button>
               <button
                 id="mass-reset-target"
                 className="px-3 py-1.5 text-gray-600 hover:text-gray-900 text-sm font-medium hover:bg-gray-100 rounded-lg transition-colors"
                 onClick={handleClear}
               >
-                Reset
+                Réinitialiser
               </button>
             </div>
           </div>
 
           {/* Reforms Section */}
           <div className="space-y-3">
-            <div className="text-xs font-bold uppercase tracking-wider text-gray-500">Available Reforms</div>
+            <div className="text-xs font-bold uppercase tracking-wider text-gray-500">Réformes disponibles</div>
             <div className="space-y-2">
               {suggestedLevers.map((reform) => (
                 <div
@@ -269,7 +269,7 @@ export function MassCategoryPanel({
                         }`}
                       onClick={() => onLeverToggle(reform)}
                     >
-                      {isLeverSelected(reform.id) ? 'Remove' : 'Add'}
+                      {isLeverSelected(reform.id) ? 'Retirer' : 'Ajouter'}
                     </button>
                   </div>
                 </div>
@@ -280,7 +280,7 @@ export function MassCategoryPanel({
           {/* Popular Reforms */}
           {popularIntents.some(intent => intent.massId === category.id) && (
             <div className="space-y-3">
-              <div className="text-xs font-bold uppercase tracking-wider text-gray-500">Popular Choices</div>
+              <div className="text-xs font-bold uppercase tracking-wider text-gray-500">Choix populaires</div>
               <div className="flex flex-wrap gap-2">
                 {popularIntents
                   .filter(intent => intent.massId === category.id)

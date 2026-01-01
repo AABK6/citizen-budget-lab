@@ -67,7 +67,7 @@ export function ProcurementMap({ rows, region }: { rows: Row[]; region?: string 
                   <div>€ {r.amountEur.toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
                   {code && <div>{g.nom} ({code})</div>}
                   {r.cpv && <div>CPV: {r.cpv}</div>}
-                  {r.procedureType && <div>Procedure: {r.procedureType}</div>}
+                  {r.procedureType && <div>Procédure : {r.procedureType}</div>}
                   {r.naf && <div>NAF: {r.naf}</div>}
                   {(r as any).sourceUrl && <div><a href={(r as any).sourceUrl} target="_blank" rel="noreferrer">Source</a></div>}
                 </div>

@@ -21,12 +21,11 @@ export function RuleLights({ eu3pct, eu60pct, netExpenditure, localBalance }: Pr
   const ne = netExpenditure?.[0]
   const lb = localBalance?.[0]
   return (
-    <div className="row gap" aria-label="Rule lights">
-      <span title="EU 3% deficit ratio">{light(e3)} EU 3%</span>
-      <span title="EU 60% debt ratio">{light(e60)} EU 60%</span>
-      <span title="Net expenditure rule">{light(ne)} NER</span>
-      <span title="Local balance (APUL)">{light(lb)} Local</span>
+    <div className="row gap" aria-label="Indicateurs des règles">
+      <span title="UE 3 % déficit">{light(e3)} UE 3%</span>
+      <span title="UE 60 % dette">{light(e60)} UE 60%</span>
+      <span title="Règle de dépense nette">{light(ne)} RDN</span>
+      <span title="Solde local (APUL)">{light(lb)} APUL</span>
     </div>
   )
 }
-

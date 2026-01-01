@@ -25,7 +25,7 @@ export function SourceLink({ ids }: { ids?: string[] }) {
         }
         if (!cancelled) setSources(out)
       } catch (e: any) {
-        if (!cancelled) setError(e?.message || 'Failed to load sources')
+        if (!cancelled) setError(e?.message || 'Impossible de charger les sources')
       }
     }
     load()
@@ -35,9 +35,9 @@ export function SourceLink({ ids }: { ids?: string[] }) {
   if (error) return <span aria-live="polite">⚠ Sources</span>
   if (!sources.length) return <a className="fr-link fr-icon-external-link-line fr-link--icon-right" href="/sources" aria-label="Sources">Sources</a>
   return (
-    <span className="row gap" aria-label="Source datasets">
+    <span className="row gap" aria-label="Jeux de données source">
       {sources.map(s => (
-        <a key={s.id} className="fr-link fr-icon-external-link-line fr-link--icon-right" href={s.url} target="_blank" rel="noreferrer" title={`${s.datasetName} — ${s.vintage}`} aria-label={`Source: ${s.datasetName}`}>
+        <a key={s.id} className="fr-link fr-icon-external-link-line fr-link--icon-right" href={s.url} target="_blank" rel="noreferrer" title={`${s.datasetName} — ${s.vintage}`} aria-label={`Source : ${s.datasetName}`}>
           {s.datasetName}
         </a>
       ))}

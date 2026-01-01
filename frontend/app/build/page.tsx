@@ -3,7 +3,7 @@ import BuildPageClient from './BuildPageClient';
 
 export default function BuildPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div>Chargement…</div>}>
       <BuildPageClient />
     </Suspense>
   );

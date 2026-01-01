@@ -5,7 +5,7 @@ import { Dsfr } from '@/components/Dsfr';
 
 export const metadata: Metadata = {
   title: 'Citizen Budget Lab',
-  description: 'Explore, analyze, and simulate the public budget.'
+  description: 'Explorer, analyser et simuler le budget public.'
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

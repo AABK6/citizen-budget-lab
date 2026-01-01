@@ -10,7 +10,7 @@ export function WaterfallDelta({ items, title }: { items: WaterfallItem[]; title
   return (
     <div className="fr-card fr-card--no-arrow" style={{ marginTop: '1rem' }}>
       <div className="fr-card__body">
-        <div className="fr-card__title">{title || 'Δ by Mass (Waterfall)'}</div>
+        <div className="fr-card__title">{title || 'Δ par masse (cascade)'}</div>
         <div className="fr-card__desc">
           <div className="stack" style={{ gap: '.5rem' }}>
             {items.map((it, idx) => {
@@ -38,4 +38,3 @@ export function WaterfallDelta({ items, title }: { items: WaterfallItem[]; title
     </div>
   )
 }
-

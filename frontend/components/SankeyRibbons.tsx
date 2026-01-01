@@ -51,9 +51,9 @@ export function SankeyRibbons({
   return (
     <div className="fr-card fr-card--no-arrow" style={{ marginTop: '1rem' }}>
       <div className="fr-card__body">
-        <div className="fr-card__title">Ribbons (lever→mass)</div>
+        <div className="fr-card__title">Rubans (levier→masse)</div>
         <div className="fr-card__desc">
-          <svg width={width} height={height} role="img" aria-label="Ribbons">
+          <svg width={width} height={height} role="img" aria-label="Rubans">
             {/* Lines */}
             {lines.map((l) => {
               const y1 = nodeY(l.from, left.length)
@@ -83,4 +83,3 @@ export function SankeyRibbons({
     </div>
   )
 }
-

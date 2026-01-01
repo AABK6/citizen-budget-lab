@@ -3,7 +3,7 @@ import ComparePageClient from './ComparePageClient';
 
 export default function ComparePage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div>Chargement…</div>}>
       <ComparePageClient />
     </Suspense>
   );
