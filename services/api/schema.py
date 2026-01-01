@@ -420,14 +420,15 @@ class Query:
 
             settings = get_settings()
             wh_items = allocation_by_cofog(year, Basis(basis.value))
+            use_override = bool(settings.warehouse_cofog_override)
             reliable = False
-            if wh_items:
+            if wh_items and not use_override:
                 try:
                     reliable = _wh.cofog_mapping_reliable(year, Basis(basis.value))
                 except Exception:
                     reliable = False
 
-            use_wh = bool(wh_items) and (settings.warehouse_cofog_override or reliable)
+            use_wh = bool(wh_items) and (use_override or reliable)
 
             if use_wh:
                 return AllocationType(

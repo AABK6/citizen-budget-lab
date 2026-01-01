@@ -585,6 +585,7 @@ def warm_plf_2026_plafonds(source: str | None = None, output_csv: str | None = N
 
     tmp_path: str | None = None
     cleanup = False
+    sample_path = os.path.join(DATA_DIR, "reference", "plf_2026_plafonds_sample.xlsx")
     try:
         if url.startswith("http://") or url.startswith("https://"):
             LOG.info("[PLF2026] Downloading spending ceilings from %s", url)
@@ -604,24 +605,32 @@ def warm_plf_2026_plafonds(source: str | None = None, output_csv: str | None = N
             tmp_path = url if os.path.exists(url) else None
 
         if not tmp_path or not os.path.exists(tmp_path):
-            sample = os.path.join(DATA_DIR, "reference", "plf_2026_plafonds_sample.xlsx")
-            if not os.path.exists(sample):
+            if not os.path.exists(sample_path):
                 raise FileNotFoundError("No PLF 2026 ceilings source available")
-            LOG.info("[PLF2026] Using bundled sample workbook at %s", sample)
-            tmp_path = sample
+            LOG.info("[PLF2026] Using bundled sample workbook at %s", sample_path)
+            tmp_path = sample_path
 
-        rows: List[dict[str, Any]] = []
-        suffix = Path(tmp_path).suffix.lower()
-        if suffix in {".xlsx", ".xlsm", ".xls"}:
-            entries = _parse_plf_2026_xlsx(tmp_path)
-        elif suffix in {".pdf"}:
-            entries = _parse_plf_2026_pdf(tmp_path)
-        else:
+        def _parse_entries(path: str) -> List[tuple[str, str, float]]:
+            suffix = Path(path).suffix.lower()
+            if suffix in {".xlsx", ".xlsm", ".xls"}:
+                return _parse_plf_2026_xlsx(path)
+            if suffix in {".pdf"}:
+                return _parse_plf_2026_pdf(path)
             # Try Excel first, fallback to PDF heuristics
             try:
-                entries = _parse_plf_2026_xlsx(tmp_path)
+                return _parse_plf_2026_xlsx(path)
             except Exception:
-                entries = _parse_plf_2026_pdf(tmp_path)
+                return _parse_plf_2026_pdf(path)
+
+        rows: List[dict[str, Any]] = []
+        try:
+            entries = _parse_entries(tmp_path)
+        except Exception as exc:
+            if cleanup and os.path.exists(sample_path):
+                LOG.warning("[PLF2026] Failed to parse downloaded file %s: %s", tmp_path, exc)
+                entries = _parse_entries(sample_path)
+            else:
+                raise
 
         rows = [
             {

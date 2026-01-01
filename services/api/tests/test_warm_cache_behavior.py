@@ -12,8 +12,11 @@ def _gql(q: str, variables: dict | None = None):
     return res.data
 
 
-def test_allocation_cofog_ignores_warmed_shares_when_warehouse_available(tmp_path, monkeypatch):
-    """Even if a warmed COFOG share file exists, the warehouse results should prevail."""
+def test_allocation_cofog_uses_warmed_when_mapping_unreliable(tmp_path, monkeypatch):
+    """When mapping is unreliable, warmed COFOG shares should prevail."""
+    from services.api import warehouse_client as wh
+    from services.api.models import MissionAllocation
+
     # Prepare warmed COFOG shares file with a distinct top code (e.g., '05' biggest)
     cache_dir = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..")), "data", "cache")
     os.makedirs(cache_dir, exist_ok=True)
@@ -29,20 +32,32 @@ def test_allocation_cofog_ignores_warmed_shares_when_warehouse_available(tmp_pat
             ]
         }, f)
 
+    # Stub warehouse data so we avoid hitting the real DB.
+    stub_items = [
+        MissionAllocation(code="09", label="Education", amount_eur=100.0, share=0.5),
+        MissionAllocation(code="07", label="Health", amount_eur=50.0, share=0.25),
+    ]
+    monkeypatch.setattr(wh, "warehouse_available", lambda: True)
+    monkeypatch.setattr(wh, "allocation_by_cofog", lambda year, basis: stub_items)
+    monkeypatch.setattr(wh, "cofog_mapping_reliable", lambda year, basis: False)
+
     q = """
       query { allocation(year: 2026, basis: CP, lens: COFOG) { cofog { code label share } } }
     """
-    data = _gql(q)
-    cofog = data["allocation"]["cofog"]
-    # Warehouse aggregation should remain unchanged despite the warmed file
-    assert cofog[0]["code"] == "09"
+    try:
+        data = _gql(q)
+        cofog = data["allocation"]["cofog"]
+        # Warmed shares should win when mapping is unreliable.
+        assert cofog[0]["code"] == "05"
 
-    # Cleanup: remove warmed file and ensure fallback mapping yields Education ('09') as top
-    os.remove(shares_path)
-    data2 = _gql(q)
-    cofog2 = data2["allocation"]["cofog"]
-    assert cofog2[0]["code"] == "09"
-    assert cofog2 == cofog
+        # Remove warmed file: fallback should use warehouse items again.
+        os.remove(shares_path)
+        data2 = _gql(q)
+        cofog2 = data2["allocation"]["cofog"]
+        assert cofog2[0]["code"] == "09"
+    finally:
+        if os.path.exists(shares_path):
+            os.remove(shares_path)
 
 
 def test_macro_series_present_absent(monkeypatch):

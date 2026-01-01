@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Dict, List, Optional
+import unicodedata
 
 
 # A catalog of well-defined, named reforms with fixed, pre-estimated budgetary impacts.
@@ -1679,6 +1680,11 @@ def _normalized_lever(lever: dict) -> dict:
     return normalized
 
 
+def _normalize_search(value: str) -> str:
+    base = value.strip().lower()
+    return unicodedata.normalize("NFKD", base).encode("ascii", "ignore").decode("ascii")
+
+
 def levers_by_id() -> Dict[str, dict]:
     return {str(lever.get("id")): _normalized_lever(lever) for lever in _LEVER_CATALOG}
 
@@ -1690,7 +1696,7 @@ def list_policy_levers(family: Optional[str] = None, search: Optional[str] = Non
     results = []
     
     # Normalize inputs
-    search_q = search.lower().strip() if search else None
+    search_q = _normalize_search(search) if search else None
     
     for lever in _LEVER_CATALOG:
         normalized = _normalized_lever(lever)
@@ -1700,8 +1706,8 @@ def list_policy_levers(family: Optional[str] = None, search: Optional[str] = Non
 
         # Filter by search query
         if search_q:
-            label = str(normalized.get("label", "")).lower()
-            desc = str(normalized.get("description", "")).lower()
+            label = _normalize_search(str(normalized.get("label", "")))
+            desc = _normalize_search(str(normalized.get("description", "")))
             if search_q not in label and search_q not in desc:
                 continue
         

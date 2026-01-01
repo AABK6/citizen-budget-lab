@@ -43,8 +43,9 @@ def test_policy_levers_query_stub():
     assert isinstance(items, list)
     assert any(it.get("id") == "pen_age_plus3m_per_year" for it in items)
     pensions = next(it for it in items if it.get("id") == "pen_age_plus3m_per_year")
-    mission_map = pensions.get("missionMapping") or {}
-    assert "M_PENSIONS" in mission_map and mission_map["M_PENSIONS"] > 0
+    mass_map = pensions.get("massMapping") or {}
+    assert mass_map
+    assert mass_map.get("10", 0) > 0
 
 
 def test_policy_levers_search_filter():

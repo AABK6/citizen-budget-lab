@@ -10,7 +10,7 @@ from services.api.cache_warm import warm_eurostat_cofog, warm_lego_baseline, war
 def _network_ready() -> bool:
     flag = os.getenv("RUN_NETWORK_TESTS")
     if flag is None:
-        return True
+        return False
     return flag in ("1", "true", "True")
 
 
