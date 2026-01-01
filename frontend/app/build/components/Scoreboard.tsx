@@ -1,5 +1,6 @@
 import { useMemo, useRef, useEffect } from 'react';
 import type { ScenarioResult } from '@/lib/types';
+import { MacroPathChart } from './MacroPathChart';
 
 interface ScoreboardProps {
     scenarioResult: ScenarioResult | null;
@@ -32,38 +33,21 @@ export function Scoreboard({
     const stats = useMemo(() => {
         // Default to baseline if no run result yet
         let deficit = (baselineTotals.revenue - baselineTotals.spending);
-        let spending = baselineTotals.spending;
-        let revenue = baselineTotals.revenue;
         let deficitRatio = null;
-        let resolution = 0;
 
         if (scenarioResult?.accounting) {
-            const { accounting, resolution: res } = scenarioResult;
-
-            // Deficit is typically provided in the path. We take the first year (current).
-            // Note: accounting.deficitPath is usually positive for deficit in this app? 
-            // Let's check logic: usually revenue - spending. 
-            // If the engine returns "deficit", it might be positive. 
-            // Let's trust the "deficitPath" from the engine if available.
+            const { accounting } = scenarioResult;
 
             if (accounting.deficitPath && accounting.deficitPath.length > 0) {
-                // In this app, "deficitPath" seems to track the Balance (Solde).
-                // If it's negative, it's a deficit. We should use it directly.
                 deficit = accounting.deficitPath[0];
             }
 
-            // Ratios
             if (accounting.deficitRatioPath && accounting.deficitRatioPath.length > 0) {
                 deficitRatio = accounting.deficitRatioPath[0];
             }
-
-            // Resolution
-            if (res?.overallPct !== undefined) {
-                resolution = res.overallPct;
-            }
         }
 
-        return { deficit, spending, revenue, deficitRatio, resolution };
+        return { deficit, deficitRatio };
     }, [scenarioResult, baselineTotals]);
 
     // Confetti Effect on Milestones
@@ -86,9 +70,6 @@ export function Scoreboard({
         }
         prevDeficitRatio.current = stats.deficitRatio;
     }, [stats.deficitRatio]);
-
-    const isDeficitBad = stats.deficit < -3.0; // Arbitrary visualization threshold (e.g. -3% GDP is huge)
-    // Actually, usually deficit is negative balance. So < 0 is red.
 
     // Preview Logic
     const showPreview = previewDeficit !== undefined && previewDeficit !== null && previewDeficit !== stats.deficit;
@@ -140,18 +121,9 @@ export function Scoreboard({
                 </div>
             </div>
 
-            {/* CENTER: Resolution Meter */}
-            <div id="scoreboard-resolution" className="flex-1 max-w-lg mx-8 flex flex-col justify-center">
-                <div className="flex justify-between text-xs font-semibold text-slate-500 mb-1">
-                    <span>Objectif Résolution</span>
-                    <span>{Math.round(stats.resolution * 100)}%</span>
-                </div>
-                <div className="h-3 w-full bg-slate-200 rounded-full overflow-hidden shadow-inner">
-                    <div
-                        className="h-full bg-gradient-to-r from-blue-500 to-indigo-600 transition-all duration-700 ease-out"
-                        style={{ width: `${Math.min(100, Math.max(0, stats.resolution * 100))}%` }}
-                    />
-                </div>
+            {/* CENTER: Macro Trajectory Chart */}
+            <div id="scoreboard-resolution" className="flex-1 max-w-lg mx-8 h-full">
+                <MacroPathChart scenarioResult={scenarioResult} year={year} />
             </div>
 
             {/* RIGHT: Actions */}

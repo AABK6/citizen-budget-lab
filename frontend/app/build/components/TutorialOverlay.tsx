@@ -11,43 +11,43 @@ export type TutorialStep = {
 const STEPS: TutorialStep[] = [
     {
         targetId: 'scoreboard-deficit',
-        title: `Votre Vision : Dessiner l'Avenir`,
-        content: `Il n'y a pas de bon ou de mauvais budget, seulement des choix de société. Vos arbitrages dessineront l'avenir du pays.`,
+        title: `Point de Départ : 5%`,
+        content: `Le déficit démarre à 5% du PIB (148,9 Md€). Ce chiffre correspond au budget initial proposé par le gouvernement, avant que le débat parlementaire ne s'arrête.`,
         position: 'bottom',
     },
     {
         targetId: 'treemap-container',
-        title: `Le Miroir des Priorités`,
-        content: 'Visualisez les dépenses publiques. La taille des blocs reflète le poids de chaque politique dans la vie des citoyens.',
+        title: `492 Milliards d'Euros`,
+        content: `Voici la totalité des dépenses de l'État. La taille des blocs reflète le poids réel de chaque politique publique. Cliquez sur un bloc pour modifier son budget.`,
         position: 'right',
     },
     {
         targetId: 'left-panel-tabs',
-        title: `Orientations & Réformes`,
-        content: `Ici, basculez entre vos "Orientations" (le cap politique) et les "Mesures" (les leviers concrets pour les réaliser).`,
+        title: `Deux Leviers d'Action`,
+        content: `Ici, l'onglet 'Orientations' vous permet de fixer des objectifs politiques globaux (ex: -5% sur les mobilités ou +10% sur les transports), et l'onglet 'Mesures' permet d'activer des réformes précises chiffrées (ex: geler le point d'indice) pour y parvenir.`,
         position: 'right',
     },
     {
         targetId: 'left-panel-list',
-        title: `Exprimer vos Préférences`,
-        content: `Sélectionnez une orientation pour fixer un objectif. C'est ici que vous déterminez les domaines à renforcer ou à économiser.`,
+        title: `Fixer vos Priorités`,
+        content: `Sélectionnez une mission pour ajuster son budget. C'est ici que vous décidez d'investir ou d'économiser. Chaque choix modifie l'équilibre global en temps réel.`,
         position: 'right',
     },
     {
         targetId: 'right-panel-revenue',
-        title: `Financer vos Choix`,
-        content: `À droite, arbitrez les ressources. Fiscalité, cotisations ou recettes diverses : trouvez l'équilibre qui correspond à vos valeurs.`,
+        title: `L'Équation Fiscale`,
+        content: `L'autre levier : l'impôt. Pour équilibrer les comptes, vous pouvez aussi agir sur les recettes. TVA, ISF, impôt sur les sociétés ou sur le revenu : qui doit contribuer à l'effort ?`,
         position: 'left',
     },
     {
         targetId: 'scoreboard-resolution',
-        title: `Indice de Cohérence`,
-        content: `Cet indice mesure l'écart entre vos ambitions et les mesures concrètes votées. Une vision sans financement reste une promesse.`,
+        title: `Trajectoire Macro`,
+        content: `Visualisez l'impact de vos choix à moyen terme (2026-2029). La zone bleue indique le déficit, la ligne verte la croissance.`,
         position: 'bottom',
     }
 ];
 
-const TUTORIAL_VERSION = 'v3';
+const TUTORIAL_VERSION = 'v6';
 const STORAGE_KEY = `has_seen_tutorial_${TUTORIAL_VERSION}`;
 
 export function TutorialOverlay({

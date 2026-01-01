@@ -63,7 +63,7 @@ export default function LandingPage() {
                 <span className="animate-pulse absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-50"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
               </span>
-              DÉBAT NATIONAL
+              SESSION EXTRAORDINAIRE CITOYENNE
             </div>
             <div className="text-slate-500 text-sm font-medium tracking-tight">
               Déjà <span className="text-slate-300 font-bold">{voteCount !== null ? voteCount.toLocaleString() : '...'}</span> citoyens ont exprimé leurs préférences pour éclairer le débat.
@@ -79,14 +79,11 @@ export default function LandingPage() {
 
           <div className="space-y-6 text-lg text-slate-400 leading-relaxed font-light max-w-xl">
             <p>
-              La procédure parlementaire s'est enrayée. Faute de majorité pour construire un compromis, le budget est bloqué.
-            </p>
-            <p>
-              Entre impératifs financiers, besoins sociaux criants et enjeux climatiques, l'équilibre est précaire. Chaque choix est un arbitrage difficile entre des contraintes multiples et souvent contradictoires.
+              1er Janvier 2026. La procédure parlementaire s'est enrayée. Le budget n'a pas été voté. Une 'Loi Spéciale' assure le fonctionnement provisoire de l'État, mais aucun arbitrage d'avenir n'est tranché.
             </p>
             <div className="pt-4 border-l-2 border-indigo-500/50 pl-6">
               <p className="italic text-slate-300 font-serif text-xl">
-                "Quand la politique s'arrête, la délibération citoyenne commence. Confrontez-vous aux réalités et dessinez votre propre issue."
+                "Face à l'impasse, nous ouvrons une session citoyenne. Votre mandat : explorer les comptes, confronter les réalités et dessiner une issue."
               </p>
             </div>
           </div>
@@ -96,7 +93,7 @@ export default function LandingPage() {
             className="group relative px-8 py-5 bg-white text-slate-900 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105 shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)] w-full md:w-auto overflow-hidden"
           >
             <span className="relative z-10 flex items-center gap-3 justify-center">
-              Entrer dans l'Hémicycle
+              Entrez dans l'Hémicycle
               <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
@@ -108,8 +105,8 @@ export default function LandingPage() {
         <div className="relative bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-8 shadow-2xl">
           <div className="flex justify-between items-end mb-8">
             <div>
-              <h3 className="text-white font-bold text-xl mb-1">La Double Peine</h3>
-              <p className="text-slate-500 text-sm">Déficit (Barres) vs Charge de la Dette (Ligne)</p>
+              <h3 className="text-white font-bold text-xl mb-1">L'Inertie Budgétaire</h3>
+              <p className="text-slate-500 text-sm">Le déficit tendanciel se creuse.</p>
             </div>
             <div className="text-right">
               <span className="block text-3xl font-bold text-red-500">55 Md€</span>
