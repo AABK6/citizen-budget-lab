@@ -64,6 +64,7 @@ export function MacroPathChart({ scenarioResult, year }: MacroPathChartProps) {
                                     <stop offset="0%" stopColor="#6366f1" stopOpacity={0.3} />
                                     <stop offset="100%" stopColor="#6366f1" stopOpacity={0} />
                                 </linearGradient>
+                            </defs>
                             <XAxis 
                                 dataKey="year" 
                                 tick={{ fontSize: 9, fill: '#94a3b8' }} 
