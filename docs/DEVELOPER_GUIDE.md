@@ -345,7 +345,45 @@ gcloud run deploy citizen-budget-frontend \
 
 Note: The frontend proxy resolves the backend URL in this order: `GRAPHQL_URL` (runtime) -> `NEXT_PUBLIC_GRAPHQL_URL` (build-time or runtime) -> `http://localhost:8000/graphql` (default). Production currently records `NEXT_PUBLIC_GRAPHQL_URL` at build time.
 
-#### **6.2.1. Build Page Snapshot (Temporary)**
+#### **6.2.1. Manual Deploy (Current Production CLI)**
+
+Use these exact commands to deploy to the current production project (`reviewflow-nrciu`) in `europe-west1`:
+
+```bash
+# Set defaults for convenience (optional)
+gcloud config set project reviewflow-nrciu
+gcloud config set run/region europe-west1
+
+# Build + deploy backend (from repo root)
+gcloud builds submit \
+  --tag europe-west1-docker.pkg.dev/reviewflow-nrciu/mcp-cloud-run-deployments/citizen-budget-api \
+  --file services/api/Dockerfile .
+
+gcloud run deploy citizen-budget-api \
+  --image europe-west1-docker.pkg.dev/reviewflow-nrciu/mcp-cloud-run-deployments/citizen-budget-api \
+  --project reviewflow-nrciu \
+  --region europe-west1 \
+  --allow-unauthenticated \
+  --port 8080
+
+# Build + deploy frontend
+cd frontend
+gcloud builds submit \
+  --tag europe-west1-docker.pkg.dev/reviewflow-nrciu/mcp-cloud-run-deployments/citizen-budget-frontend .
+cd ..
+
+gcloud run deploy citizen-budget-frontend \
+  --image europe-west1-docker.pkg.dev/reviewflow-nrciu/mcp-cloud-run-deployments/citizen-budget-frontend \
+  --project reviewflow-nrciu \
+  --region europe-west1 \
+  --allow-unauthenticated \
+  --port 8080 \
+  --set-env-vars GRAPHQL_URL=https://citizen-budget-api-613407570343.europe-west1.run.app/graphql
+```
+
+Tip: The frontend service can also rely on a build-time `NEXT_PUBLIC_GRAPHQL_URL`, but manual deploys should set `GRAPHQL_URL` at runtime to avoid stale defaults.
+
+#### **6.2.2. Build Page Snapshot (Temporary)**
 
 To reduce cold-start latency on the Build page, the API can serve a precomputed snapshot at `/build-snapshot?year=2026`. This is a temporary mitigation and can be removed once the GraphQL response time is consistently fast.
 
