@@ -126,6 +126,15 @@ def create_app() -> FastAPI:
         body = "\n".join(lines) + "\n"
         return Response(content=body, media_type="text/plain; version=0.0.4")
 
+    @app.on_event("shutdown")
+    def _shutdown() -> None:
+        try:
+            from .votes_store import close_vote_store
+
+            close_vote_store()
+        except Exception:
+            pass
+
     return app
 
 

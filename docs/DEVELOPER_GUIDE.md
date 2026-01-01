@@ -201,6 +201,11 @@ Macro baselines
 | `VOTES_FILE_PATH` | Path to JSON file for vote storage (file backend). Default: `data/cache/votes.json`. | No |
 | `VOTES_SQLITE_PATH` | Path to SQLite file for vote storage (sqlite backend). Default: `data/cache/votes.sqlite3`. | No |
 | `VOTES_DB_DSN` | Postgres DSN for vote storage when `VOTES_STORE=postgres`. | No |
+| `VOTES_DB_POOL_MIN` | Minimum vote storage pool size. Default: `1`. | No |
+| `VOTES_DB_POOL_MAX` | Maximum vote storage pool size. Default: `5`. | No |
+| `VOTES_DB_POOL_TIMEOUT` | Seconds to wait for a pooled connection. Default: `30`. | No |
+| `VOTES_DB_POOL_MAX_IDLE` | Seconds before recycling idle connections. Default: `300`. | No |
+| `VOTES_DB_POOL_MAX_LIFETIME` | Max lifetime (seconds) before recycling connections. Default: `1800`. | No |
 | `PROCUREMENT_ENRICH_SIRENE` | If `1`, enrich procurement data using SIRENE. Default: `1` (on). | No |
 | `MACRO_IRFS_PATH` | Override path to `macro_irfs.json`. | No |
 | `LOCAL_BAL_TOLERANCE_EUR` | Floating tolerance for balance checks. Default: `0`. | No |
@@ -327,3 +332,31 @@ gcloud run deploy citizen-budget-frontend \
   --set-env-vars GRAPHQL_URL=[BACKEND_URL]/graphql
 ```
 *Replace `[PROJECT_ID]` and `[BACKEND_URL]` with the appropriate values.*
+
+#### **6.3. Votes Storage on Cloud SQL (Postgres)**
+
+To persist voter preferences in Cloud SQL, configure the API to use the Postgres backend and attach the instance to Cloud Run.
+
+1. **Create a Postgres instance and database** in Cloud SQL, then create a user/password.
+2. **Set the vote store backend** to Postgres:
+
+```bash
+VOTES_STORE=postgres
+VOTES_DB_DSN=postgresql://[USER]:[PASSWORD]@/[DBNAME]?host=/cloudsql/[PROJECT]:[REGION]:[INSTANCE]
+```
+
+3. **(Optional) Tune the pool** with `VOTES_DB_POOL_MIN`, `VOTES_DB_POOL_MAX`, etc.
+4. **Deploy the API with the Cloud SQL instance attached:**
+
+```bash
+gcloud run deploy citizen-budget-api \
+  --image gcr.io/[PROJECT_ID]/citizen-budget-api \
+  --project [PROJECT_ID] \
+  --region europe-west1 \
+  --allow-unauthenticated \
+  --port 8000 \
+  --add-cloudsql-instances [PROJECT]:[REGION]:[INSTANCE] \
+  --set-env-vars VOTES_STORE=postgres,VOTES_DB_DSN="postgresql://[USER]:[PASSWORD]@/[DBNAME]?host=/cloudsql/[PROJECT]:[REGION]:[INSTANCE]"
+```
+
+The API applies schema migrations automatically on startup when `VOTES_STORE=postgres` is enabled.

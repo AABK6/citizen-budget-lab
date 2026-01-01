@@ -65,6 +65,11 @@ class Settings:
     # Voter preferences storage
     votes_store: str = os.getenv("VOTES_STORE", "file")  # file|sqlite|postgres
     votes_db_dsn: str | None = os.getenv("VOTES_DB_DSN")
+    votes_db_pool_min: int = int(os.getenv("VOTES_DB_POOL_MIN", "1"))
+    votes_db_pool_max: int = int(os.getenv("VOTES_DB_POOL_MAX", "5"))
+    votes_db_pool_timeout: float = float(os.getenv("VOTES_DB_POOL_TIMEOUT", "30"))
+    votes_db_pool_max_idle: float = float(os.getenv("VOTES_DB_POOL_MAX_IDLE", "300"))
+    votes_db_pool_max_lifetime: float = float(os.getenv("VOTES_DB_POOL_MAX_LIFETIME", "1800"))
     votes_sqlite_path: str = os.getenv("VOTES_SQLITE_PATH", os.path.join("data", "cache", "votes.sqlite3"))
     votes_file_path: str = os.getenv("VOTES_FILE_PATH", os.path.join("data", "cache", "votes.json"))
 
