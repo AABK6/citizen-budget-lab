@@ -345,6 +345,18 @@ gcloud run deploy citizen-budget-frontend \
 
 Note: The frontend proxy resolves the backend URL in this order: `GRAPHQL_URL` (runtime) -> `NEXT_PUBLIC_GRAPHQL_URL` (build-time or runtime) -> `http://localhost:8000/graphql` (default). Production currently records `NEXT_PUBLIC_GRAPHQL_URL` at build time.
 
+#### **6.2.1. Build Page Snapshot (Temporary)**
+
+To reduce cold-start latency on the Build page, the API can serve a precomputed snapshot at `/build-snapshot?year=2026`. This is a temporary mitigation and can be removed once the GraphQL response time is consistently fast.
+
+Generate/update the snapshot:
+
+```bash
+python tools/build_snapshot.py --year 2026
+```
+
+This writes `data/cache/build_page_2026.json` (and a `.meta.json` sidecar) which is baked into the API image at deploy time.
+
 #### **6.3. Votes Storage on Cloud SQL (Postgres)**
 
 To persist voter preferences in Cloud SQL, configure the API to use the Postgres backend and attach the instance to Cloud Run.

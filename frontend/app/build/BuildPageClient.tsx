@@ -391,7 +391,18 @@ export default function BuildPageClient() {
     setError(null);
     setScenarioError(null);
     try {
-      const data = await gqlRequest(buildPageQuery, { year });
+      let data: any | null = null;
+      try {
+        const snapshotRes = await fetch(`/api/build-snapshot?year=${year}`, { cache: 'no-store' });
+        if (snapshotRes.ok) {
+          data = await snapshotRes.json();
+        }
+      } catch (err) {
+        data = null;
+      }
+      if (!data) {
+        data = await gqlRequest(buildPageQuery, { year });
+      }
 
       const baselineAmounts: Record<string, number> = {};
       data.legoBaseline.pieces.forEach((p: any) => {

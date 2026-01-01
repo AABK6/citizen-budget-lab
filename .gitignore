@@ -22,6 +22,8 @@ data/.http_cache/
 data/cache/*
 !data/cache/
 !data/cache/lego_baseline_2026.json
+!data/cache/build_page_2026.json
+!data/cache/build_page_2026.meta.json
 data/warehouse.duckdb
 data/warehouse.duckdb.wal
 

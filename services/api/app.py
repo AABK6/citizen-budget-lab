@@ -1,7 +1,10 @@
+import json
 import logging
+import os
 import time
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from strawberry.fastapi import GraphQLRouter
 
 from .schema import schema
@@ -77,6 +80,18 @@ def create_app() -> FastAPI:
         except Exception:  # pragma: no cover
             wh = {"enabled": False, "available": False, "ready": False, "missing": []}
         return {"status": "healthy", "warehouse": wh}
+
+    @app.get("/build-snapshot")
+    def build_snapshot(year: int = 2026) -> Response:
+        data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data"))
+        path = os.path.join(data_dir, "cache", f"build_page_{year}.json")
+        if not os.path.exists(path):
+            return JSONResponse(status_code=404, content={"error": "snapshot not found"})
+        with open(path, "r", encoding="utf-8") as f:
+            payload = json.load(f)
+        response = JSONResponse(content=payload)
+        response.headers["Cache-Control"] = "public, max-age=300"
+        return response
 
     @app.get("/health/full")
     def health_full():
