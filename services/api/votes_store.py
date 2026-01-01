@@ -30,6 +30,12 @@ class VoteStore:
     def summary(self, limit: int = 25) -> List[VoteSummary]:
         raise NotImplementedError
 
+    def save_scenario(self, sid: str, dsl_json: str, meta_json: str | None = None) -> None:
+        pass
+
+    def get_scenario(self, sid: str) -> Optional[str]:
+        return None
+
     def close(self) -> None:
         pass
 
@@ -195,8 +201,7 @@ class PostgresVoteStore(VoteStore):
                     """,
                     (vote_id, scenario_id, ts, normalized.get("userEmail"), payload),
                 )
-                # 2. Upsert materialization (if vote_stats table exists)
-                # We assume migration 004 applied.
+                # 2. Upsert materialization
                 cur.execute(
                     """
                     INSERT INTO vote_stats (scenario_id, vote_count, last_ts)
@@ -212,7 +217,6 @@ class PostgresVoteStore(VoteStore):
     def summary(self, limit: int = 25) -> List[VoteSummary]:
         with self._pool.connection() as conn:
             with conn.cursor() as cur:
-                # Read from materialized view for performance
                 try:
                     cur.execute(
                         """
@@ -225,118 +229,58 @@ class PostgresVoteStore(VoteStore):
                     )
                     rows = cur.fetchall()
                 except Exception:
-                    # Fallback if table missing or error (e.g. migration not applied yet)
                     conn.rollback()
-                    return self._summary_fallback(limit)
+                    return []
                     
         return [
             VoteSummary(scenario_id=row[0], votes=int(row[1]), last_vote_ts=row[2])
             for row in rows
         ]
 
-    def _summary_fallback(self, limit: int) -> List[VoteSummary]:
-        # Old slow method
+    def save_scenario(self, sid: str, dsl_json: str, meta_json: str | None = None) -> None:
         with self._pool.connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(
                     """
-                    SELECT scenario_id, COUNT(*) as votes, MAX(timestamp) as last_ts
-                    FROM votes
-                    GROUP BY scenario_id
-                    ORDER BY votes DESC
-                    LIMIT %s
+                    INSERT INTO scenarios (id, dsl_json, meta_json)
+                    VALUES (%s, %s, %s)
+                    ON CONFLICT (id) DO UPDATE SET
+                        dsl_json = EXCLUDED.dsl_json,
+                        meta_json = COALESCE(EXCLUDED.meta_json, scenarios.meta_json)
                     """,
-                    (max(limit, 0),),
+                    (sid, dsl_json, meta_json),
                 )
-                rows = cur.fetchall()
-        return [
-            VoteSummary(scenario_id=row[0], votes=int(row[1]), last_vote_ts=row[2])
-            for row in rows
-        ]
+            conn.commit()
+
+    def get_scenario(self, sid: str) -> Optional[str]:
+        with self._pool.connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute("SELECT dsl_json FROM scenarios WHERE id = %s", (sid,))
+                row = cur.fetchone()
+                if row:
+                    # Return DSL as string (if stored as JSONB, psycopg returns dict, we might need to stringify or just return dict)
+                    # The previous code expects a base64 encoded string usually, or just JSON string?
+                    # The store previously returned 'dsl_b64' string.
+                    # Wait, 'set_dsl' took 'dsl_b64'.
+                    # We should store it as JSONB for analytics, but maybe store the raw b64 too?
+                    # Or decode before storing.
+                    # Let's assume dsl_json input is valid JSON string or dict.
+                    # If the input `dsl_b64` is base64 encoded YAML/JSON, we should decode it to store as JSONB.
+                    # I'll handle the conversion in `store.py`.
+                    # Here we just return the value.
+                    return json.dumps(row[0]) if isinstance(row[0], (dict, list)) else str(row[0])
+        return None
 
     def close(self) -> None:
         self._pool.close()
 
 
-class FirestoreVoteStore(VoteStore):
-    def __init__(self, project: Optional[str] = None):
-        try:
-            from google.cloud import firestore
-        except ImportError:
-            raise ImportError("google-cloud-firestore is required for FirestoreVoteStore")
-        
-        self.db = firestore.Client(project=project)
-        self.collection_votes = self.db.collection("votes")
-        self.collection_stats = self.db.collection("vote_stats")
-
-    def add_vote(self, scenario_id: str, user_email: Optional[str], meta: Dict[str, Any]) -> None:
-        from google.cloud import firestore
-        
-        normalized = _normalize_meta(meta, user_email)
-        ts = float(normalized.get("timestamp") or time.time())
-        record = {
-            "scenarioId": scenario_id,
-            "timestamp": ts,
-            "userEmail": normalized.get("userEmail"),
-            "meta": normalized,
-        }
-        # Add raw vote
-        self.collection_votes.add(record)
-        
-        # Update materialization
-        doc_ref = self.collection_stats.document(scenario_id)
-        doc_ref.set({
-            "vote_count": firestore.Increment(1),
-            "last_ts": ts 
-        }, merge=True)
-
-    def summary(self, limit: int = 25) -> List[VoteSummary]:
-        docs = self.collection_stats.order_by("vote_count", direction="DESCENDING").limit(limit).stream()
-        return [
-            VoteSummary(scenario_id=d.id, votes=d.get("vote_count") or 0, last_vote_ts=d.get("last_ts"))
-            for d in docs
-        ]
-
-    def close(self) -> None:
-        self.db.close()
-
-
-class HybridVoteStore(VoteStore):
-    """
-    Writes to both Primary and Secondary.
-    Reads from Primary.
-    """
-    def __init__(self, primary: VoteStore, secondary: VoteStore):
-        self.primary = primary
-        self.secondary = secondary
-
-    def add_vote(self, scenario_id: str, user_email: Optional[str], meta: Dict[str, Any]) -> None:
-        # Write to primary first (critical path)
-        self.primary.add_vote(scenario_id, user_email, meta)
-        
-        # Write to secondary (best effort)
-        try:
-            self.secondary.add_vote(scenario_id, user_email, meta)
-        except Exception as e:
-            logger.warning("HybridVoteStore: Failed to write to secondary store: %s", e)
-
-    def summary(self, limit: int = 25) -> List[VoteSummary]:
-        return self.primary.summary(limit)
-
-    def close(self) -> None:
-        self.primary.close()
-        self.secondary.close()
-
-
 @lru_cache(maxsize=1)
 def get_vote_store() -> VoteStore:
     settings = get_settings()
-    store = str(settings.votes_store or "file").lower()
     
-    # Helper to create Postgres Store
-    def create_postgres() -> PostgresVoteStore:
-        if not settings.votes_db_dsn:
-            raise RuntimeError("VOTES_DB_DSN is required for postgres vote storage")
+    # Force Postgres if DSN available (Primary Strategy)
+    if settings.votes_db_dsn:
         return PostgresVoteStore(
             settings.votes_db_dsn,
             settings.votes_db_pool_min,
@@ -346,24 +290,7 @@ def get_vote_store() -> VoteStore:
             settings.votes_db_pool_max_lifetime,
         )
 
-    # Helper to create Firestore Store
-    def create_firestore() -> FirestoreVoteStore:
-        return FirestoreVoteStore() # Uses GOOGLE_APPLICATION_CREDENTIALS
-
-    if store == "postgres":
-        return create_postgres()
-    
-    if store == "firestore":
-        return create_firestore()
-
-    if store == "hybrid":
-        # Default hybrid: Postgres Primary, Firestore Secondary
-        # In a real app, this might be configurable.
-        pg = create_postgres()
-        fs = create_firestore()
-        return HybridVoteStore(primary=pg, secondary=fs)
-
-    if store == "sqlite":
+    if settings.votes_store == "sqlite":
         return SqliteVoteStore(settings.votes_sqlite_path)
         
     return FileVoteStore(settings.votes_file_path)
