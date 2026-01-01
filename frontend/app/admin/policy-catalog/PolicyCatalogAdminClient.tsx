@@ -155,6 +155,7 @@ export default function PolicyCatalogAdminClient() {
   const [token, setToken] = useState('');
   const [loading, setLoading] = useState(false);
   const [validating, setValidating] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const [status, setStatus] = useState<string | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -226,6 +227,41 @@ export default function PolicyCatalogAdminClient() {
       setStatus('Validation failed.');
     } finally {
       setValidating(false);
+    }
+  };
+
+  const saveCatalog = async () => {
+    setSaving(true);
+    setErrors([]);
+    setStatus(null);
+    try {
+      const payloadYaml = view === 'yaml' ? yamlText : dumpYaml(catalog);
+      const headers: Record<string, string> = { 'content-type': 'application/json' };
+      if (token) headers['x-admin-token'] = token;
+      const res = await fetch('/api/admin/policy-catalog', {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify({ yaml: payloadYaml }),
+      });
+      const payload = await res.json();
+      if (!res.ok) {
+        const errs = payload?.errors || [`HTTP ${res.status}`];
+        throw new Error(errs.join('\n'));
+      }
+      setYamlText(payloadYaml);
+      setRawDirty(false);
+      try {
+        setCatalog(parseYaml(payloadYaml));
+      } catch (err) {
+        // Validation passed server-side; keep table state.
+      }
+      const backup = payload.backup_path ? ` Backup: ${payload.backup_path}` : '';
+      setStatus(`Enregistre dans ${payload.path}.${backup}`);
+    } catch (err: any) {
+      setErrors([err instanceof Error ? err.message : 'Save failed']);
+      setStatus('Enregistrement echoue.');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -529,7 +565,7 @@ export default function PolicyCatalogAdminClient() {
             <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Admin - Policy Catalog</p>
             <h1 className="text-3xl font-semibold">Policy Lever Catalog Editor</h1>
             <p className="text-slate-400">
-              Vue tableur pour modifier les leviers, leurs mappings et leurs familles. Telecharge le YAML et commit ensuite.
+              Vue tableur pour modifier les leviers, leurs mappings et leurs familles. Enregistre directement le YAML puis commit.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -538,14 +574,21 @@ export default function PolicyCatalogAdminClient() {
               className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-sm"
               disabled={loading}
             >
-              {loading ? 'Chargement...' : 'Recharger'}
+              {loading ? 'Chargement...' : 'Recharger fichier'}
             </button>
             <button
               onClick={validateCatalog}
               className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-sm"
               disabled={validating}
             >
-              {validating ? 'Validation...' : 'Valider'}
+              {validating ? 'Validation...' : 'Valider contenu'}
+            </button>
+            <button
+              onClick={saveCatalog}
+              className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-sm"
+              disabled={saving}
+            >
+              {saving ? 'Enregistrement...' : 'Enregistrer'}
             </button>
             <button
               onClick={copyCatalog}
@@ -555,7 +598,7 @@ export default function PolicyCatalogAdminClient() {
             </button>
             <button
               onClick={downloadCatalog}
-              className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-sm"
+              className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-sm"
             >
               Telecharger YAML
             </button>

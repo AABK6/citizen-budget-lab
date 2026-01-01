@@ -48,12 +48,12 @@ const STEPS: TutorialStep[] = [
     {
         targetId: 'scoreboard-vote-btn',
         title: `Le Verdict`,
-        content: `Une fois vos arbitrages terminés, cliquez sur "Voter". Votre budget rejoindra la grande consultation nationale pour faire émerger une solution.`,
+        content: `Une fois vos arbitrages terminés, cliquez sur "Voter". Votre choix permettra de faire émerger les préférences réelles des citoyens. Si nous sommes nombreux, ces résultats agrégés pèseront concrètement sur le débat public.`,
         position: 'left',
     }
 ];
 
-const TUTORIAL_VERSION = 'v7';
+const TUTORIAL_VERSION = 'v8';
 const STORAGE_KEY = `has_seen_tutorial_${TUTORIAL_VERSION}`;
 
 export function TutorialOverlay({

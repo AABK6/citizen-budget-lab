@@ -41,12 +41,12 @@ export function DebriefModal({ isOpen, onClose, onConfirmVote, scenarioResult, d
                     <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100 text-sm text-blue-800">
                         <p className="mb-2 font-bold flex items-center gap-2">
                             <span className="material-icons text-sm">public</span>
-                            Mandat Citoyen :
+                            Votre voix compte :
                         </p>
                         <ul className="list-disc pl-5 space-y-1 opacity-80">
-                            <li>Votre budget sera agrégé avec ceux des autres citoyens.</li>
-                            <li>L'objectif : dégager des consensus pour sortir du blocage.</li>
-                            <li>Après le vote, vous pourrez partager votre lien de mandat.</li>
+                            <li>Vos choix seront agrégés anonymement pour faire émerger les préférences réelles des citoyens.</li>
+                            <li>Plus les votes seront nombreux, plus ces résultats pèseront sur les décideurs pour sortir de l&apos;impasse.</li>
+                            <li>Après le vote, vous pourrez partager votre vision pour donner plus de poids à cette consultation.</li>
                         </ul>
                     </div>
                 </div>
