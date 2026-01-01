@@ -71,7 +71,7 @@ export default function LandingPage() {
           </div>
 
           <h1 className="text-5xl lg:text-7xl font-extrabold tracking-tight leading-[1.1] text-white">
-            L&apos;État est bloqué. <br />
+            L'État est bloqué. <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">
               Prenez les clés.
             </span>
@@ -79,14 +79,14 @@ export default function LandingPage() {
 
           <div className="space-y-6 text-lg text-slate-400 leading-relaxed font-light max-w-xl">
             <p>
-              La procédure parlementaire s&apos;est enrayée. Faute de majorité pour construire un compromis, le budget est bloqué.
+              La procédure parlementaire s'est enrayée. Faute de majorité pour construire un compromis, le budget est bloqué.
             </p>
             <p>
-              Entre impératifs financiers, besoins sociaux criants et enjeux climatiques, l&apos;équilibre est précaire. Chaque choix est un arbitrage difficile entre des contraintes multiples et souvent contradictoires.
+              Entre impératifs financiers, besoins sociaux criants et enjeux climatiques, l'équilibre est précaire. Chaque choix est un arbitrage difficile entre des contraintes multiples et souvent contradictoires.
             </p>
             <div className="pt-4 border-l-2 border-indigo-500/50 pl-6">
               <p className="italic text-slate-300 font-serif text-xl">
-                &quot;Quand la politique s&apos;arrête, la délibération citoyenne commence. Confrontez-vous aux réalités et dessinez votre propre issue.&quot;
+                "Quand la politique s'arrête, la délibération citoyenne commence. Confrontez-vous aux réalités et dessinez votre propre issue."
               </p>
             </div>
           </div>
@@ -96,7 +96,7 @@ export default function LandingPage() {
             className="group relative px-8 py-5 bg-white text-slate-900 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105 shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)] w-full md:w-auto overflow-hidden"
           >
             <span className="relative z-10 flex items-center gap-3 justify-center">
-              Entrer dans l&apos;Hémicycle
+              Entrer dans l'Hémicycle
               <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
@@ -159,7 +159,7 @@ export default function LandingPage() {
           </div>
 
           <div className="mt-6 text-xs text-slate-500 text-center">
-            Source: Insee, Projections Bercy • La charge de la dette est devenue le 2ème budget de l&apos;État.
+            Source: Insee, Projections Bercy • La charge de la dette est devenue le 2ème budget de l'État.
           </div>
         </div>
 
