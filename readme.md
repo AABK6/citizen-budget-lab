@@ -30,7 +30,11 @@ This repository contains extensive documentation to help users and developers un
 
 For detailed instructions on how to set up and run this project locally, please see the [**Developer Guide**](./docs/DEVELOPER_GUIDE.md).
 
-## 4. Baseline & Scenario Outputs
+## 4. Deployment (Cloud Run)
+
+Production runs on Google Cloud Run as two services (API + frontend). The default service URLs include both `run.app` and legacy `a.run.app` domains that point to the same service. Deployment steps and current production notes live in [**docs/DEVELOPER_GUIDE.md**](./docs/DEVELOPER_GUIDE.md).
+
+## 5. Baseline & Scenario Outputs
 
 -   The simulation engine now returns both the **absolute fiscal path** (baseline + scenario deltas) and the **separate baseline/delta components** for deficit and debt. Frontend views such as `/build`, `/compare`, and `/what-if` add these together so the default cards show the Treasury’s starting deficit (≈ €150 bn in 2026) instead of a zero delta.
 -   API consumers can still inspect pure deltas via the new `deficitDeltaPath` / `debtDeltaPath` fields, which mirror previous behaviour for backwards-compatible analytics.

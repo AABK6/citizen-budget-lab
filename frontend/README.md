@@ -12,6 +12,7 @@ Setup
 - Copy `.env.local.example` to `.env.local` and adjust `GRAPHQL_URL` if needed.
   - The frontend always calls `/api/graphql` (same origin). The `/api/graphql` route forwards at runtime to the backend URL.
   - `GRAPHQL_URL` controls the proxy destination. If unset, it defaults to `http://localhost:8000/graphql` (fallbacks also accept `NEXT_PUBLIC_GRAPHQL_URL` for legacy setups).
+  - Resolution order is `GRAPHQL_URL` (runtime) -> `NEXT_PUBLIC_GRAPHQL_URL` (build-time or runtime) -> `http://localhost:8000/graphql`. Production currently records `NEXT_PUBLIC_GRAPHQL_URL` at build time.
 
 Healthcheck
 

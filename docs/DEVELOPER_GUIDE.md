@@ -262,8 +262,17 @@ Note: Settings are resolved at instantiation time. To change feature flags like 
 
 The application is deployed as two separate services on Google Cloud Run, providing a scalable and independent architecture for the backend and frontend.
 
-*   **Backend URL**: [https://citizen-budget-api-613407570343.europe-west1.run.app](https://citizen-budget-api-613407570343.europe-west1.run.app)
-*   **Frontend URL**: [https://citizen-budget-frontend-613407570343.europe-west1.run.app](https://citizen-budget-frontend-613407570343.europe-west1.run.app)
+*   **Backend URLs**: [https://citizen-budget-api-613407570343.europe-west1.run.app](https://citizen-budget-api-613407570343.europe-west1.run.app), [https://citizen-budget-api-szwctolrdq-ew.a.run.app](https://citizen-budget-api-szwctolrdq-ew.a.run.app)
+*   **Frontend URLs**: [https://citizen-budget-frontend-613407570343.europe-west1.run.app](https://citizen-budget-frontend-613407570343.europe-west1.run.app), [https://citizen-budget-frontend-szwctolrdq-ew.a.run.app](https://citizen-budget-frontend-szwctolrdq-ew.a.run.app)
+
+Cloud Run exposes two default domains per service (project-number `run.app` and legacy `a.run.app`); both map to the same service.
+
+**Current production (reviewflow-nrciu, europe-west1):**
+*   Services are public (unauthenticated) and listen on the Cloud Run default port (`PORT=8080`).
+*   Backend image: `europe-west1-docker.pkg.dev/reviewflow-nrciu/mcp-cloud-run-deployments/citizen-budget-api`
+*   Frontend image: `europe-west1-docker.pkg.dev/reviewflow-nrciu/mcp-cloud-run-deployments/citizen-budget-frontend`
+*   Frontend build metadata records a `NEXT_PUBLIC_GRAPHQL_URL` pointing to the backend `run.app` URL; runtime `GRAPHQL_URL` is not set.
+*   Backend currently uses `VOTES_STORE=firestore`.
 
 #### **6.1. Architecture**
 
@@ -272,12 +281,13 @@ The application is deployed as two separate services on Google Cloud Run, provid
 
 #### **6.2. Build & Deploy Process**
 
-The deployment process requires building and pushing container images to an artifact registry (like Google Container Registry) and then deploying them to Cloud Run.
+The deployment process requires building and pushing container images to Artifact Registry, then deploying them to Cloud Run.
 
 **Prerequisites:**
 
 *   `gcloud` CLI installed and authenticated.
 *   A GCP project with Cloud Build, Cloud Run, and Artifact Registry APIs enabled.
+*   An Artifact Registry Docker repo in your region (create with `gcloud artifacts repositories create [AR_REPO] --repository-format=docker --location [REGION]`).
 
 **Step 1: Prepare Data Warehouse (Mandatory)**
 
@@ -300,17 +310,17 @@ The backend is deployed from the root of the repository. A `.gcloudignore` file 
 
 ```bash
 # Build the container image using Cloud Build
-gcloud builds submit --tag gcr.io/[PROJECT_ID]/citizen-budget-api --file services/api/Dockerfile .
+gcloud builds submit --tag [REGION]-docker.pkg.dev/[PROJECT_ID]/[AR_REPO]/citizen-budget-api --file services/api/Dockerfile .
 
 # Deploy the image to Cloud Run
 gcloud run deploy citizen-budget-api \
-  --image gcr.io/[PROJECT_ID]/citizen-budget-api \
+  --image [REGION]-docker.pkg.dev/[PROJECT_ID]/[AR_REPO]/citizen-budget-api \
   --project [PROJECT_ID] \
-  --region europe-west1 \
+  --region [REGION] \
   --allow-unauthenticated \
-  --port 8000
+  --port 8080
 ```
-*Replace `[PROJECT_ID]` with your GCP project ID.*
+*Replace `[PROJECT_ID]`, `[REGION]`, and `[AR_REPO]` with your GCP settings.*
 
 **Step 3: Build & Deploy Frontend**
 
@@ -319,19 +329,21 @@ The frontend deployment requires the backend's URL to be injected as an environm
 ```bash
 # Build the container image from the 'frontend' directory
 cd frontend
-gcloud builds submit --tag gcr.io/[PROJECT_ID]/citizen-budget-frontend .
+gcloud builds submit --tag [REGION]-docker.pkg.dev/[PROJECT_ID]/[AR_REPO]/citizen-budget-frontend .
 cd ..
 
 # Deploy the image to Cloud Run, setting the API URL
 gcloud run deploy citizen-budget-frontend \
-  --image gcr.io/[PROJECT_ID]/citizen-budget-frontend \
+  --image [REGION]-docker.pkg.dev/[PROJECT_ID]/[AR_REPO]/citizen-budget-frontend \
   --project [PROJECT_ID] \
-  --region europe-west1 \
+  --region [REGION] \
   --allow-unauthenticated \
-  --port 3000 \
+  --port 8080 \
   --set-env-vars GRAPHQL_URL=[BACKEND_URL]/graphql
 ```
-*Replace `[PROJECT_ID]` and `[BACKEND_URL]` with the appropriate values.*
+*Replace `[PROJECT_ID]`, `[REGION]`, `[AR_REPO]`, and `[BACKEND_URL]` with the appropriate values.*
+
+Note: The frontend proxy resolves the backend URL in this order: `GRAPHQL_URL` (runtime) -> `NEXT_PUBLIC_GRAPHQL_URL` (build-time or runtime) -> `http://localhost:8000/graphql` (default). Production currently records `NEXT_PUBLIC_GRAPHQL_URL` at build time.
 
 #### **6.3. Votes Storage on Cloud SQL (Postgres)**
 
@@ -350,13 +362,89 @@ VOTES_DB_DSN=postgresql://[USER]:[PASSWORD]@/[DBNAME]?host=/cloudsql/[PROJECT]:[
 
 ```bash
 gcloud run deploy citizen-budget-api \
-  --image gcr.io/[PROJECT_ID]/citizen-budget-api \
+  --image [REGION]-docker.pkg.dev/[PROJECT_ID]/[AR_REPO]/citizen-budget-api \
   --project [PROJECT_ID] \
-  --region europe-west1 \
+  --region [REGION] \
   --allow-unauthenticated \
-  --port 8000 \
+  --port 8080 \
   --add-cloudsql-instances [PROJECT]:[REGION]:[INSTANCE] \
   --set-env-vars VOTES_STORE=postgres,VOTES_DB_DSN="postgresql://[USER]:[PASSWORD]@/[DBNAME]?host=/cloudsql/[PROJECT]:[REGION]:[INSTANCE]"
 ```
 
 The API applies schema migrations automatically on startup when `VOTES_STORE=postgres` is enabled.
+
+#### **6.4. Custom Domains (Cloud Run)**
+
+Cloud Run can map custom domains to your services and provision TLS automatically.
+
+**Recommended flow (gcloud CLI):**
+
+If you have not installed the beta commands yet, run `gcloud components install beta`.
+
+1. Pick a domain and DNS provider. If DNS is not hosted on Google, you may need to verify domain ownership by adding a TXT record (Cloud Identity verification).
+2. Create mappings for the frontend and backend:
+
+```bash
+# Frontend (root domain)
+gcloud beta run domain-mappings create \
+  --service citizen-budget-frontend \
+  --domain [DOMAIN] \
+  --project [PROJECT_ID] \
+  --region [REGION]
+
+# Backend (api subdomain)
+gcloud beta run domain-mappings create \
+  --service citizen-budget-api \
+  --domain api.[DOMAIN] \
+  --project [PROJECT_ID] \
+  --region [REGION]
+```
+
+3. Fetch DNS records to add at your provider:
+
+```bash
+gcloud beta run domain-mappings describe \
+  --domain [DOMAIN] \
+  --project [PROJECT_ID] \
+  --region [REGION] \
+  --format="yaml(status.resourceRecords)"
+```
+
+4. Add the returned records (A/AAAA or CNAME, depending on the domain) in your DNS provider and wait for propagation.
+5. Verify status:
+
+```bash
+gcloud beta run domain-mappings list \
+  --project [PROJECT_ID] \
+  --region [REGION]
+```
+
+**Apex vs subdomain:** The apex/root domain is `[DOMAIN]` (for example, `budget-ouvert.fr`). Subdomains are `www.[DOMAIN]` or `api.[DOMAIN]`. Cloud Run returns the exact DNS records you must add; apex records are typically A/AAAA, while subdomains are typically CNAME. If your DNS provider does not support apex aliases, use `www.[DOMAIN]` for the frontend and redirect the apex to it.
+
+6. Point the frontend to the custom backend domain (choose one):
+   - Set `GRAPHQL_URL=https://api.[DOMAIN]/graphql` at deploy time.
+   - Or set `NEXT_PUBLIC_GRAPHQL_URL=https://api.[DOMAIN]/graphql` at build time.
+
+**Cheap and reliable registrar examples (verify current pricing):**
+*   Cloudflare Registrar (at-cost, requires Cloudflare DNS).
+*   Porkbun (low pricing, solid DNS).
+*   Namecheap (frequent promos; watch renewal pricing).
+*   OVHcloud (often competitive for .fr domains).
+
+**Provider-specific DNS hints (generic examples):**
+*   Cloudflare: create the exact A/AAAA/CNAME values shown by `gcloud beta run domain-mappings describe`. Set Proxy to DNS-only during validation.
+*   Porkbun: add the returned A/AAAA/CNAME records under DNS; apex records are supported directly.
+*   OVHcloud: add the returned A/AAAA/CNAME records in the DNS zone; if asked, choose an A record for apex and CNAME for subdomains.
+*   Namecheap: add records in Advanced DNS. If apex aliasing is unsupported, map `www` and forward the root to `https://www.[DOMAIN]`.
+
+**Domain name ideas (availability checked via RDAP on 2026-01-01; confirm at registrar):**
+*   budget-citoyen.fr — available
+*   budget-collectif.fr — available
+*   budget-ouvert.fr — available
+*   budget-public.fr — available
+*   budget-transparence.fr — available
+*   budget-partage.fr — available
+*   labobudget.fr — available
+*   labobudgetcitoyen.fr — available
+*   budgetcitoyen.org — available
+*   budgetcitoyen.eu — available
