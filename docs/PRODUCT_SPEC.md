@@ -1,18 +1,20 @@
 # Citizen Budget Lab — Product Specification
 
-## 1. Vision & Purpose
+## 1. Context: The 2026 Impasse
 
-**Problem:** Public debate on budgets is polarized and opaque. Citizens rarely see who spends what, for what outcomes, and what trade‑offs reforms imply.
+**Situation:** On January 1st, 2026, France entered a "Special Law" regime following the rejection of the 2026 Budget Bill. The State operates on a provisional basis, but the structural deficit has drifted to **5.0% of GDP** (approx. €149bn).
 
-**Solution:** Citizen Budget Lab is an open, neutral, and interactive web app to understand how public money is used in France and to experiment with building a balanced, realistic budget. It aggregates transparent, sourced data; lets users adjust spending and taxes; and shows the accounting, rule‑of‑thumb macro, and (V1) distributional impacts with clear assumptions and uncertainty.
+**Vision:** Citizen Budget Lab opens a "Session Extraordinaire Citoyenne". In the absence of a parliamentary majority, it empowers citizens to take the seat of the legislator, explore the accounts, and propose a credible path back to sustainability (or assume the deficit).
 
-**Impact:** Improve understanding and trust by making trade‑offs tangible and sourced. Enable better media coverage and civic education; give policymakers a neutral, auditable sandbox.
+**Purpose:** De-polarize the debate by making trade-offs tangible. Show that "balancing the books" requires either massive savings or new revenues, and that every choice has a social or economic cost.
+
+**Method:** It aggregates transparent, sourced data; lets users adjust spending and taxes; and shows the accounting, rule‑of‑thumb macro, and (V1) distributional impacts with clear assumptions and uncertainty.
 
 ## 2. Key Features & User Journeys
 
 ### 2.1. Explore €1
 
--   **Job:** Understand where public money goes.
+-   **Job:** Understand where public money goes (Total: €492bn).
 -   **Features:** Navigate spending by administrative lens (missions/programmes) and functional lens (COFOG); always with totals, shares, trends, and sources. Includes interactive sunburst and treemap visualizations, plus data tables.
 
 ### 2.2. Who Gets Paid? (Procurement)
@@ -29,7 +31,7 @@ This is the core interactive feature of the application, allowing users to build
 *   **Mass:** A high-level, functional budget category (e.g., Health, Defense), corresponding to COFOG classifications.
 *   **Piece:** A granular, user-friendly budget item (e.g., "Teachers and schools").
 *   **Levers:** Concrete, named policy reforms with fixed, pre-estimated budgetary impacts (e.g., "Repeal 2023 Pension Reform").
-*   **Resolution Meter:** A key UX element that shows how much of a user's high-level budget target (the "what") has been explained by concrete policy levers (the "how").
+*   **Macro Trajectory:** A dynamic chart showing the impact of reforms on the Deficit (% GDP) and Real Growth over 4 years (2026–2029).
 
 #### User Journeys
 
@@ -42,8 +44,8 @@ This is the core interactive feature of the application, allowing users to build
     *   **Left Panel (Spending):** Lists spending categories (masses). Clicking a category expands a detailed view with underlying pieces and relevant policy reforms.
     *   **Center Panel (Canvas):** An interactive treemap visualizes the budget masses. Below are charts showing the scenario's impact on the deficit, debt, and economic growth.
     *   **Right Panel (Revenues):** Lists revenue categories with controls for adjustments.
--   **Baseline Transparency Update (Dec 2025):** The "Current deficit" stat card and the deficit chart now display the absolute baseline deficit (normalized to ≈ €148.9 bn in 2026 based on the adopted budget) with deltas layered on top. Users no longer see a zeroed starting point when no reforms are applied; instead they get an immediate sense of the Treasury’s blank-page challenge.
--   **Top HUD Bar:** A persistent header provides global feedback: the Resolution Meter, EU compliance lights, year selector, and scenario controls (Run, Reset, Undo/Redo).
+-   **Baseline Transparency:** The "Current deficit" stat card and the deficit chart display the absolute baseline deficit (normalized to **5.0% of GDP** in 2026) with deltas layered on top. Users start with the "drift" scenario and must actively reform to change the trajectory.
+-   **Top HUD Bar:** A persistent header provides global feedback: the Macro Trajectory charts, EU compliance lights, year selector, and scenario controls (Run, Reset, Undo/Redo).
 -   **Lens Switcher:** A toggle in the center panel allows users to re-color the treemap visualization based on different perspectives (e.g., by budget mass, by reform family).
 
 ## 3. Scope & Roadmap
@@ -52,5 +54,6 @@ This is the core interactive feature of the application, allowing users to build
 -   **MVP+:** LEGO Budget Builder (the core of the `/build` page), beneficiary lens, permalinks/exports.
 -   **V1:** Distributional analysis (OpenFisca), EU comparisons, classroom mode.
 -   **V2:** Macro priors with uncertainty bands, local finance module.
+-   **Future:** Integration with precise microsimulation engines (e.g., OpenFisca for full tax-benefit system) and advanced macro-econometric models for rigorous impact assessment.
 
 For a detailed, task-oriented breakdown, see `BACKLOG.md`.

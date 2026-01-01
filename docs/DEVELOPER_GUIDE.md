@@ -131,6 +131,32 @@ The API includes two caching layers:
 -   **API Integration:** The FastAPI/GraphQL layer automatically prefers dbt models when `WAREHOUSE_ENABLED=1` (the default) and the DuckDB file (`data/warehouse.duckdb`) exists.
     -   **Macro baselines:** Staging views `stg_macro_gdp` and `stg_baseline_def_debt` expose GDP and baseline deficit/debt series based on warmed CSVs. Derived views `dim_macro_gdp` and `fct_baseline_deficit_debt` are provided for convenience. The Python provider `services/api/baselines.py` reads from these when the warehouse is enabled, otherwise it falls back to CSV.
 
+#### **2.3. Policy Lever Catalog (YAML)**
+
+The policy reform catalog lives in a repo-managed YAML file for readability and easy edits.
+
+*   **Source file:** `data/policy_levers.yaml`
+*   **Schema:** `schemas/policy_levers.schema.json`
+*   **Override path (optional):** set `POLICY_CATALOG_PATH=/path/to/policy_levers.yaml`
+
+**Validate from CLI:**
+
+```bash
+python tools/validate_policy_catalog.py
+```
+
+**Admin editor (local-only):**
+
+1. Start the API and frontend with admin mode enabled:
+   ```bash
+   POLICY_CATALOG_ADMIN_ENABLED=1 uvicorn services.api.app:app --reload
+   POLICY_CATALOG_ADMIN_ENABLED=1 npm run dev --prefix frontend
+   ```
+2. Open `http://localhost:3000/admin/policy-catalog`.
+3. Edit YAML, click **Validate**, then **Download** and replace `data/policy_levers.yaml` before committing.
+
+Optional: set `POLICY_CATALOG_ADMIN_TOKEN=...` in both services and the UI will send it as `x-admin-token`.
+
 ---
 
 ### **3. GraphQL & Schema Management**
@@ -395,12 +421,18 @@ python tools/build_snapshot.py --year 2026
 
 This writes `data/cache/build_page_2026.json` (and a `.meta.json` sidecar) which is baked into the API image at deploy time.
 
-#### **6.3. Votes Storage on Cloud SQL (Postgres)**
+#### **6.3. Votes & Scenarios Persistence (Cloud SQL)**
 
-To persist voter preferences in Cloud SQL, configure the API to use the Postgres backend and attach the instance to Cloud Run.
+Both voter preferences (who voted when) and scenario definitions (what they chose) are persisted in a PostgreSQL database (Cloud SQL). This ensures that user data survives container restarts and enables analytics on budget choices.
+
+**Database Structure:**
+*   `votes` table: Stores vote timestamp, scenario_id, and user metadata.
+*   `scenarios` table: Stores the canonical DSL (JSON) for each unique budget configuration.
+
+**Setup:**
 
 1. **Create a Postgres instance and database** in Cloud SQL, then create a user/password.
-2. **Set the vote store backend** to Postgres:
+2. **Set the store backend** to Postgres:
 
 ```bash
 VOTES_STORE=postgres
