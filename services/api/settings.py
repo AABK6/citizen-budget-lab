@@ -59,6 +59,9 @@ class Settings:
     # Macro kernel configuration (V2 prep): override IRF parameters JSON path
     macro_irfs_path: str | None = os.getenv("MACRO_IRFS_PATH")
 
+    # Admin-only policy catalog editor (optional token)
+    policy_catalog_admin_token: str | None = os.getenv("POLICY_CATALOG_ADMIN_TOKEN")
+
     # Local balance tolerance (EUR) when checking compliance for subsectors
     local_balance_tolerance_eur: float = float(os.getenv("LOCAL_BAL_TOLERANCE_EUR", "0"))
 

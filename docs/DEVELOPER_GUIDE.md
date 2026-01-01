@@ -147,15 +147,15 @@ python tools/validate_policy_catalog.py
 
 **Admin editor (local-only):**
 
-1. Start the API and frontend with admin mode enabled:
+1. Start the API and frontend:
    ```bash
-   POLICY_CATALOG_ADMIN_ENABLED=1 uvicorn services.api.app:app --reload
-   POLICY_CATALOG_ADMIN_ENABLED=1 npm run dev --prefix frontend
+   uvicorn services.api.app:app --reload
+   npm run dev --prefix frontend
    ```
 2. Open `http://localhost:3000/admin/policy-catalog`.
-3. Edit YAML, click **Validate**, then **Download** and replace `data/policy_levers.yaml` before committing.
+3. Edit values in the table, click **Validate**, then **Save** to write `data/policy_levers.yaml` (a timestamped `.bak` is created).
 
-Optional: set `POLICY_CATALOG_ADMIN_TOKEN=...` in both services and the UI will send it as `x-admin-token`.
+Optional: set `POLICY_CATALOG_ADMIN_TOKEN=...` in the API and frontend to require an `x-admin-token` header.
 
 ---
 

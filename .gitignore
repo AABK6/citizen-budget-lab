@@ -26,6 +26,7 @@ data/cache/*
 !data/cache/build_page_2026.meta.json
 data/warehouse.duckdb
 data/warehouse.duckdb.wal
+data/policy_levers.yaml.*.bak
 
 # Node/Next.js
 **/node_modules/

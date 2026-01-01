@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Citizen Budget Lab Policy Lever Catalog",
+  "type": "array",
+  "minItems": 1,
+  "items": { "$ref": "#/$defs/lever" },
+  "$defs": {
+    "lever": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "family",
+        "label",
+        "description",
+        "fixed_impact_eur",
+        "mass_mapping",
+        "feasibility",
+        "conflicts_with",
+        "sources",
+        "params_schema"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "family": {
+          "type": "string",
+          "enum": [
+            "PENSIONS",
+            "TAXES",
+            "TAX_EXPENDITURES",
+            "HEALTH",
+            "DEFENSE",
+            "STAFFING",
+            "SUBSIDIES",
+            "CLIMATE",
+            "SOCIAL_SECURITY",
+            "PROCUREMENT",
+            "OPERATIONS",
+            "OTHER"
+          ]
+        },
+        "label": { "type": "string", "minLength": 1 },
+        "description": { "type": "string", "minLength": 1 },
+        "short_label": { "type": "string" },
+        "fixed_impact_eur": { "type": "number" },
+        "impact_schedule_eur": {
+          "type": "array",
+          "items": { "type": "number" }
+        },
+        "budget_side": {
+          "type": "string",
+          "enum": ["SPENDING", "REVENUE", "BOTH"]
+        },
+        "dimension": { "type": "string" },
+        "major_amendment": { "type": "boolean" },
+        "popularity": { "type": "number" },
+        "active": { "type": "boolean" },
+        "mass_mapping": {
+          "type": "object",
+          "additionalProperties": { "type": "number" }
+        },
+        "feasibility": { "$ref": "#/$defs/feasibility" },
+        "conflicts_with": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "sources": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "params_schema": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "impact": { "$ref": "#/$defs/impact" }
+      }
+    },
+    "feasibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["law", "adminLagMonths"],
+      "properties": {
+        "law": { "type": "boolean" },
+        "adminLagMonths": { "type": "number" },
+        "notes": { "type": "string" }
+      }
+    },
+    "impact": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "householdsImpacted": { "type": "integer" },
+        "decile1ImpactEur": { "type": "number" },
+        "decile10ImpactEur": { "type": "number" },
+        "gdpImpactPct": { "type": "number" },
+        "jobsImpactCount": { "type": "integer" }
+      }
+    }
+  }
+}

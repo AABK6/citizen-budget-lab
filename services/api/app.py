@@ -93,6 +93,62 @@ def create_app() -> FastAPI:
         response.headers["Cache-Control"] = "public, max-age=300"
         return response
 
+    def _policy_admin_allowed(req: Request) -> bool:
+        token = settings.policy_catalog_admin_token
+        if token and req.headers.get("x-admin-token") != token:
+            return False
+        return True
+
+    @app.get("/admin/policy-catalog")
+    def policy_catalog_yaml(request: Request) -> Response:
+        if not _policy_admin_allowed(request):
+            return Response(status_code=403)
+        from . import policy_catalog as pol
+
+        try:
+            payload = pol.read_policy_catalog_text()
+        except FileNotFoundError:
+            return JSONResponse(status_code=404, content={"error": "policy catalog not found"})
+        return Response(content=payload, media_type="text/yaml")
+
+    @app.post("/admin/policy-catalog/validate")
+    async def policy_catalog_validate(request: Request) -> Response:
+        if not _policy_admin_allowed(request):
+            return Response(status_code=403)
+        try:
+            payload = await request.json()
+        except Exception:
+            return JSONResponse(status_code=400, content={"ok": False, "errors": ["Invalid JSON body"]})
+        yaml_text = payload.get("yaml") if isinstance(payload, dict) else None
+        if not isinstance(yaml_text, str):
+            return JSONResponse(status_code=400, content={"ok": False, "errors": ["Missing 'yaml' string"]})
+        from . import policy_catalog as pol
+
+        errors = pol.validate_policy_catalog_text(yaml_text)
+        return JSONResponse(content={"ok": len(errors) == 0, "errors": errors})
+
+    @app.put("/admin/policy-catalog")
+    async def policy_catalog_save(request: Request) -> Response:
+        if not _policy_admin_allowed(request):
+            return Response(status_code=403)
+        try:
+            payload = await request.json()
+        except Exception:
+            return JSONResponse(status_code=400, content={"ok": False, "errors": ["Invalid JSON body"]})
+        yaml_text = payload.get("yaml") if isinstance(payload, dict) else None
+        if not isinstance(yaml_text, str):
+            return JSONResponse(status_code=400, content={"ok": False, "errors": ["Missing 'yaml' string"]})
+        from . import policy_catalog as pol
+
+        errors = pol.validate_policy_catalog_text(yaml_text)
+        if errors:
+            return JSONResponse(status_code=400, content={"ok": False, "errors": errors})
+        try:
+            info = pol.write_policy_catalog_text(yaml_text)
+        except Exception as exc:
+            return JSONResponse(status_code=500, content={"ok": False, "errors": [str(exc)]})
+        return JSONResponse(content={"ok": True, **info})
+
     @app.get("/health/full")
     def health_full():
         # Warehouse status + row counts + dbt version if available

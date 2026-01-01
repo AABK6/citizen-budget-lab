@@ -1,0 +1,2236 @@
+- id: amend_ifi_to_fortune_improductive
+  family: TAXES
+  label: Remplacer l'IFI par un impôt sur la fortune improductive
+  description: >-
+    Suppression de l'Impôt sur la fortune immobilière (IFI) et création d'un nouvel impôt visant le patrimoine non
+    productif (biens somptuaires, actifs non investis)[7].
+  fixed_impact_eur: 100000000
+  major_amendment: true
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+  conflicts_with: []
+  sources:
+    - Assemblée nat. 2025, amendements PLF[7]
+  params_schema: {}
+- id: amend_ir_bracket_indexation_1pct
+  family: TAXES
+  label: Indexation limitée du barème de l'IR à +1,1%
+  description: >-
+    Revalorisation des tranches du barème de l'impôt sur le revenu de seulement +1,1% pour 2026 (soit en deçà de
+    l'inflation prévue)[8].
+  fixed_impact_eur: 2500000000
+  major_amendment: true
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+  conflicts_with: []
+  sources:
+    - Assemblée nat., PLF 2026[8]
+  params_schema: {}
+- id: amend_alimony_tax_exemption
+  family: TAXES
+  label: Défiscalisation des pensions alimentaires (plafond)
+  description: >-
+    Exonérer d'impôt sur le revenu les pensions alimentaires perçues, dans la limite de 4 000 € par enfant (et 12 000 €
+    par an au total)[8].
+  fixed_impact_eur: 470000000
+  major_amendment: true
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+  conflicts_with: []
+  sources:
+    - Assemblée nat., PLF 2026[9]
+  params_schema: {}
+- id: amend_home_service_credit_cap
+  family: TAXES
+  label: Abaissement du plafond du crédit d'impôt services à la personne
+  description: >-
+    Réduire le plafond des dépenses ouvrant droit au crédit d'impôt pour l'emploi à domicile de 12 000 € à 10 000 € par
+    an, limitant l'avantage fiscal accordé[10].
+  fixed_impact_eur: 110000000
+  major_amendment: true
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+  conflicts_with: []
+  sources:
+    - Assemblée nat., PLF 2026[10]
+  params_schema: {}
+- id: amend_dependence_reduction_to_credit
+  family: TAXES
+  label: Transformation de la réduction d'impôt dépendance en crédit d'impôt
+  description: >-
+    Convertir la réduction d'impôt pour dépenses liées à la dépendance (personnes âgées dépendantes) en un crédit
+    d'impôt remboursable, afin d'en faire bénéficier même les ménages non-imposables[11].
+  fixed_impact_eur: -272000000
+  major_amendment: true
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+  conflicts_with: []
+  sources:
+    - Assemblée nat., PLF 2026[11]
+  params_schema: {}
+- id: amend_extend_tips_exemption
+  family: TAXES
+  label: Prorogation de l'exonération fiscale des pourboires
+  description: >-
+    Prolonger jusqu'à fin 2028 l'exonération d'impôt sur le revenu des pourboires perçus par les salariés (notamment
+    dans la restauration), mesure initialement temporaire[12].
+  fixed_impact_eur: -30000000
+  major_amendment: true
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+  conflicts_with: []
+  sources:
+    - Assemblée nat., PLF 2026[12]
+  params_schema: {}
+- id: amend_high_income_surtax_permanent
+  family: TAXES
+  label: Pérennisation de la contribution exceptionnelle hauts revenus
+  description: >-
+    Maintenir au-delà de 2026 la contribution fiscale additionnelle sur les très hauts revenus (instaurée initialement
+    en 2012), au lieu de la laisser expirer fin 2025[13].
+  fixed_impact_eur: 2000000000
+  major_amendment: true
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+  conflicts_with: []
+  sources:
+    - Assemblée nat., PLF 2026[13]
+  params_schema: {}
+- id: amend_return_exit_tax
+  family: TAXES
+  label: Rétablissement de l'Exit Tax (version antérieure à 2019)
+  description: >-
+    Réintroduire l'« Exit Tax » sur les plus-values latentes en cas d'expatriation, avec le régime antérieur à 2019
+    (imposition annulée seulement après 15 ans de résidence fiscale à l'étranger, contre 2 ans aujourd'hui)[14].
+  fixed_impact_eur: 70000000
+  major_amendment: true
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+  conflicts_with: []
+  sources:
+    - Assemblée nat., amend. PLF[14]
+  params_schema: {}
+- id: amend_one_time_donation_exemption
+  family: TAXES
+  label: Don familial exceptionnel exonéré jusqu'à 152 500 € en 2026
+  description: >-
+    Instaurer une exonération unique de droits de donation à hauteur de 152 500 € pour les dons effectués en 2026 au
+    profit d'un descendant (enfant, petit-enfant) ou conjoint[15].
+  fixed_impact_eur: -300000000
+  major_amendment: true
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+  conflicts_with: []
+  sources:
+    - Assemblée nat., PLF 2026[15]
+  params_schema: {}
+- id: amend_ald_sickleave_exempt_ir
+  family: TAXES
+  label: Maintien de l'exonération fiscale des IJ maladie (ALD)
+  description: >-
+    Conserver l'exonération d'impôt sur le revenu pour les indemnités journalières versées lors d'un arrêt maladie de
+    longue durée (affection longue durée), alors qu'une fiscalisation était envisagée[16].
+  fixed_impact_eur: -150000000
+  major_amendment: true
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+  conflicts_with: []
+  sources:
+    - Assemblée nat., PLF 2026[17]
+  params_schema: {}
+- id: amend_school_fees_tax_reduction
+  family: TAXES
+  label: Maintien de la réduction d'impôt pour frais de scolarité
+  description: >-
+    Préserver l'avantage fiscal accordé aux familles au titre des frais de scolarité des enfants (collège, lycée,
+    supérieur), alors que sa suppression était initialement prévue[17].
+  fixed_impact_eur: -250000000
+  major_amendment: true
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+  conflicts_with: []
+  sources:
+    - Assemblée nat., PLF 2026[17]
+  params_schema: {}
+- id: amend_limit_holding_tax_to_luxury
+  family: TAXES
+  label: Limitation de la taxe sur les holdings patrimoniales aux biens somptuaires
+  description: >-
+    Restreindre l'assiette de la nouvelle taxe sur les holdings patrimoniales (sociétés non opérationnelles détenant du
+    patrimoine) aux seuls actifs « somptuaires » (de luxe), excluant ainsi les autres biens de cette taxation[18].
+  fixed_impact_eur: 100000000
+  major_amendment: true
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+  conflicts_with: []
+  sources:
+    - Assemblée nat., PLF 2026[18]
+  params_schema: {}
+- id: amend_raise_big_corp_profit_contrib
+  family: TAXES
+  label: Hausse de la contribution exceptionnelle sur les bénéfices des grandes entreprises
+  description: >-
+    Augmenter le taux et/ou la durée de la contribution exceptionnelle appliquée aux bénéfices des grandes entreprises,
+    afin de solliciter davantage les grands groupes qui ont réalisé des profits importants[19].
+  fixed_impact_eur: 6000000000
+  major_amendment: true
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+  conflicts_with: []
+  sources:
+    - Assemblée nat., PLF 2026[19]
+  params_schema: {}
+- id: amend_universal_tax_multinationals
+  family: TAXES
+  label: Instauration d'un impôt universel sur les multinationales
+  description: >-
+    Mettre en place un mécanisme d'imposition universelle visant les multinationales, pour s'assurer qu'elles
+    contribuent fiscalement en France sur leurs bénéfices mondiaux (en complément du dispositif international d'impôt
+    minimum)[20].
+  fixed_impact_eur: 1500000000
+  major_amendment: true
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+  conflicts_with: []
+  sources:
+    - Assemblée nat., PLF 2026[20]
+  params_schema: {}
+- id: amend_double_gafam_tax
+  family: TAXES
+  label: Taxe GAFAM renforcée (de 3 % à 15 %)
+  description: >-
+    Porter de 3 % à 15 % le taux de la taxe sur les services numériques, en relevant le seuil d'application à 2 Md€ de
+    chiffre d'affaires mondial pour concentrer la mesure sur les très grands groupes[21].
+  fixed_impact_eur: 2400000000
+  major_amendment: true
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+  conflicts_with: []
+  sources:
+    - Assemblée nat., PLF 2026[21]
+  params_schema: {}
+- id: amend_lower_global_min_tax_threshold
+  family: TAXES
+  label: Abaissement du seuil d'application du taux d'IS minimum mondial à 250 M€ de CA
+  description: >-
+    Abaisser de 750 millions à 250 millions d'euros de chiffre d'affaires le seuil à partir duquel s'applique le taux
+    minimum mondial de 15 % sur les bénéfices, élargissant ainsi le champ des entreprises concernées (notamment les
+    ETI).
+  fixed_impact_eur: 1200000000
+  major_amendment: true
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+  conflicts_with: []
+  sources:
+    - Observatoire de la Fiscalité, simulations OCDE
+  params_schema: {}
+- id: amend_raise_buyback_tax
+  family: TAXES
+  label: Rehaussement de la taxe sur les rachats d'actions de 8 % à 33 %
+  description: >-
+    Augmenter drastiquement le taux de la taxe sur les rachats d'actions (ou « buybacks ») des entreprises, en le
+    faisant passer de 8 % à 33 %, afin de décourager ces pratiques et de générer des recettes fiscales
+    supplémentaires[24].
+  fixed_impact_eur: 2000000000
+  major_amendment: true
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+  conflicts_with: []
+  sources:
+    - Assemblée nat., PLF 2026[24]
+  params_schema: {}
+- id: amend_windfall_dividend_tax
+  family: TAXES
+  label: Contribution sur les dividendes exceptionnels des grandes entreprises (20 % à 33 %)
+  description: >-
+    Instituer une contribution fiscale spécifique sur les dividendes exceptionnels versés par les grandes entreprises, à
+    un taux situé entre 20 % et 33 %, pour faire contribuer les « super-dividendes » au budget public[25].
+  fixed_impact_eur: 2000000000
+  major_amendment: true
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+  conflicts_with: []
+  sources:
+    - Assemblée nat., PLF 2026[25]
+  params_schema: {}
+- id: amend_clawback_cir_relocation
+  family: TAXES
+  label: Remboursement du CIR en cas de délocalisation sous 3 ans
+  description: >-
+    Exiger qu'une entreprise qui a bénéficié du Crédit d'impôt recherche (CIR) rembourse les trois dernières années de
+    crédit perçues si elle délocalise ses activités de R&D hors de France, afin de décourager les délocalisations après
+    usage du CIR[26].
+  fixed_impact_eur: 100000000
+  major_amendment: true
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+  conflicts_with: []
+  sources:
+    - Assemblée nat., PLF 2026[26]
+  params_schema: {}
+- id: amend_sme_cit_threshold_100k
+  family: TAXES
+  label: Relèvement du seuil d'accès au taux réduit d'IS (15 %) de 42 500 à 100 000 €
+  description: >-
+    Augmenter le plafond de bénéfice taxable au taux réduit de 15 % d'impôt sur les sociétés pour les PME, en le faisant
+    passer de 42 500 € à 100 000 € de profit, afin d'élargir le nombre de petites entreprises bénéficiant du taux d'IS
+    réduit[27].
+  fixed_impact_eur: -200000000
+  major_amendment: true
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+  conflicts_with: []
+  sources:
+    - Assemblée nat., PLF 2026[27]
+  params_schema: {}
+- id: amend_tighten_pacte_dutreil
+  family: TAXES
+  label: Recentrage du pacte Dutreil (biens professionnels uniquement, durée 6 ans)
+  description: >-
+    Restreindre le dispositif d'exonération partielle des droits de succession/donation « pacte Dutreil » aux seuls
+    biens professionnels (entreprises effectivement actives), et allonger la durée d'engagement de conservation des
+    titres de 4 à 6 ans[28].
+  fixed_impact_eur: 2000000000
+  major_amendment: true
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+  conflicts_with: []
+  sources:
+    - Assemblée nat., PLF 2026[28]
+  params_schema: {}
+- id: amend_ondam_3pct_increase
+  family: SOCIAL_SECURITY
+  label: Hausse de l'Ondam 2026 portée à +3 % au lieu de +1,6 %
+  description: >-
+    Augmenter l'objectif national de dépenses d'assurance maladie (Ondam) pour 2026 à +3 % (au lieu de +1,6 %
+    initialement prévu), ce qui relève le plafond de dépenses de santé à env. 273,9 Md€[1].
+  fixed_impact_eur: -3000000000
+  major_amendment: true
+  mass_mapping:
+    '07': 1
+  feasibility:
+    law: true
+    adminLagMonths: 6
+  conflicts_with: []
+  sources:
+    - PLFSS 2026 adopté[1]
+  params_schema: {}
+- id: amend_suspend_retirement_reform
+  family: SOCIAL_SECURITY
+  label: Suspension de la réforme des retraites (report âge 64 ans suspendu)
+  description: >-
+    Suspendre jusqu'en janvier 2028 la poursuite de la réforme des retraites de 2023 : le relèvement progressif de l'âge
+    légal (vers 64 ans) et de la durée de cotisation sont mis en pause. Par exemple, la génération 1964 ne verra pas son
+    âge légal passer à 64 ans mais pourra partir à 62 ans et 9 mois[29].
+  fixed_impact_eur: -500000000
+  impact_schedule_eur:
+    - -500000000
+    - -2000000000
+    - -4000000000
+    - -7000000000
+    - -10000000000
+  major_amendment: true
+  mass_mapping:
+    '10': 1
+  feasibility:
+    law: true
+    adminLagMonths: 6
+  conflicts_with: []
+  sources:
+    - PLFSS 2026 adopté[29]
+  params_schema: {}
+- id: amend_new_birth_leave
+  family: SOCIAL_SECURITY
+  label: Création d'un congé de naissance supplémentaire (1 à 2 mois)
+  description: >-
+    Instaurer un nouveau congé de naissance, s'ajoutant aux congés maternité et paternité existants, d'une durée au
+    choix du salarié de un mois (à 70 % du salaire) ou deux mois (à 60 %). Ce congé pourra être pris en deux fois et
+    vise à renforcer le soutien à la parentalité[30].
+  fixed_impact_eur: -300000000
+  major_amendment: true
+  mass_mapping:
+    '10': 1
+  feasibility:
+    law: true
+    adminLagMonths: 6
+  conflicts_with: []
+  sources:
+    - PLFSS 2026 adopté[30]
+  params_schema: {}
+- id: amend_limit_sick_leave_duration
+  family: SOCIAL_SECURITY
+  label: Encadrement des Indemnités Journalières (durée et plafond)
+  description: >-
+    Limiter la durée des arrêts de travail (max 360 jours) et abaisser le plafond de prise en charge des IJ de 1,8 à 1,4
+    SMIC, pour freiner la dynamique des dépenses de santé.
+  fixed_impact_eur: 900000000
+  major_amendment: true
+  mass_mapping:
+    '07': 1
+  feasibility:
+    law: true
+    adminLagMonths: 6
+  conflicts_with: []
+  sources:
+    - PLFSS 2026, Rapport Commission Affaires Sociales
+  params_schema: {}
+- id: amend_no_benefit_index_freeze
+  family: SOCIAL_SECURITY
+  label: Annulation du gel 2024-2025 des pensions et minima sociaux
+  description: >-
+    Supprimer l'article prévoyant une « année blanche » sans revalorisation des pensions de retraite et prestations
+    sociales en avril 2026. Les retraites et minima sociaux seront finalement indexés sur l'inflation comme d'habitude,
+    évitant ~3 Mds€ d'économies initialement envisagées[2].
+  fixed_impact_eur: -5000000000
+  major_amendment: true
+  mass_mapping:
+    '10': 1
+  feasibility:
+    law: true
+    adminLagMonths: 6
+  conflicts_with: []
+  sources:
+    - PLFSS 2026, AN[2]
+  params_schema: {}
+- id: amend_no_new_apprentice_contrib
+  family: SOCIAL_SECURITY
+  label: Abandon de la fin d'exonération de cotisations pour les apprentis
+  description: >-
+    Annuler la mesure envisagée de suppression de l'exonération de cotisations sociales pour les nouveaux contrats
+    d'apprentissage. Autrement dit, les employeurs d'apprentis continueront à bénéficier de l'allègement actuel, aucune
+    cotisation nouvelle ne sera créée[2].
+  fixed_impact_eur: -1000000000
+  budget_side: REVENUE
+  major_amendment: true
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+  conflicts_with: []
+  sources:
+    - PLFSS 2026, AN[2]
+  params_schema: {}
+- id: amend_no_meal_voucher_tax
+  family: SOCIAL_SECURITY
+  label: Abandon de la cotisation patronale sur les titres-restaurants
+  description: >-
+    Retirer la disposition qui visait à instaurer une nouvelle cotisation patronale sur la part patronale des
+    titres-restaurant. En conséquence, les entreprises ne seront pas soumises en 2026 à une charge supplémentaire sur
+    les tickets-resto distribués à leurs salariés[2].
+  fixed_impact_eur: -900000000
+  budget_side: REVENUE
+  major_amendment: true
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+  conflicts_with: []
+  sources:
+    - PLFSS 2026, AN[2]
+  params_schema: {}
+- id: amend_no_medical_copay_doubling
+  family: SOCIAL_SECURITY
+  label: Renonciation au doublement des franchises médicales par décret
+  description: >-
+    Le gouvernement renonce à son projet d'augmenter par décret (sans vote) le montant des franchises médicales – ces
+    participations forfaitaires laissées à charge des patients sur les boîtes de médicaments, actes médicaux, etc.
+    Initialement, un doublement de ces franchises était envisagé[32].
+  fixed_impact_eur: -800000000
+  major_amendment: true
+  mass_mapping:
+    '07': 1
+  feasibility:
+    law: true
+    adminLagMonths: 6
+  conflicts_with: []
+  sources:
+    - PLFSS 2026, débats[32]
+  params_schema: {}
+- id: amend_raise_csg_on_capital
+  family: SOCIAL_SECURITY
+  label: Hausse de la fiscalité via CSG sur revenus du capital (+1,4 pt)
+  description: >-
+    Augmenter de 1,4 point le taux de Contribution sociale généralisée (CSG) sur certains revenus du capital
+    (dividendes, plus-values mobilières). La CSG passe ainsi d'environ 9,2 % à 10,6 % sur ces revenus pour les foyers
+    aisés, ce qui devrait rapporter ~1,5 Md€ affecté à la branche autonomie[3].
+  fixed_impact_eur: 1500000000
+  budget_side: REVENUE
+  major_amendment: true
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+  conflicts_with: []
+  sources:
+    - PLFSS 2026 adopté[3]
+  params_schema: {}
+- id: amend_surtax_health_insurers
+  family: SOCIAL_SECURITY
+  label: Contribution exceptionnelle des mutuelles santé (1 Md€)
+  description: >-
+    Instaurer une taxe exceptionnelle sur les organismes complémentaires santé (mutuelles et assureurs) d'environ 1 Md€
+    en 2026. Objectif affiché : compenser le coût des mesures et répondre aux hausses de tarifs jugées excessives des
+    mutuelles, sans répercussion sur les assurés (plafond d'augmentation des cotisations en 2026)[4].
+  fixed_impact_eur: 1000000000
+  budget_side: REVENUE
+  major_amendment: true
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+  conflicts_with: []
+  sources:
+    - PLFSS 2026 adopté[4]
+  params_schema: {}
+- id: amend_extend_overtime_deduction
+  family: SOCIAL_SECURITY
+  label: Extension de la déduction de cotisations sur les heures sup' aux >250 salariés
+  description: >-
+    Étendre aux entreprises de plus de 250 salariés la déduction forfaitaire de cotisations patronales aujourd'hui
+    applicable aux heures supplémentaires dans les plus petites entreprises. Cette mesure, portée par des députés de
+    l'opposition, vise à soutenir le pouvoir d'achat des salariés des grands groupes (coût < 150 M€)[33].
+  fixed_impact_eur: -150000000
+  budget_side: REVENUE
+  major_amendment: true
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+  conflicts_with: []
+  sources:
+    - PLFSS 2026 amend. AN[33]
+  params_schema: {}
+- id: amend_increase_severance_tax
+  family: SOCIAL_SECURITY
+  label: Augmentation du forfait social sur les indemnités de rupture (30% → 40%)
+  description: >-
+    Rehausser de 30 % à 40 % le taux du forfait social (contribution patronale) appliqué aux indemnités de rupture
+    conventionnelle et de mise à la retraite. Cette mesure accroît le coût des départs négociés pour l'employeur,
+    générant des recettes supplémentaires pour la Sécurité sociale[34].
+  fixed_impact_eur: 260000000
+  budget_side: REVENUE
+  major_amendment: true
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+  conflicts_with: []
+  sources:
+    - PLFSS 2026 adopté[34]
+  params_schema: {}
+- id: annee_blanche_indexation
+  family: SOCIAL_SECURITY
+  label: Année Blanche (Geler l'indexation des prestations)
+  description: >-
+    Suspendre la revalorisation annuelle (indexation sur l'inflation) des prestations sociales et des retraites pendant
+    un an.
+  fixed_impact_eur: 6500000000
+  dimension: cp
+  mass_mapping:
+    '10': 1
+  feasibility:
+    law: true
+    adminLagMonths: 2
+    notes: Requires finance bill amendment; politically sensitive due to impact on households.
+  conflicts_with: []
+  sources:
+    - Cour des comptes 2023
+    - PLF 2026 orientation documents
+  params_schema: {}
+  impact:
+    householdsImpacted: 17000000
+    decile1ImpactEur: -150
+    decile10ImpactEur: -480
+    gdpImpactPct: -0.05
+    jobsImpactCount: -2000
+- id: plf2026_mission_justice_efficiency
+  family: OPERATIONS
+  label: Économies d'efficacité (Mission Justice)
+  description: Mettre en œuvre des mesures d'efficacité (numérisation, services partagés) au sein du ministère de la Justice.
+  short_label: Justice savings
+  fixed_impact_eur: 750000000
+  dimension: cp
+  popularity: 0.35
+  mass_mapping:
+    '03': 1
+  feasibility:
+    law: false
+    adminLagMonths: 9
+    notes: Requires programme-by-programme redeployment; identified in PLF 2026 savings annex.
+  conflicts_with: []
+  sources:
+    - PLF 2026, Mission Justice
+  params_schema: {}
+- id: plf2026_mission_education_efficiency
+  family: OPERATIONS
+  label: Efficacité opérationnelle (Mission Éducation)
+  description: >-
+    Rationaliser les services support et les achats au sein de l'Éducation nationale, en préservant les dépenses pour
+    les classes.
+  short_label: Education effic.
+  fixed_impact_eur: 1200000000
+  dimension: cp
+  popularity: 0.28
+  mass_mapping:
+    '9': 1
+  feasibility:
+    law: false
+    adminLagMonths: 12
+    notes: Requires management reform and procurement pooling across rectorats.
+  conflicts_with: []
+  sources:
+    - PLF 2026, Mission Enseignement scolaire
+  params_schema: {}
+- id: plf2026_mission_foreign_affairs_streamlining
+  family: OPERATIONS
+  label: Rationalisation (Mission Affaires étrangères)
+  description: Rationaliser les postes diplomatiques et les services partagés à l'étranger pour réaliser des économies.
+  short_label: Affaires ext.
+  fixed_impact_eur: 350000000
+  dimension: cp
+  popularity: 0.22
+  mass_mapping:
+    '01': 1
+  feasibility:
+    law: false
+    adminLagMonths: 18
+    notes: Requires administrative decrees and redeployment of staff; highlighted in PLF 2026 action plan.
+  conflicts_with: []
+  sources:
+    - PLF 2026, Mission Action extérieure
+  params_schema: {}
+- id: wealth_tax
+  family: TAXES
+  label: Rétablir l'Impôt de Solidarité sur la Fortune (ISF)
+  description: >-
+    Restaurer un impôt général sur le patrimoine des ménages les plus aisés (en remplacement de l'IFI, qui ne concerne
+    que l'immobilier).
+  fixed_impact_eur: 5000000000
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 12
+    notes: Requires new tax law; politically symbolic and contested.
+  conflicts_with: []
+  sources:
+    - Institut Montaigne [1]
+  params_schema: {}
+  impact:
+    householdsImpacted: 350000
+    decile1ImpactEur: 0
+    decile10ImpactEur: -12000
+    gdpImpactPct: -0.02
+    jobsImpactCount: -500
+- id: high_income_surtax
+  family: TAXES
+  label: Surtaxe sur les très hauts revenus
+  description: Introduire de nouvelles tranches supérieures ou une surtaxe sur l'impôt sur le revenu pour les plus hauts revenus.
+  fixed_impact_eur: 8000000000
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+    notes: Requires budget law change; likely political resistance from opposition.
+  conflicts_with: []
+  sources:
+    - Fondation iFRAP [4]
+  params_schema: {}
+- id: superprofits_tax
+  family: TAXES
+  label: Taxe sur les 'super-profits' des entreprises
+  description: Prélever une taxe exceptionnelle sur les 'super-profits' (bénéfices exceptionnels) des grandes entreprises.
+  fixed_impact_eur: 4000000000
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+    notes: Needs new tax law; complex to define 'excess' profits and avoid capital flight.
+  conflicts_with: []
+  sources:
+    - Oxfam France [6]
+  params_schema: {}
+  impact:
+    householdsImpacted: 0
+    decile1ImpactEur: 0
+    decile10ImpactEur: -200
+    gdpImpactPct: -0.05
+    jobsImpactCount: -2000
+- id: end_flat_tax
+  family: TAXES
+  label: Supprimer la 'Flat Tax' (PFU) sur les revenus du capital
+  description: >-
+    Supprimer le Prélèvement Forfaitaire Unique (PFU) de 30% sur les dividendes et intérêts, et revenir au barème
+    progressif de l'impôt.
+  fixed_impact_eur: 3500000000
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+    notes: Implemented via finance law; may affect investment behavior.
+  conflicts_with: []
+  sources:
+    - Fondation iFRAP [8]
+  params_schema: {}
+  impact:
+    householdsImpacted: 4000000
+    decile1ImpactEur: 0
+    decile10ImpactEur: -850
+    gdpImpactPct: -0.03
+    jobsImpactCount: -1000
+- id: expand_ftt
+  family: TAXES
+  label: Étendre la Taxe sur les Transactions Financières (TTF)
+  description: Élargir l'assiette ou augmenter le taux de la taxe sur les transactions financières (achats d'actions, etc.).
+  fixed_impact_eur: 2000000000
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+    notes: Requires law; careful design needed to avoid market relocation.
+  conflicts_with: []
+  sources:
+    - Assemblée nationale [9]
+  params_schema: {}
+- id: progressive_csg
+  family: TAXES
+  label: Rendre la CSG plus progressive
+  description: Augmenter la CSG sur les revenus du capital ou les hautes retraites, tout en la réduisant pour les bas revenus.
+  fixed_impact_eur: 4500000000
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+    notes: Adjustment via social security financing law; aims for revenue-neutral shifts or modest net gain.
+  conflicts_with: []
+  sources:
+    - Fondation iFRAP [10]
+  params_schema: {}
+- id: carbon_tax
+  family: CLIMATE
+  label: Rétablir / Augmenter la taxe carbone
+  description: >-
+    Augmenter progressivement les taxes sur les émissions de carbone (carburants, gaz...) en restaurant la trajectoire
+    de la taxe carbone.
+  fixed_impact_eur: 3000000000
+  budget_side: REVENUE
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+    notes: Implemented via tax law; politically sensitive (yellow-vest protests).
+  conflicts_with: []
+  sources:
+    - Oxfam France [6]
+  params_schema: {}
+  impact:
+    householdsImpacted: 25000000
+    decile1ImpactEur: -80
+    decile10ImpactEur: -250
+    gdpImpactPct: -0.1
+    jobsImpactCount: -5000
+- id: cap_research_credit
+  family: TAXES
+  label: Réformer le Crédit d'Impôt Recherche (CIR)
+  description: Réduire ou plafonner le Crédit d'Impôt Recherche (CIR) pour les entreprises afin de réaliser des économies.
+  fixed_impact_eur: 2000000000
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+    notes: Change in tax code; risk of pushback from industry and research sectors.
+  conflicts_with: []
+  sources:
+    - La Finance Pour Tous [16]
+  params_schema: {}
+  impact:
+    householdsImpacted: 0
+    decile1ImpactEur: 0
+    decile10ImpactEur: 0
+    gdpImpactPct: -0.08
+    jobsImpactCount: -15000
+- id: reduce_home_services_credit
+  family: TAXES
+  label: Réduire le crédit d'impôt 'Services à la personne'
+  description: Diminuer le crédit d'impôt pour l'emploi à domicile (ménage, garde d'enfants...) pour réduire son coût.
+  fixed_impact_eur: 1000000000
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+    notes: Requires tax code change; might affect domestic employment sector.
+  conflicts_with: []
+  sources:
+    - La Finance Pour Tous [17]
+  params_schema: {}
+- id: remove_pension_deduction
+  family: TAXES
+  label: Supprimer l'abattement fiscal de 10% sur les pensions
+  description: >-
+    Supprimer l'abattement forfaitaire de 10% appliqué aux pensions de retraite, alignant leur fiscalité sur celle des
+    salaires.
+  fixed_impact_eur: 5000000000
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 3
+    notes: Change in tax law; politically sensitive among retirees.
+  conflicts_with: []
+  sources:
+    - La Finance Pour Tous [18]
+  params_schema: {}
+- id: end_overtime_exemption
+  family: TAXES
+  label: Supprimer l'exonération fiscale des heures supplémentaires
+  description: Rendre les heures supplémentaires imposables à l'impôt sur le revenu, comme le salaire normal.
+  fixed_impact_eur: 1700000000
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 3
+    notes: Simple change via finance law; may be unpopular as it affects take-home pay.
+  conflicts_with: []
+  sources:
+    - La Finance Pour Tous [19]
+  params_schema: {}
+- id: fight_tax_fraud
+  family: TAXES
+  label: Lutter contre la fraude et l'évasion fiscales
+  description: Renforcer les contrôles, le partage de données et les sanctions pour récupérer davantage d'impôts impayés.
+  fixed_impact_eur: 2300000000
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 12
+    notes: Mostly administrative, but may require new enforcement powers; actual yields uncertain.
+  conflicts_with: []
+  sources:
+    - Public Sénat [20]
+  params_schema: {}
+- id: expand_digital_tax
+  family: TAXES
+  label: Augmenter la taxe sur le numérique (GAFAM)
+  description: >-
+    Augmenter les revenus issus des entreprises multinationales du numérique (via la taxe nationale ou l'impôt minimum
+    mondial).
+  fixed_impact_eur: 800000000
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 12
+    notes: Dependent on international agreements (OECD/EU) for full effect; domestic DST increase possible unilaterally.
+  conflicts_with: []
+  sources:
+    - France24 [22]
+  params_schema: {}
+- id: reinstate_cvae
+  family: TAXES
+  label: Rétablir la CVAE (Impôt de production)
+  description: >-
+    Annuler la suppression totale de la CVAE (Cotisation sur la Valeur Ajoutée des Entreprises) pour restaurer cet impôt
+    de production.
+  fixed_impact_eur: 4000000000
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 3
+    notes: Would be done via finance law; opposed by businesses due to competitiveness concerns.
+  conflicts_with: []
+  sources:
+    - France24 [22]
+  params_schema: {}
+- id: cut_fuel_taxes
+  family: TAXES
+  label: Réduire les taxes sur le carburant (TICPE)
+  description: Baisser la taxe (TICPE) sur l'essence et le diesel, ou subventionner le prix à la pompe.
+  fixed_impact_eur: -5000000000
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 1
+    notes: Can be done via budget or decree; quick to implement but very costly and possibly at odds with climate goals.
+  conflicts_with: []
+  sources:
+    - Budget 2022
+  params_schema: {}
+- id: cut_income_tax_middle
+  family: TAXES
+  label: Baisser l'impôt sur le revenu des classes moyennes
+  description: 'Alléger l''impôt pour les contribuables de la classe moyenne (ex: en ajustant les tranches du barème).'
+  fixed_impact_eur: -3000000000
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 3
+    notes: Would be included in a finance law; popular with taxpayers but worsens deficit.
+  conflicts_with: []
+  sources:
+    - Budget debates 2023
+  params_schema: {}
+- id: expand_overtime_exemption
+  family: TAXES
+  label: Étendre la défiscalisation des heures sup. / primes
+  description: Réduire davantage les impôts ou charges sociales sur les heures supplémentaires ou les primes salariales.
+  fixed_impact_eur: -500000000
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 3
+    notes: Change via finance or social law; relatively easy administratively, but reduces revenues.
+  conflicts_with:
+    - end_overtime_exemption
+  sources:
+    - Budget debates 2023
+  params_schema: {}
+- id: cut_vat_essentials
+  family: TAXES
+  label: Baisser la TVA sur les produits de première nécessité
+  description: Appliquer un taux de TVA réduit (ou nul) sur les produits essentiels (alimentation, produits d'hygiène...).
+  fixed_impact_eur: -1500000000
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 3
+    notes: Needs change in VAT law; EU VAT rules allow reduced rates on some essentials.
+  conflicts_with: []
+  sources:
+    - Est.
+  params_schema: {}
+- id: cut_vat_energy
+  family: TAXES
+  label: Baisser la TVA sur l'énergie à 5,5%
+  description: Réduire la TVA sur l'électricité, le gaz et les carburants de 20% à 5,5%.
+  fixed_impact_eur: -11000000000
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 12
+    notes: Requires EU approval to derogate from standard VAT rules on fuel; very costly measure championed by opposition.
+  conflicts_with: []
+  sources:
+    - Independent est.
+  params_schema: {}
+- id: freeze_tax_brackets
+  family: TAXES
+  label: Geler le barème de l'impôt sur le revenu
+  description: Ne pas revaloriser les tranches du barème de l'impôt sur l'inflation (ce qui augmente mécaniquement l'impôt).
+  fixed_impact_eur: 6100000000
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 0
+    notes: Enacted via annual budget; quick fiscal gain but effectively a stealth tax increase on all taxpayers.
+  conflicts_with: []
+  sources:
+    - PLF 2024
+  params_schema: {}
+- id: raise_retirement_age_65
+  family: PENSIONS
+  label: Augmenter l'âge légal de la retraite à 65 ans
+  description: Augmenter l'âge légal de départ à la retraite à 65 ans (au-delà de la réforme actuelle le fixant à 64 ans).
+  fixed_impact_eur: 8000000000
+  mass_mapping:
+    '10': 1
+  feasibility:
+    law: true
+    adminLagMonths: 6
+    notes: Major pension reform requiring law; phased implementation over several years.
+  conflicts_with:
+    - lower_retirement_age_62
+    - lower_retirement_age_60
+  sources:
+    - Est.
+  params_schema: {}
+  impact:
+    householdsImpacted: 1600000
+    decile1ImpactEur: -800
+    decile10ImpactEur: -200
+    gdpImpactPct: 0.1
+    jobsImpactCount: 200000
+- id: lower_retirement_age_62
+  family: PENSIONS
+  label: Revenir à l'âge légal de la retraite à 62 ans
+  description: Annuler la réforme de 2023 et rétablir l'âge légal de départ à la retraite à 62 ans.
+  fixed_impact_eur: -34000000000
+  mass_mapping:
+    '10': 1
+  feasibility:
+    law: true
+    adminLagMonths: 6
+    notes: Would require overturning recent law; extremely costly and likely violates EU fiscal commitments.
+  conflicts_with:
+    - raise_retirement_age_65
+  sources:
+    - BFMTV [23]
+  params_schema: {}
+  impact:
+    householdsImpacted: 800000
+    decile1ImpactEur: 600
+    decile10ImpactEur: 2200
+    gdpImpactPct: -0.4
+    jobsImpactCount: -300000
+- id: lower_retirement_age_60
+  family: PENSIONS
+  label: Abaisser l'âge légal de la retraite à 60 ans
+  description: Réduire l'âge légal de départ à la retraite à 60 ans (pour ceux ayant les annuités requises).
+  fixed_impact_eur: -50000000000
+  mass_mapping:
+    '10': 1
+  feasibility:
+    law: true
+    adminLagMonths: 12
+    notes: Flagship far-left proposal; tremendously expensive and would require massive new revenues or debt.
+  conflicts_with:
+    - raise_retirement_age_65
+  sources:
+    - OFCE (2024)
+  params_schema: {}
+- id: extend_contribution_period
+  family: PENSIONS
+  label: Allonger la durée de cotisation pour la retraite
+  description: Exiger davantage de trimestres de travail pour obtenir une retraite à taux plein.
+  fixed_impact_eur: 5000000000
+  mass_mapping:
+    '10': 1
+  feasibility:
+    law: true
+    adminLagMonths: 6
+    notes: Can be included in pension law; effect builds over time as cohorts adjust.
+  conflicts_with: []
+  sources:
+    - Est.
+  params_schema: {}
+- id: close_special_regimes
+  family: PENSIONS
+  label: Supprimer les régimes spéciaux de retraite restants
+  description: Mettre fin aux régimes spéciaux de retraite encore existants et restreindre les départs anticipés.
+  fixed_impact_eur: 500000000
+  mass_mapping:
+    '10': 1
+  feasibility:
+    law: true
+    adminLagMonths: 12
+    notes: Reform via statute or in pension law; unions strongly resist, and savings materialize gradually.
+  conflicts_with: []
+  sources:
+    - Est.
+  params_schema: {}
+  impact:
+    householdsImpacted: 250000
+    decile1ImpactEur: 0
+    decile10ImpactEur: -400
+    gdpImpactPct: 0
+    jobsImpactCount: 0
+- id: freeze_pension_indexation
+  family: PENSIONS
+  label: Geler ou sous-indexer les pensions de retraite
+  description: Limiter ou retarder temporairement la revalorisation des pensions par rapport à l'inflation.
+  fixed_impact_eur: 6200000000
+  mass_mapping:
+    '10': 1
+  feasibility:
+    law: true
+    adminLagMonths: 3
+    notes: Change enacted via Social Security law; immediate budget relief but reduces retirees' purchasing power.
+  conflicts_with: []
+  sources:
+    - L'Express [26]
+  params_schema: {}
+  impact:
+    householdsImpacted: 17000000
+    decile1ImpactEur: -150
+    decile10ImpactEur: -450
+    gdpImpactPct: -0.1
+    jobsImpactCount: -2000
+- id: align_public_private_pensions
+  family: PENSIONS
+  label: Aligner le calcul des retraites public/privé
+  description: >-
+    Calculer les pensions des fonctionnaires sur une période plus longue (ex: 25 ans) au lieu des 6 derniers mois, pour
+    aligner sur le privé.
+  fixed_impact_eur: 1500000000
+  mass_mapping:
+    '10': 1
+  feasibility:
+    law: true
+    adminLagMonths: 12
+    notes: Requires pension reform law; long-term savings as new formula phases in.
+  conflicts_with: []
+  sources:
+    - Est.
+  params_schema: {}
+- id: raise_pension_contributions
+  family: PENSIONS
+  label: Augmenter les cotisations retraite
+  description: Augmenter les taux de cotisation (salariale et/ou patronale) qui financent les retraites.
+  fixed_impact_eur: 10000000000
+  budget_side: REVENUE
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 3
+    notes: >-
+      Change via Social Security financing law; effectively a tax increase on labor, facing resistance from employers
+      and workers.
+  conflicts_with: []
+  sources:
+    - Est.
+  params_schema: {}
+- id: raise_min_pension
+  family: PENSIONS
+  label: Augmenter les pensions minimales
+  description: 'Augmenter le montant de la pension minimum (ex: pour les carrières complètes) pour les retraités modestes.'
+  fixed_impact_eur: -1500000000
+  mass_mapping:
+    '10': 1
+  feasibility:
+    law: true
+    adminLagMonths: 6
+    notes: Included in pension or social security law; must be financed by other measures or adds to deficit.
+  conflicts_with: []
+  sources:
+    - BFMTV [25]
+  params_schema: {}
+- id: tighten_unemployment_benefits
+  family: SOCIAL_SECURITY
+  label: Durcir les règles de l'assurance chômage
+  description: Restreindre l'assurance chômage en raccourcissant la durée d'indemnisation ou en durcissant les conditions d'accès.
+  fixed_impact_eur: 2500000000
+  mass_mapping:
+    '10': 1
+  feasibility:
+    law: true
+    adminLagMonths: 6
+    notes: >-
+      Implemented via unemployment insurance regulations (backed by law or decree); opposed by unions but already partly
+      in effect.
+  conflicts_with:
+    - expand_unemployment_benefits
+  sources:
+    - Le Monde [28]
+  params_schema: {}
+  impact:
+    householdsImpacted: 2500000
+    decile1ImpactEur: -400
+    decile10ImpactEur: 0
+    gdpImpactPct: -0.05
+    jobsImpactCount: 15000
+- id: expand_unemployment_benefits
+  family: SOCIAL_SECURITY
+  label: Annuler les coupes dans l'assurance chômage
+  description: 'Rendre l''assurance chômage plus généreuse (ex: rétablir des durées d''indemnisation plus longues).'
+  fixed_impact_eur: -2500000000
+  mass_mapping:
+    '10': 1
+  feasibility:
+    law: true
+    adminLagMonths: 3
+    notes: >-
+      Could be done by executive order (as rules are in regulations) but likely via law; politically supported by left,
+      criticized by fiscal watchdogs.
+  conflicts_with:
+    - tighten_unemployment_benefits
+  sources:
+    - Le Monde [28]
+  params_schema: {}
+- id: tighten_rsa_requirements
+  family: SOCIAL_SECURITY
+  label: Conditionner le versement du RSA
+  description: >-
+    Exiger des bénéficiaires du RSA (Revenu de Solidarité Active) des activités (travail, formation) en contrepartie de
+    l'allocation.
+  fixed_impact_eur: 800000000
+  mass_mapping:
+    '10': 1
+  feasibility:
+    law: true
+    adminLagMonths: 12
+    notes: >-
+      Would need legal changes and administrative capacity to enforce; savings are speculative and depend on
+      implementation.
+  conflicts_with: []
+  sources:
+    - Est.
+  params_schema: {}
+- id: restrict_non_citizen_benefits
+  family: SOCIAL_SECURITY
+  label: Restreindre les aides sociales aux non-citoyens
+  description: >-
+    Appliquer une 'préférence nationale' en limitant l'accès de certains non-citoyens aux aides sociales
+    non-contributives (RSA, APL...).
+  fixed_impact_eur: 2000000000
+  mass_mapping:
+    '10': 1
+  feasibility:
+    law: true
+    adminLagMonths: 12
+    notes: Likely unconstitutional and against EU law; even if attempted, would face legal challenges and limited savings.
+  conflicts_with: []
+  sources:
+    - RN estimate
+  params_schema: {}
+- id: freeze_social_benefits
+  family: SOCIAL_SECURITY
+  label: Geler l'indexation des minima sociaux
+  description: Suspendre temporairement la revalorisation sur l'inflation des minima sociaux (RSA, AAH...) pendant un an.
+  fixed_impact_eur: 2300000000
+  mass_mapping:
+    '10': 1
+  feasibility:
+    law: true
+    adminLagMonths: 3
+    notes: Can be done via budget/social security law for one year; reduces purchasing power for the poorest.
+  conflicts_with: []
+  sources:
+    - L'Express [27]
+  params_schema: {}
+- id: cut_housing_aid
+  family: SOCIAL_SECURITY
+  label: Réduire les Aides au Logement (APL)
+  description: Réduire les dépenses d'APL (Aide Personnalisée au Logement), par exemple en durcissant les conditions d'éligibilité.
+  fixed_impact_eur: 1300000000
+  mass_mapping:
+    '10': 1
+  feasibility:
+    law: true
+    adminLagMonths: 6
+    notes: Change in Social Security or budget law; directly affects low-income renters, likely controversial.
+  conflicts_with: []
+  sources:
+    - L'Express [31]
+  params_schema: {}
+  impact:
+    householdsImpacted: 3000000
+    decile1ImpactEur: -350
+    decile10ImpactEur: 0
+    gdpImpactPct: -0.05
+    jobsImpactCount: 0
+- id: cut_family_benefits
+  family: SOCIAL_SECURITY
+  label: Réduire les allocations familiales (hauts revenus)
+  description: Diminuer les allocations familiales versées aux ménages les plus aisés.
+  fixed_impact_eur: 600000000
+  mass_mapping:
+    '10': 1
+  feasibility:
+    law: true
+    adminLagMonths: 6
+    notes: Changes via social security financing law; moderate savings but politically delicate among families.
+  conflicts_with: []
+  sources:
+    - Est.
+  params_schema: {}
+- id: fight_social_fraud
+  family: SOCIAL_SECURITY
+  label: Lutter contre la fraude aux prestations sociales
+  description: Renforcer les contrôles pour détecter et prévenir la fraude aux prestations sociales (famille, chômage, santé...).
+  fixed_impact_eur: 1000000000
+  mass_mapping:
+    '10': 1
+  feasibility:
+    law: false
+    adminLagMonths: 12
+    notes: >-
+      Administrative measures (improved data cross-checks, inspections) largely; additional legal tools might help. Real
+      impact uncertain.
+  conflicts_with: []
+  sources:
+    - Fondation iFRAP [61]
+  params_schema: {}
+- id: eliminate_ame
+  family: SOCIAL_SECURITY
+  label: Supprimer l'Aide Médicale d'État (AME)
+  description: Supprimer l'AME (Aide Médicale d'État), le programme de santé pour les immigrés sans papiers.
+  fixed_impact_eur: 500000000
+  mass_mapping:
+    '07': 1
+  feasibility:
+    law: true
+    adminLagMonths: 6
+    notes: Requires legal change; controversial due to public health implications and likely marginal net savings.
+  conflicts_with: []
+  sources:
+    - Est.
+  params_schema: {}
+- id: cap_health_spending
+  family: HEALTH
+  label: Plafonner la croissance des dépenses de santé (ONDAM)
+  description: Imposer un plafond plus strict (ONDAM) à la croissance annuelle des dépenses de santé.
+  fixed_impact_eur: 5000000000
+  mass_mapping:
+    '07': 1
+  feasibility:
+    law: true
+    adminLagMonths: 3
+    notes: Set in the Social Security financing law; requires subsequent cost-containment measures by health authorities.
+  conflicts_with: []
+  sources:
+    - Bayrou plan [32]
+  params_schema: {}
+- id: reduce_health_costs
+  family: HEALTH
+  label: Réduire les dépenses de santé 'inutiles'
+  description: >-
+    Réduire les dépenses de santé jugées inefficaces (ex: moins rembourser certains médicaments, promouvoir les
+    génériques).
+  fixed_impact_eur: 2000000000
+  mass_mapping:
+    '07': 1
+  feasibility:
+    law: false
+    adminLagMonths: 6
+    notes: >-
+      Mostly via administrative decisions and regulatory changes in health insurance coverage; part of recent savings
+      plans.
+  conflicts_with: []
+  sources:
+    - Bayrou plan [32]
+  params_schema: {}
+- id: increase_patient_copays
+  family: HEALTH
+  label: Augmenter le reste à charge (franchises médicales)
+  description: >-
+    Mettre en place ou augmenter les franchises médicales (participation forfaitaire) sur les visites ou les
+    médicaments.
+  fixed_impact_eur: 200000000
+  mass_mapping:
+    '07': 1
+  feasibility:
+    law: true
+    adminLagMonths: 6
+    notes: Usually set via Social Security financing law; politically sensitive as it affects access, and savings are small.
+  conflicts_with: []
+  sources:
+    - Est.
+  params_schema: {}
+- id: hire_health_workers
+  family: HEALTH
+  label: Embaucher du personnel soignant supplémentaire
+  description: 'Recruter davantage de personnel médical (ex: un plan pour embaucher 20 000 infirmiers et aides-soignants).'
+  fixed_impact_eur: -2800000000
+  mass_mapping:
+    '07': 1
+  feasibility:
+    law: false
+    adminLagMonths: 12
+    notes: Budget allocation and administrative hiring process; requires training and addressing staff shortages.
+  conflicts_with: []
+  sources:
+    - Est.
+  params_schema: {}
+- id: raise_healthcare_wages
+  family: HEALTH
+  label: Augmenter les salaires des soignants à l'hôpital
+  description: Augmenter les grilles de salaires des infirmiers et autres soignants à l'hôpital public.
+  fixed_impact_eur: -700000000
+  mass_mapping:
+    '07': 1
+  feasibility:
+    law: false
+    adminLagMonths: 6
+    notes: >-
+      Typically decided by government in healthcare budget or wage agreements; improves morale but adds to health
+      deficits.
+  conflicts_with: []
+  sources:
+    - Est.
+  params_schema: {}
+- id: cut_officials_privileges
+  family: STAFFING
+  label: Réduire les 'privilèges' des élus
+  description: >-
+    Supprimer ou réduire les avantages des hommes et femmes politiques (ex: régimes de retraite spéciaux, budgets de
+    frais).
+  fixed_impact_eur: 100000000
+  mass_mapping:
+    '01': 1
+  feasibility:
+    law: true
+    adminLagMonths: 12
+    notes: >-
+      Some changes require law or even constitutional reform (e.g. cutting number of MPs); politically popular but
+      fiscally minor.
+  conflicts_with: []
+  sources:
+    - Est.
+  params_schema: {}
+- id: freeze_civil_service_pay
+  family: STAFFING
+  label: Geler le point d'indice des fonctionnaires
+  description: Suspendre l'augmentation générale du point d'indice des fonctionnaires pendant un an.
+  fixed_impact_eur: 3600000000
+  mass_mapping:
+    '9': 0.3
+    '07': 0.2
+    '03': 0.1
+    '02': 0.1
+    '01': 0.3
+  feasibility:
+    law: false
+    adminLagMonths: 0
+    notes: Can be decided by executive (no index raise decree); immediate savings but triggers labor discontent.
+  conflicts_with:
+    - raise_civil_service_pay
+  sources:
+    - L'Express [35]
+  params_schema: {}
+  impact:
+    householdsImpacted: 5700000
+    decile1ImpactEur: -200
+    decile10ImpactEur: -500
+    gdpImpactPct: -0.1
+    jobsImpactCount: 0
+- id: freeze_civil_service_promotions
+  family: STAFFING
+  label: Geler les promotions automatiques (Fonction Publique)
+  description: Suspendre temporairement les augmentations automatiques liées à l'ancienneté (GVT) pour les fonctionnaires.
+  fixed_impact_eur: 2700000000
+  mass_mapping:
+    '9': 0.3
+    '07': 0.2
+    '03': 0.1
+    '02': 0.1
+    '01': 0.3
+  feasibility:
+    law: false
+    adminLagMonths: 0
+    notes: Likely can be done by executive HR policy; unions oppose strongly as it suspends career progression rewards.
+  conflicts_with: []
+  sources:
+    - L'Express [37]
+  params_schema: {}
+- id: raise_civil_service_pay
+  family: STAFFING
+  label: Augmenter le point d'indice de 10% (Fonction Publique)
+  description: Augmenter la valeur du point d'indice (salaire de base des fonctionnaires) de 10%.
+  fixed_impact_eur: -20000000000
+  mass_mapping:
+    '9': 0.3
+    '07': 0.2
+    '03': 0.1
+    '02': 0.1
+    '01': 0.3
+  feasibility:
+    law: false
+    adminLagMonths: 1
+    notes: Implemented by government decree; politically popular among workers but very costly to the budget.
+  conflicts_with:
+    - freeze_civil_service_pay
+  sources:
+    - Official est.
+  params_schema: {}
+  impact:
+    householdsImpacted: 5700000
+    decile1ImpactEur: 300
+    decile10ImpactEur: 800
+    gdpImpactPct: 0.2
+    jobsImpactCount: 5000
+- id: cut_public_workforce
+  family: STAFFING
+  label: Réduire le nombre de fonctionnaires (non-remplacement)
+  description: Diminuer le nombre d'agents publics en ne remplaçant qu'une partie des départs à la retraite.
+  fixed_impact_eur: 2500000000
+  mass_mapping:
+    '9': 0.3
+    '07': 0.2
+    '03': 0.1
+    '02': 0.1
+    '01': 0.3
+  feasibility:
+    law: false
+    adminLagMonths: 24
+    notes: Policy decision enforced via hiring freezes; savings accrue gradually as workforce declines.
+  conflicts_with: []
+  sources:
+    - L'Express [42]
+  params_schema: {}
+  impact:
+    householdsImpacted: 50000
+    decile1ImpactEur: -50
+    decile10ImpactEur: -50
+    gdpImpactPct: -0.05
+    jobsImpactCount: -50000
+- id: cut_agencies
+  family: STAFFING
+  label: Supprimer ou fusionner des agences publiques
+  description: Éliminer ou regrouper certaines agences ou comités publics jugés redondants.
+  fixed_impact_eur: 1000000000
+  mass_mapping:
+    '01': 1
+  feasibility:
+    law: true
+    adminLagMonths: 12
+    notes: >-
+      Requires legislative or executive action to dissolve entities; savings modest, mainly symbolic of state
+      belt-tightening.
+  conflicts_with: []
+  sources:
+    - Bayrou plan [43]
+  params_schema: {}
+- id: reduce_sick_leave
+  family: STAFFING
+  label: Réduire l'absentéisme dans la fonction publique
+  description: 'Mettre en place des mesures pour réduire l''absentéisme (ex: réintroduire un jour de carence, contrôles renforcés).'
+  fixed_impact_eur: 1300000000
+  mass_mapping:
+    '9': 0.3
+    '07': 0.2
+    '03': 0.1
+    '02': 0.1
+    '01': 0.3
+  feasibility:
+    law: true
+    adminLagMonths: 6
+    notes: >-
+      May require legal change (to add waiting day, etc.); relies on enforcement and cultural change, savings are
+      estimates.
+  conflicts_with: []
+  sources:
+    - L'Express [34]
+  params_schema: {}
+- id: cut_defense_spending
+  family: DEFENSE
+  label: Réduire le budget de la Défense de 10%
+  description: Réduire la croissance des dépenses militaires en annulant ou reportant des programmes d'équipement majeurs.
+  fixed_impact_eur: 6000000000
+  mass_mapping:
+    '02': 1
+  feasibility:
+    law: true
+    adminLagMonths: 6
+    notes: >-
+      Would be set in budget law; faces strong opposition due to security concerns and contract penalties for
+      cancellations.
+  conflicts_with: []
+  sources:
+    - L'Express [44]
+  params_schema: {}
+- id: reduce_payroll_subsidies
+  family: SUBSIDIES
+  label: Réduire les allègements de cotisations patronales
+  description: >-
+    Diminuer les réductions générales de cotisations sociales patronales (ex-CICE), en particulier pour les grandes
+    entreprises.
+  fixed_impact_eur: 5000000000
+  mass_mapping:
+    '04': 1
+  feasibility:
+    law: true
+    adminLagMonths: 6
+    notes: Change via budget or social security law; businesses will lobby against it due to competitiveness concerns.
+  conflicts_with: []
+  sources:
+    - The Guardian [45]
+  params_schema: {}
+- id: remove_fossil_subsidies
+  family: CLIMATE
+  label: Supprimer les niches fiscales 'brunes' (fossiles)
+  description: 'Supprimer les subventions et exonérations fiscales qui favorisent les énergies fossiles (ex: gazole non routier).'
+  fixed_impact_eur: 1500000000
+  mass_mapping:
+    '05': 1
+  feasibility:
+    law: true
+    adminLagMonths: 12
+    notes: >-
+      Implemented via finance law; politically sensitive for affected sectors (transport, agriculture) but aligns with
+      green transition.
+  conflicts_with: []
+  sources:
+    - The Guardian [46]
+  params_schema: {}
+- id: cut_foreign_aid
+  family: SUBSIDIES
+  label: Réduire l'aide publique au développement
+  description: Réduire le budget de la France consacré à l'aide internationale et au développement.
+  fixed_impact_eur: 1500000000
+  mass_mapping:
+    '01': 1
+  feasibility:
+    law: true
+    adminLagMonths: 3
+    notes: Change in budget law; may draw criticism for undermining international commitments and soft power.
+  conflicts_with: []
+  sources:
+    - L'Express [47]
+  params_schema: {}
+- id: cut_association_subsidies
+  family: SUBSIDIES
+  label: Réduire les subventions aux associations
+  description: Diminuer les subventions de l'État accordées à diverses associations (culturelles, communautaires, etc.).
+  fixed_impact_eur: 1600000000
+  mass_mapping:
+    '8': 1
+  feasibility:
+    law: true
+    adminLagMonths: 6
+    notes: Enacted via budget allocations; politically contentious as it affects civil society and local programs.
+  conflicts_with: []
+  sources:
+    - L'Express [49]
+  params_schema: {}
+- id: cut_public_investments
+  family: OTHER
+  label: Réduire ou reporter les investissements publics
+  description: 'Annuler, réduire ou reporter des programmes d''investissement public prévus (ex: infrastructures, plan France 2030).'
+  fixed_impact_eur: 800000000
+  mass_mapping:
+    '04': 1
+  feasibility:
+    law: true
+    adminLagMonths: 3
+    notes: >-
+      Adjust via budget credit allocations; may hinder long-term goals (infrastructure, green transition) for short-term
+      savings.
+  conflicts_with: []
+  sources:
+    - Est.
+  params_schema: {}
+- id: hire_teachers
+  family: STAFFING
+  label: Embaucher des enseignants supplémentaires
+  description: 'Recruter davantage d''enseignants pour réduire la taille des classes (ex: 10 000 postes).'
+  fixed_impact_eur: -500000000
+  mass_mapping:
+    '9': 1
+  feasibility:
+    law: false
+    adminLagMonths: 12
+    notes: >-
+      Budgetary decision to fund new positions; faces teacher supply constraints but politically popular for education
+      quality.
+  conflicts_with: []
+  sources:
+    - Est.
+  params_schema: {}
+- id: cut_local_transfers
+  family: OTHER
+  label: Réduire les dotations aux collectivités locales
+  description: 'Réduire ou geler les dotations de l''État aux mairies, départements et régions (ex: DGF).'
+  fixed_impact_eur: 1500000000
+  mass_mapping:
+    '01': 1
+  feasibility:
+    law: true
+    adminLagMonths: 3
+    notes: >-
+      Done via budget law; shifts financial pressure to local governments (potentially causing local service cuts or tax
+      hikes).
+  conflicts_with: []
+  sources:
+    - Est.
+  params_schema: {}
+- id: green_transport_tax
+  family: CLIMATE
+  label: Taxe verte sur les transports (Avion, Livraisons)
+  description: 'Prélever de nouvelles taxes écologiques (ex: sur les billets d''avion, le kérosène, ou les livraisons e-commerce).'
+  fixed_impact_eur: 600000000
+  budget_side: REVENUE
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 18
+    notes: >-
+      Would ideally be coordinated at EU level (especially for kerosene); implementation could be slow due to
+      negotiations.
+  conflicts_with: []
+  sources:
+    - Bayrou plan [11]
+  params_schema: {}
+- id: efficient_procurement
+  family: PROCUREMENT
+  label: Améliorer l'efficacité des achats publics
+  description: Rationaliser les achats de l'État (achats groupés, meilleurs appels d'offres) pour réduire les coûts.
+  fixed_impact_eur: 500000000
+  mass_mapping:
+    '02': 0.5
+    '07': 0.5
+  feasibility:
+    law: false
+    adminLagMonths: 12
+    notes: >-
+      Administrative and managerial reforms; requires investment in procurement systems and political will to enforce
+      changes.
+  conflicts_with: []
+  sources:
+    - Cour des Comptes (2023)
+  params_schema: {}
+- id: freeze_spending_one_year
+  family: OPERATIONS
+  label: Gel des dépenses de l'État en valeur (1 an)
+  description: Geler les dépenses publiques en valeur (zéro augmentation nominale) pendant un an.
+  fixed_impact_eur: 7000000000
+  mass_mapping:
+    '9': 0.1
+    '10': 0.5
+    '07': 0.2
+    '04': 0.1
+    '01': 0.1
+  feasibility:
+    law: true
+    adminLagMonths: 0
+    notes: Enacted via annual budget law; not a permanent reform, but spreads the effort widely for a short-term gain.
+  conflicts_with: []
+  sources:
+    - info.gouv.fr [51]
+  params_schema: {}
+- id: build_social_housing
+  family: OTHER
+  label: Construction massive de logements sociaux
+  description: 'Lancer un grand programme public de construction de logements sociaux (ex: 200 000 par an).'
+  fixed_impact_eur: -30000000000
+  mass_mapping:
+    '06': 1
+  feasibility:
+    law: true
+    adminLagMonths: 12
+    notes: >-
+      Would be part of multi-year investment plan and budgets; requires capacity in construction sector and political
+      prioritization.
+  conflicts_with: []
+  sources:
+    - NFP platform (2024)
+  params_schema: {}
+- id: free_school_services
+  family: OTHER
+  label: Gratuité de la cantine et des fournitures scolaires
+  description: Rendre gratuites les dépenses liées à l'école (cantine, fournitures, activités périscolaires) pour les familles.
+  fixed_impact_eur: -15000000000
+  mass_mapping:
+    '9': 1
+  feasibility:
+    law: true
+    adminLagMonths: 12
+    notes: Implemented through education budget increases; very costly universal benefit approach championed by the left.
+  conflicts_with: []
+  sources:
+    - NFP platform (2024)
+  params_schema: {}
+- id: pen_age_plus3m_per_year
+  family: PENSIONS
+  label: 'Retraite : maintien du rythme de la réforme (+3 mois par an)'
+  description: >-
+    Poursuivre l'augmentation progressive de l'âge légal de la retraite de 3 mois par an pour atteindre 64 ans, comme
+    prévu par la réforme de 2023.
+  fixed_impact_eur: 500000000
+  mass_mapping:
+    '10': 1
+  feasibility:
+    law: true
+    adminLagMonths: 12
+    notes: Gradual implementation; impact increases over time.
+  conflicts_with:
+    - amend_suspend_retirement_reform
+  sources:
+    - Direction Générale du Trésor
+  params_schema: {}
+- id: is_rate_33_5
+  family: TAXES
+  label: Augmenter l'Impôt sur les Sociétés (IS) à 33,5%
+  description: Augmenter le taux de l'Impôt sur les Sociétés (IS) de 25% à 33,5%.
+  fixed_impact_eur: 4400000000
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+    notes: Budget law change; competitiveness concerns.
+  conflicts_with: []
+  sources:
+    - Workbook 20251017, Recettes
+  params_schema: {}
+- id: transfer_pricing_enforcement
+  family: TAXES
+  label: Renforcer le contrôle des prix de transfert (multinationales)
+  description: Contrôles accrus sur les prix de transfert entre filiales de multinationales (optimisation fiscale).
+  fixed_impact_eur: 4600000000
+  mass_mapping: {}
+  feasibility:
+    law: false
+    adminLagMonths: 6
+    notes: Admin + legal updates; depends on enforcement capacity.
+  conflicts_with: []
+  sources:
+    - Workbook 20251017, Recettes
+  params_schema: {}
+- id: vat_normal_plus1
+  family: TAXES
+  label: Augmenter le taux normal de TVA de 1 point
+  description: Augmenter le taux normal de TVA (de 20% à 21%).
+  fixed_impact_eur: 6000000000
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 3
+    notes: EU-conform; regressive distributional impact.
+  conflicts_with:
+    - vat_all_rates_plus1
+    - vat_intermediate_12_5
+  sources:
+    - Workbook 20251017, Recettes
+  params_schema: {}
+- id: vat_all_rates_plus1
+  family: TAXES
+  label: Augmenter tous les taux de TVA de 1 point
+  description: Augmenter tous les taux de TVA (normal, intermédiaire, réduit) de 1 point.
+  fixed_impact_eur: 8200000000
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 3
+    notes: EU-conform; high political salience.
+  conflicts_with:
+    - vat_normal_plus1
+    - vat_intermediate_12_5
+  sources:
+    - Workbook 20251017, Recettes
+  params_schema: {}
+  impact:
+    householdsImpacted: 30000000
+    decile1ImpactEur: -250
+    decile10ImpactEur: -600
+    gdpImpactPct: -0.2
+    jobsImpactCount: -10000
+- id: vat_intermediate_12_5
+  family: TAXES
+  label: Augmenter le taux intermédiaire de TVA à 12,5%
+  description: Augmenter le taux intermédiaire de TVA de 10% à 12,5% (concerne restauration, transports...)
+  fixed_impact_eur: 2905982906
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 3
+    notes: EU-conform.
+  conflicts_with:
+    - vat_all_rates_plus1
+    - vat_normal_plus1
+  sources:
+    - Workbook 20251017, Recettes
+  params_schema: {}
+- id: vat_franchise_threshold_halved
+  family: TAXES
+  label: Réduire le seuil de la franchise de TVA (petites entreprises)
+  description: Diviser par deux le seuil de chiffre d'affaires permettant aux petites entreprises de ne pas facturer la TVA.
+  fixed_impact_eur: 2200000000
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+    notes: Impacts micro-enterprises; admin workload increases.
+  conflicts_with: []
+  sources:
+    - Workbook 20251017, Recettes
+  params_schema: {}
+- id: cap_quotient_conjugal
+  family: TAXES
+  label: Plafonner le quotient conjugal
+  description: Plafonner le bénéfice du quotient conjugal pour hauts revenus.
+  fixed_impact_eur: 1100000000
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 3
+    notes: Finance law; distributional debate likely.
+  conflicts_with:
+    - abolish_quotient_conjugal
+  sources:
+    - Workbook 20251017, Recettes
+  params_schema: {}
+- id: abolish_quotient_conjugal
+  family: TAXES
+  label: Supprimer le quotient conjugal
+  description: Supprimer le quotient conjugal.
+  fixed_impact_eur: 10600000000
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+    notes: Major PIT redesign.
+  conflicts_with:
+    - cap_quotient_conjugal
+  sources:
+    - Workbook 20251017, Recettes
+  params_schema: {}
+- id: abolish_qf_demi_parts_noneffective
+  family: TAXES
+  label: Supprimer les demi-parts fiscales 'non effectives'
+  description: Supprimer les demi-parts qui ne reflètent pas des charges réelles.
+  fixed_impact_eur: 2890000000
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 3
+    notes: Targeted fairness reform.
+  conflicts_with: []
+  sources:
+    - Workbook 20251017, Recettes
+  params_schema: {}
+- id: wealth_minimum_tax_2pct_100m
+  family: TAXES
+  label: Impôt minimum de 2% (Patrimoine > 100 M€)
+  description: Créer un impôt minimum de 2% sur le patrimoine financier des personnes détenant plus de 100 M€.
+  fixed_impact_eur: 4800000000
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 12
+    notes: New base; valuation/admin issues.
+  conflicts_with: []
+  sources:
+    - Workbook 20251017, Recettes
+  params_schema: {}
+- id: restore_taxe_habitation_top20
+  family: TAXES
+  label: Rétablir la Taxe d'Habitation (20% plus aisés)
+  description: Réinstaurer la Taxe d'Habitation pour les 20% des ménages les plus aisés.
+  fixed_impact_eur: 9300000000
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+    notes: Local tax redesign w/ compensation rules.
+  conflicts_with:
+    - restore_taxe_habitation_all
+  sources:
+    - Workbook 20251017, Recettes
+  params_schema: {}
+- id: restore_taxe_habitation_all
+  family: TAXES
+  label: Rétablir la Taxe d'Habitation (Tous)
+  description: Réinstaurer la Taxe d'Habitation sur les résidences principales pour tous les ménages.
+  fixed_impact_eur: 21800000000
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 9
+    notes: Large reform; distributional offset needed.
+  conflicts_with:
+    - restore_taxe_habitation_top20
+  sources:
+    - Workbook 20251017, Recettes
+  params_schema: {}
+  impact:
+    householdsImpacted: 30000000
+    decile1ImpactEur: -200
+    decile10ImpactEur: -1500
+    gdpImpactPct: -0.3
+    jobsImpactCount: -15000
+- id: airline_ticket_tax_increase
+  family: CLIMATE
+  label: Augmenter la taxe sur les billets d'avion
+  description: Augmenter le barème de la taxe de solidarité ('taxe Chirac') sur les billets d'avion.
+  fixed_impact_eur: 3700000000
+  budget_side: REVENUE
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+    notes: EU/state aid coordination may arise.
+  conflicts_with: []
+  sources:
+    - Workbook 20251017, Recettes
+  params_schema: {}
+- id: ecotax_heavy_trucks
+  family: CLIMATE
+  label: Écotaxe kilométrique (Poids lourds)
+  description: Instaurer un péage kilométrique (hors autoroutes) pour les poids lourds (transport de marchandises).
+  fixed_impact_eur: 1000000000
+  budget_side: REVENUE
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 12
+    notes: Infrastructure & enforcement cost; EU coordination.
+  conflicts_with: []
+  sources:
+    - Workbook 20251017, Recettes
+  params_schema: {}
+- id: abolish_tonnage_tax
+  family: TAX_EXPENDITURES
+  label: Supprimer la taxe au tonnage (transport maritime)
+  description: Supprimer le régime favorable de la taxe au tonnage pour les transporteurs maritimes (retour à l'IS normal).
+  fixed_impact_eur: 1375000000
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 12
+    notes: Sector lobbying likely.
+  conflicts_with: []
+  sources:
+    - Workbook 20251017, Dépenses fiscales
+  params_schema: {}
+- id: cir_cut_large_firms_half
+  family: TAX_EXPENDITURES
+  label: 'CIR : Réduire de 50% (Grandes Entreprises)'
+  description: Réduire de moitié le Crédit d'Impôt Recherche (CIR) pour les grandes entreprises.
+  fixed_impact_eur: 1500000000
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+    notes: Refines existing CIR; consider R&D impact.
+  conflicts_with:
+    - cap_research_credit
+  sources:
+    - Workbook 20251017, Dépenses fiscales
+  params_schema: {}
+- id: cir_remove_5pct_above_100m
+  family: TAX_EXPENDITURES
+  label: 'CIR : Supprimer le taux à 5% (> 100 M€)'
+  description: Supprimer le taux réduit de 5% du CIR pour les dépenses de recherche dépassant 100 M€.
+  fixed_impact_eur: 400000000
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 6
+    notes: Complements prior CIR trims.
+  conflicts_with:
+    - cap_research_credit
+  sources:
+    - Workbook 20251017, Dépenses fiscales
+  params_schema: {}
+- id: remove_ticpe_air_exemption
+  family: TAX_EXPENDITURES
+  label: Supprimer l'exonération de TICPE (Kérosène)
+  description: Supprimer l'exonération de taxe (TICPE) sur le kérosène utilisé par le transport aérien.
+  fixed_impact_eur: 3500000000
+  mass_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 12
+    notes: International agreements may bind timing.
+  conflicts_with:
+    - remove_fossil_subsidies
+  sources:
+    - Workbook 20251017, Dépenses fiscales
+  params_schema: {}
+- id: apl_flat_minus5
+  family: SOCIAL_SECURITY
+  label: 'APL : Baisse forfaitaire de 5€'
+  description: Baisse forfaitaire des APL de 5€.
+  fixed_impact_eur: 60000000
+  mass_mapping:
+    '10': 1
+  feasibility:
+    law: true
+    adminLagMonths: 3
+    notes: Simple but regressive.
+  conflicts_with:
+    - cut_housing_aid
+  sources:
+    - Workbook 20251017, Dépenses budgétaires
+  params_schema: {}
+- id: apl_means_test_18920
+  family: SOCIAL_SECURITY
+  label: 'APL : Durcir le seuil d''accès (Revenu 18 920€)'
+  description: Conditionner l'accès aux APL à un seuil de revenu net global de 18 920€.
+  fixed_impact_eur: 550000000
+  mass_mapping:
+    '10': 1
+  feasibility:
+    law: true
+    adminLagMonths: 6
+    notes: Admin screening required.
+  conflicts_with:
+    - cut_housing_aid
+    - apl_means_test_39020
+  sources:
+    - Workbook 20251017, Dépenses budgétaires
+  params_schema: {}
+- id: apl_means_test_39020
+  family: SOCIAL_SECURITY
+  label: 'APL : Durcir le seuil d''accès (Revenu 39 020€)'
+  description: Conditionner l'accès aux APL à un seuil de revenu net global de 39 020€.
+  fixed_impact_eur: 820000000
+  mass_mapping:
+    '10': 1
+  feasibility:
+    law: true
+    adminLagMonths: 6
+    notes: Admin screening required.
+  conflicts_with:
+    - cut_housing_aid
+    - apl_means_test_18920
+  sources:
+    - Workbook 20251017, Dépenses budgétaires
+  params_schema: {}
+- id: private_ed_subsidy_75_to_50
+  family: OTHER
+  label: Réduire les subventions à l'enseignement privé
+  description: Baisser la subvention publique aux établissements d'enseignement privé.
+  fixed_impact_eur: 3500000000
+  mass_mapping:
+    '9': 1
+  feasibility:
+    law: true
+    adminLagMonths: 12
+    notes: Political/legal scrutiny.
+  conflicts_with: []
+  sources:
+    - Workbook 20251017, Dépenses budgétaires
+  params_schema: {}
+- id: higher_ed_tuition_uniform_increase
+  family: OTHER
+  label: Augmenter les frais d'inscription à l'université
+  description: 'Augmenter les frais d''inscription (ex: Licence 730€, Master 887€, Doctorat 1 380€).'
+  fixed_impact_eur: 463000000
+  mass_mapping:
+    '9': 1
+  feasibility:
+    law: true
+    adminLagMonths: 12
+    notes: Equity offsets advisable (grants).
+  conflicts_with: []
+  sources:
+    - Workbook 20251017, Dépenses budgétaires
+  params_schema: {}
+- id: education_demography_adjust
+  family: OTHER
+  label: Ajuster les dépenses d'éducation à la démographie
+  description: Aligner les dépenses d'éducation sur la baisse du nombre d'élèves (baisse démographique).
+  fixed_impact_eur: 400000000
+  mass_mapping:
+    '9': 1
+  feasibility:
+    law: false
+    adminLagMonths: 12
+    notes: Operational implementation across rectorats.
+  conflicts_with: []
+  sources:
+    - Workbook 20251017, Dépenses budgétaires
+  params_schema: {}
+- id: freeze_local_transfers_value
+  family: OTHER
+  label: Geler les dotations de l'État (collectivités)
+  description: Geler en valeur (sans inflation) les transferts financiers de l'État aux collectivités locales.
+  fixed_impact_eur: 3408000000
+  mass_mapping:
+    '01': 1
+  feasibility:
+    law: true
+    adminLagMonths: 3
+    notes: Shifts pressure to local taxation/services.
+  conflicts_with:
+    - freeze_apul_budget_value
+    - cut_local_transfers
+  sources:
+    - Workbook 20251017, Dépenses budgétaires
+  params_schema: {}
+- id: freeze_apul_budget_value
+  family: OTHER
+  label: Geler les budgets des collectivités locales (hors dette)
+  description: Geler en valeur le budget des collectivités locales (hors charges de dette).
+  fixed_impact_eur: 6720000000
+  mass_mapping:
+    '01': 1
+  feasibility:
+    law: true
+    adminLagMonths: 3
+    notes: Broader than transfer freeze; macro impact larger.
+  conflicts_with:
+    - freeze_local_transfers_value
+    - cut_local_transfers
+  sources:
+    - Workbook 20251017, Dépenses budgétaires
+  params_schema: {}
+- id: apply_35h_local
+  family: STAFFING
+  label: Appliquer les 35h (collectivités locales)
+  description: Harmoniser la durée légale du travail (1607h/an) dans les collectivités locales.
+  fixed_impact_eur: 1300000000
+  mass_mapping:
+    '01': 1
+  feasibility:
+    law: true
+    adminLagMonths: 12
+    notes: HR transition; social dialogue required.
+  conflicts_with: []
+  sources:
+    - Workbook 20251017, Dépenses budgétaires
+  params_schema: {}
+- id: pensions_freeze_base_plus_compl_2026
+  family: PENSIONS
+  label: Geler les retraites (base + compl.) en 2026
+  description: Gel ponctuel des retraites de base et complémentaires en 2026.
+  fixed_impact_eur: 3900000000
+  mass_mapping:
+    '10': 1
+  feasibility:
+    law: true
+    adminLagMonths: 3
+    notes: Distinct from full annual indexation freeze.
+  conflicts_with:
+    - freeze_pension_indexation
+  sources:
+    - Workbook 20251017, Dépenses budgétaires
+  params_schema: {}
+- id: pensions_deindex_above_2000
+  family: PENSIONS
+  label: Désindexer les retraites de plus de 2 000€
+  description: Désindexer de l'inflation les pensions de retraite supérieures à 2 000€.
+  fixed_impact_eur: 2500000000
+  mass_mapping:
+    '10': 1
+  feasibility:
+    law: true
+    adminLagMonths: 6
+    notes: Targeted distributional choice.
+  conflicts_with: []
+  sources:
+    - Workbook 20251017, Dépenses budgétaires
+  params_schema: {}
+- id: maprimerenov_focus_deep
+  family: CLIMATE
+  label: '''MaPrimeRénov'' : Cibler les rénovations d''ampleur'
+  description: Recentrer l'aide MaPrimeRénov' sur les rénovations globales ('d'ampleur') et la sortie des 'passoires thermiques'.
+  fixed_impact_eur: 904000000
+  mass_mapping:
+    '06': 1
+  feasibility:
+    law: false
+    adminLagMonths: 6
+    notes: Paramétrage de programme & contrôles.
+  conflicts_with: []
+  sources:
+    - Workbook 20251017, Dépenses budgétaires
+  params_schema: {}

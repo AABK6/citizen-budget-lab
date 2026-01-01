@@ -29,6 +29,7 @@ interface Lever {
   dimension?: string;
   major_amendment?: boolean;
   popularity?: number;
+  active: boolean;
   mass_mapping: Record<string, number>;
   feasibility: Feasibility;
   conflicts_with: string[];
@@ -72,6 +73,8 @@ const MASS_LABELS: Record<string, string> = {
   '10': 'Protection sociale',
 };
 
+const MASS_FORMATTER = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 2 });
+
 const SORT_OPTIONS = [
   { id: 'order', label: 'Ordre manuel' },
   { id: 'id', label: 'ID' },
@@ -111,6 +114,7 @@ function normalizeLever(raw: any): Lever {
     dimension: raw?.dimension ? String(raw.dimension) : undefined,
     major_amendment: raw?.major_amendment ?? undefined,
     popularity: raw?.popularity ?? undefined,
+    active: raw?.active === false ? false : true,
     mass_mapping: normalizeMapping(raw?.mass_mapping),
     feasibility: {
       law: Boolean(raw?.feasibility?.law),
@@ -124,8 +128,17 @@ function normalizeLever(raw: any): Lever {
   };
 }
 
+function serializeLever(lever: Lever): Record<string, any> {
+  const { active, ...rest } = lever;
+  const out: Record<string, any> = { ...rest };
+  if (active === false) {
+    out.active = false;
+  }
+  return out;
+}
+
 function dumpYaml(data: Lever[]): string {
-  return yaml.dump(data, { noRefs: true, sortKeys: false, lineWidth: 120 });
+  return yaml.dump(data.map(serializeLever), { noRefs: true, sortKeys: false, lineWidth: 120 });
 }
 
 function parseYaml(text: string): Lever[] {
@@ -145,6 +158,13 @@ function linesToList(value: string): string[] {
     .split('\n')
     .map((line) => line.trim())
     .filter(Boolean);
+}
+
+function formatMassValue(value: number | undefined): string {
+  if (value === undefined || value === null || !Number.isFinite(value)) {
+    return '-';
+  }
+  return MASS_FORMATTER.format(value);
 }
 
 export default function PolicyCatalogAdminClient() {
@@ -336,6 +356,7 @@ export default function PolicyCatalogAdminClient() {
       label: 'Nouveau levier',
       description: '',
       fixed_impact_eur: 0,
+      active: true,
       mass_mapping: {},
       feasibility: { law: false, adminLagMonths: 0 },
       conflicts_with: [],
@@ -448,6 +469,23 @@ export default function PolicyCatalogAdminClient() {
     });
     return sorted;
   }, [catalog, search, familyFilter, massFilter, sortKey, sortDir]);
+
+  const massTotals = useMemo(() => {
+    const totals: Record<string, number> = {};
+    for (const code of Object.keys(MASS_LABELS)) {
+      totals[code] = 0;
+    }
+    for (const { lever } of filteredRows) {
+      for (const [code, value] of Object.entries(lever.mass_mapping || {})) {
+        if (totals[code] === undefined) continue;
+        const num = Number(value);
+        if (Number.isFinite(num)) {
+          totals[code] += num;
+        }
+      }
+    }
+    return totals;
+  }, [filteredRows]);
 
   const applySortOrder = () => {
     if (sortKey === 'order') return;
@@ -697,7 +735,7 @@ export default function PolicyCatalogAdminClient() {
           </div>
         ) : view === 'pivot' ? (
           <div className="rounded-xl border border-slate-800 bg-slate-900/40 overflow-hidden">
-            <div className="overflow-auto max-h-[70vh]">
+            <div className="overflow-x-auto">
               <table className="min-w-[1200px] text-sm">
                 <thead className="bg-slate-900/80 text-slate-400 sticky top-0">
                   <tr>
@@ -713,7 +751,10 @@ export default function PolicyCatalogAdminClient() {
                 </thead>
                 <tbody>
                   {filteredRows.map(({ lever }) => (
-                    <tr key={lever.id} className="border-t border-slate-800/70">
+                    <tr
+                      key={lever.id}
+                      className={`border-t border-slate-800/70 ${lever.active === false ? 'opacity-60' : ''}`}
+                    >
                       <td className="px-3 py-2 whitespace-nowrap">
                         <div className="font-mono text-xs text-slate-300">{lever.id}</div>
                         <div className="text-slate-200">{lever.label}</div>
@@ -722,37 +763,31 @@ export default function PolicyCatalogAdminClient() {
                       {Object.keys(MASS_LABELS).map((code) => {
                         const value = lever.mass_mapping?.[code];
                         return (
-                          <td key={`${lever.id}-${code}`} className="px-3 py-2">
-                            <input
-                              type="number"
-                              value={value ?? ''}
-                              onChange={(e) => {
-                                const raw = e.target.value;
-                                updateLever(lever.id, (item) => {
-                                  const next = { ...item.mass_mapping };
-                                  if (raw === '') {
-                                    delete next[code];
-                                  } else {
-                                    next[code] = Number(raw);
-                                  }
-                                  return { ...item, mass_mapping: next };
-                                });
-                              }}
-                              className="w-24 rounded-md bg-slate-900 border border-slate-800 px-2 py-1 text-xs text-slate-100"
-                              placeholder="-"
-                            />
+                          <td key={`${lever.id}-${code}`} className="px-3 py-2 text-right text-slate-200">
+                            {formatMassValue(value)}
                           </td>
                         );
                       })}
                     </tr>
                   ))}
                 </tbody>
+                <tfoot className="bg-slate-900/80 text-slate-300">
+                  <tr className="border-t border-slate-800/70">
+                    <td className="px-3 py-2 font-semibold">Total</td>
+                    <td className="px-3 py-2 text-xs text-slate-500">Somme des poids</td>
+                    {Object.keys(MASS_LABELS).map((code) => (
+                      <td key={`total-${code}`} className="px-3 py-2 text-right font-semibold">
+                        {formatMassValue(massTotals[code])}
+                      </td>
+                    ))}
+                  </tr>
+                </tfoot>
               </table>
             </div>
           </div>
         ) : (
-          <div className="grid gap-6 lg:grid-cols-[1.7fr_1fr]">
-            <section className="space-y-4">
+          <div className="grid gap-6 lg:grid-cols-[1.7fr_1fr] lg:items-start">
+            <section className="space-y-4 order-2 lg:order-1 min-w-0">
               <div className="flex flex-wrap gap-3 items-center">
                 <button
                   onClick={addLever}
@@ -856,7 +891,7 @@ export default function PolicyCatalogAdminClient() {
               <div className="rounded-xl border border-slate-800 bg-slate-900/40 overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="min-w-full text-sm">
-                    <thead className="bg-slate-900/80 text-slate-400">
+                    <thead className="bg-slate-900/80 text-slate-400 sticky top-0 z-10">
                       <tr>
                         <th className="px-3 py-2 text-left">Sel</th>
                         <th className="px-3 py-2 text-left">Ordre</th>
@@ -872,13 +907,14 @@ export default function PolicyCatalogAdminClient() {
                       {filteredRows.map(({ lever, index }) => {
                         const isActive = lever.id === activeId;
                         const isSelected = selectedIds.has(lever.id);
+                        const isInactive = lever.active === false;
                         const mappingSummary = Object.entries(lever.mass_mapping || {})
                           .map(([k, v]) => `${MASS_LABELS[k] || k} (${k}):${v}`)
                           .join(' ');
                         return (
                           <tr
                             key={lever.id}
-                            className={`border-t border-slate-800/70 ${isActive ? 'bg-indigo-500/10' : 'hover:bg-slate-800/40'}`}
+                            className={`border-t border-slate-800/70 ${isActive ? 'bg-indigo-500/10' : 'hover:bg-slate-800/40'} ${isInactive ? 'opacity-60' : ''}`}
                             onClick={() => setActiveId(lever.id)}
                           >
                             <td className="px-3 py-2">
@@ -932,7 +968,7 @@ export default function PolicyCatalogAdminClient() {
               </div>
             </section>
 
-            <section className="rounded-xl border border-slate-800 bg-slate-900/50 p-4 space-y-4">
+            <section className="rounded-xl border border-slate-800 bg-slate-900/50 p-4 space-y-4 order-1 lg:order-2 lg:sticky lg:top-6 lg:max-h-[80vh] lg:overflow-auto self-start">
               {!activeLever ? (
                 <p className="text-slate-400">Selectionne un levier pour l'editer.</p>
               ) : (
@@ -965,6 +1001,18 @@ export default function PolicyCatalogAdminClient() {
                       onChange={(e) => updateLever(activeLever.id, (lever) => ({ ...lever, id: e.target.value }))}
                       className={inputClass}
                     />
+
+                    <label className="text-xs text-slate-400">Actif</label>
+                    <label className="flex items-center gap-2 text-sm text-slate-200">
+                      <input
+                        type="checkbox"
+                        checked={activeLever.active !== false}
+                        onChange={(e) =>
+                          updateLever(activeLever.id, (lever) => ({ ...lever, active: e.target.checked }))
+                        }
+                      />
+                      Visible dans la simulation
+                    </label>
 
                     <label className="text-xs text-slate-400">Famille</label>
                     <select
