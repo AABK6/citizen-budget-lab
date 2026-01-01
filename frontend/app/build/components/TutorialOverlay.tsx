@@ -44,10 +44,16 @@ const STEPS: TutorialStep[] = [
         title: `Trajectoire Macro`,
         content: `Visualisez l'impact de vos choix à moyen terme (2026-2029). La zone bleue indique le déficit, la ligne verte la croissance.`,
         position: 'bottom',
+    },
+    {
+        targetId: 'scoreboard-vote-btn',
+        title: `Le Verdict`,
+        content: `Une fois vos arbitrages terminés, cliquez sur "Voter". Votre budget rejoindra la grande consultation nationale pour faire émerger une solution.`,
+        position: 'left',
     }
 ];
 
-const TUTORIAL_VERSION = 'v6';
+const TUTORIAL_VERSION = 'v7';
 const STORAGE_KEY = `has_seen_tutorial_${TUTORIAL_VERSION}`;
 
 export function TutorialOverlay({

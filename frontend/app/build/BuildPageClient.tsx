@@ -1080,7 +1080,7 @@ export default function BuildPageClient() {
             try {
               if (scenarioResult?.id) {
                 await gqlRequest(submitVoteMutation, { scenarioId: scenarioResult.id });
-                alert("Votre vote a été enregistré ! \n\nMerci d'avoir participé à l'Hémicycle citoyen.");
+                alert("🗳️ A voté !\n\nVotre budget a été enregistré au greffe de la session citoyenne.\nVous pouvez maintenant partager votre mandat.");
               }
             } catch (e) {
               console.error(e);

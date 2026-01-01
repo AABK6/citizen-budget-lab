@@ -146,11 +146,12 @@ export function Scoreboard({
                 </button>
 
                 <button
+                    id="scoreboard-vote-btn"
                     onClick={onShare}
-                    className="flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg font-medium text-sm transition-all shadow-md hover:shadow-lg"
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-sm transition-all shadow-md hover:shadow-lg hover:scale-105"
                 >
-                    <span className="material-icons text-sm">share</span>
-                    Partager
+                    <span className="material-icons text-sm">how_to_vote</span>
+                    Voter
                 </button>
             </div>
         </div>

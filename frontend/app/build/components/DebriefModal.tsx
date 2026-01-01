@@ -24,15 +24,15 @@ export function DebriefModal({ isOpen, onClose, onConfirmVote, scenarioResult, d
                     <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
                         <span className="material-icons text-3xl">how_to_vote</span>
                     </div>
-                    <h2 className="text-2xl font-bold text-slate-900 mb-2">Confirmer vos choix de société ?</h2>
+                    <h2 className="text-2xl font-bold text-slate-900 mb-2">Voter ce Budget ?</h2>
                     <p className="text-sm text-slate-500">
-                        En validant vos arbitrages, vous exprimez votre préférence pour l&apos;avenir de la collectivité.
+                        Vous vous apprêtez à déposer votre proposition de loi de finances au greffe de la Session Extraordinaire.
                     </p>
                 </div>
 
                 <div className="p-6 space-y-6">
                     <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-200">
-                        <span className="text-sm font-bold text-slate-600 uppercase tracking-wider">Résultat de vos Arbitrages</span>
+                        <span className="text-sm font-bold text-slate-600 uppercase tracking-wider">Solde Final</span>
                         <div className={`text-2xl font-black ${isDeficitBad ? 'text-red-600' : 'text-emerald-600'}`}>
                             {deficitBillions} Md€
                         </div>
@@ -40,13 +40,13 @@ export function DebriefModal({ isOpen, onClose, onConfirmVote, scenarioResult, d
 
                     <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100 text-sm text-blue-800">
                         <p className="mb-2 font-bold flex items-center gap-2">
-                            <span className="material-icons text-sm">info</span>
-                            Votre voix compte :
+                            <span className="material-icons text-sm">public</span>
+                            Mandat Citoyen :
                         </p>
                         <ul className="list-disc pl-5 space-y-1 opacity-80">
-                            <li>Vos préférences seront agrégées anonymement.</li>
-                            <li>La somme des choix citoyens offre un éclairage inédit sur le débat national.</li>
-                            <li>Vous pourrez consulter les tendances collectives après votre vote.</li>
+                            <li>Votre budget sera agrégé avec ceux des autres citoyens.</li>
+                            <li>L'objectif : dégager des consensus pour sortir du blocage.</li>
+                            <li>Après le vote, vous pourrez partager votre lien de mandat.</li>
                         </ul>
                     </div>
                 </div>
@@ -56,14 +56,14 @@ export function DebriefModal({ isOpen, onClose, onConfirmVote, scenarioResult, d
                         onClick={onClose}
                         className="flex-1 py-3 px-4 bg-white hover:bg-gray-50 text-slate-700 border border-slate-300 rounded-xl font-bold transition-all"
                     >
-                        Continuer à modifier
+                        Revoir ma copie
                     </button>
                     <button
                         onClick={onConfirmVote}
                         className="flex-1 py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-lg shadow-blue-200 transition-all flex items-center justify-center gap-2"
                     >
                         <span className="material-icons">how_to_vote</span>
-                        Voter pour ce projet
+                        Déposer mon vote
                     </button>
                 </div>
             </div>
