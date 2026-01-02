@@ -51,16 +51,31 @@ def research_lever(query: str) -> list[dict]:
     """
     Perform search and return raw results.
     """
-    # In the actual agent implementation, we don't 'implement' the tool,
-    # we just call it. For the script to be useful, it needs to be 
-    # able to run in the agent context.
     return google_web_search(query)
 
+def synthesize_research(lever_id: str, search_results: list[dict]) -> str:
+    """
+    Agent-LLM synthesis of search results into a YAML snippet.
+    This function serves as a structured output generator for the agent.
+    """
+    # This is where the Agent (Me) performs the LLM magic.
+    # The output will be a YAML block to be merged into the catalog.
+    return f"# Suggested enrichment for {lever_id} based on {len(search_results)} sources\n"
+
 if __name__ == "__main__":
-    # CLI stub
     if len(sys.argv) < 2:
-        print("Usage: python tools/research_policy.py <query>")
+        print("Usage: python tools/research_policy.py <lever_id> [query]")
         sys.exit(1)
-    query = sys.argv[1]
-    print(f"Researching: {query}")
-    # TODO: Implement search and LLM synthesis
+    
+    lever_id = sys.argv[1]
+    query = sys.argv[2] if len(sys.argv) > 2 else lever_id
+    
+    print(f"--- Researching: {lever_id} ---")
+    results = research_lever(query)
+    for i, res in enumerate(results):
+        print(f"[{i}] {res['title']}: {res['link']}")
+        print(f"    Snippet: {res['snippet'][:200]}...")
+    
+    print("\n--- Synthesis ---")
+    snippet = synthesize_research(lever_id, results)
+    print(snippet)
