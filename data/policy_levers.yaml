@@ -79,6 +79,15 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': -470000000
+    '2027': -480000000
+    '2028': -490000000
+  pushbacks:
+  - type: administrative
+    description: Complexité de mise en œuvre pour le calcul du revenu imposable des
+      deux parties.
+    source: LCP.fr (2025)
 - id: amend_home_service_credit_cap
   family: TAX_EXPENDITURES
   label: Abaissement du plafond du crédit d'impôt services à la personne
@@ -129,7 +138,20 @@
   - Assemblée nat., PLF 2026[11]
   params_schema: {}
   mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
+    M_SOLIDARITE: 1.0
+  multi_year_impact:
+    '2026': -272000000
+    '2027': -280000000
+    '2028': -290000000
+  pushbacks:
+  - type: financial
+    description: Coût budgétaire supplémentaire pour l'État lié au remboursement des
+      ménages non-imposables.
+    source: Légifiscal (2025)
+  - type: social
+    description: Mesure de justice sociale visant à réduire le reste à charge pour
+      les résidents en EHPAD les plus modestes.
+    source: Le Média Social
 - id: amend_extend_tips_exemption
   family: TAXES
   label: Prorogation de l'exonération fiscale des pourboires
@@ -148,6 +170,19 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': -30000000
+    '2027': -31000000
+    '2028': -32000000
+  pushbacks:
+  - type: sector
+    description: Mesure jugée indispensable par le secteur de l'hôtellerie-restauration
+      pour maintenir l'attractivité des métiers.
+    source: Le Figaro (2025)
+  - type: financial
+    description: Perte de recettes pour la Sécurité Sociale (cotisations non perçues
+      sur les pourboires).
+    source: Boursorama
 - id: amend_high_income_surtax_permanent
   family: TAXES
   label: Pérennisation de la contribution exceptionnelle hauts revenus
@@ -166,6 +201,14 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 2000000000
+    '2027': 2100000000
+    '2028': 2200000000
+  pushbacks:
+  - type: political
+    description: Débat sur la pérennisation vs. caractère exceptionnel initial.
+    source: Vie-publique.fr
 - id: amend_return_exit_tax
   family: TAXES
   label: Rétablissement de l'Exit Tax (version antérieure à 2019)
@@ -184,6 +227,14 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 700000000
+    '2027': 750000000
+    '2028': 800000000
+  pushbacks:
+  - type: economic
+    description: Frein potentiel à l'attractivité pour les investisseurs internationaux.
+    source: 2ndmarket.fr
 - id: amend_one_time_donation_exemption
   family: TAXES
   label: Don familial exceptionnel exonéré jusqu'à 152 500 € en 2026
@@ -202,6 +253,18 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 0
+    '2027': 0
+    '2028': 0
+  pushbacks:
+  - type: financial
+    description: Opération blanche pour l'État (avance d'un avantage successoral existant).
+    source: Boursorama (2025)
+  - type: administrative
+    description: Conditions strictes d'âge (70+) et de date de versement initial (avant
+      oct 2025).
+    source: Légifiscal
 - id: amend_ald_sickleave_exempt_ir
   family: TAXES
   label: Maintien de l'exonération fiscale des IJ maladie (ALD)
@@ -219,7 +282,19 @@
   - Assemblée nat., PLF 2026[17]
   params_schema: {}
   mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
+    M_SANTE: 1.0
+  multi_year_impact:
+    '2026': 883000000
+    '2027': 900000000
+    '2028': 920000000
+  pushbacks:
+  - type: social
+    description: 'Forte opposition parlementaire : mesure jugée pénalisante pour les
+      patients les plus fragiles (maladies chroniques).'
+    source: Le Moniteur des Pharmacies (2025)
+  - type: political
+    description: Amendement de rejet adopté par l'Assemblée Nationale.
+    source: OpenWork
 - id: amend_school_fees_tax_reduction
   family: TAXES
   label: Maintien de la réduction d'impôt pour frais de scolarité
@@ -237,7 +312,20 @@
   - Assemblée nat., PLF 2026[17]
   params_schema: {}
   mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
+    M_ENSEIGNEMENT_SCOLAIRE: 1.0
+  multi_year_impact:
+    '2026': 450000000
+    '2027': 460000000
+    '2028': 470000000
+  pushbacks:
+  - type: social
+    description: Mesure impopulaire auprès des familles, particulièrement celles du
+      second degré et de l'enseignement supérieur.
+    source: Vie-publique.fr
+  - type: political
+    description: Soutien transpartisan pour le maintien de cette aide au pouvoir d'achat
+      des parents.
+    source: Sénat (2025)
 - id: amend_limit_holding_tax_to_luxury
   family: TAXES
   label: Limitation de la taxe sur les holdings patrimoniales aux biens somptuaires
@@ -256,6 +344,18 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 150000000
+    '2027': 160000000
+    '2028': 170000000
+  pushbacks:
+  - type: legal
+    description: Difficulté de distinction entre actifs 'productifs' et 'somptuaires'
+      au sein des holdings.
+    source: Village Justice (2025)
+  - type: economic
+    description: Risque de double imposition et de complexification du droit des sociétés.
+    source: August Debouzy
 - id: amend_raise_big_corp_profit_contrib
   family: TAXES
   label: Hausse de la contribution exceptionnelle sur les bénéfices des grandes entreprises
@@ -274,6 +374,18 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 8000000000
+    '2027': 4000000000
+    '2028': 0
+  pushbacks:
+  - type: economic
+    description: Crainte d'un impact sur l'investissement et l'attractivité du site
+      France.
+    source: Le Monde (2025)
+  - type: legal
+    description: Risque de contentieux constitutionnel sur l'égalité devant l'impôt.
+    source: Conseil d'État
 - id: amend_universal_tax_multinationals
   family: TAXES
   label: Instauration d'un impôt universel sur les multinationales
@@ -292,6 +404,18 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 1500000000
+    '2027': 1600000000
+    '2028': 1700000000
+  pushbacks:
+  - type: legal
+    description: Complexité de mise en œuvre technique (Pilier 2 de l'OCDE).
+    source: OCDE
+  - type: economic
+    description: Incertitude sur le rendement réel en fonction des stratégies d'optimisation
+      des groupes.
+    source: Le Monde
 - id: amend_double_gafam_tax
   family: TAXES
   label: Taxe GAFAM renforcée (de 3 % à 15 %)
@@ -310,6 +434,18 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 800000000
+    '2027': 850000000
+    '2028': 900000000
+  pushbacks:
+  - type: legal
+    description: Risque de mesures de rétorsion commerciales (notamment des États-Unis).
+    source: Le Figaro (2025)
+  - type: economic
+    description: Incertitude sur la compatibilité avec les accords internationaux
+      du Pilier 1 de l'OCDE.
+    source: Les Échos
 - id: amend_lower_global_min_tax_threshold
   family: TAXES
   label: Abaissement du seuil d'application du taux d'IS minimum mondial à 250 M€
@@ -329,6 +465,18 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 400000000
+    '2027': 420000000
+    '2028': 440000000
+  pushbacks:
+  - type: administrative
+    description: Charge de conformité accrue pour les ETI (Entreprises de Taille Intermédiaire).
+    source: Légifiscal (2025)
+  - type: economic
+    description: Risque de perte de compétitivité par rapport aux pays n'ayant pas
+      abaissé le seuil standard de l'OCDE.
+    source: OECD
 - id: amend_raise_buyback_tax
   family: TAXES
   label: Rehaussement de la taxe sur les rachats d'actions de 8 % à 33 %
@@ -347,6 +495,19 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 200000000
+    '2027': 210000000
+    '2028': 220000000
+  pushbacks:
+  - type: economic
+    description: Risque de décourager le retour de liquidités vers les marchés financiers
+      et de pénaliser les actionnaires.
+    source: Les Échos (2025)
+  - type: behavioral
+    description: Possibilité pour les entreprises de privilégier les dividendes classiques
+      au détriment des rachats d'actions.
+    source: Le Monde
 - id: amend_windfall_dividend_tax
   family: TAXES
   label: Contribution sur les dividendes exceptionnels des grandes entreprises (20
@@ -366,6 +527,19 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 750000000
+    '2027': 800000000
+    '2028': 850000000
+  pushbacks:
+  - type: behavioral
+    description: Risque de rétention des bénéfices ou de rachats d'actions pour contourner
+      la taxe sur les dividendes.
+    source: WanSquare (2025)
+  - type: economic
+    description: Inquiétude des investisseurs institutionnels sur le rendement des
+      fonds propres.
+    source: L'Argus de l'Assurance
 - id: amend_clawback_cir_relocation
   family: TAXES
   label: Remboursement du CIR en cas de délocalisation sous 3 ans
@@ -384,7 +558,20 @@
   - Assemblée nat., PLF 2026[26]
   params_schema: {}
   mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
+    M_RECHERCHE_ENSEIGNEMENT_SUPERIEUR: 1.0
+  multi_year_impact:
+    '2026': 100000000
+    '2027': 110000000
+    '2028': 120000000
+  pushbacks:
+  - type: legal
+    description: Risque de non-conformité avec le droit européen (libre circulation
+      des capitaux) et problèmes de rétroactivité.
+    source: Deloitte (2025)
+  - type: economic
+    description: Crainte d'une instabilité du cadre fiscal de l'innovation décourageant
+      l'implantation de nouveaux centres de R&D.
+    source: Zabala Innovation
 - id: amend_sme_cit_threshold_100k
   family: TAXES
   label: Relèvement du seuil d'accès au taux réduit d'IS (15 %) de 42 500 à 100 000
@@ -405,6 +592,18 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': -1500000000
+    '2027': -1550000000
+    '2028': -1600000000
+  pushbacks:
+  - type: financial
+    description: Coût budgétaire significatif pour l'État (niche fiscale supplémentaire).
+    source: TGS France (2025)
+  - type: political
+    description: Réserves du gouvernement sur le coût total de la mesure malgré l'adoption
+      par les députés.
+    source: Légifiscal
 - id: amend_tighten_pacte_dutreil
   family: TAXES
   label: Recentrage du pacte Dutreil (biens professionnels uniquement, durée 6 ans)
@@ -423,6 +622,18 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 200000000
+    '2027': 210000000
+    '2028': 220000000
+  pushbacks:
+  - type: economic
+    description: Risque de fragilisation de la transmission des entreprises familiales
+      et de l'actionnariat de long terme.
+    source: Les Échos (2025)
+  - type: political
+    description: Forte opposition des organisations patronales (MEDEF, CPME).
+    source: Le Figaro
 - id: amend_ondam_3pct_increase
   family: HEALTH
   label: Hausse de l'Ondam 2026 portée à +3 % au lieu de +1,6 %
@@ -567,6 +778,19 @@
   params_schema: {}
   mission_mapping:
     M_SOLIDARITE: 1.0
+  multi_year_impact:
+    '2026': -1200000000
+    '2027': -1250000000
+    '2028': -1300000000
+  pushbacks:
+  - type: social
+    description: Mesure de protection du pouvoir d'achat des plus précaires face à
+      l'inflation.
+    source: Vie-publique.fr
+  - type: political
+    description: Amendement soutenu par une large majorité de l'opposition pour contrer
+      la rigueur budgétaire.
+    source: Le Monde (2025)
 - id: amend_no_new_apprentice_contrib
   family: SOCIAL_SECURITY
   label: Abandon de la fin d'exonération de cotisations pour les apprentis
@@ -586,7 +810,20 @@
   - PLFSS 2026, AN[2]
   params_schema: {}
   mission_mapping:
-    M_SOLIDARITE: 1.0
+    M_TRAVAIL_EMPLOI: 1.0
+  multi_year_impact:
+    '2026': -1100000000
+    '2027': -1150000000
+    '2028': -1200000000
+  pushbacks:
+  - type: economic
+    description: Protection des entreprises contre une hausse des charges sociales
+      et fiscales sur l'emploi.
+    source: Le Figaro (2025)
+  - type: political
+    description: Victoire des organisations patronales (MEDEF) contre le financement
+      de l'apprentissage par les entreprises.
+    source: Les Échos
 - id: amend_no_meal_voucher_tax
   family: SOCIAL_SECURITY
   label: Abandon de la cotisation patronale sur les titres-restaurants
@@ -606,7 +843,20 @@
   - PLFSS 2026, AN[2]
   params_schema: {}
   mission_mapping:
-    M_SOLIDARITE: 1.0
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': -950000000
+    '2027': -1000000000
+    '2028': -1050000000
+  pushbacks:
+  - type: social
+    description: Protection du pouvoir d'achat des salariés utilisant les titres-restaurant
+      (environ 5 millions de bénéficiaires).
+    source: Journal de l'Économie (2025)
+  - type: sector
+    description: Inquiétude du secteur de la restauration sur une baisse potentielle
+      de l'utilisation des titres si taxés.
+    source: Capital.fr
 - id: amend_no_medical_copay_doubling
   family: SOCIAL_SECURITY
   label: Renonciation au doublement des franchises médicales par décret
@@ -626,7 +876,20 @@
   - PLFSS 2026, débats[32]
   params_schema: {}
   mission_mapping:
-    M_SOLIDARITE: 1.0
+    M_SANTE: 1.0
+  multi_year_impact:
+    '2026': -2300000000
+    '2027': -2400000000
+    '2028': -2500000000
+  pushbacks:
+  - type: social
+    description: Protection de l'accès aux soins et du pouvoir d'achat des patients,
+      notamment les plus modestes.
+    source: Acuite.fr (2025)
+  - type: political
+    description: Recul du gouvernement face à une opposition quasi-unanime au Parlement
+      sur ce doublement.
+    source: Capital.fr
 - id: amend_raise_csg_on_capital
   family: SOCIAL_SECURITY
   label: Hausse de la fiscalité via CSG sur revenus du capital (+1,4 pt)
@@ -646,7 +909,19 @@
   - PLFSS 2026 adopté[3]
   params_schema: {}
   mission_mapping:
-    M_SOLIDARITE: 1.0
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 1500000000
+    '2027': 1550000000
+    '2028': 1600000000
+  pushbacks:
+  - type: economic
+    description: Risque de découragement de l'épargne et de l'investissement productif.
+    source: Les Échos (2025)
+  - type: political
+    description: Débat sur la pression fiscale globale déjà élevée sur le capital
+      en France.
+    source: Commission des Finances
 - id: amend_surtax_health_insurers
   family: SOCIAL_SECURITY
   label: Contribution exceptionnelle des mutuelles santé (1 Md€)
@@ -667,7 +942,20 @@
   - PLFSS 2026 adopté[4]
   params_schema: {}
   mission_mapping:
-    M_SOLIDARITE: 1.0
+    M_SANTE: 1.0
+  multi_year_impact:
+    '2026': 1100000000
+    '2027': 0
+    '2028': 0
+  pushbacks:
+  - type: sector
+    description: Opposition frontale des mutuelles dénonçant une 'taxe sur la santé'
+      et un 'impôt déguisé'.
+    source: Le Lynx (2025)
+  - type: social
+    description: Risque de répercussion sur les cotisations des assurés dès 2027 (hausse
+      des tarifs).
+    source: Viva Magazine
 - id: amend_extend_overtime_deduction
   family: SOCIAL_SECURITY
   label: Extension de la déduction de cotisations sur les heures sup' aux >250 salariés
@@ -688,7 +976,20 @@
   - PLFSS 2026 amend. AN[33]
   params_schema: {}
   mission_mapping:
-    M_SOLIDARITE: 1.0
+    M_TRAVAIL_EMPLOI: 1.0
+  multi_year_impact:
+    '2026': -500000000
+    '2027': -520000000
+    '2028': -540000000
+  pushbacks:
+  - type: economic
+    description: Inquiétude sur le coût global des exonérations sur les heures supplémentaires
+      (coût total > 3Md€).
+    source: Sénat (2025)
+  - type: political
+    description: Débat sur l'efficacité de la mesure pour stimuler l'offre de travail
+      vs. coût pour les finances publiques.
+    source: Les Échos
 - id: amend_increase_severance_tax
   family: SOCIAL_SECURITY
   label: Augmentation du forfait social sur les indemnités de rupture (30% → 40%)
@@ -709,6 +1010,19 @@
   params_schema: {}
   mission_mapping:
     M_SOLIDARITE: 1.0
+  multi_year_impact:
+    '2026': 600000000
+    '2027': 620000000
+    '2028': 640000000
+  pushbacks:
+  - type: economic
+    description: Risque de renchérissement du coût des ruptures de contrat pour les
+      entreprises.
+    source: Les Échos (2025)
+  - type: labor
+    description: Inquiétude sur une baisse potentielle du montant net perçu par les
+      salariés en cas de rupture.
+    source: Le Figaro
 - id: annee_blanche_indexation
   family: SOCIAL_SECURITY
   label: Année Blanche (Geler l'indexation des prestations)
@@ -736,6 +1050,19 @@
     jobsImpactCount: -2000
   mission_mapping:
     M_SOLIDARITE: 1.0
+  multi_year_impact:
+    '2026': 4000000000
+    '2027': 4200000000
+    '2028': 4400000000
+  pushbacks:
+  - type: social
+    description: Risque de forte précarisation des ménages modestes face à une inflation
+      non compensée.
+    source: Vie-publique.fr (2025)
+  - type: political
+    description: Mesure hautement inflammable politiquement, souvent qualifiée de
+      'rigueur aveugle'.
+    source: Le Monde
 - id: plf2026_mission_justice_efficiency
   family: OPERATIONS
   label: Économies d'efficacité (Mission Justice)
@@ -757,7 +1084,20 @@
   - PLF 2026, Mission Justice
   params_schema: {}
   mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
+    M_JUSTICE: 1.0
+  multi_year_impact:
+    '2026': 250000000
+    '2027': 300000000
+    '2028': 350000000
+  pushbacks:
+  - type: operational
+    description: Risque de ralentissement de la modernisation de l'institution judiciaire
+      et de la dématérialisation.
+    source: Sénat (2025)
+  - type: social
+    description: Inquiétude des syndicats de magistrats sur les moyens de fonctionnement
+      des tribunaux.
+    source: Le Monde
 - id: plf2026_mission_education_efficiency
   family: OPERATIONS
   label: Efficacité opérationnelle (Mission Éducation)
@@ -778,7 +1118,20 @@
   - PLF 2026, Mission Enseignement scolaire
   params_schema: {}
   mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
+    M_ENSEIGNEMENT_SCOLAIRE: 1.0
+  multi_year_impact:
+    '2026': 400000000
+    '2027': 450000000
+    '2028': 500000000
+  pushbacks:
+  - type: operational
+    description: Risque de dégradation des conditions d'encadrement si les mesures
+      d'efficience touchent les postes devant élèves.
+    source: Sénat (2025)
+  - type: social
+    description: Forte mobilisation syndicale contre toute réduction de moyens dans
+      l'éducation nationale.
+    source: Les Échos
 - id: plf2026_mission_foreign_affairs_streamlining
   family: OPERATIONS
   label: Rationalisation (Mission Affaires étrangères)
@@ -800,7 +1153,20 @@
   - PLF 2026, Mission Action extérieure
   params_schema: {}
   mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
+    M_ACTION_EXTERIEURE_ETAT: 1.0
+  multi_year_impact:
+    '2026': 150000000
+    '2027': 160000000
+    '2028': 170000000
+  pushbacks:
+  - type: diplomatic
+    description: Risque d'affaiblissement de l'influence diplomatique française et
+      de la qualité du service aux Français de l'étranger.
+    source: Commission des Affaires Étrangères (Assemblée Nationale)
+  - type: operational
+    description: Complexité de la réorganisation du réseau consulaire sans nuire à
+      la continuité du service public.
+    source: Sénat (2025)
 - id: wealth_tax
   family: TAXES
   label: Rétablir l'Impôt de Solidarité sur la Fortune (ISF)
@@ -824,6 +1190,15 @@
     jobsImpactCount: -500
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 15000000000
+    '2027': 15500000000
+    '2028': 16000000000
+  pushbacks:
+  - type: economic
+    description: Risque de fuite des capitaux et d'évasion fiscale des contribuables
+      les plus aisés.
+    source: Conseil d'Analyse Économique
 - id: high_income_surtax
   family: TAXES
   label: Surtaxe sur les très hauts revenus
@@ -841,6 +1216,19 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 8000000000
+    '2027': 8200000000
+    '2028': 8400000000
+  pushbacks:
+  - type: economic
+    description: Risque d'expatriation fiscale des hauts revenus et de baisse de l'attractivité
+      pour les talents internationaux.
+    source: Institut Montaigne (2025)
+  - type: social
+    description: Perçu comme une mesure de justice fiscale nécessaire par une partie
+      de l'opinion publique.
+    source: Sondage OpinionWay
 - id: superprofits_tax
   family: TAXES
   label: Taxe sur les 'super-profits' des entreprises
@@ -865,6 +1253,18 @@
     jobsImpactCount: -2000
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 1500000000
+    '2027': 1600000000
+    '2028': 1700000000
+  pushbacks:
+  - type: economic
+    description: Risque de frein à l'investissement productif si les bénéfices réinvestis
+      sont taxés.
+    source: La Tribune (2025)
+  - type: legal
+    description: Instabilité fiscale dénoncée par les organisations patronales (MEDEF).
+    source: Le Figaro
 - id: end_flat_tax
   family: TAXES
   label: Supprimer la 'Flat Tax' (PFU) sur les revenus du capital
@@ -888,6 +1288,19 @@
     jobsImpactCount: -1000
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 1500000000
+    '2027': 1550000000
+    '2028': 1600000000
+  pushbacks:
+  - type: economic
+    description: Crainte d'un retour de l'évasion fiscale et d'une baisse de l'investissement
+      productif.
+    source: Bloomberg Tax (2025)
+  - type: social
+    description: Mesure de justice fiscale visant à aligner la taxation du capital
+      sur celle du travail.
+    source: Alternatives Économiques
 - id: expand_ftt
   family: TAXES
   label: Étendre la Taxe sur les Transactions Financières (TTF)
@@ -905,6 +1318,19 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 1200000000
+    '2027': 1250000000
+    '2028': 1300000000
+  pushbacks:
+  - type: economic
+    description: Crainte d'une délocalisation des activités de trading vers Londres
+      ou d'autres places financières sans TTF large.
+    source: Fédération Bancaire Française (2025)
+  - type: operational
+    description: Difficulté technique de taxation du trading haute fréquence et des
+      produits dérivés complexes.
+    source: Note du Trésor
 - id: progressive_csg
   family: TAXES
   label: Rendre la CSG plus progressive
@@ -923,6 +1349,19 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 2000000000
+    '2027': 2100000000
+    '2028': 2200000000
+  pushbacks:
+  - type: legal
+    description: Risque constitutionnel lié à l'individualisation de la CSG (actuellement
+      basée sur le foyer pour certains revenus) et à la rupture d'égalité.
+    source: Conseil Constitutionnel
+  - type: social
+    description: Incertitude sur le gain réel pour les classes moyennes en fonction
+      des seuils de progressivité retenus.
+    source: Note de l'IPP
 - id: carbon_tax
   family: CLIMATE
   label: Rétablir / Augmenter la taxe carbone
@@ -947,6 +1386,15 @@
     jobsImpactCount: -5000
   mission_mapping:
     M_ECOLOGIE: 1.0
+  multi_year_impact:
+    '2026': 4000000000
+    '2027': 4200000000
+    '2028': 4400000000
+  pushbacks:
+  - type: social
+    description: Risque de contestation sociale type 'Gilets Jaunes' en cas de hausse
+      brutale sans compensation.
+    source: Note de la CAE
 - id: cap_research_credit
   family: TAXES
   label: Réformer le Crédit d'Impôt Recherche (CIR)
@@ -969,7 +1417,20 @@
     gdpImpactPct: -0.08
     jobsImpactCount: -15000
   mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
+    M_RECHERCHE_ENSEIGNEMENT_SUPERIEUR: 1.0
+  multi_year_impact:
+    '2026': 500000000
+    '2027': 550000000
+    '2028': 600000000
+  pushbacks:
+  - type: economic
+    description: Risque de baisse de la R&D privée et de délocalisation des chercheurs
+      vers des pays plus attractifs.
+    source: Conseil d'Analyse Économique (2025)
+  - type: operational
+    description: Instabilité fiscale critiquée par les entreprises innovantes et les
+      startups.
+    source: Myriad Consulting
 - id: reduce_home_services_credit
   family: TAXES
   label: Réduire le crédit d'impôt 'Services à la personne'
@@ -986,7 +1447,20 @@
   - La Finance Pour Tous [17]
   params_schema: {}
   mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
+    M_SOLIDARITE: 1.0
+  multi_year_impact:
+    '2026': 1000000000
+    '2027': 1050000000
+    '2028': 1100000000
+  pushbacks:
+  - type: economic
+    description: Risque de forte hausse du travail au noir dans le secteur des services
+      à la personne (ménage, jardinage).
+    source: Note de la DG Trésor (2025)
+  - type: social
+    description: Impact sur le pouvoir d'achat des familles et des personnes âgées
+      dépendantes employant à domicile.
+    source: Les Échos
 - id: remove_pension_deduction
   family: TAXES
   label: Supprimer l'abattement fiscal de 10% sur les pensions
@@ -1004,6 +1478,19 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 4200000000
+    '2027': 4350000000
+    '2028': 4500000000
+  pushbacks:
+  - type: social
+    description: Forte baisse du pouvoir d'achat pour environ 17 millions de retraités
+      imposables.
+    source: Note de l'IPP (2025)
+  - type: political
+    description: Mesure politiquement très sensible, souvent qualifiée de 'ponction
+      sur les retraités'.
+    source: Le Figaro
 - id: end_overtime_exemption
   family: TAXES
   label: Supprimer l'exonération fiscale des heures supplémentaires
@@ -1022,6 +1509,19 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 3500000000
+    '2027': 3650000000
+    '2028': 3800000000
+  pushbacks:
+  - type: social
+    description: Forte baisse de pouvoir d'achat pour les salariés effectuant des
+      heures supplémentaires (environ 9 millions de personnes).
+    source: INSEE (2025)
+  - type: political
+    description: Mesure hautement impopulaire, remettant en cause le slogan 'travailler
+      plus pour gagner plus'.
+    source: Le Monde
 - id: fight_tax_fraud
   family: TAXES
   label: Lutter contre la fraude et l'évasion fiscales
@@ -1040,6 +1540,18 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 1500000000
+    '2027': 1600000000
+    '2028': 1700000000
+  pushbacks:
+  - type: operational
+    description: Nécessite des moyens humains supplémentaires substantiels (DGFiP)
+      pour des résultats parfois différés.
+    source: Cour des Comptes (2025)
+  - type: economic
+    description: Incertitude inhérente au rendement réel de la lutte contre la fraude.
+    source: Note du Trésor
 - id: expand_digital_tax
   family: TAXES
   label: Augmenter la taxe sur le numérique (GAFAM)
@@ -1058,6 +1570,19 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 800000000
+    '2027': 850000000
+    '2028': 900000000
+  pushbacks:
+  - type: legal
+    description: Difficulté de définition juridique des services numériques taxables
+      pour éviter les doubles impositions.
+    source: Conseil d'État (2025)
+  - type: international
+    description: Tensions avec les partenaires commerciaux (USA) sur le caractère
+      discriminatoire de la taxe.
+    source: Les Échos
 - id: reinstate_cvae
   family: TAXES
   label: Rétablir la CVAE (Impôt de production)
@@ -1076,6 +1601,19 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 4000000000
+    '2027': 4200000000
+    '2028': 4400000000
+  pushbacks:
+  - type: economic
+    description: Crainte d'une dégradation de la compétitivité industrielle française
+      (la CVAE étant un impôt de production).
+    source: France Industrie (2025)
+  - type: political
+    description: Remise en cause de la promesse de baisse des impôts de production
+      pour les entreprises.
+    source: Le Figaro
 - id: cut_fuel_taxes
   family: TAXES
   label: Réduire les taxes sur le carburant (TICPE)
@@ -1094,6 +1632,18 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': -2500000000
+    '2027': -2550000000
+    '2028': -2600000000
+  pushbacks:
+  - type: environmental
+    description: Mesure 'brune' contraire aux engagements climatiques de la France
+      (incitation à la consommation fossile).
+    source: Haut Conseil pour le Climat (2025)
+  - type: financial
+    description: Coût budgétaire massif pesant lourdement sur le déficit de l'État.
+    source: Note de la DG Trésor
 - id: cut_income_tax_middle
   family: TAXES
   label: Baisser l'impôt sur le revenu des classes moyennes
@@ -1112,6 +1662,19 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': -2000000000
+    '2027': -2050000000
+    '2028': -2100000000
+  pushbacks:
+  - type: financial
+    description: Creusement du déficit public de 2 milliards d'euros dans un contexte
+      de forte tension budgétaire.
+    source: Le Monde (2025)
+  - type: economic
+    description: Incertitude sur l'effet de relance réelle par rapport au coût pour
+      les finances de l'État.
+    source: Note de l'Observatoire Français des Conjonctures Économiques (OFCE)
 - id: expand_overtime_exemption
   family: TAXES
   label: Étendre la défiscalisation des heures sup. / primes
@@ -1131,6 +1694,19 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': -500000000
+    '2027': -520000000
+    '2028': -540000000
+  pushbacks:
+  - type: social
+    description: Mesure de soutien au pouvoir d'achat par le travail, très populaire
+      auprès des salariés.
+    source: Le Figaro (2025)
+  - type: economic
+    description: Risque de substitution entre emploi permanent et recours aux heures
+      supplémentaires, pesant sur les finances de la Sécurité Sociale.
+    source: Note de la Dares
 - id: cut_vat_essentials
   family: TAXES
   label: Baisser la TVA sur les produits de première nécessité
@@ -1148,6 +1724,19 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': -3500000000
+    '2027': -3600000000
+    '2028': -3700000000
+  pushbacks:
+  - type: economic
+    description: Risque de non-répercussion de la baisse de TVA sur les prix finaux
+      par la grande distribution (effet d'aubaine).
+    source: INSEE (2025)
+  - type: financial
+    description: Coût budgétaire très élevé et ciblage imparfait (bénéficie aussi
+      aux ménages aisés).
+    source: Note du Trésor
 - id: cut_vat_energy
   family: TAXES
   label: Baisser la TVA sur l'énergie à 5,5%
@@ -1166,6 +1755,19 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': -1500000000
+    '2027': -1550000000
+    '2028': -1600000000
+  pushbacks:
+  - type: legal
+    description: Nécessite une modification de la directive européenne TVA pour une
+      application pérenne sur l'ensemble de la facture.
+    source: Fondation Jean Jaurès (2025)
+  - type: environmental
+    description: 'Effet ambivalent : soutient le pouvoir d''achat mais réduit le signal-prix
+      pour la sobriété énergétique.'
+    source: Selectra
 - id: freeze_tax_brackets
   family: TAXES
   label: Geler le barème de l'impôt sur le revenu
@@ -1184,6 +1786,18 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 2000000000
+    '2027': 2100000000
+    '2028': 2200000000
+  pushbacks:
+  - type: social
+    description: Augmentation mécanique de l'impôt pour des millions de ménages, y
+      compris les plus modestes (effet de seuil).
+    source: MoneyVox (2025)
+  - type: political
+    description: Mesure perçue comme une 'hausse d'impôt cachée' par l'opposition.
+    source: Public Sénat
 - id: raise_retirement_age_65
   family: PENSIONS
   label: Augmenter l'âge légal de la retraite à 65 ans
@@ -1211,6 +1825,19 @@
     jobsImpactCount: 200000
   mission_mapping:
     M_SOLIDARITE: 1.0
+  multi_year_impact:
+    '2026': 1500000000
+    '2027': 3000000000
+    '2028': 4500000000
+  pushbacks:
+  - type: social
+    description: Forte opposition syndicale et risque de mouvements sociaux massifs
+      (type grèves de 2023).
+    source: Le Monde (2025)
+  - type: labor
+    description: Inquiétude sur l'emploi des seniors et le basculement vers le chômage
+      ou l'invalidité.
+    source: Note de l'OFCE
 - id: lower_retirement_age_62
   family: PENSIONS
   label: Revenir à l'âge légal de la retraite à 62 ans
@@ -1237,6 +1864,19 @@
     jobsImpactCount: -300000
   mission_mapping:
     M_SOLIDARITE: 1.0
+  multi_year_impact:
+    '2026': -3500000000
+    '2027': -7000000000
+    '2028': -10500000000
+  pushbacks:
+  - type: financial
+    description: Creusement massif du déficit de la branche vieillesse, menaçant l'équilibre
+      du système par répartition.
+    source: COR (Comité de Suivi des Retraites) 2025
+  - type: economic
+    description: Risque de baisse de la population active et de ralentissement de
+      la croissance du PIB.
+    source: Note de la DG Trésor
 - id: lower_retirement_age_60
   family: PENSIONS
   label: Abaisser l'âge légal de la retraite à 60 ans
@@ -1257,6 +1897,19 @@
   params_schema: {}
   mission_mapping:
     M_SOLIDARITE: 1.0
+  multi_year_impact:
+    '2026': -6000000000
+    '2027': -12000000000
+    '2028': -18000000000
+  pushbacks:
+  - type: financial
+    description: Coût budgétaire massif jugé insoutenable par la plupart des institutions
+      (Cour des Comptes, COR) sans hausse massive des cotisations.
+    source: Rapport du COR (2025)
+  - type: economic
+    description: Risque de forte pénurie de main-d'œuvre et de dégradation du ratio
+      actifs/retraités.
+    source: Note de la DG Trésor
 - id: extend_contribution_period
   family: PENSIONS
   label: Allonger la durée de cotisation pour la retraite
@@ -1275,6 +1928,19 @@
   params_schema: {}
   mission_mapping:
     M_SOLIDARITE: 1.0
+  multi_year_impact:
+    '2026': 500000000
+    '2027': 1000000000
+    '2028': 1500000000
+  pushbacks:
+  - type: labor
+    description: Injustice dénoncée pour les carrières longues et hachées, particulièrement
+      pour les femmes.
+    source: Note de l'IPP (2025)
+  - type: social
+    description: Risque de baisse du niveau des pensions pour ceux ne pouvant pas
+      atteindre la durée requise.
+    source: Le Monde
 - id: close_special_regimes
   family: PENSIONS
   label: Supprimer les régimes spéciaux de retraite restants
@@ -1300,6 +1966,19 @@
     jobsImpactCount: 0
   mission_mapping:
     M_SOLIDARITE: 1.0
+  multi_year_impact:
+    '2026': 300000000
+    '2027': 600000000
+    '2028': 900000000
+  pushbacks:
+  - type: labor
+    description: Risque de fortes tensions sociales et de grèves ciblées dans les
+      secteurs concernés (énergie, transports).
+    source: Le Monde (2025)
+  - type: operational
+    description: Complexité de la gestion de la transition ('clause du grand-père')
+      s'étalant sur plusieurs décennies.
+    source: Rapport de l'IFRAP
 - id: freeze_pension_indexation
   family: PENSIONS
   label: Geler ou sous-indexer les pensions de retraite
@@ -1325,6 +2004,19 @@
     jobsImpactCount: -2000
   mission_mapping:
     M_SOLIDARITE: 1.0
+  multi_year_impact:
+    '2026': 6200000000
+    '2027': 6400000000
+    '2028': 6600000000
+  pushbacks:
+  - type: social
+    description: Forte baisse du pouvoir d'achat réel des retraités, particulièrement
+      les petites pensions, dans un contexte d'inflation.
+    source: Le Monde (2025)
+  - type: political
+    description: Mesure politiquement explosive, souvent contestée par les associations
+      de retraités et les partis d'opposition.
+    source: Public Sénat
 - id: align_public_private_pensions
   family: PENSIONS
   label: Aligner le calcul des retraites public/privé
@@ -1343,6 +2035,19 @@
   params_schema: {}
   mission_mapping:
     M_SOLIDARITE: 1.0
+  multi_year_impact:
+    '2026': 500000000
+    '2027': 1000000000
+    '2028': 1500000000
+  pushbacks:
+  - type: labor
+    description: Forte hostilité des agents de la fonction publique, dénonçant une
+      baisse de pension sans revalorisation salariale compensatoire.
+    source: Le Figaro (2025)
+  - type: economic
+    description: Débat sur l'équité réelle public-privé (différence de primes, de
+      carrières et de cotisations).
+    source: Note de l'IPP
 - id: raise_pension_contributions
   family: PENSIONS
   label: Augmenter les cotisations retraite
@@ -1362,6 +2067,19 @@
   params_schema: {}
   mission_mapping:
     M_SOLIDARITE: 1.0
+  multi_year_impact:
+    '2026': 8000000000
+    '2027': 8200000000
+    '2028': 8400000000
+  pushbacks:
+  - type: economic
+    description: Risque de dégradation de la compétitivité-coût des entreprises (part
+      patronale) ou baisse du salaire net (part salariale).
+    source: Note de la DG Trésor (2025)
+  - type: political
+    description: Mesure impopulaire auprès des actifs, augmentant la pression fiscale
+      globale déjà élevée en France.
+    source: Le Figaro
 - id: raise_min_pension
   family: PENSIONS
   label: Augmenter les pensions minimales
@@ -1381,6 +2099,19 @@
   params_schema: {}
   mission_mapping:
     M_SOLIDARITE: 1.0
+  multi_year_impact:
+    '2026': -2000000000
+    '2027': -2100000000
+    '2028': -2200000000
+  pushbacks:
+  - type: financial
+    description: Coût budgétaire important pesant sur l'équilibre financier de la
+      branche vieillesse.
+    source: Note de la Direction de la Sécurité Sociale (2025)
+  - type: operational
+    description: Complexité de mise en œuvre pour les retraités ayant des carrières
+      multi-régimes.
+    source: Rapport du COR
 - id: tighten_unemployment_benefits
   family: SOCIAL_SECURITY
   label: Durcir les règles de l'assurance chômage
@@ -1406,7 +2137,20 @@
     gdpImpactPct: -0.05
     jobsImpactCount: 15000
   mission_mapping:
-    M_SOLIDARITE: 1.0
+    M_TRAVAIL_EMPLOI: 1.0
+  multi_year_impact:
+    '2026': 1300000000
+    '2027': 1800000000
+    '2028': 2000000000
+  pushbacks:
+  - type: social
+    description: Forte opposition des syndicats dénonçant une stigmatisation des chômeurs
+      et une baisse de la protection sociale.
+    source: Culture RH (2025)
+  - type: economic
+    description: Risque de précarisation accrue des demandeurs d'emploi en fin de
+      droits.
+    source: Note de l'Unédic
 - id: expand_unemployment_benefits
   family: SOCIAL_SECURITY
   label: Annuler les coupes dans l'assurance chômage
@@ -1426,7 +2170,20 @@
   - Le Monde [28]
   params_schema: {}
   mission_mapping:
-    M_SOLIDARITE: 1.0
+    M_TRAVAIL_EMPLOI: 1.0
+  multi_year_impact:
+    '2026': -1500000000
+    '2027': -1600000000
+    '2028': -1700000000
+  pushbacks:
+  - type: behavioral
+    description: Crainte d'une hausse massive des démissions et d'une déstabilisation
+      du marché du travail.
+    source: L'Express (2025)
+  - type: financial
+    description: Pression sur l'équilibre financier de l'Unédic, nécessitant potentiellement
+      une hausse des cotisations.
+    source: Note de l'Unédic
 - id: tighten_rsa_requirements
   family: SOCIAL_SECURITY
   label: Conditionner le versement du RSA
@@ -1446,6 +2203,19 @@
   params_schema: {}
   mission_mapping:
     M_SOLIDARITE: 1.0
+  multi_year_impact:
+    '2026': 500000000
+    '2027': 800000000
+    '2028': 1000000000
+  pushbacks:
+  - type: social
+    description: Inquiétude des associations de lutte contre la pauvreté sur le risque
+      de radiation des publics les plus éloignés de l'emploi.
+    source: Le Monde (2025)
+  - type: administrative
+    description: Complexité et coût de l'accompagnement et du contrôle des 15-20 heures
+      d'activité hebdomadaires.
+    source: Note de l'IPP
 - id: restrict_non_citizen_benefits
   family: SOCIAL_SECURITY
   label: Restreindre les aides sociales aux non-citoyens
@@ -1465,6 +2235,19 @@
   params_schema: {}
   mission_mapping:
     M_SOLIDARITE: 1.0
+  multi_year_impact:
+    '2026': 500000000
+    '2027': 520000000
+    '2028': 540000000
+  pushbacks:
+  - type: legal
+    description: Risque de censure par le Conseil Constitutionnel (principe de fraternité
+      et égalité devant les prestations sociales).
+    source: Conseil Constitutionnel (2024/2025)
+  - type: social
+    description: Inquiétude sur l'aggravation de la grande pauvreté chez les populations
+      immigrées en situation régulière.
+    source: Le Monde
 - id: freeze_social_benefits
   family: SOCIAL_SECURITY
   label: Geler l'indexation des minima sociaux
@@ -1484,6 +2267,19 @@
   params_schema: {}
   mission_mapping:
     M_SOLIDARITE: 1.0
+  multi_year_impact:
+    '2026': 1200000000
+    '2027': 1250000000
+    '2028': 1300000000
+  pushbacks:
+  - type: social
+    description: Forte dégradation du pouvoir d'achat des ménages les plus pauvres,
+      déjà impactés par l'inflation alimentaire et énergétique.
+    source: Vie-publique.fr (2025)
+  - type: financial
+    description: Risque de hausse indirecte des dépenses d'urgence sociale (hébergement,
+      aides alimentaires) pour compenser la baisse de revenu.
+    source: Note de l'IPP
 - id: cut_housing_aid
   family: SOCIAL_SECURITY
   label: Réduire les Aides au Logement (APL)
@@ -1508,7 +2304,20 @@
     gdpImpactPct: -0.05
     jobsImpactCount: 0
   mission_mapping:
-    M_SOLIDARITE: 1.0
+    M_COHESION_DES_TERRITOIRES: 1.0
+  multi_year_impact:
+    '2026': 1500000000
+    '2027': 1550000000
+    '2028': 1600000000
+  pushbacks:
+  - type: social
+    description: Impact direct sur le reste à charge des locataires les plus modestes
+      et des étudiants.
+    source: Le Monde (2025)
+  - type: financial
+    description: Risque de hausse des impayés de loyer pour les bailleurs sociaux
+      (HLM).
+    source: Union Sociale pour l'Habitat (USH)
 - id: cut_family_benefits
   family: SOCIAL_SECURITY
   label: Réduire les allocations familiales (hauts revenus)
@@ -1527,6 +2336,19 @@
   params_schema: {}
   mission_mapping:
     M_SOLIDARITE: 1.0
+  multi_year_impact:
+    '2026': 1500000000
+    '2027': 1550000000
+    '2028': 1600000000
+  pushbacks:
+  - type: social
+    description: Injustice dénoncée pour les familles des classes moyennes supérieures
+      qui ont déjà subi un fort écrêtement.
+    source: Le Figaro (2025)
+  - type: economic
+    description: Risque de baisse de la natalité si les aides familiales sont perçues
+      comme instables.
+    source: Note de l'Unaf
 - id: fight_social_fraud
   family: SOCIAL_SECURITY
   label: Lutter contre la fraude aux prestations sociales
@@ -1546,6 +2368,19 @@
   params_schema: {}
   mission_mapping:
     M_SOLIDARITE: 1.0
+  multi_year_impact:
+    '2026': 500000000
+    '2027': 550000000
+    '2028': 600000000
+  pushbacks:
+  - type: operational
+    description: Nécessite des investissements importants en outils numériques (croisement
+      de fichiers) et en effectifs de contrôle (CAF, CPAM).
+    source: Modernisation.gouv.fr (2025)
+  - type: social
+    description: Risque de stigmatisation des bénéficiaires de prestations sociales
+      et de multiplication des contrôles intrusifs.
+    source: Public Sénat
 - id: eliminate_ame
   family: SOCIAL_SECURITY
   label: Supprimer l'Aide Médicale d'État (AME)
@@ -1564,7 +2399,20 @@
   - Est.
   params_schema: {}
   mission_mapping:
-    M_SOLIDARITE: 1.0
+    M_SANTE: 1.0
+  multi_year_impact:
+    '2026': 800000000
+    '2027': 850000000
+    '2028': 900000000
+  pushbacks:
+  - type: health
+    description: Risque de santé publique (propagation de maladies infectieuses) et
+      engorgement des services d'urgence hospitalière.
+    source: Académie de Médecine (2025)
+  - type: social
+    description: Contestation par les associations humanitaires dénonçant une rupture
+      de l'accès aux soins fondamentaux.
+    source: Le Monde
 - id: cap_health_spending
   family: HEALTH
   label: Plafonner la croissance des dépenses de santé (ONDAM)
@@ -1584,6 +2432,19 @@
   params_schema: {}
   mission_mapping:
     M_SANTE: 1.0
+  multi_year_impact:
+    '2026': 2800000000
+    '2027': 3000000000
+    '2028': 3200000000
+  pushbacks:
+  - type: health
+    description: Risque de sous-financement chronique de l'hôpital public et dégradation
+      de l'accès aux soins.
+    source: Fédération Hospitalière de France (2025)
+  - type: social
+    description: Inquiétude sur le déremboursement de soins ou médicaments pour compenser
+      le plafonnement.
+    source: Les Échos
 - id: reduce_health_costs
   family: HEALTH
   label: Réduire les dépenses de santé 'inutiles'
@@ -1603,6 +2464,19 @@
   params_schema: {}
   mission_mapping:
     M_SANTE: 1.0
+  multi_year_impact:
+    '2026': 1200000000
+    '2027': 1300000000
+    '2028': 1400000000
+  pushbacks:
+  - type: sector
+    description: Difficulté de mise en œuvre réelle sans dégrader la qualité des soins
+      ou augmenter la charge de travail des soignants.
+    source: Le Monde (2025)
+  - type: operational
+    description: Nécessite des investissements préalables (numérique, formation) pour
+      générer des économies à terme.
+    source: Note de l'Assurance Maladie
 - id: increase_patient_copays
   family: HEALTH
   label: Augmenter le reste à charge (franchises médicales)
@@ -1622,6 +2496,19 @@
   params_schema: {}
   mission_mapping:
     M_SANTE: 1.0
+  multi_year_impact:
+    '2026': 1100000000
+    '2027': 1150000000
+    '2028': 1200000000
+  pushbacks:
+  - type: social
+    description: Augmentation du reste à charge pour les patients, pouvant entraîner
+      un renoncement aux soins pour les plus précaires sans mutuelle.
+    source: Note de la DREES (2025)
+  - type: economic
+    description: Transfert de charge vers les mutuelles et assurances complémentaires,
+      entraînant une hausse mécanique de leurs cotisations.
+    source: Le Monde
 - id: hire_health_workers
   family: HEALTH
   label: Embaucher du personnel soignant supplémentaire
@@ -1641,6 +2528,19 @@
   params_schema: {}
   mission_mapping:
     M_SANTE: 1.0
+  multi_year_impact:
+    '2026': -1500000000
+    '2027': -1600000000
+    '2028': -1700000000
+  pushbacks:
+  - type: labor
+    description: Difficultés majeures de recrutement (98% des établissements impactés)
+      malgré l'ouverture de postes.
+    source: Infirmiers.com (2025)
+  - type: financial
+    description: Pression sur les budgets hospitaliers déjà en fort déficit (1,2Md€
+      cumulé pour les CHU en 2023).
+    source: Le Quotidien du Médecin
 - id: raise_healthcare_wages
   family: HEALTH
   label: Augmenter les salaires des soignants à l'hôpital
@@ -1660,6 +2560,18 @@
   params_schema: {}
   mission_mapping:
     M_SANTE: 1.0
+  multi_year_impact:
+    '2026': -4500000000
+    '2027': -4600000000
+    '2028': -4700000000
+  pushbacks:
+  - type: financial
+    description: Impact massif sur le déficit de la Sécurité Sociale et nécessité
+      de financement pérenne.
+    source: Cour des Comptes (2025)
+  - type: economic
+    description: Risque d'inflation par les salaires dans le secteur public hospitalier.
+    source: Note de l'Insee
 - id: cut_officials_privileges
   family: STAFFING
   label: Réduire les 'privilèges' des élus
@@ -1678,7 +2590,20 @@
   - Est.
   params_schema: {}
   mission_mapping:
-    M_ENSEIGNEMENT_SCOLAIRE: 1.0
+    M_DIRECTION_DE_L_ACTION_DU_GOUVERNEMENT: 1.0
+  multi_year_impact:
+    '2026': 100000000
+    '2027': 105000000
+    '2028': 110000000
+  pushbacks:
+  - type: symbolic
+    description: Mesure à fort impact symbolique mais à rendement budgétaire limité
+      au regard du déficit global.
+    source: Rapport de la Cour des Comptes (2025)
+  - type: political
+    description: Résistances internes au sein des assemblées parlementaires et des
+      grands corps de l'État.
+    source: Le Figaro
 - id: freeze_civil_service_pay
   family: STAFFING
   label: Geler le point d'indice des fonctionnaires
@@ -1708,7 +2633,20 @@
     gdpImpactPct: -0.1
     jobsImpactCount: 0
   mission_mapping:
-    M_ENSEIGNEMENT_SCOLAIRE: 1.0
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 2000000000
+    '2027': 2100000000
+    '2028': 2200000000
+  pushbacks:
+  - type: social
+    description: Baisse du pouvoir d'achat réel des fonctionnaires, particulièrement
+      marquée en période d'inflation.
+    source: FIPECO (2025)
+  - type: labor
+    description: Risque de perte d'attractivité des métiers de la fonction publique
+      et tensions sociales (grèves).
+    source: Solidaires Finances Publiques
 - id: freeze_civil_service_promotions
   family: STAFFING
   label: Geler les promotions automatiques (Fonction Publique)
@@ -1731,7 +2669,20 @@
   - L'Express [37]
   params_schema: {}
   mission_mapping:
-    M_ENSEIGNEMENT_SCOLAIRE: 1.0
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 800000000
+    '2027': 850000000
+    '2028': 900000000
+  pushbacks:
+  - type: labor
+    description: Blocage des carrières et du GVT (Glissement Vieillesse Technicité),
+      perçu comme une sanction injuste par les agents.
+    source: CGT Finances Publiques (2025)
+  - type: administrative
+    description: Complexité de gestion des reliquats d'avancement lors du dégel futur
+      des carrières.
+    source: Note de la DGAFP
 - id: raise_civil_service_pay
   family: STAFFING
   label: Augmenter le point d'indice de 10% (Fonction Publique)
@@ -1761,7 +2712,20 @@
     gdpImpactPct: 0.2
     jobsImpactCount: 5000
   mission_mapping:
-    M_ENSEIGNEMENT_SCOLAIRE: 1.0
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': -2000000000
+    '2027': -2050000000
+    '2028': -2100000000
+  pushbacks:
+  - type: financial
+    description: Coût budgétaire massif pour les finances publiques (2Md€ par point
+      d'indice) dans un contexte de réduction du déficit.
+    source: Sénat (2025)
+  - type: economic
+    description: Risque d'effet d'entraînement sur les salaires du secteur privé et
+      de boucle prix-salaires.
+    source: Note de la Banque de France
 - id: cut_public_workforce
   family: STAFFING
   label: Réduire le nombre de fonctionnaires (non-remplacement)
@@ -1790,7 +2754,20 @@
     gdpImpactPct: -0.05
     jobsImpactCount: -50000
   mission_mapping:
-    M_ENSEIGNEMENT_SCOLAIRE: 1.0
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 150000000
+    '2027': 160000000
+    '2028': 170000000
+  pushbacks:
+  - type: labor
+    description: Inquiétude sur la charge de travail accrue pour les agents restants
+      et la dégradation de la qualité du service public.
+    source: Miroir Social (2025)
+  - type: operational
+    description: Difficulté de ciblage des suppressions de postes sans nuire aux missions
+      régaliennes (justice, police).
+    source: Budget.gouv.fr
 - id: cut_agencies
   family: STAFFING
   label: Supprimer ou fusionner des agences publiques
@@ -1808,7 +2785,20 @@
   - Bayrou plan [43]
   params_schema: {}
   mission_mapping:
-    M_ENSEIGNEMENT_SCOLAIRE: 1.0
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 500000000
+    '2027': 1500000000
+    '2028': 2500000000
+  pushbacks:
+  - type: operational
+    description: Complexité majeure des fusions d'agences et des réaffectations de
+      missions de service public.
+    source: Sénat (2025)
+  - type: labor
+    description: Inquiétude sur le devenir des 180 000 salariés des opérateurs de
+      l'État et risques de conflits sociaux.
+    source: Les Échos
 - id: reduce_sick_leave
   family: STAFFING
   label: Réduire l'absentéisme dans la fonction publique
@@ -1831,7 +2821,20 @@
   - L'Express [34]
   params_schema: {}
   mission_mapping:
-    M_ENSEIGNEMENT_SCOLAIRE: 1.0
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 900000000
+    '2027': 950000000
+    '2028': 1000000000
+  pushbacks:
+  - type: labor
+    description: Contestation syndicale dénonçant une mesure punitive et une stigmatisation
+      des agents publics par rapport au privé.
+    source: Maire-Info (2025)
+  - type: operational
+    description: Efficacité budgétaire réelle débattue (risque de report sur des arrêts
+      plus longs ou présentisme).
+    source: Note de l'IGF/IGAS
 - id: cut_defense_spending
   family: DEFENSE
   label: Réduire le budget de la Défense de 10%
@@ -1851,6 +2854,15 @@
   params_schema: {}
   mission_mapping:
     M_DEFENSE: 1.0
+  multi_year_impact:
+    '2026': 3300000000
+    '2027': 3500000000
+    '2028': 3700000000
+  pushbacks:
+  - type: geopolitical
+    description: Affaiblissement de la posture de dissuasion et remise en cause de
+      la Loi de Programmation Militaire.
+    source: Commission de la Défense (Sénat)
 - id: reduce_payroll_subsidies
   family: SUBSIDIES
   label: Réduire les allègements de cotisations patronales
@@ -1869,7 +2881,20 @@
   - The Guardian [45]
   params_schema: {}
   mission_mapping:
-    M_DIVERS: 1.0
+    M_TRAVAIL_EMPLOI: 1.0
+  multi_year_impact:
+    '2026': 3500000000
+    '2027': 3800000000
+    '2028': 4000000000
+  pushbacks:
+  - type: economic
+    description: Risque de destruction d'emplois (estimé entre 50 000 et 150 000)
+      et de hausse du coût du travail sur les bas salaires.
+    source: Note de l'OFCE (2025)
+  - type: sector
+    description: Forte opposition des organisations patronales (MEDEF, CPME) dénonçant
+      un coup de frein à la compétitivité.
+    source: Les Échos
 - id: remove_fossil_subsidies
   family: CLIMATE
   label: Supprimer les niches fiscales 'brunes' (fossiles)
@@ -1889,6 +2914,19 @@
   params_schema: {}
   mission_mapping:
     M_ECOLOGIE: 1.0
+  multi_year_impact:
+    '2026': 2000000000
+    '2027': 2100000000
+    '2028': 2200000000
+  pushbacks:
+  - type: sector
+    description: Forte opposition des transporteurs routiers et du secteur du BTP
+      dénonçant une hausse des coûts insupportable.
+    source: Le Monde (2025)
+  - type: economic
+    description: Risque de répercussion sur les prix de vente finaux (inflation) et
+      perte de compétitivité des entreprises françaises.
+    source: Note de la DG Trésor
 - id: cut_foreign_aid
   family: SUBSIDIES
   label: Réduire l'aide publique au développement
@@ -1907,7 +2945,20 @@
   - L'Express [47]
   params_schema: {}
   mission_mapping:
-    M_DIVERS: 1.0
+    M_AIDE_PUBLIQUE_AU_DEVELOPPEMENT: 1.0
+  multi_year_impact:
+    '2026': 700000000
+    '2027': 750000000
+    '2028': 800000000
+  pushbacks:
+  - type: diplomatic
+    description: Affaiblissement du 'soft power' français et de son influence dans
+      les pays du Sud global.
+    source: Focus 2030 (2025)
+  - type: ethical
+    description: Dénonciation par les ONG humanitaires d'un désengagement de la France
+      vis-à-vis des objectifs de développement durable (ODD).
+    source: Alternatives Économiques
 - id: cut_association_subsidies
   family: SUBSIDIES
   label: Réduire les subventions aux associations
@@ -1926,7 +2977,20 @@
   - L'Express [49]
   params_schema: {}
   mission_mapping:
-    M_DIVERS: 1.0
+    M_SPORT_JEUNESSE_ET_VIE_ASSOCIATIVE: 1.0
+  multi_year_impact:
+    '2026': 300000000
+    '2027': 310000000
+    '2028': 320000000
+  pushbacks:
+  - type: social
+    description: Risque de fragilisation du tissu associatif local et de réduction
+      des services de proximité (sport, aide sociale).
+    source: Le Monde (2025)
+  - type: political
+    description: Contestation par les élus locaux qui craignent un report de charge
+      sur les collectivités territoriales.
+    source: Sénat
 - id: cut_public_investments
   family: OTHER
   label: Réduire ou reporter les investissements publics
@@ -1945,7 +3009,20 @@
   - Est.
   params_schema: {}
   mission_mapping:
-    M_DIVERS: 1.0
+    M_ECONOMIE: 1.0
+  multi_year_impact:
+    '2026': 2000000000
+    '2027': 2100000000
+    '2028': 2200000000
+  pushbacks:
+  - type: economic
+    description: Risque de dégradation du potentiel de croissance à long terme et
+      du patrimoine public (infrastructures).
+    source: Note de la DG Trésor (2025)
+  - type: environmental
+    description: Crainte d'un ralentissement de la transition écologique si les investissements
+      verts sont touchés.
+    source: Haut Conseil pour le Climat
 - id: hire_teachers
   family: STAFFING
   label: Embaucher des enseignants supplémentaires
@@ -1965,6 +3042,14 @@
   params_schema: {}
   mission_mapping:
     M_ENSEIGNEMENT_SCOLAIRE: 1.0
+  multi_year_impact:
+    '2026': -80000000
+    '2027': -240000000
+    '2028': -250000000
+  pushbacks:
+  - type: administrative
+    description: Difficultés de recrutement chroniques sur certains concours.
+    source: Sénat (2025)
 - id: cut_local_transfers
   family: OTHER
   label: Réduire les dotations aux collectivités locales
@@ -1983,7 +3068,20 @@
   - Est.
   params_schema: {}
   mission_mapping:
-    M_DIVERS: 1.0
+    M_RELATIONS_AVEC_LES_COLLECTIVITES_TERRITORIALES: 1.0
+  multi_year_impact:
+    '2026': 1500000000
+    '2027': 1550000000
+    '2028': 1600000000
+  pushbacks:
+  - type: political
+    description: Forte opposition des associations d'élus locaux (AMF, ADF, Régions
+      de France) dénonçant une mise en péril des services publics locaux.
+    source: Le Monde (2025)
+  - type: social
+    description: Risque de dégradation des services de proximité (écoles, voirie,
+      action sociale) ou de hausse des impôts locaux pour compenser.
+    source: Sénat
 - id: green_transport_tax
   family: CLIMATE
   label: Taxe verte sur les transports (Avion, Livraisons)
@@ -2003,6 +3101,15 @@
   params_schema: {}
   mission_mapping:
     M_ECOLOGIE: 1.0
+  multi_year_impact:
+    '2026': 580000000
+    '2027': 600000000
+    '2028': 620000000
+  pushbacks:
+  - type: sector
+    description: Inquiétude des exploitants d'infrastructures sur la hausse de la
+      taxe de 4,6% à 10%.
+    source: Banque des Territoires (2025)
 - id: efficient_procurement
   family: PROCUREMENT
   label: Améliorer l'efficacité des achats publics
@@ -2023,6 +3130,19 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 1000000000
+    '2027': 1100000000
+    '2028': 1200000000
+  pushbacks:
+  - type: operational
+    description: Complexité de mise en œuvre technique et administrative pour massifier
+      les achats sans nuire à la réactivité locale.
+    source: Rapport de la Cour des Comptes (2025)
+  - type: economic
+    description: Risque d'éviction des PME locales au profit des grands groupes lors
+      de la massification des contrats.
+    source: Note de la Direction des Achats de l'État (DAE)
 - id: freeze_spending_one_year
   family: OPERATIONS
   label: Gel des dépenses de l'État en valeur (1 an)
@@ -2046,6 +3166,19 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 10000000000
+    '2027': 10500000000
+    '2028': 11000000000
+  pushbacks:
+  - type: operational
+    description: 'Extrême difficulté de mise en œuvre uniforme : risque de blocage
+      des services publics essentiels (éducation, sécurité).'
+    source: Note de la DG Trésor (2025)
+  - type: political
+    description: Mesure de rigueur extrême souvent critiquée pour son caractère aveugle
+      et non sélectif.
+    source: Le Monde
 - id: build_social_housing
   family: OTHER
   label: Construction massive de logements sociaux
@@ -2064,7 +3197,20 @@
   - NFP platform (2024)
   params_schema: {}
   mission_mapping:
-    M_DIVERS: 1.0
+    M_COHESION_DES_TERRITOIRES: 1.0
+  multi_year_impact:
+    '2026': -2000000000
+    '2027': -2100000000
+    '2028': -2200000000
+  pushbacks:
+  - type: financial
+    description: Coût budgétaire massif pour l'État et risque de hausse de la dette
+      publique.
+    source: Note de la DG Trésor (2025)
+  - type: operational
+    description: Difficultés de mise en œuvre liées à la disponibilité du foncier
+      et aux délais de construction.
+    source: Union Sociale pour l'Habitat (USH)
 - id: free_school_services
   family: OTHER
   label: Gratuité de la cantine et des fournitures scolaires
@@ -2083,7 +3229,20 @@
   - NFP platform (2024)
   params_schema: {}
   mission_mapping:
-    M_DIVERS: 1.0
+    M_ENSEIGNEMENT_SCOLAIRE: 1.0
+  multi_year_impact:
+    '2026': -3000000000
+    '2027': -3100000000
+    '2028': -3200000000
+  pushbacks:
+  - type: financial
+    description: Coût budgétaire très important (7 à 9 Md€ pour la gratuité totale)
+      nécessitant un transfert massif du coût des familles vers les finances publiques.
+    source: France Stratégie (2025)
+  - type: political
+    description: Débat sur la répartition du financement entre l'État et les collectivités
+      territoriales (communes, départements, régions).
+    source: Sénat
 - id: pen_age_plus3m_per_year
   family: PENSIONS
   label: 'Retraite : maintien du rythme de la réforme (+3 mois par an)'
@@ -2103,6 +3262,19 @@
   params_schema: {}
   mission_mapping:
     M_SOLIDARITE: 1.0
+  multi_year_impact:
+    '2026': 300000000
+    '2027': 600000000
+    '2028': 900000000
+  pushbacks:
+  - type: labor
+    description: Injustice dénoncée pour les carrières longues et pénibles, avec un
+      risque de basculement vers le chômage senior ou l'invalidité.
+    source: Note de l'OFCE (2025)
+  - type: social
+    description: Forte opposition de l'opinion publique au recul de l'âge de départ,
+      perçu comme une dégradation de la qualité de vie.
+    source: Sondage IFOP
 - id: is_rate_33_5
   family: TAXES
   label: Augmenter l'Impôt sur les Sociétés (IS) à 33,5%
@@ -2119,6 +3291,15 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 11000000000
+    '2027': 11500000000
+    '2028': 12000000000
+  pushbacks:
+  - type: economic
+    description: Perte de compétitivité des entreprises françaises face à la moyenne
+      européenne (21-25%).
+    source: OECD Tax Database
 - id: transfer_pricing_enforcement
   family: TAXES
   label: Renforcer le contrôle des prix de transfert (multinationales)
@@ -2136,6 +3317,19 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 500000000
+    '2027': 520000000
+    '2028': 540000000
+  pushbacks:
+  - type: administrative
+    description: Charge de conformité accrue pour les ETI (Entreprises de Taille Intermédiaire)
+      entrant dans le nouveau seuil de 150M€.
+    source: PwC Avocats (2025)
+  - type: legal
+    description: Risque de multiplication des contentieux fiscaux sur l'évaluation
+      des actifs incorporels difficiles à évaluer.
+    source: Deloitte
 - id: vat_normal_plus1
   family: TAXES
   label: Augmenter le taux normal de TVA de 1 point
@@ -2154,6 +3348,14 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 7000000000
+    '2027': 7200000000
+    '2028': 7400000000
+  pushbacks:
+  - type: social
+    description: Effet régressif sur le pouvoir d'achat des ménages les plus modestes.
+    source: INSEE
 - id: vat_all_rates_plus1
   family: TAXES
   label: Augmenter tous les taux de TVA de 1 point
@@ -2179,6 +3381,19 @@
     jobsImpactCount: -10000
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 10000000000
+    '2027': 10200000000
+    '2028': 10400000000
+  pushbacks:
+  - type: social
+    description: Effet inflationniste direct sur les prix à la consommation et baisse
+      du pouvoir d'achat pour l'ensemble des ménages.
+    source: INSEE (2025)
+  - type: economic
+    description: Risque de freinage de la consommation intérieure, principal moteur
+      de la croissance française.
+    source: Note de la DG Trésor
 - id: vat_intermediate_12_5
   family: TAXES
   label: Augmenter le taux intermédiaire de TVA à 12,5%
@@ -2198,6 +3413,18 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 3000000000
+    '2027': 3100000000
+    '2028': 3200000000
+  pushbacks:
+  - type: sector
+    description: Risque de ralentissement du secteur du bâtiment (rénovation) et des
+      transports si la répercussion sur les prix est totale.
+    source: FFB (Fédération Française du Bâtiment) 2025
+  - type: economic
+    description: Effet inflationniste modéré mais réel sur les services concernés.
+    source: Note de la DG Trésor
 - id: vat_franchise_threshold_halved
   family: TAXES
   label: Réduire le seuil de la franchise de TVA (petites entreprises)
@@ -2215,6 +3442,19 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 400000000
+    '2027': 420000000
+    '2028': 440000000
+  pushbacks:
+  - type: administrative
+    description: Complexification administrative majeure pour environ 200 000 petites
+      entreprises et auto-entrepreneurs entrant dans le champ de la TVA.
+    source: Sénat (2025)
+  - type: economic
+    description: Risque de perte de marge pour les petites structures ne pouvant pas
+      répercuter la TVA sur leurs prix de vente.
+    source: Les Échos
 - id: cap_quotient_conjugal
   family: TAXES
   label: Plafonner le quotient conjugal
@@ -2232,6 +3472,19 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 3200000000
+    '2027': 3300000000
+    '2028': 3400000000
+  pushbacks:
+  - type: social
+    description: Hausse d'impôt ciblée sur les 10% des couples mariés ou pacsés les
+      plus aisés avec de fortes disparités de revenus.
+    source: Note de l'OFCE (2025)
+  - type: political
+    description: Mesure sensible touchant à l'institution du mariage et à la politique
+      familiale.
+    source: Le Figaro
 - id: abolish_quotient_conjugal
   family: TAXES
   label: Supprimer le quotient conjugal
@@ -2249,6 +3502,19 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 10000000000
+    '2027': 10500000000
+    '2028': 11000000000
+  pushbacks:
+  - type: labor
+    description: Injustice dénoncée pour les foyers avec un seul revenu ou de fortes
+      disparités, pouvant désinciter au travail du conjoint le moins rémunéré.
+    source: Note de l'OFCE (2025)
+  - type: political
+    description: Réforme radicale remettant en cause un pilier historique du système
+      fiscal français depuis 1945.
+    source: Sénat
 - id: abolish_qf_demi_parts_noneffective
   family: TAXES
   label: Supprimer les demi-parts fiscales 'non effectives'
@@ -2265,6 +3531,18 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 1500000000
+    '2027': 1550000000
+    '2028': 1600000000
+  pushbacks:
+  - type: social
+    description: Forte opposition des associations de retraités et de veufs/veuves
+      dénonçant une hausse d'impôt ciblée sur les seniors.
+    source: Le Monde (2025)
+  - type: political
+    description: Mesure souvent qualifiée de 'petite économie' au coût politique disproportionné.
+    source: Sénat
 - id: wealth_minimum_tax_2pct_100m
   family: TAXES
   label: Impôt minimum de 2% (Patrimoine > 100 M€)
@@ -2282,6 +3560,19 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 6000000000
+    '2027': 6200000000
+    '2028': 6400000000
+  pushbacks:
+  - type: economic
+    description: Risque massif d'expatriation fiscale des plus grandes fortunes mondiales
+      résidant en France.
+    source: EU Tax Observatory (2025)
+  - type: legal
+    description: Complexité de mise en œuvre sans un accord international (coordination
+      au niveau du G20).
+    source: Note de la DG Trésor
 - id: restore_taxe_habitation_top20
   family: TAXES
   label: Rétablir la Taxe d'Habitation (20% plus aisés)
@@ -2299,7 +3590,20 @@
   - Workbook 20251017, Recettes
   params_schema: {}
   mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
+    M_RELATIONS_AVEC_LES_COLLECTIVITES_TERRITORIALES: 1.0
+  multi_year_impact:
+    '2026': 10000000000
+    '2027': 10200000000
+    '2028': 10400000000
+  pushbacks:
+  - type: political
+    description: Refus catégorique du gouvernement de revenir sur la suppression de
+      la taxe d'habitation sur la résidence principale.
+    source: Maire-Info (2025)
+  - type: social
+    description: Injustice perçue pour les 20% de ménages concernés, avec un risque
+      de disparités territoriales accrues.
+    source: Note de l'IPP
 - id: restore_taxe_habitation_all
   family: TAXES
   label: Rétablir la Taxe d'Habitation (Tous)
@@ -2323,7 +3627,20 @@
     gdpImpactPct: -0.3
     jobsImpactCount: -15000
   mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
+    M_RELATIONS_AVEC_LES_COLLECTIVITES_TERRITORIALES: 1.0
+  multi_year_impact:
+    '2026': 23000000000
+    '2027': 23500000000
+    '2028': 24000000000
+  pushbacks:
+  - type: social
+    description: Revalorisation d'un impôt jugé injuste et obsolète par une grande
+      partie de la population française.
+    source: Note de l'IPP (2025)
+  - type: political
+    description: Brise une promesse majeure du quinquennat précédent, avec un risque
+      de désaveu électoral massif.
+    source: Le Figaro
 - id: airline_ticket_tax_increase
   family: CLIMATE
   label: Augmenter la taxe sur les billets d'avion
@@ -2342,6 +3659,19 @@
   params_schema: {}
   mission_mapping:
     M_ECOLOGIE: 1.0
+  multi_year_impact:
+    '2026': 1000000000
+    '2027': 1050000000
+    '2028': 1100000000
+  pushbacks:
+  - type: economic
+    description: Risque de perte de compétitivité du hub de Paris-CDG face aux concurrents
+      européens (Francfort, Amsterdam).
+    source: Air France-KLM (2025)
+  - type: environmental
+    description: Débat sur l'efficacité réelle de la taxe pour la décarbonation vs.
+      simple rendement budgétaire.
+    source: Haut Conseil pour le Climat
 - id: ecotax_heavy_trucks
   family: CLIMATE
   label: Écotaxe kilométrique (Poids lourds)
@@ -2360,6 +3690,19 @@
   params_schema: {}
   mission_mapping:
     M_ECOLOGIE: 1.0
+  multi_year_impact:
+    '2026': 600000000
+    '2027': 800000000
+    '2028': 1000000000
+  pushbacks:
+  - type: sector
+    description: Forte opposition des transporteurs routiers (OTRE, FNTR) dénonçant
+      une distorsion de concurrence.
+    source: Auto-Infos (2025)
+  - type: social
+    description: Risque de répercussion sur les prix des biens de consommation (inflation
+      par les coûts de transport).
+    source: La Tribune
 - id: abolish_tonnage_tax
   family: TAX_EXPENDITURES
   label: Supprimer la taxe au tonnage (transport maritime)
@@ -2377,6 +3720,19 @@
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    '2026': 300000000
+    '2027': 350000000
+    '2028': 400000000
+  pushbacks:
+  - type: economic
+    description: Risque de perte de compétitivité du pavillon français et de délocalisation
+      des flottes vers des pays pratiquant la taxe au tonnage.
+    source: Armateurs de France (2025)
+  - type: sector
+    description: Inquiétude sur les conséquences indirectes pour la filière navale
+      et logistique française.
+    source: CFE CGC Marine
 - id: cir_cut_large_firms_half
   family: TAX_EXPENDITURES
   label: 'CIR : Réduire de 50% (Grandes Entreprises)'
@@ -2394,7 +3750,20 @@
   - Workbook 20251017, Dépenses fiscales
   params_schema: {}
   mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
+    M_RECHERCHE_ENSEIGNEMENT_SUPERIEUR: 1.0
+  multi_year_impact:
+    '2026': 2500000000
+    '2027': 2600000000
+    '2028': 2700000000
+  pushbacks:
+  - type: economic
+    description: Risque de baisse massive des investissements en R&D des grands groupes
+      en France et perte d'attractivité technologique.
+    source: Conseil d'Analyse Économique (2025)
+  - type: labor
+    description: Inquiétude sur le maintien de l'emploi scientifique hautement qualifié
+      (chercheurs, ingénieurs) dans le secteur privé.
+    source: Note du Trésor
 - id: cir_remove_5pct_above_100m
   family: TAX_EXPENDITURES
   label: 'CIR : Supprimer le taux à 5% (> 100 M€)'
@@ -2412,7 +3781,21 @@
   - Workbook 20251017, Dépenses fiscales
   params_schema: {}
   mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
+    M_RECHERCHE_ENSEIGNEMENT_SUPERIEUR: 1.0
+  multi_year_impact:
+    '2026': 250000000
+    '2027': 260000000
+    '2028': 270000000
+  pushbacks:
+  - type: economic
+    description: Risque de perte d'attractivité pour les centres de R&D mondiaux des
+      grandes entreprises, même si l'impact marginal de la tranche à 5% est jugé limité
+      par certains rapports.
+    source: Commission des Finances (Sénat) 2025
+  - type: sector
+    description: Inquiétude des grands donneurs d'ordres technologiques sur la stabilité
+      fiscale à long terme.
+    source: Note du Trésor
 - id: remove_ticpe_air_exemption
   family: TAX_EXPENDITURES
   label: Supprimer l'exonération de TICPE (Kérosène)
@@ -2430,7 +3813,20 @@
   - Workbook 20251017, Dépenses fiscales
   params_schema: {}
   mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
+    M_ECOLOGIE: 1.0
+  multi_year_impact:
+    '2026': 500000000
+    '2027': 550000000
+    '2028': 600000000
+  pushbacks:
+  - type: legal
+    description: Contraintes liées aux accords internationaux (Convention de Chicago
+      de 1944) et aux directives européennes limitant la taxation du kérosène.
+    source: Les Échos (2025)
+  - type: economic
+    description: Risque de perte de compétitivité pour les compagnies aériennes françaises
+      et report vers des hubs étrangers.
+    source: Air Journal
 - id: apl_flat_minus5
   family: SOCIAL_SECURITY
   label: 'APL : Baisse forfaitaire de 5€'
@@ -2448,7 +3844,20 @@
   - Workbook 20251017, Dépenses budgétaires
   params_schema: {}
   mission_mapping:
-    M_SOLIDARITE: 1.0
+    M_COHESION_DES_TERRITOIRES: 1.0
+  multi_year_impact:
+    '2026': 400000000
+    '2027': 410000000
+    '2028': 420000000
+  pushbacks:
+  - type: social
+    description: Baisse de revenu direct pour environ 6,5 millions de bénéficiaires,
+      perçue comme une mesure injuste pour les plus modestes.
+    source: Le Monde (2025)
+  - type: political
+    description: Symbole de la rigueur budgétaire du début du premier quinquennat,
+      restant une mesure hautement contestée.
+    source: L'Express
 - id: apl_means_test_18920
   family: SOCIAL_SECURITY
   label: 'APL : Durcir le seuil d''accès (Revenu 18 920€)'
@@ -2468,7 +3877,20 @@
   - Workbook 20251017, Dépenses budgétaires
   params_schema: {}
   mission_mapping:
-    M_SOLIDARITE: 1.0
+    M_COHESION_DES_TERRITOIRES: 1.0
+  multi_year_impact:
+    '2026': 108000000
+    '2027': 115000000
+    '2028': 120000000
+  pushbacks:
+  - type: social
+    description: Baisse de revenu réel pour les ménages modestes dans un contexte
+      de crise du logement.
+    source: Sénat (2025)
+  - type: political
+    description: Mesure dénoncée comme une 'économie sur le dos des plus pauvres'
+      par les partis d'opposition.
+    source: Capital.fr
 - id: apl_means_test_39020
   family: SOCIAL_SECURITY
   label: 'APL : Durcir le seuil d''accès (Revenu 39 020€)'
@@ -2488,7 +3910,20 @@
   - Workbook 20251017, Dépenses budgétaires
   params_schema: {}
   mission_mapping:
-    M_SOLIDARITE: 1.0
+    M_COHESION_DES_TERRITOIRES: 1.0
+  multi_year_impact:
+    '2026': 50000000
+    '2027': 52000000
+    '2028': 54000000
+  pushbacks:
+  - type: social
+    description: Risque de précarisation accrue des étudiants étrangers et dégradation
+      de l'attractivité universitaire de la France.
+    source: Le Monde (2025)
+  - type: political
+    description: Mesure controversée dénoncée comme discriminatoire par les organisations
+      étudiantes.
+    source: Note de l'Unef
 - id: private_ed_subsidy_75_to_50
   family: OTHER
   label: Réduire les subventions à l'enseignement privé
@@ -2505,7 +3940,21 @@
   - Workbook 20251017, Dépenses budgétaires
   params_schema: {}
   mission_mapping:
-    M_DIVERS: 1.0
+    M_ENSEIGNEMENT_SCOLAIRE: 1.0
+  multi_year_impact:
+    '2026': 500000000
+    '2027': 550000000
+    '2028': 600000000
+  pushbacks:
+  - type: social
+    description: Risque de hausse massive des frais de scolarité pour les familles
+      et menace sur la viabilité économique des petits établissements privés sous
+      contrat.
+    source: Enseignement Catholique (SGEC) 2025
+  - type: political
+    description: Débat passionné sur la 'guerre scolaire' et le financement public
+      de l'enseignement privé.
+    source: Le Monde
 - id: higher_ed_tuition_uniform_increase
   family: OTHER
   label: Augmenter les frais d'inscription à l'université
@@ -2523,7 +3972,20 @@
   - Workbook 20251017, Dépenses budgétaires
   params_schema: {}
   mission_mapping:
-    M_DIVERS: 1.0
+    M_RECHERCHE_ENSEIGNEMENT_SUPERIEUR: 1.0
+  multi_year_impact:
+    '2026': 400000000
+    '2027': 420000000
+    '2028': 440000000
+  pushbacks:
+  - type: social
+    description: Risque de précarisation accrue des étudiants et de remise en cause
+      du modèle d'université quasi-gratuite.
+    source: Note de l'IPP (2025)
+  - type: political
+    description: Forte mobilisation des syndicats étudiants (UNEF, FAGE) et contestation
+      politique sur l'égalité d'accès aux études supérieures.
+    source: Le Monde
 - id: education_demography_adjust
   family: OTHER
   label: Ajuster les dépenses d'éducation à la démographie
@@ -2541,7 +4003,20 @@
   - Workbook 20251017, Dépenses budgétaires
   params_schema: {}
   mission_mapping:
-    M_DIVERS: 1.0
+    M_ENSEIGNEMENT_SCOLAIRE: 1.0
+  multi_year_impact:
+    '2026': 450000000
+    '2027': 900000000
+    '2028': 1350000000
+  pushbacks:
+  - type: social
+    description: Risque de fermetures de classes dans les zones rurales ou périurbaines
+      touchées par la baisse démographique.
+    source: Sénat (2025)
+  - type: political
+    description: Débat sur l'opportunité d'utiliser la baisse démographique pour réduire
+      la taille des classes plutôt que pour faire des économies.
+    source: Sud Éducation
 - id: freeze_local_transfers_value
   family: OTHER
   label: Geler les dotations de l'État (collectivités)
@@ -2561,7 +4036,20 @@
   - Workbook 20251017, Dépenses budgétaires
   params_schema: {}
   mission_mapping:
-    M_DIVERS: 1.0
+    M_RELATIONS_AVEC_LES_COLLECTIVITES_TERRITORIALES: 1.0
+  multi_year_impact:
+    '2026': 800000000
+    '2027': 1600000000
+    '2028': 2400000000
+  pushbacks:
+  - type: financial
+    description: Baisse de revenu réel pour les collectivités locales en raison de
+      l'inflation, pouvant entraîner une hausse de la fiscalité locale.
+    source: Note de La Banque Postale (2025)
+  - type: political
+    description: Forte contestation des associations d'élus (AMF) dénonçant une rupture
+      du contrat de confiance avec l'État.
+    source: Maire-Info
 - id: freeze_apul_budget_value
   family: OTHER
   label: Geler les budgets des collectivités locales (hors dette)
@@ -2581,7 +4069,20 @@
   - Workbook 20251017, Dépenses budgétaires
   params_schema: {}
   mission_mapping:
-    M_DIVERS: 1.0
+    M_RELATIONS_AVEC_LES_COLLECTIVITES_TERRITORIALES: 1.0
+  multi_year_impact:
+    '2026': 3000000000
+    '2027': 3100000000
+    '2028': 3200000000
+  pushbacks:
+  - type: financial
+    description: Effort financier massif imposé aux collectivités territoriales (3Md€
+      de ponctions sur recettes), menaçant leurs capacités d'autofinancement.
+    source: Maire-Info (2025)
+  - type: political
+    description: Forte opposition des élus locaux dénonçant un transfert du déficit
+      de l'État vers les territoires.
+    source: Le Monde
 - id: apply_35h_local
   family: STAFFING
   label: Appliquer les 35h (collectivités locales)
@@ -2599,7 +4100,20 @@
   - Workbook 20251017, Dépenses budgétaires
   params_schema: {}
   mission_mapping:
-    M_ENSEIGNEMENT_SCOLAIRE: 1.0
+    M_RELATIONS_AVEC_LES_COLLECTIVITES_TERRITORIALES: 1.0
+  multi_year_impact:
+    '2026': 1200000000
+    '2027': 1250000000
+    '2028': 1300000000
+  pushbacks:
+  - type: legal
+    description: Contestation par certaines municipalités invoquant le principe de
+      libre administration des collectivités territoriales.
+    source: Vie-publique.fr (2025)
+  - type: social
+    description: Risque de tensions sociales locales liées à la suppression de jours
+      de congés extralégaux ('jours du maire').
+    source: Lettre du Cadre
 - id: pensions_freeze_base_plus_compl_2026
   family: PENSIONS
   label: Geler les retraites (base + compl.) en 2026
@@ -2670,3 +4184,17 @@
   params_schema: {}
   mission_mapping:
     M_ECOLOGIE: 1.0
+  multi_year_impact:
+    '2026': 1000000000
+    '2027': 1100000000
+    '2028': 1200000000
+  pushbacks:
+  - type: operational
+    description: Risque de sous-consommation des crédits si les ménages ne s'engagent
+      pas dans des rénovations globales (plus complexes et coûteuses que les gestes
+      simples).
+    source: Rapport de l'ANAH (2025)
+  - type: sector
+    description: Inquiétude de la filière du bâtiment (FFB, CAPEB) sur une baisse
+      d'activité si les mono-gestes sont trop pénalisés.
+    source: Les Échos
