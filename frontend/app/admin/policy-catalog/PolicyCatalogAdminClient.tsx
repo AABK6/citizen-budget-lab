@@ -529,12 +529,12 @@ export default function PolicyCatalogAdminClient() {
             </div>
           </div>
 
-          <div className="flex-1 overflow-auto relative min-w-0">
+          <div className="flex-1 overflow-auto relative">
             {view === 'yaml' ? (
               <textarea value={yamlText} onChange={e => { setYamlText(e.target.value); setRawDirty(true); }} className="w-full h-full p-6 bg-slate-950 font-mono text-sm leading-relaxed text-slate-300 outline-none" spellCheck={false} />
             ) : view === 'mission' ? (
-              <div className="h-full overflow-x-auto">
-                <table className="min-w-full table-fixed text-[11px] border-separate border-spacing-0">
+              <div className="h-full overflow-auto">
+                <table className="min-w-full text-[11px] border-separate border-spacing-0">
                   <thead className="bg-slate-900 sticky top-0 z-20 shadow">
                     <tr>
                       <th className="p-3 text-left border-b-2 border-slate-700 w-64 bg-slate-900 sticky left-0 z-30">Levier</th>
@@ -602,7 +602,7 @@ export default function PolicyCatalogAdminClient() {
                         {lever.sources?.some(s => s.includes('http')) ? <LinkIcon size={14} className="text-blue-400 mx-auto" /> : <span className="text-slate-700">-</span>}
                       </td>
                     </tr>
-                  )})}
+                  )})
                 </tbody>
               </table>
             )}
@@ -626,7 +626,7 @@ export default function PolicyCatalogAdminClient() {
                     <label className={sectionHeaderClass}>ID & Famille</label>
                     <div className="flex gap-2">
                       <input value={activeLever.id} readOnly className="flex-1 bg-slate-900 border border-slate-800 rounded px-2 py-1 text-[11px] font-mono text-slate-500 opacity-70 cursor-not-allowed" />
-                      <select value={activeLever.family} onChange={e => updateLever(activeLever.id, l => ({ ...l, family: e.target.value }))} className="bg-slate-900 border border-slate-800 rounded px-2 py-1 text-[11px] font-bold text-indigo-400">
+                      <select value={activeLever.family} onChange={e => updateLever(activeLever.id, l => ({ ...l, family: e.target.value }))} className="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-[11px] font-bold text-indigo-400">
                         {FAMILIES.map(f => <option key={f} value={f}>{f}</option>)}
                       </select>
                     </div>
@@ -711,7 +711,7 @@ export default function PolicyCatalogAdminClient() {
           ) : (
             <div className="h-full flex flex-col items-center justify-center text-slate-700 space-y-4">
               <div className="bg-slate-800/50 p-4 rounded-full"><Search size={48} className="opacity-20"/></div>
-              <p className="italic text-sm">Sélectionnez un levier dans la liste pour l&apos;éditer</p>
+              <p className="italic text-sm">Sélectionnez un levier dans la liste pour l'éditer</p>
             </div>
           )}
         </section>
