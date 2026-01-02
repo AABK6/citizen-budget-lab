@@ -140,7 +140,7 @@ The policy reform catalog lives in a repo-managed YAML file for readability and 
 *   **Override path (optional):** set `POLICY_CATALOG_PATH=/path/to/policy_levers.yaml`
 *   **Mappings:**
     * `cofog_mapping`: COFOG weights (01..10), used for macro shocks and COFOG aggregations.
-    * `mission_mapping`: mission weights (M_*), used for mission-level suggestions/treemap. If empty, it is derived from `cofog_mapping` as a temporary fallback.
+    * `mission_mapping`: mission weights (M_*), used for mission-level suggestions/treemap. If empty, it is derived from `cofog_mapping` as a temporary fallback. Legacy PLF mission ids are normalized to app mission ids at load time (including a split of `M_ECOLOGIE` into `M_ENVIRONMENT` and `M_TRANSPORT`).
 *   **GraphQL fields:** `cofogMapping` + `missionMapping` (`massMapping` is a COFOG alias for legacy clients).
 
 **Validate from CLI:**

@@ -20,6 +20,7 @@ Policy levers can carry a mission attribution separately from their COFOG attrib
 
 - YAML fields: `mission_mapping` (missions) and `cofog_mapping` (COFOG)
 - GraphQL fields: `missionMapping` and `cofogMapping` (`massMapping` remains a COFOG alias for backwards compatibility)
+- The API normalizes legacy PLF-style mission ids in `mission_mapping` (e.g., `M_GESTION_FINANCES_PUBLIQUES`) to the app mission ids used by the ADMIN lens (e.g., `M_ADMIN`). `M_ECOLOGIE` is split into `M_ENVIRONMENT` and `M_TRANSPORT` using the PLF 2025 ratios.
 
 The active lens determines which mapping is used for allocation displays. When `mission_mapping` is empty, the API derives a mission attribution from COFOG as a temporary fallback for suggestions/treemap.
 

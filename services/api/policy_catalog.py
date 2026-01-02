@@ -17,6 +17,32 @@ DATA_DIR = os.path.join(ROOT, "data")
 SCHEMA_PATH = os.path.join(ROOT, "schemas", "policy_levers.schema.json")
 DEFAULT_CATALOG_PATH = os.path.join(DATA_DIR, "policy_levers.yaml")
 
+# Legacy PLF mission ids used by the policy catalog need translation to app-level missions.
+# Ecologie split derived from docs/plf_missions_programmes.md (TA totals: 15.77 env, 4.74 transport).
+_ECOLOGIE_MISSION_SPLIT = {
+    "M_ENVIRONMENT": 15.77 / 20.50,
+    "M_TRANSPORT": 4.74 / 20.50,
+}
+
+_LEGACY_MISSION_TO_APP: Dict[str, Dict[str, float]] = {
+    "M_ACTION_EXTERIEURE_ETAT": {"M_DIPLO": 1.0},
+    "M_AIDE_PUBLIQUE_AU_DEVELOPPEMENT": {"M_DIPLO": 1.0},
+    "M_COHESION_DES_TERRITOIRES": {"M_HOUSING": 1.0},
+    "M_DEFENSE": {"M_DEFENSE": 1.0},
+    "M_DIRECTION_DE_L_ACTION_DU_GOUVERNEMENT": {"M_ADMIN": 1.0},
+    "M_ECOLOGIE": _ECOLOGIE_MISSION_SPLIT,
+    "M_ECONOMIE": {"M_ECONOMIC": 1.0},
+    "M_ENSEIGNEMENT_SCOLAIRE": {"M_EDU": 1.0},
+    "M_GESTION_FINANCES_PUBLIQUES": {"M_ADMIN": 1.0},
+    "M_JUSTICE": {"M_JUSTICE": 1.0},
+    "M_RECHERCHE_ENSEIGNEMENT_SUPERIEUR": {"M_HIGHER_EDU": 1.0},
+    "M_RELATIONS_AVEC_LES_COLLECTIVITES_TERRITORIALES": {"M_TERRITORIES": 1.0},
+    "M_SANTE": {"M_HEALTH": 1.0},
+    "M_SOLIDARITE": {"M_SOLIDARITY": 1.0},
+    "M_SPORT_JEUNESSE_ET_VIE_ASSOCIATIVE": {"M_CULTURE": 1.0},
+    "M_TRAVAIL_EMPLOI": {"M_EMPLOYMENT": 1.0},
+}
+
 
 def _catalog_path(path: str | None = None) -> str:
     raw = path or os.getenv("POLICY_CATALOG_PATH") or DEFAULT_CATALOG_PATH
@@ -152,11 +178,30 @@ def _normalize_budget_side(lever: dict) -> str:
     return "SPENDING"
 
 
+def _translate_mission_mapping(raw_mapping: dict) -> dict:
+    translated: Dict[str, float] = {}
+    for key, value in (raw_mapping or {}).items():
+        try:
+            weight = float(value)
+        except Exception:
+            continue
+        if weight == 0:
+            continue
+        mission_id = str(key).upper()
+        mapped = _LEGACY_MISSION_TO_APP.get(mission_id)
+        if mapped:
+            for app_id, app_weight in mapped.items():
+                translated[app_id] = translated.get(app_id, 0.0) + weight * float(app_weight)
+        else:
+            translated[mission_id] = translated.get(mission_id, 0.0) + weight
+    return translated
+
+
 def _normalized_lever(lever: dict) -> dict:
     normalized = dict(lever)
     normalized["active"] = lever.get("active", True) is not False
     normalized["cofog_mapping"] = lever.get("cofog_mapping") or lever.get("mass_mapping") or {}
-    normalized["mission_mapping"] = lever.get("mission_mapping") or {}
+    normalized["mission_mapping"] = _translate_mission_mapping(lever.get("mission_mapping") or {})
     normalized["budget_side"] = _normalize_budget_side(lever)
     normalized["major_amendment"] = bool(lever.get("major_amendment", False))
     return normalized
