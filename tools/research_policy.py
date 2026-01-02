@@ -38,6 +38,24 @@ def extract_mission_from_text(text: str) -> Optional[str]:
             return m
     return None
 
+def google_web_search(query: str):
+    """
+    Placeholder for the tool call. In the real agent, 
+    this will be intercepted or we use the available tool.
+    """
+    # This is a stub for local tests; 
+    # the agent will use the actual tool during execution.
+    return []
+
+def research_lever(query: str) -> list[dict]:
+    """
+    Perform search and return raw results.
+    """
+    # In the actual agent implementation, we don't 'implement' the tool,
+    # we just call it. For the script to be useful, it needs to be 
+    # able to run in the agent context.
+    return google_web_search(query)
+
 if __name__ == "__main__":
     # CLI stub
     if len(sys.argv) < 2:
