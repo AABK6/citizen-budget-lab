@@ -534,3 +534,31 @@ gcloud beta run domain-mappings list \
 *   labobudgetcitoyen.fr — available
 *   budgetcitoyen.org — available
 *   budgetcitoyen.eu — available
+
+### **7. Frontend State Management & Gotchas**
+
+#### **7.1. Scenario Synchronization & Race Conditions**
+
+The Main Builder Page (`BuildPageClient.tsx`) manages complex state synchronization between the React component, the URL query parameters (`?scenarioId=...`), and the backend persistence.
+
+**The "Double Fetch Flip-Flop" Issue:**
+When a user reform triggers a scenario update, the backend returns a new `scenarioId`. The frontend typically:
+1.  Updates internal state (`scenarioId`, `scenarioResult`).
+2.  Updates the URL query parameter via `router.replace`.
+
+A race condition exists where `useEffect` hooks trigger on the URL update before the internal state has fully stabilized, or vice-versa, causing the component to attempt to "revert" to the previous scenario ID found in the stale URL. This can cause the newly calculated scenario to be overwritten or lost, leading to "Scenario not found" errors.
+
+**The Solution: `skipFetchRef`**
+To prevent this, we implement a `skipFetchRef` pattern:
+1.  When an **internal** action (like running a simulation) generates a new ID, we immediately:
+    *   Update `scenarioIdRef`.
+    *   Set `skipFetchRef.current = true`.
+    *   Trigger `router.replace` to update the URL.
+2.  The `useEffect` responsible for syncing URL changes observes `skipFetchRef`. usage:
+    *   If `true` AND the URL ID matches the expected new ID: Reset `skipFetchRef` to `false` (sync complete).
+    *   If `true` AND the URL ID does *not* match yet: **Return early** (ignore the stale URL).
+    *   If `false`: Proceed with normal fetching (this handles user-initiated external navigation, e.g., back button or pasting a link).
+
+**Key Takeaway:** Always use this pattern when syncing local state to URL parameters to avoid self-canceling updates during rapid state transitions.
+
+> **Status Update (Jan 2026):** While the above pattern mitigates common issues, the underlying "Read-After-Write" architecture remains prone to race conditions. See `docs/BUG_REPORT_SCENARIO_RACE.md` for the full analysis and the recommended permanent fix (Optimistic UI).

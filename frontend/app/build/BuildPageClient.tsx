@@ -150,6 +150,7 @@ export default function BuildPageClient() {
   const searchParams = useSearchParams();
   const searchParamsString = searchParams.toString();
   const scenarioIdRef = useRef<string | null>(scenarioId);
+  const skipFetchRef = useRef(false);
   const latestRunRef = useRef(0);
 
 
@@ -338,17 +339,46 @@ export default function BuildPageClient() {
 
   useEffect(() => {
     const urlScenarioId = new URLSearchParams(searchParamsString).get('scenarioId');
+
+    // If we're performing an internal navigation, ignore stale URL mismatches
+    if (skipFetchRef.current) {
+      if (urlScenarioId === scenarioIdRef.current) {
+        // URL has caught up, we are stable
+        skipFetchRef.current = false;
+      } else {
+        // URL is still stale, unexpected mismatch, ignore
+        return;
+      }
+    }
+
     if (urlScenarioId) {
-      // If the URL ID matches what we have in state OR what we just set in the ref (via runScenario),
-      // then we are in sync, do nothing.
+
       if (urlScenarioId !== scenarioId && urlScenarioId !== scenarioIdRef.current) {
         setScenarioId(urlScenarioId);
-        const fetchDsl = async () => {
+        const fetchDsl = async (retries = 3) => {
+          // If we have already moved to a new scenario internally, abort this stale fetch
+          if (scenarioIdRef.current && scenarioIdRef.current !== urlScenarioId) {
+            return;
+          }
           try {
             const { scenario } = await gqlRequest(getScenarioDslQuery, { id: urlScenarioId });
+            // Double check before applying state
+            if (scenarioIdRef.current && scenarioIdRef.current !== urlScenarioId) {
+              return;
+            }
             setDslObject(parseDsl(atob(scenario.dsl)));
           } catch (err) {
-            setError('Échec du chargement du scénario');
+            // If we have moved on, ignore the error
+            if (scenarioIdRef.current && scenarioIdRef.current !== urlScenarioId) {
+              return;
+            }
+            if (retries > 0) {
+              console.warn('[Build] Retrying fetch...', retries);
+              setTimeout(() => fetchDsl(retries - 1), 500);
+            } else {
+              console.error('[Build] Fetch failed:', err);
+              setError('Échec du chargement du scénario');
+            }
           }
         };
         fetchDsl();
@@ -370,15 +400,27 @@ export default function BuildPageClient() {
       }
       const scenarioData = result.runScenario;
       setScenarioResult(scenarioData, scenarioData?.id ?? undefined);
-      const currentScenarioId = scenarioIdRef.current;
-      if (scenarioData?.id && scenarioData.id !== currentScenarioId) {
-        const params = new URLSearchParams(searchParamsString);
-        params.set('scenarioId', scenarioData.id);
-        const queryString = params.toString();
-        const href = queryString ? `${pathname}?${queryString}` : pathname;
-        router.replace(href, { scroll: false });
+
+      const newId = scenarioData?.id ?? null;
+      // Update ref immediately to prevent race conditions during navigation
+      scenarioIdRef.current = newId;
+      // Mark that we are navigating to this ID, so ignore mismatches until URL matches
+      skipFetchRef.current = true;
+      // Sync state immediately so we don't depend on effect roundtrip
+      setScenarioId(newId);
+
+      // Ensure URL is in sync
+      if (newId) {
+        const urlId = new URLSearchParams(searchParamsString).get('scenarioId');
+        if (urlId !== newId) {
+          const params = new URLSearchParams(searchParamsString);
+          params.set('scenarioId', newId);
+          const queryString = params.toString();
+          const href = queryString ? `${pathname}?${queryString}` : pathname;
+          router.replace(href, { scroll: false });
+        }
       }
-      scenarioIdRef.current = scenarioData?.id ?? null;
+
     } catch (err: any) {
       setScenarioError(err.message || 'Échec de l\'exécution du scénario');
     } finally {
@@ -540,7 +582,7 @@ export default function BuildPageClient() {
 
   const addLeverToDsl = (lever: PolicyLever) => {
     setDslObject(currentDslObject => {
-    const isRevenue = resolveBudgetSide(lever) === 'REVENUE';
+      const isRevenue = resolveBudgetSide(lever) === 'REVENUE';
       const op = (isRevenue
         ? ((lever.fixedImpactEur || 0) >= 0 ? 'increase' : 'decrease')
         : ((lever.fixedImpactEur || 0) >= 0 ? 'decrease' : 'increase')) as 'increase' | 'decrease';
