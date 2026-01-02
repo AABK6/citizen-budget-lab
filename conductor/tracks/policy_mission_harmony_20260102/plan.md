@@ -38,7 +38,7 @@ Goal: Systematically update the existing catalog using the research tool.
 ## Phase 4: UI Surfacing
 Goal: Display the new rich metadata to the user in the Builder interface.
 
-- [ ] **Task: Update Frontend GraphQL Queries**
+- [x] **Task: Update Frontend GraphQL Queries** (f67933b)
     - [ ] Sub-task: Update `frontend/graphql/` queries to fetch the new fields (`pushbacks`, `multiYearImpact`).
     - [ ] Sub-task: Run `npm run codegen` in `frontend/` to regenerate types.
 - [ ] **Task: Enhance Reform Detail Component**
