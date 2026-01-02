@@ -55,6 +55,12 @@ export const buildPageQuery = `
         gdpImpactPct
         jobsImpactCount
       }
+      multiYearImpact
+      pushbacks {
+        type
+        description
+        source
+      }
     }
     popularIntents {
       id
@@ -73,6 +79,12 @@ export const suggestLeversQuery = `
       label
       description
       fixedImpactEur
+      multiYearImpact
+      pushbacks {
+        type
+        description
+        source
+      }
     }
   }
 `;

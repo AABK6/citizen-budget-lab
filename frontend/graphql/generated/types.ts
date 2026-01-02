@@ -30,8 +30,18 @@ export type Scalars = {
 
 export type Accounting = {
   __typename?: "Accounting";
+  baselineDebtPath?: Maybe<Array<Scalars["Float"]["output"]>>;
+  baselineDebtRatioPath?: Maybe<Array<Scalars["Float"]["output"]>>;
+  baselineDeficitPath?: Maybe<Array<Scalars["Float"]["output"]>>;
+  baselineDeficitRatioPath?: Maybe<Array<Scalars["Float"]["output"]>>;
+  commitmentsPath?: Maybe<Array<Scalars["Float"]["output"]>>;
+  debtDeltaPath?: Maybe<Array<Scalars["Float"]["output"]>>;
   debtPath: Array<Scalars["Float"]["output"]>;
+  debtRatioPath?: Maybe<Array<Scalars["Float"]["output"]>>;
+  deficitDeltaPath?: Maybe<Array<Scalars["Float"]["output"]>>;
   deficitPath: Array<Scalars["Float"]["output"]>;
+  deficitRatioPath?: Maybe<Array<Scalars["Float"]["output"]>>;
+  gdpPath?: Maybe<Array<Scalars["Float"]["output"]>>;
 };
 
 export type Allocation = {
@@ -44,6 +54,12 @@ export type Allocation = {
 export enum BasisEnum {
   Ae = "AE",
   Cp = "CP",
+}
+
+export enum BudgetSideEnum {
+  Both = "BOTH",
+  Revenue = "REVENUE",
+  Spending = "SPENDING",
 }
 
 export type BuilderMassType = {
@@ -128,6 +144,7 @@ export type LegoPiece = {
   __typename?: "LegoPiece";
   amountEur?: Maybe<Scalars["Float"]["output"]>;
   beneficiaries: Scalars["JSON"]["output"];
+  description?: Maybe<Scalars["String"]["output"]>;
   examples: Array<Scalars["String"]["output"]>;
   id: Scalars["ID"]["output"];
   label: Scalars["String"]["output"];
@@ -165,9 +182,13 @@ export type MassLabelType = {
 
 export type MassTargetType = {
   __typename?: "MassTargetType";
+  cpDeltaEur?: Maybe<Scalars["Float"]["output"]>;
+  cpSpecifiedDeltaEur?: Maybe<Scalars["Float"]["output"]>;
+  cpTargetDeltaEur?: Maybe<Scalars["Float"]["output"]>;
   massId: Scalars["String"]["output"];
   specifiedDeltaEur: Scalars["Float"]["output"];
   targetDeltaEur: Scalars["Float"]["output"];
+  unspecifiedCpDeltaEur?: Maybe<Scalars["Float"]["output"]>;
 };
 
 export type MissionAllocation = {
@@ -200,6 +221,7 @@ export type Mutation = {
   deleteScenario: Scalars["Boolean"]["output"];
   runScenario: RunScenarioPayload;
   saveScenario: Scalars["Boolean"]["output"];
+  submitVote: Scalars["Boolean"]["output"];
 };
 
 export type MutationDeleteScenarioArgs = {
@@ -216,6 +238,11 @@ export type MutationSaveScenarioArgs = {
   title?: InputMaybe<Scalars["String"]["input"]>;
 };
 
+export type MutationSubmitVoteArgs = {
+  scenarioId: Scalars["ID"]["input"];
+  userEmail?: InputMaybe<Scalars["String"]["input"]>;
+};
+
 export enum PolicyFamilyEnum {
   Climate = "CLIMATE",
   Defense = "DEFENSE",
@@ -227,12 +254,14 @@ export enum PolicyFamilyEnum {
   SocialSecurity = "SOCIAL_SECURITY",
   Staffing = "STAFFING",
   Subsidies = "SUBSIDIES",
-  TaxExpenditures = "TAX_EXPENDITURES",
   Taxes = "TAXES",
+  TaxExpenditures = "TAX_EXPENDITURES",
 }
 
 export type PolicyLeverType = {
   __typename?: "PolicyLeverType";
+  budgetSide: BudgetSideEnum;
+  cofogMapping?: Maybe<Scalars["JSON"]["output"]>;
   conflictsWith: Array<Scalars["ID"]["output"]>;
   description?: Maybe<Scalars["String"]["output"]>;
   family: PolicyFamilyEnum;
@@ -240,6 +269,7 @@ export type PolicyLeverType = {
   fixedImpactEur?: Maybe<Scalars["Float"]["output"]>;
   id: Scalars["ID"]["output"];
   label: Scalars["String"]["output"];
+  majorAmendment?: Maybe<Scalars["Boolean"]["output"]>;
   massMapping?: Maybe<Scalars["JSON"]["output"]>;
   missionMapping?: Maybe<Scalars["JSON"]["output"]>;
   paramsSchema: Scalars["JSON"]["output"];
@@ -281,6 +311,7 @@ export type Query = {
   sirene: Scalars["JSON"]["output"];
   sources: Array<Source>;
   suggestLevers: Array<PolicyLeverType>;
+  voteSummary: Array<VoteSummary>;
 };
 
 export type QueryAllocationArgs = {
@@ -376,6 +407,10 @@ export type QuerySuggestLeversArgs = {
   massId: Scalars["String"]["input"];
 };
 
+export type QueryVoteSummaryArgs = {
+  limit?: InputMaybe<Scalars["Int"]["input"]>;
+};
+
 export type ResolutionType = {
   __typename?: "ResolutionType";
   byMass: Array<MassTargetType>;
@@ -445,6 +480,13 @@ export type Supplier = {
   __typename?: "Supplier";
   name: Scalars["String"]["output"];
   siren: Scalars["String"]["output"];
+};
+
+export type VoteSummary = {
+  __typename?: "VoteSummary";
+  lastVoteTs?: Maybe<Scalars["Float"]["output"]>;
+  scenarioId: Scalars["ID"]["output"];
+  votes: Scalars["Int"]["output"];
 };
 
 export type GetAllocationQueryVariables = Exact<{
