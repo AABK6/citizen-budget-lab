@@ -19,7 +19,7 @@ Goal: Develop the automated tool to assist in verifying and enriching policy lev
 - [x] **Task: Develop Base Research Script** (ff23f6e)
     - [ ] Sub-task: Create `tools/research_policy.py` with basic search and extraction logic.
     - [ ] Sub-task: Write unit tests for the extraction logic using mock search results.
-- [ ] **Task: Implement Metadata Synthesis**
+- [x] **Task: Implement Metadata Synthesis** (711479c)
     - [ ] Sub-task: Integrate LLM capability to synthesize search results into `pushbacks`, `multiYearImpact`, and `missionMapping` suggestions.
     - [ ] Sub-task: Add "Source Citation" requirement to the tool's output.
 - [ ] **Task: Conductor - User Manual Verification 'Phase 2: "Policy Researcher" Tooling' (Protocol in workflow.md)**
