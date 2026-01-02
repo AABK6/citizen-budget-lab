@@ -30,7 +30,7 @@ Goal: Systematically update the existing catalog using the research tool.
 - [x] **Task: Audit Existing Levers** (16aaeae)
     - [ ] Sub-task: Run `tools/research_policy.py` on all levers in `data/policy_levers.yaml`.
     - [ ] Sub-task: Manually review and approve the suggested updates, prioritizing missing `missionMapping`.
-- [ ] **Task: Validate Enriched Catalog**
+- [x] **Task: Validate Enriched Catalog** (16aaeae)
     - [ ] Sub-task: Run `tools/validate_policy_catalog.py` to ensure the new catalog adheres to the upgraded schema and that all mappings are consistent.
 - [ ] **Task: Conductor - User Manual Verification 'Phase 3: Catalog Audit & Enrichment' (Protocol in workflow.md)**
 
