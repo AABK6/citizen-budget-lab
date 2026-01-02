@@ -333,6 +333,12 @@ class ImpactStructType:
     jobsImpactCount: int | None = None
 
 @strawberry.type
+class PushbackType:
+    type: str
+    description: str
+    source: str | None = None
+
+@strawberry.type
 class PolicyLeverType:
     id: str
     family: PolicyFamilyEnum
@@ -351,6 +357,9 @@ class PolicyLeverType:
     cofogMapping: JSON | None = None
     missionMapping: JSON | None = None
     impact: ImpactStructType | None = None
+    multiYearImpact: JSON | None = None
+    pushbacks: list[PushbackType] | None = None
+    distributionalFlags: JSON | None = None
 
 
 @strawberry.type
@@ -959,6 +968,16 @@ class Query:
                         if it.get("impact")
                         else None
                     ),
+                    multiYearImpact=it.get("multi_year_impact"),
+                    pushbacks=[
+                        PushbackType(
+                            type=str(p.get("type")),
+                            description=str(p.get("description")),
+                            source=p.get("source"),
+                        )
+                        for p in (it.get("pushbacks") or [])
+                    ] if it.get("pushbacks") else None,
+                    distributionalFlags=it.get("distributional_flags"),
                 )
             )
         return out
@@ -1120,6 +1139,16 @@ class Query:
                         if it.get("impact")
                         else None
                     ),
+                    multiYearImpact=it.get("multi_year_impact"),
+                    pushbacks=[
+                        PushbackType(
+                            type=str(p.get("type")),
+                            description=str(p.get("description")),
+                            source=p.get("source"),
+                        )
+                        for p in (it.get("pushbacks") or [])
+                    ] if it.get("pushbacks") else None,
+                    distributionalFlags=it.get("distributional_flags"),
                 )
             )
         return out
