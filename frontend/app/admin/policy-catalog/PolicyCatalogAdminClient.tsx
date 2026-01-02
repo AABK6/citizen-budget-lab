@@ -566,20 +566,28 @@ export default function PolicyCatalogAdminClient() {
               <table className="w-full text-sm border-separate border-spacing-0">
                 <thead className="bg-slate-900 sticky top-0 z-10 shadow">
                   <tr>
-                    <SortHeader label="ID" id="id" currentKey={sortKey} currentDir={sortDir} onSort={handleHeaderSort} />
-                    <SortHeader label="FAMILLE" id="family" currentKey={sortKey} currentDir={sortDir} onSort={handleHeaderSort} />
                     <SortHeader label="LABEL" id="label" currentKey={sortKey} currentDir={sortDir} onSort={handleHeaderSort} />
+                    <SortHeader label="FAMILLE" id="family" currentKey={sortKey} currentDir={sortDir} onSort={handleHeaderSort} />
+                    <th className="px-3 py-2 text-left border-b border-slate-700 bg-slate-900">MISSIONS</th>
                     <SortHeader label="IMPACT" id="impact" currentKey={sortKey} currentDir={sortDir} onSort={handleHeaderSort} />
-                    <th className="px-3 py-2 text-center border-b border-slate-800">Q</th>
-                    <th className="px-3 py-2 text-center border-b border-slate-800">SRC</th>
+                    <th className="px-3 py-2 text-center border-b border-slate-700 bg-slate-900">Q</th>
+                    <th className="px-3 py-2 text-center border-b border-slate-700 bg-slate-900">SRC</th>
                   </tr>
                 </thead>
                 <tbody className="bg-slate-950">
-                  {filteredRows.map(({ lever }) => (
+                  {filteredRows.map(({ lever }) => {
+                    const missions = Object.keys(lever.mission_mapping || {});
+                    return (
                     <tr key={lever.id} onClick={() => setActiveId(lever.id)} className={`group border-b border-slate-800/50 cursor-pointer transition-colors ${activeId === lever.id ? 'bg-indigo-500/10' : 'hover:bg-slate-900'}`}>
-                      <td className="px-3 py-3 font-mono text-[10px] text-slate-500 border-b border-slate-800/50 group-hover:text-slate-300">{lever.id}</td>
-                      <td className="px-3 py-3 border-b border-slate-800/50"><span className="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-[10px] font-bold text-slate-400">{lever.family}</span></td>
                       <td className="px-3 py-3 font-medium text-slate-200 border-b border-slate-800/50">{lever.label}</td>
+                      <td className="px-3 py-3 border-b border-slate-800/50"><span className="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-[10px] font-bold text-slate-400">{lever.family}</span></td>
+                      <td className="px-3 py-3 border-b border-slate-800/50 max-w-[200px]">
+                        <div className="flex flex-wrap gap-1">
+                          {missions.length > 0 ? missions.map(m => (
+                            <span key={m} className="px-1.5 py-0.5 rounded-sm bg-indigo-950/50 text-indigo-400 text-[9px] font-black uppercase" title={missionLabelMap[m]}>{m.replace('M_', '')}</span>
+                          )) : <span className="text-rose-900 text-xs font-bold italic">AUCUNE</span>}
+                        </div>
+                      </td>
                       <td className={`px-3 py-3 text-right font-mono text-xs border-b border-slate-800/50 ${lever.fixed_impact_eur >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                         {(lever.fixed_impact_eur / 1e9).toFixed(1)} Md€
                       </td>
@@ -593,7 +601,7 @@ export default function PolicyCatalogAdminClient() {
                         {lever.sources?.some(s => s.includes('http')) ? <LinkIcon size={14} className="text-blue-400 mx-auto" /> : <span className="text-slate-700">-</span>}
                       </td>
                     </tr>
-                  ))}
+                  )})}
                 </tbody>
               </table>
             )}
