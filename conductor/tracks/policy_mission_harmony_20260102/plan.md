@@ -2,7 +2,7 @@
 
 This plan follows the Conductor methodology: 80% test coverage, per-task commits, and phase-level verification.
 
-## Phase 1: Schema & Backend Infrastructure
+## Phase 1: Schema & Backend Infrastructure [checkpoint: d85cdf9]
 Goal: Upgrade the policy catalog schema and API to support administrative missions and rich metadata.
 
 - [x] **Task: Update Policy Lever Schema** (1ed9559)
