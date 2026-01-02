@@ -14,7 +14,10 @@ Citizen Budget Lab is an interactive web application designed to democratize und
 ## Key Features
 *   **The "Build" Page (Core):** The central and currently only active feature. It allows users to:
     *   **Adjust Budget "Masses":** Modify high-level spending and revenue categories (Playground mode).
-    *   **Apply Policy Levers:** Select specific, priced reforms (e.g., "Repeal 2023 Pension Reform") that automatically update the budget (Workshop mode).
+    *   **Apply Policy Levers:** Select specific, priced reforms (Workshop mode). Reforms now include rich metadata:
+        *   **Multi-year Trajectories:** See how impacts evolve from 2026 to 2030.
+        *   **Implementation Risks:** View "Points de vigilance" describing political and social pushbacks.
+        *   **Mission Alignment:** Reforms are now rigorously mapped to Administrative Missions, ensuring consistency between the "Playground" and "Workshop" lenses.
     *   **Visualize Impacts:** See real-time feedback on the deficit, debt, and economic growth.
 *   **LEGO Methodology:** A rigorous backend system that maps user choices to official national accounts (Eurostat/Insee) to ensure credibility.
 

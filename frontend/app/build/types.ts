@@ -47,6 +47,12 @@ export type PolicyLever = {
     gdpImpactPct?: number;
     jobsImpactCount?: number;
   };
+  multiYearImpact?: Record<string, number>;
+  pushbacks?: Array<{
+    type: string;
+    description: string;
+    source?: string;
+  }>;
 };
 
 export type PopularIntent = {
