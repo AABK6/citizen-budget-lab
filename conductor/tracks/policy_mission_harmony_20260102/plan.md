@@ -13,7 +13,7 @@ Goal: Upgrade the policy catalog schema and API to support administrative missio
     - [ ] Sub-task: Update `services/api/data_loader.py` to handle the new rich metadata and ensure it's returned in the GraphQL response.
 - [ ] **Task: Conductor - User Manual Verification 'Phase 1: Schema & Backend Infrastructure' (Protocol in workflow.md)**
 
-## Phase 2: "Policy Researcher" Tooling
+## Phase 2: "Policy Researcher" Tooling [checkpoint: f26e455]
 Goal: Develop the automated tool to assist in verifying and enriching policy levers.
 
 - [x] **Task: Develop Base Research Script** (ff23f6e)
