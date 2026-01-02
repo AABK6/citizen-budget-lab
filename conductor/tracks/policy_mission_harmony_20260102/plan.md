@@ -27,7 +27,7 @@ Goal: Develop the automated tool to assist in verifying and enriching policy lev
 ## Phase 3: Catalog Audit & Enrichment
 Goal: Systematically update the existing catalog using the research tool.
 
-- [ ] **Task: Audit Existing Levers**
+- [x] **Task: Audit Existing Levers** (16aaeae)
     - [ ] Sub-task: Run `tools/research_policy.py` on all levers in `data/policy_levers.yaml`.
     - [ ] Sub-task: Manually review and approve the suggested updates, prioritizing missing `missionMapping`.
 - [ ] **Task: Validate Enriched Catalog**
