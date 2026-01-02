@@ -1,25 +1,27 @@
 - id: amend_ifi_to_fortune_improductive
   family: TAXES
   label: Remplacer l'IFI par un impôt sur la fortune improductive
-  description: >-
-    Suppression de l'Impôt sur la fortune immobilière (IFI) et création d'un nouvel impôt visant le patrimoine non
-    productif (biens somptuaires, actifs non investis)[7].
+  description: Suppression de l'Impôt sur la fortune immobilière (IFI) et création
+    d'un nouvel impôt visant le patrimoine non productif (biens somptuaires, actifs
+    non investis)[7].
   fixed_impact_eur: 100000000
   major_amendment: true
   cofog_mapping: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    "2026": 100000000
-    "2027": 150000000
-    "2028": 200000000
+    '2026': 100000000
+    '2027': 150000000
+    '2028': 200000000
   pushbacks:
-    - type: legal
-      description: "Complexité de définition du caractère 'productif' ou 'improductif' d'un actif."
-      source: "Légifiscal (2025)"
-    - type: political
-      description: "Sujet de désaccord majeur entre la majorité et l'opposition sur le périmètre des actifs taxés."
-      source: "Sénat.fr"
+  - type: legal
+    description: Complexité de définition du caractère 'productif' ou 'improductif'
+      d'un actif.
+    source: Légifiscal (2025)
+  - type: political
+    description: Sujet de désaccord majeur entre la majorité et l'opposition sur le
+      périmètre des actifs taxés.
+    source: Sénat.fr
   distributional_flags:
     openfisca: true
   feasibility:
@@ -27,30 +29,30 @@
     adminLagMonths: 6
   conflicts_with: []
   sources:
-    - Assemblée nat. 2025, amendements PLF[7]
+  - Assemblée nat. 2025, amendements PLF[7]
   params_schema: {}
 - id: amend_ir_bracket_indexation_1pct
   family: TAXES
   label: Indexation limitée du barème de l'IR à +1,1%
-  description: >-
-    Revalorisation des tranches du barème de l'impôt sur le revenu de seulement +1,1% pour 2026 (soit en deçà de
-    l'inflation prévue)[8].
+  description: Revalorisation des tranches du barème de l'impôt sur le revenu de seulement
+    +1,1% pour 2026 (soit en deçà de l'inflation prévue)[8].
   fixed_impact_eur: 2500000000
   major_amendment: true
   cofog_mapping: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    "2026": 2500000000
-    "2027": 2600000000
-    "2028": 2700000000
+    '2026': 2500000000
+    '2027': 2600000000
+    '2028': 2700000000
   pushbacks:
-    - type: social
-      description: "Risque de 'perte de pouvoir d'achat' si l'inflation dépasse 1,1%."
-      source: "Capital.fr (2025)"
-    - type: political
-      description: "Amendement de compromis adopté par l'Assemblée contre l'avis initial du gouvernement (gel)."
-      source: "LCP.fr"
+  - type: social
+    description: Risque de 'perte de pouvoir d'achat' si l'inflation dépasse 1,1%.
+    source: Capital.fr (2025)
+  - type: political
+    description: Amendement de compromis adopté par l'Assemblée contre l'avis initial
+      du gouvernement (gel).
+    source: LCP.fr
   distributional_flags:
     openfisca: true
   feasibility:
@@ -58,7 +60,7 @@
     adminLagMonths: 6
   conflicts_with: []
   sources:
-    - Assemblée nat., PLF 2026[8]
+  - Assemblée nat., PLF 2026[8]
   params_schema: {}
 - id: amend_alimony_tax_exemption
   family: TAXES
@@ -75,29 +77,32 @@
   sources:
   - Assemblée nat., PLF 2026[9]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: amend_home_service_credit_cap
   family: TAX_EXPENDITURES
   label: Abaissement du plafond du crédit d'impôt services à la personne
-  description: >-
-    Réduire le plafond des dépenses ouvrant droit au crédit d'impôt pour l'emploi à domicile de 12 000 € à 10 000 € par
-    an, limitant l'avantage fiscal accordé[10].
+  description: Réduire le plafond des dépenses ouvrant droit au crédit d'impôt pour
+    l'emploi à domicile de 12 000 € à 10 000 € par an, limitant l'avantage fiscal
+    accordé[10].
   fixed_impact_eur: 110000000
   major_amendment: true
   cofog_mapping: {}
   mission_mapping:
     M_SOLIDARITE: 1.0
   multi_year_impact:
-    "2026": 110000000
-    "2027": 120000000
-    "2028": 130000000
+    '2026': 110000000
+    '2027': 120000000
+    '2028': 130000000
   pushbacks:
-    - type: social
-      description: "Inquiétude des ménages employeurs sur le reste à charge des services de garde d'enfants ou d'aide aux seniors."
-      source: "Notre Temps (2025)"
-    - type: economic
-      description: "Risque de favoriser le travail dissimulé (au noir) si l'avantage fiscal est trop réduit."
-      source: "Public Sénat"
+  - type: social
+    description: Inquiétude des ménages employeurs sur le reste à charge des services
+      de garde d'enfants ou d'aide aux seniors.
+    source: Notre Temps (2025)
+  - type: economic
+    description: Risque de favoriser le travail dissimulé (au noir) si l'avantage
+      fiscal est trop réduit.
+    source: Public Sénat
   distributional_flags:
     openfisca: true
   feasibility:
@@ -105,7 +110,7 @@
     adminLagMonths: 6
   conflicts_with: []
   sources:
-    - Assemblée nat., PLF 2026[10]
+  - Assemblée nat., PLF 2026[10]
   params_schema: {}
 - id: amend_dependence_reduction_to_credit
   family: TAXES
@@ -123,7 +128,8 @@
   sources:
   - Assemblée nat., PLF 2026[11]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: amend_extend_tips_exemption
   family: TAXES
   label: Prorogation de l'exonération fiscale des pourboires
@@ -140,7 +146,8 @@
   sources:
   - Assemblée nat., PLF 2026[12]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: amend_high_income_surtax_permanent
   family: TAXES
   label: Pérennisation de la contribution exceptionnelle hauts revenus
@@ -157,7 +164,8 @@
   sources:
   - Assemblée nat., PLF 2026[13]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: amend_return_exit_tax
   family: TAXES
   label: Rétablissement de l'Exit Tax (version antérieure à 2019)
@@ -174,7 +182,8 @@
   sources:
   - Assemblée nat., amend. PLF[14]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: amend_one_time_donation_exemption
   family: TAXES
   label: Don familial exceptionnel exonéré jusqu'à 152 500 € en 2026
@@ -191,7 +200,8 @@
   sources:
   - Assemblée nat., PLF 2026[15]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: amend_ald_sickleave_exempt_ir
   family: TAXES
   label: Maintien de l'exonération fiscale des IJ maladie (ALD)
@@ -208,7 +218,8 @@
   sources:
   - Assemblée nat., PLF 2026[17]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: amend_school_fees_tax_reduction
   family: TAXES
   label: Maintien de la réduction d'impôt pour frais de scolarité
@@ -225,7 +236,8 @@
   sources:
   - Assemblée nat., PLF 2026[17]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: amend_limit_holding_tax_to_luxury
   family: TAXES
   label: Limitation de la taxe sur les holdings patrimoniales aux biens somptuaires
@@ -242,7 +254,8 @@
   sources:
   - Assemblée nat., PLF 2026[18]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: amend_raise_big_corp_profit_contrib
   family: TAXES
   label: Hausse de la contribution exceptionnelle sur les bénéfices des grandes entreprises
@@ -259,7 +272,8 @@
   sources:
   - Assemblée nat., PLF 2026[19]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: amend_universal_tax_multinationals
   family: TAXES
   label: Instauration d'un impôt universel sur les multinationales
@@ -276,7 +290,8 @@
   sources:
   - Assemblée nat., PLF 2026[20]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: amend_double_gafam_tax
   family: TAXES
   label: Taxe GAFAM renforcée (de 3 % à 15 %)
@@ -293,7 +308,8 @@
   sources:
   - Assemblée nat., PLF 2026[21]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: amend_lower_global_min_tax_threshold
   family: TAXES
   label: Abaissement du seuil d'application du taux d'IS minimum mondial à 250 M€
@@ -311,7 +327,8 @@
   sources:
   - Observatoire de la Fiscalité, simulations OCDE
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: amend_raise_buyback_tax
   family: TAXES
   label: Rehaussement de la taxe sur les rachats d'actions de 8 % à 33 %
@@ -328,7 +345,8 @@
   sources:
   - Assemblée nat., PLF 2026[24]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: amend_windfall_dividend_tax
   family: TAXES
   label: Contribution sur les dividendes exceptionnels des grandes entreprises (20
@@ -346,7 +364,8 @@
   sources:
   - Assemblée nat., PLF 2026[25]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: amend_clawback_cir_relocation
   family: TAXES
   label: Remboursement du CIR en cas de délocalisation sous 3 ans
@@ -364,7 +383,8 @@
   sources:
   - Assemblée nat., PLF 2026[26]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: amend_sme_cit_threshold_100k
   family: TAXES
   label: Relèvement du seuil d'accès au taux réduit d'IS (15 %) de 42 500 à 100 000
@@ -383,7 +403,8 @@
   sources:
   - Assemblée nat., PLF 2026[27]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: amend_tighten_pacte_dutreil
   family: TAXES
   label: Recentrage du pacte Dutreil (biens professionnels uniquement, durée 6 ans)
@@ -400,7 +421,8 @@
   sources:
   - Assemblée nat., PLF 2026[28]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: amend_ondam_3pct_increase
   family: HEALTH
   label: Hausse de l'Ondam 2026 portée à +3 % au lieu de +1,6 %
@@ -414,16 +436,18 @@
   mission_mapping:
     M_SANTE: 1.0
   multi_year_impact:
-    "2026": -3000000000
-    "2027": -3200000000
-    "2028": -3400000000
+    '2026': -3000000000
+    '2027': -3200000000
+    '2028': -3400000000
   pushbacks:
-    - type: sector
-      description: "Les fédérations hospitalières (FHF) jugent cette hausse insuffisante par rapport à l'inflation médicale (4%)."
-      source: "FHF.fr (2025)"
-    - type: political
-      description: "Débat tendu au Parlement sur l'équilibre entre rigueur budgétaire et besoins du système de soin."
-      source: "Info.gouv.fr"
+  - type: sector
+    description: Les fédérations hospitalières (FHF) jugent cette hausse insuffisante
+      par rapport à l'inflation médicale (4%).
+    source: FHF.fr (2025)
+  - type: political
+    description: Débat tendu au Parlement sur l'équilibre entre rigueur budgétaire
+      et besoins du système de soin.
+    source: Info.gouv.fr
   distributional_flags:
     openfisca: true
   feasibility:
@@ -447,16 +471,18 @@
   mission_mapping:
     M_SOLIDARITE: 1.0
   multi_year_impact:
-    "2026": -100000000
-    "2027": -1400000000
-    "2028": -2000000000
+    '2026': -100000000
+    '2027': -1400000000
+    '2028': -2000000000
   pushbacks:
-    - type: financial
-      description: "Risque sur la soutenabilité à long terme du système par répartition (CSR)."
-      source: "iFRAP (2025)"
-    - type: political
-      description: "Suspension jusqu'en 2028 vue comme une 'année blanche' électorale par certains opposants."
-      source: "Public Sénat"
+  - type: financial
+    description: Risque sur la soutenabilité à long terme du système par répartition
+      (CSR).
+    source: iFRAP (2025)
+  - type: political
+    description: Suspension jusqu'en 2028 vue comme une 'année blanche' électorale
+      par certains opposants.
+    source: Public Sénat
   distributional_flags:
     openfisca: true
   feasibility:
@@ -484,7 +510,16 @@
   sources:
   - PLFSS 2026 adopté[30]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
+  multi_year_impact:
+    '2026': -800000000
+    '2027': -1200000000
+    '2028': -1500000000
+  pushbacks:
+  - type: economic
+    description: Coût important pour la branche Famille.
+    source: Solidarités.gouv.fr
 - id: amend_limit_sick_leave_duration
   family: SOCIAL_SECURITY
   label: Encadrement des Indemnités Journalières (durée et plafond)
@@ -502,7 +537,16 @@
   sources:
   - PLFSS 2026, Rapport Commission Affaires Sociales
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_SANTE: 1.0
+  multi_year_impact:
+    '2026': 900000000
+    '2027': 950000000
+    '2028': 1000000000
+  pushbacks:
+  - type: social
+    description: Inquiétude sur la précarisation des salariés malades.
+    source: Légifiscal
 - id: amend_no_benefit_index_freeze
   family: SOCIAL_SECURITY
   label: Annulation du gel 2024-2025 des pensions et minima sociaux
@@ -521,7 +565,8 @@
   sources:
   - PLFSS 2026, AN[2]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
 - id: amend_no_new_apprentice_contrib
   family: SOCIAL_SECURITY
   label: Abandon de la fin d'exonération de cotisations pour les apprentis
@@ -540,7 +585,8 @@
   sources:
   - PLFSS 2026, AN[2]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
 - id: amend_no_meal_voucher_tax
   family: SOCIAL_SECURITY
   label: Abandon de la cotisation patronale sur les titres-restaurants
@@ -559,7 +605,8 @@
   sources:
   - PLFSS 2026, AN[2]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
 - id: amend_no_medical_copay_doubling
   family: SOCIAL_SECURITY
   label: Renonciation au doublement des franchises médicales par décret
@@ -578,7 +625,8 @@
   sources:
   - PLFSS 2026, débats[32]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
 - id: amend_raise_csg_on_capital
   family: SOCIAL_SECURITY
   label: Hausse de la fiscalité via CSG sur revenus du capital (+1,4 pt)
@@ -597,7 +645,8 @@
   sources:
   - PLFSS 2026 adopté[3]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
 - id: amend_surtax_health_insurers
   family: SOCIAL_SECURITY
   label: Contribution exceptionnelle des mutuelles santé (1 Md€)
@@ -617,7 +666,8 @@
   sources:
   - PLFSS 2026 adopté[4]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
 - id: amend_extend_overtime_deduction
   family: SOCIAL_SECURITY
   label: Extension de la déduction de cotisations sur les heures sup' aux >250 salariés
@@ -637,7 +687,8 @@
   sources:
   - PLFSS 2026 amend. AN[33]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
 - id: amend_increase_severance_tax
   family: SOCIAL_SECURITY
   label: Augmentation du forfait social sur les indemnités de rupture (30% → 40%)
@@ -656,7 +707,8 @@
   sources:
   - PLFSS 2026 adopté[34]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
 - id: annee_blanche_indexation
   family: SOCIAL_SECURITY
   label: Année Blanche (Geler l'indexation des prestations)
@@ -682,7 +734,8 @@
     decile10ImpactEur: -480
     gdpImpactPct: -0.05
     jobsImpactCount: -2000
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
 - id: plf2026_mission_justice_efficiency
   family: OPERATIONS
   label: Économies d'efficacité (Mission Justice)
@@ -703,7 +756,8 @@
   sources:
   - PLF 2026, Mission Justice
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: plf2026_mission_education_efficiency
   family: OPERATIONS
   label: Efficacité opérationnelle (Mission Éducation)
@@ -723,7 +777,8 @@
   sources:
   - PLF 2026, Mission Enseignement scolaire
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: plf2026_mission_foreign_affairs_streamlining
   family: OPERATIONS
   label: Rationalisation (Mission Affaires étrangères)
@@ -744,7 +799,8 @@
   sources:
   - PLF 2026, Mission Action extérieure
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: wealth_tax
   family: TAXES
   label: Rétablir l'Impôt de Solidarité sur la Fortune (ISF)
@@ -766,7 +822,8 @@
     decile10ImpactEur: -12000
     gdpImpactPct: -0.02
     jobsImpactCount: -500
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: high_income_surtax
   family: TAXES
   label: Surtaxe sur les très hauts revenus
@@ -782,7 +839,8 @@
   sources:
   - Fondation iFRAP [4]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: superprofits_tax
   family: TAXES
   label: Taxe sur les 'super-profits' des entreprises
@@ -805,7 +863,8 @@
     decile10ImpactEur: -200
     gdpImpactPct: -0.05
     jobsImpactCount: -2000
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: end_flat_tax
   family: TAXES
   label: Supprimer la 'Flat Tax' (PFU) sur les revenus du capital
@@ -827,7 +886,8 @@
     decile10ImpactEur: -850
     gdpImpactPct: -0.03
     jobsImpactCount: -1000
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: expand_ftt
   family: TAXES
   label: Étendre la Taxe sur les Transactions Financières (TTF)
@@ -843,7 +903,8 @@
   sources:
   - Assemblée nationale [9]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: progressive_csg
   family: TAXES
   label: Rendre la CSG plus progressive
@@ -860,7 +921,8 @@
   sources:
   - Fondation iFRAP [10]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: carbon_tax
   family: CLIMATE
   label: Rétablir / Augmenter la taxe carbone
@@ -883,7 +945,8 @@
     decile10ImpactEur: -250
     gdpImpactPct: -0.1
     jobsImpactCount: -5000
-  mission_mapping: {}
+  mission_mapping:
+    M_ECOLOGIE: 1.0
 - id: cap_research_credit
   family: TAXES
   label: Réformer le Crédit d'Impôt Recherche (CIR)
@@ -905,7 +968,8 @@
     decile10ImpactEur: 0
     gdpImpactPct: -0.08
     jobsImpactCount: -15000
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: reduce_home_services_credit
   family: TAXES
   label: Réduire le crédit d'impôt 'Services à la personne'
@@ -921,7 +985,8 @@
   sources:
   - La Finance Pour Tous [17]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: remove_pension_deduction
   family: TAXES
   label: Supprimer l'abattement fiscal de 10% sur les pensions
@@ -937,7 +1002,8 @@
   sources:
   - La Finance Pour Tous [18]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: end_overtime_exemption
   family: TAXES
   label: Supprimer l'exonération fiscale des heures supplémentaires
@@ -954,7 +1020,8 @@
   sources:
   - La Finance Pour Tous [19]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: fight_tax_fraud
   family: TAXES
   label: Lutter contre la fraude et l'évasion fiscales
@@ -971,7 +1038,8 @@
   sources:
   - Public Sénat [20]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: expand_digital_tax
   family: TAXES
   label: Augmenter la taxe sur le numérique (GAFAM)
@@ -988,7 +1056,8 @@
   sources:
   - France24 [22]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: reinstate_cvae
   family: TAXES
   label: Rétablir la CVAE (Impôt de production)
@@ -1005,7 +1074,8 @@
   sources:
   - France24 [22]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: cut_fuel_taxes
   family: TAXES
   label: Réduire les taxes sur le carburant (TICPE)
@@ -1022,7 +1092,8 @@
   sources:
   - Budget 2022
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: cut_income_tax_middle
   family: TAXES
   label: Baisser l'impôt sur le revenu des classes moyennes
@@ -1039,7 +1110,8 @@
   sources:
   - Budget debates 2023
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: expand_overtime_exemption
   family: TAXES
   label: Étendre la défiscalisation des heures sup. / primes
@@ -1057,7 +1129,8 @@
   sources:
   - Budget debates 2023
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: cut_vat_essentials
   family: TAXES
   label: Baisser la TVA sur les produits de première nécessité
@@ -1073,7 +1146,8 @@
   sources:
   - Est.
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: cut_vat_energy
   family: TAXES
   label: Baisser la TVA sur l'énergie à 5,5%
@@ -1090,7 +1164,8 @@
   sources:
   - Independent est.
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: freeze_tax_brackets
   family: TAXES
   label: Geler le barème de l'impôt sur le revenu
@@ -1107,7 +1182,8 @@
   sources:
   - PLF 2024
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: raise_retirement_age_65
   family: PENSIONS
   label: Augmenter l'âge légal de la retraite à 65 ans
@@ -1133,7 +1209,8 @@
     decile10ImpactEur: -200
     gdpImpactPct: 0.1
     jobsImpactCount: 200000
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
 - id: lower_retirement_age_62
   family: PENSIONS
   label: Revenir à l'âge légal de la retraite à 62 ans
@@ -1158,7 +1235,8 @@
     decile10ImpactEur: 2200
     gdpImpactPct: -0.4
     jobsImpactCount: -300000
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
 - id: lower_retirement_age_60
   family: PENSIONS
   label: Abaisser l'âge légal de la retraite à 60 ans
@@ -1177,7 +1255,8 @@
   sources:
   - OFCE (2024)
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
 - id: extend_contribution_period
   family: PENSIONS
   label: Allonger la durée de cotisation pour la retraite
@@ -1194,7 +1273,8 @@
   sources:
   - Est.
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
 - id: close_special_regimes
   family: PENSIONS
   label: Supprimer les régimes spéciaux de retraite restants
@@ -1218,7 +1298,8 @@
     decile10ImpactEur: -400
     gdpImpactPct: 0
     jobsImpactCount: 0
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
 - id: freeze_pension_indexation
   family: PENSIONS
   label: Geler ou sous-indexer les pensions de retraite
@@ -1242,7 +1323,8 @@
     decile10ImpactEur: -450
     gdpImpactPct: -0.1
     jobsImpactCount: -2000
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
 - id: align_public_private_pensions
   family: PENSIONS
   label: Aligner le calcul des retraites public/privé
@@ -1259,7 +1341,8 @@
   sources:
   - Est.
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
 - id: raise_pension_contributions
   family: PENSIONS
   label: Augmenter les cotisations retraite
@@ -1277,7 +1360,8 @@
   sources:
   - Est.
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
 - id: raise_min_pension
   family: PENSIONS
   label: Augmenter les pensions minimales
@@ -1295,7 +1379,8 @@
   sources:
   - BFMTV [25]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
 - id: tighten_unemployment_benefits
   family: SOCIAL_SECURITY
   label: Durcir les règles de l'assurance chômage
@@ -1320,7 +1405,8 @@
     decile10ImpactEur: 0
     gdpImpactPct: -0.05
     jobsImpactCount: 15000
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
 - id: expand_unemployment_benefits
   family: SOCIAL_SECURITY
   label: Annuler les coupes dans l'assurance chômage
@@ -1339,7 +1425,8 @@
   sources:
   - Le Monde [28]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
 - id: tighten_rsa_requirements
   family: SOCIAL_SECURITY
   label: Conditionner le versement du RSA
@@ -1357,7 +1444,8 @@
   sources:
   - Est.
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
 - id: restrict_non_citizen_benefits
   family: SOCIAL_SECURITY
   label: Restreindre les aides sociales aux non-citoyens
@@ -1375,7 +1463,8 @@
   sources:
   - RN estimate
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
 - id: freeze_social_benefits
   family: SOCIAL_SECURITY
   label: Geler l'indexation des minima sociaux
@@ -1393,7 +1482,8 @@
   sources:
   - L'Express [27]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
 - id: cut_housing_aid
   family: SOCIAL_SECURITY
   label: Réduire les Aides au Logement (APL)
@@ -1417,7 +1507,8 @@
     decile10ImpactEur: 0
     gdpImpactPct: -0.05
     jobsImpactCount: 0
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
 - id: cut_family_benefits
   family: SOCIAL_SECURITY
   label: Réduire les allocations familiales (hauts revenus)
@@ -1434,7 +1525,8 @@
   sources:
   - Est.
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
 - id: fight_social_fraud
   family: SOCIAL_SECURITY
   label: Lutter contre la fraude aux prestations sociales
@@ -1452,7 +1544,8 @@
   sources:
   - Fondation iFRAP [61]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
 - id: eliminate_ame
   family: SOCIAL_SECURITY
   label: Supprimer l'Aide Médicale d'État (AME)
@@ -1470,7 +1563,8 @@
   sources:
   - Est.
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
 - id: cap_health_spending
   family: HEALTH
   label: Plafonner la croissance des dépenses de santé (ONDAM)
@@ -1488,7 +1582,8 @@
   sources:
   - Bayrou plan [32]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_SANTE: 1.0
 - id: reduce_health_costs
   family: HEALTH
   label: Réduire les dépenses de santé 'inutiles'
@@ -1506,7 +1601,8 @@
   sources:
   - Bayrou plan [32]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_SANTE: 1.0
 - id: increase_patient_copays
   family: HEALTH
   label: Augmenter le reste à charge (franchises médicales)
@@ -1524,7 +1620,8 @@
   sources:
   - Est.
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_SANTE: 1.0
 - id: hire_health_workers
   family: HEALTH
   label: Embaucher du personnel soignant supplémentaire
@@ -1542,7 +1639,8 @@
   sources:
   - Est.
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_SANTE: 1.0
 - id: raise_healthcare_wages
   family: HEALTH
   label: Augmenter les salaires des soignants à l'hôpital
@@ -1560,7 +1658,8 @@
   sources:
   - Est.
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_SANTE: 1.0
 - id: cut_officials_privileges
   family: STAFFING
   label: Réduire les 'privilèges' des élus
@@ -1578,7 +1677,8 @@
   sources:
   - Est.
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_ENSEIGNEMENT_SCOLAIRE: 1.0
 - id: freeze_civil_service_pay
   family: STAFFING
   label: Geler le point d'indice des fonctionnaires
@@ -1607,7 +1707,8 @@
     decile10ImpactEur: -500
     gdpImpactPct: -0.1
     jobsImpactCount: 0
-  mission_mapping: {}
+  mission_mapping:
+    M_ENSEIGNEMENT_SCOLAIRE: 1.0
 - id: freeze_civil_service_promotions
   family: STAFFING
   label: Geler les promotions automatiques (Fonction Publique)
@@ -1629,7 +1730,8 @@
   sources:
   - L'Express [37]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_ENSEIGNEMENT_SCOLAIRE: 1.0
 - id: raise_civil_service_pay
   family: STAFFING
   label: Augmenter le point d'indice de 10% (Fonction Publique)
@@ -1658,7 +1760,8 @@
     decile10ImpactEur: 800
     gdpImpactPct: 0.2
     jobsImpactCount: 5000
-  mission_mapping: {}
+  mission_mapping:
+    M_ENSEIGNEMENT_SCOLAIRE: 1.0
 - id: cut_public_workforce
   family: STAFFING
   label: Réduire le nombre de fonctionnaires (non-remplacement)
@@ -1686,7 +1789,8 @@
     decile10ImpactEur: -50
     gdpImpactPct: -0.05
     jobsImpactCount: -50000
-  mission_mapping: {}
+  mission_mapping:
+    M_ENSEIGNEMENT_SCOLAIRE: 1.0
 - id: cut_agencies
   family: STAFFING
   label: Supprimer ou fusionner des agences publiques
@@ -1703,7 +1807,8 @@
   sources:
   - Bayrou plan [43]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_ENSEIGNEMENT_SCOLAIRE: 1.0
 - id: reduce_sick_leave
   family: STAFFING
   label: Réduire l'absentéisme dans la fonction publique
@@ -1725,7 +1830,8 @@
   sources:
   - L'Express [34]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_ENSEIGNEMENT_SCOLAIRE: 1.0
 - id: cut_defense_spending
   family: DEFENSE
   label: Réduire le budget de la Défense de 10%
@@ -1743,7 +1849,8 @@
   sources:
   - L'Express [44]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_DEFENSE: 1.0
 - id: reduce_payroll_subsidies
   family: SUBSIDIES
   label: Réduire les allègements de cotisations patronales
@@ -1761,7 +1868,8 @@
   sources:
   - The Guardian [45]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_DIVERS: 1.0
 - id: remove_fossil_subsidies
   family: CLIMATE
   label: Supprimer les niches fiscales 'brunes' (fossiles)
@@ -1779,7 +1887,8 @@
   sources:
   - The Guardian [46]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_ECOLOGIE: 1.0
 - id: cut_foreign_aid
   family: SUBSIDIES
   label: Réduire l'aide publique au développement
@@ -1797,7 +1906,8 @@
   sources:
   - L'Express [47]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_DIVERS: 1.0
 - id: cut_association_subsidies
   family: SUBSIDIES
   label: Réduire les subventions aux associations
@@ -1815,7 +1925,8 @@
   sources:
   - L'Express [49]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_DIVERS: 1.0
 - id: cut_public_investments
   family: OTHER
   label: Réduire ou reporter les investissements publics
@@ -1833,7 +1944,8 @@
   sources:
   - Est.
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_DIVERS: 1.0
 - id: hire_teachers
   family: STAFFING
   label: Embaucher des enseignants supplémentaires
@@ -1851,7 +1963,8 @@
   sources:
   - Est.
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_ENSEIGNEMENT_SCOLAIRE: 1.0
 - id: cut_local_transfers
   family: OTHER
   label: Réduire les dotations aux collectivités locales
@@ -1869,7 +1982,8 @@
   sources:
   - Est.
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_DIVERS: 1.0
 - id: green_transport_tax
   family: CLIMATE
   label: Taxe verte sur les transports (Avion, Livraisons)
@@ -1887,7 +2001,8 @@
   sources:
   - Bayrou plan [11]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_ECOLOGIE: 1.0
 - id: efficient_procurement
   family: PROCUREMENT
   label: Améliorer l'efficacité des achats publics
@@ -1906,7 +2021,8 @@
   sources:
   - Cour des Comptes (2023)
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: freeze_spending_one_year
   family: OPERATIONS
   label: Gel des dépenses de l'État en valeur (1 an)
@@ -1928,7 +2044,8 @@
   sources:
   - info.gouv.fr [51]
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: build_social_housing
   family: OTHER
   label: Construction massive de logements sociaux
@@ -1946,7 +2063,8 @@
   sources:
   - NFP platform (2024)
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_DIVERS: 1.0
 - id: free_school_services
   family: OTHER
   label: Gratuité de la cantine et des fournitures scolaires
@@ -1964,7 +2082,8 @@
   sources:
   - NFP platform (2024)
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_DIVERS: 1.0
 - id: pen_age_plus3m_per_year
   family: PENSIONS
   label: 'Retraite : maintien du rythme de la réforme (+3 mois par an)'
@@ -1982,7 +2101,8 @@
   sources:
   - Direction Générale du Trésor
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
 - id: is_rate_33_5
   family: TAXES
   label: Augmenter l'Impôt sur les Sociétés (IS) à 33,5%
@@ -1997,7 +2117,8 @@
   sources:
   - Workbook 20251017, Recettes
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: transfer_pricing_enforcement
   family: TAXES
   label: Renforcer le contrôle des prix de transfert (multinationales)
@@ -2013,7 +2134,8 @@
   sources:
   - Workbook 20251017, Recettes
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: vat_normal_plus1
   family: TAXES
   label: Augmenter le taux normal de TVA de 1 point
@@ -2030,7 +2152,8 @@
   sources:
   - Workbook 20251017, Recettes
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: vat_all_rates_plus1
   family: TAXES
   label: Augmenter tous les taux de TVA de 1 point
@@ -2054,7 +2177,8 @@
     decile10ImpactEur: -600
     gdpImpactPct: -0.2
     jobsImpactCount: -10000
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: vat_intermediate_12_5
   family: TAXES
   label: Augmenter le taux intermédiaire de TVA à 12,5%
@@ -2072,7 +2196,8 @@
   sources:
   - Workbook 20251017, Recettes
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: vat_franchise_threshold_halved
   family: TAXES
   label: Réduire le seuil de la franchise de TVA (petites entreprises)
@@ -2088,7 +2213,8 @@
   sources:
   - Workbook 20251017, Recettes
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: cap_quotient_conjugal
   family: TAXES
   label: Plafonner le quotient conjugal
@@ -2104,7 +2230,8 @@
   sources:
   - Workbook 20251017, Recettes
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: abolish_quotient_conjugal
   family: TAXES
   label: Supprimer le quotient conjugal
@@ -2120,7 +2247,8 @@
   sources:
   - Workbook 20251017, Recettes
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: abolish_qf_demi_parts_noneffective
   family: TAXES
   label: Supprimer les demi-parts fiscales 'non effectives'
@@ -2135,7 +2263,8 @@
   sources:
   - Workbook 20251017, Recettes
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: wealth_minimum_tax_2pct_100m
   family: TAXES
   label: Impôt minimum de 2% (Patrimoine > 100 M€)
@@ -2151,7 +2280,8 @@
   sources:
   - Workbook 20251017, Recettes
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: restore_taxe_habitation_top20
   family: TAXES
   label: Rétablir la Taxe d'Habitation (20% plus aisés)
@@ -2168,7 +2298,8 @@
   sources:
   - Workbook 20251017, Recettes
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: restore_taxe_habitation_all
   family: TAXES
   label: Rétablir la Taxe d'Habitation (Tous)
@@ -2191,7 +2322,8 @@
     decile10ImpactEur: -1500
     gdpImpactPct: -0.3
     jobsImpactCount: -15000
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: airline_ticket_tax_increase
   family: CLIMATE
   label: Augmenter la taxe sur les billets d'avion
@@ -2208,7 +2340,8 @@
   sources:
   - Workbook 20251017, Recettes
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_ECOLOGIE: 1.0
 - id: ecotax_heavy_trucks
   family: CLIMATE
   label: Écotaxe kilométrique (Poids lourds)
@@ -2225,7 +2358,8 @@
   sources:
   - Workbook 20251017, Recettes
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_ECOLOGIE: 1.0
 - id: abolish_tonnage_tax
   family: TAX_EXPENDITURES
   label: Supprimer la taxe au tonnage (transport maritime)
@@ -2241,7 +2375,8 @@
   sources:
   - Workbook 20251017, Dépenses fiscales
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: cir_cut_large_firms_half
   family: TAX_EXPENDITURES
   label: 'CIR : Réduire de 50% (Grandes Entreprises)'
@@ -2258,7 +2393,8 @@
   sources:
   - Workbook 20251017, Dépenses fiscales
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: cir_remove_5pct_above_100m
   family: TAX_EXPENDITURES
   label: 'CIR : Supprimer le taux à 5% (> 100 M€)'
@@ -2275,7 +2411,8 @@
   sources:
   - Workbook 20251017, Dépenses fiscales
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: remove_ticpe_air_exemption
   family: TAX_EXPENDITURES
   label: Supprimer l'exonération de TICPE (Kérosène)
@@ -2292,7 +2429,8 @@
   sources:
   - Workbook 20251017, Dépenses fiscales
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
 - id: apl_flat_minus5
   family: SOCIAL_SECURITY
   label: 'APL : Baisse forfaitaire de 5€'
@@ -2309,7 +2447,8 @@
   sources:
   - Workbook 20251017, Dépenses budgétaires
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
 - id: apl_means_test_18920
   family: SOCIAL_SECURITY
   label: 'APL : Durcir le seuil d''accès (Revenu 18 920€)'
@@ -2328,7 +2467,8 @@
   sources:
   - Workbook 20251017, Dépenses budgétaires
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
 - id: apl_means_test_39020
   family: SOCIAL_SECURITY
   label: 'APL : Durcir le seuil d''accès (Revenu 39 020€)'
@@ -2347,7 +2487,8 @@
   sources:
   - Workbook 20251017, Dépenses budgétaires
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
 - id: private_ed_subsidy_75_to_50
   family: OTHER
   label: Réduire les subventions à l'enseignement privé
@@ -2363,7 +2504,8 @@
   sources:
   - Workbook 20251017, Dépenses budgétaires
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_DIVERS: 1.0
 - id: higher_ed_tuition_uniform_increase
   family: OTHER
   label: Augmenter les frais d'inscription à l'université
@@ -2380,7 +2522,8 @@
   sources:
   - Workbook 20251017, Dépenses budgétaires
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_DIVERS: 1.0
 - id: education_demography_adjust
   family: OTHER
   label: Ajuster les dépenses d'éducation à la démographie
@@ -2397,7 +2540,8 @@
   sources:
   - Workbook 20251017, Dépenses budgétaires
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_DIVERS: 1.0
 - id: freeze_local_transfers_value
   family: OTHER
   label: Geler les dotations de l'État (collectivités)
@@ -2416,7 +2560,8 @@
   sources:
   - Workbook 20251017, Dépenses budgétaires
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_DIVERS: 1.0
 - id: freeze_apul_budget_value
   family: OTHER
   label: Geler les budgets des collectivités locales (hors dette)
@@ -2435,7 +2580,8 @@
   sources:
   - Workbook 20251017, Dépenses budgétaires
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_DIVERS: 1.0
 - id: apply_35h_local
   family: STAFFING
   label: Appliquer les 35h (collectivités locales)
@@ -2452,7 +2598,8 @@
   sources:
   - Workbook 20251017, Dépenses budgétaires
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_ENSEIGNEMENT_SCOLAIRE: 1.0
 - id: pensions_freeze_base_plus_compl_2026
   family: PENSIONS
   label: Geler les retraites (base + compl.) en 2026
@@ -2469,7 +2616,16 @@
   sources:
   - Workbook 20251017, Dépenses budgétaires
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
+  multi_year_impact:
+    '2026': 3600000000
+    '2027': 3800000000
+    '2028': 4000000000
+  pushbacks:
+  - type: social
+    description: Forte opposition des syndicats de retraités.
+    source: Le Revenu (2025)
 - id: pensions_deindex_above_2000
   family: PENSIONS
   label: Désindexer les retraites de plus de 2 000€
@@ -2486,7 +2642,16 @@
   sources:
   - Workbook 20251017, Dépenses budgétaires
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
+  multi_year_impact:
+    '2026': 1200000000
+    '2027': 1300000000
+    '2028': 1400000000
+  pushbacks:
+  - type: political
+    description: Mesure jugée injuste pour les classes moyennes supérieures.
+    source: Public Sénat
 - id: maprimerenov_focus_deep
   family: CLIMATE
   label: '''MaPrimeRénov'' : Cibler les rénovations d''ampleur'
@@ -2503,4 +2668,5 @@
   sources:
   - Workbook 20251017, Dépenses budgétaires
   params_schema: {}
-  mission_mapping: {}
+  mission_mapping:
+    M_ECOLOGIE: 1.0
