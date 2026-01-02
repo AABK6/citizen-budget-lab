@@ -16,7 +16,7 @@ Goal: Upgrade the policy catalog schema and API to support administrative missio
 ## Phase 2: "Policy Researcher" Tooling
 Goal: Develop the automated tool to assist in verifying and enriching policy levers.
 
-- [ ] **Task: Develop Base Research Script**
+- [x] **Task: Develop Base Research Script** (ff23f6e)
     - [ ] Sub-task: Create `tools/research_policy.py` with basic search and extraction logic.
     - [ ] Sub-task: Write unit tests for the extraction logic using mock search results.
 - [ ] **Task: Implement Metadata Synthesis**
