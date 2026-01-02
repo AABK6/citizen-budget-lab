@@ -24,7 +24,7 @@ Goal: Develop the automated tool to assist in verifying and enriching policy lev
     - [ ] Sub-task: Add "Source Citation" requirement to the tool's output.
 - [ ] **Task: Conductor - User Manual Verification 'Phase 2: "Policy Researcher" Tooling' (Protocol in workflow.md)**
 
-## Phase 3: Catalog Audit & Enrichment
+## Phase 3: Catalog Audit & Enrichment [checkpoint: b987770]
 Goal: Systematically update the existing catalog using the research tool.
 
 - [x] **Task: Audit Existing Levers** (44ae3ba)
