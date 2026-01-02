@@ -1,7 +1,6 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import type { PolicyLever } from '../types';
-import { ImpactBadge } from '@/components/reform/ImpactBadge';
-import { DistributionChart } from '@/components/reform/DistributionChart';
+import { ReformDetailDrawer } from './ReformDetailDrawer';
 
 interface ReformSidebarListProps {
     onSelectReform: (reform: PolicyLever) => void;
@@ -10,6 +9,7 @@ interface ReformSidebarListProps {
     isLeverSelected: (id: string) => boolean;
     title?: string;
     subtitle?: string;
+    side?: 'left' | 'right';
 }
 
 const familyOrder = [
@@ -37,7 +37,7 @@ const familyLabels: Record<string, string> = {
     DEFENSE: 'Défense',
     CLIMATE: 'Transition écologique',
     PROCUREMENT: 'Achats publics',
-    OPERATIONS: "Fonctionnement de l&apos;État",
+    OPERATIONS: "Fonctionnement de l'État",
     SUBSIDIES: 'Subventions',
     OTHER: 'Autres',
 };
@@ -129,6 +129,7 @@ const formatBadgeLabel = (lever: PolicyLever) => {
     if (override?.label) return override.label;
     if (lever.shortLabel) return lever.shortLabel;
     const label = lever.label;
+    // Longer truncation for badges
     return label.length > 22 ? `${label.slice(0, 22)}...` : label;
 };
 
@@ -142,7 +143,11 @@ export function ReformSidebarList({
     isLeverSelected,
     title = 'Réformes',
     subtitle = 'Sélectionnez des mesures applicables à votre scénario',
+    side = 'left',
 }: ReformSidebarListProps) {
+    // State for the currently viewed reform in the drawer
+    const [viewingReform, setViewingReform] = useState<PolicyLever | null>(null);
+
     const featuredLevers = useMemo(() => {
         const majors = levers.filter((lever) => lever.majorAmendment);
         return [...majors]
@@ -156,150 +161,108 @@ export function ReformSidebarList({
     }, [levers]);
 
     const remainingLevers = useMemo(() => {
-        // We want to show ALL levers in the list, even if they are featured at the top.
-        // This ensures users can see the details (pushbacks, trajectory) for major amendments.
+        // Show ALL levers in the list
         return levers;
     }, [levers]);
 
-    const renderLever = (lever: PolicyLever) => {
+    const renderLeverCompact = (lever: PolicyLever) => {
         const isSelected = isLeverSelected(lever.id);
+        const icon = resolveBadgeIcon(lever);
+
         return (
-            <button
+            <div
                 key={lever.id}
-                onClick={() => onSelectReform(lever)}
                 onMouseEnter={() => onHoverReform?.(lever.id)}
                 onMouseLeave={() => onHoverReform?.(null)}
-                className={`group w-full flex flex-col text-left p-4 bg-white border rounded-xl shadow-sm hover:shadow-md transition-all relative overflow-hidden ${isSelected ? 'border-violet-500 ring-1 ring-violet-500 bg-violet-50/30' : 'border-gray-200 hover:border-violet-300'
+                // Forced height 60px as requested, dense packing
+                className={`relative group flex items-center justify-between h-[60px] px-3 bg-white rounded-xl transition-all duration-200 cursor-pointer border ${isSelected
+                    ? 'border-violet-500/30 bg-violet-50/40 shadow-[0_2px_12px_rgba(139,92,246,0.1)]'
+                    : 'border-transparent hover:border-violet-200 hover:bg-white hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:-translate-y-[1px]'
                     }`}
+                onClick={(e) => {
+                    setViewingReform(lever);
+                }}
             >
-                {isSelected && (
-                    <div className="absolute top-2 right-2 text-violet-600">
-                        <span className="material-icons text-base">check_circle</span>
-                    </div>
-                )}
+                {/* Selection Indicator Bar */}
+                <div
+                    className={`absolute left-0 top-3 bottom-3 w-1 rounded-r-full transition-all duration-300 ${isSelected ? 'bg-violet-500' : 'bg-transparent group-hover:bg-violet-200/50'
+                        }`}
+                />
 
-                    <div className="flex justify-between items-start mb-1 gap-2 pr-6">
-                        <h3 className={`font-bold text-sm transition-colors flex-1 ${isSelected ? 'text-violet-900' : 'text-slate-800 group-hover:text-violet-700'
+                <div className="flex items-center gap-3 overflow-hidden flex-1 pl-2">
+                    <div className={`p-2 rounded-lg shrink-0 transition-all duration-300 flex items-center justify-center w-9 h-9 ${isSelected
+                        ? 'bg-violet-500 text-white shadow-lg shadow-violet-200 scale-105'
+                        : 'bg-slate-50 text-slate-400 group-hover:bg-violet-50 group-hover:text-violet-600'
+                        }`}>
+                        <span className="material-icons text-[18px]">{icon}</span>
+                    </div>
+                    <div className="flex flex-col min-w-0 justify-center">
+                        <span className={`text-xs font-bold truncate leading-tight transition-colors ${isSelected ? 'text-violet-900' : 'text-slate-700 group-hover:text-slate-900'
                             }`}>
                             {lever.label}
-                        </h3>
-                    </div>
-
-                    <span className={`inline-flex self-start px-2 py-0.5 rounded text-[10px] font-bold mb-2 ${(lever.fixedImpactEur || 0) > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
-                        }`}>
-                        {(lever.fixedImpactEur || 0) > 0 ? '+' : ''}{((lever.fixedImpactEur || 0) / 1e9).toFixed(1)} Md€
-                    </span>
-
-                <p className="text-xs text-slate-500 line-clamp-2 mb-3 leading-relaxed">
-                    {lever.description || "Pas de description disponible."}
-                </p>
-
-                <div className="flex flex-col gap-2 pt-2 border-t border-slate-100 w-full mt-2">
-                    {lever.pushbacks && lever.pushbacks.length > 0 && (
-                        <div className="flex flex-col gap-1 mb-1">
-                            <span className="text-[10px] font-bold text-rose-600 uppercase tracking-tight flex items-center gap-1">
-                                <span className="material-icons text-[12px]">warning</span>
-                                Risques et points de vigilance
-                            </span>
-                            {lever.pushbacks.slice(0, 2).map((pb, idx) => (
-                                <p key={idx} className="text-[10px] text-slate-600 italic leading-tight border-l-2 border-rose-200 pl-2">
-                                    {pb.description}
-                                </p>
-                            ))}
-                        </div>
-                    )}
-
-                    {lever.multiYearImpact && Object.keys(lever.multiYearImpact).length > 1 && (
-                        <div className="flex flex-col gap-1 mb-1">
-                            <span className="text-[10px] font-bold text-blue-600 uppercase tracking-tight flex items-center gap-1">
-                                <span className="material-icons text-[12px]">trending_up</span>
-                                Trajectoire pluriannuelle
-                            </span>
-                            <div className="flex gap-3 overflow-x-auto pb-1 no-scrollbar">
-                                {Object.entries(lever.multiYearImpact).sort().map(([year, val]) => (
-                                    <div key={year} className="flex flex-col">
-                                        <span className="text-[9px] text-slate-400 font-medium">{year}</span>
-                                        <span className="text-[10px] text-slate-700 font-bold whitespace-nowrap">
-                                            {val > 0 ? '+' : ''}{(val / 1e9).toFixed(1)} Md€
-                                        </span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {lever.impact ? (
-                        <>
-                            <div className="flex flex-wrap gap-2">
-                                {lever.impact.gdpImpactPct !== undefined && lever.impact.gdpImpactPct !== 0 && (
-                                    <ImpactBadge type="gdp" value={lever.impact.gdpImpactPct} />
-                                )}
-                                {lever.impact.jobsImpactCount !== undefined && lever.impact.jobsImpactCount !== 0 && (
-                                    <ImpactBadge type="jobs" value={lever.impact.jobsImpactCount} />
-                                )}
-                                {lever.impact.householdsImpacted !== undefined && lever.impact.householdsImpacted > 0 && (
-                                    <ImpactBadge type="households" value={lever.impact.householdsImpacted} />
-                                )}
-                            </div>
-                            {(lever.impact.decile1ImpactEur !== undefined || lever.impact.decile10ImpactEur !== undefined) && (
-                                <DistributionChart
-                                    d1={lever.impact.decile1ImpactEur || 0}
-                                    d10={lever.impact.decile10ImpactEur || 0}
-                                />
-                            )}
-                        </>
-                    ) : (
-                        <span className="text-[10px] font-bold text-slate-300 bg-slate-50 px-2 py-1 rounded-md flex items-center gap-1 self-start">
-                            <span className="material-icons text-[10px]">hourglass_empty</span>
-                            Impact en cours d&apos;analyse
                         </span>
-                    )}
+                        <div className="flex items-center gap-2 mt-0.5">
+                            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${(lever.fixedImpactEur || 0) > 0
+                                ? 'bg-emerald-100 text-emerald-700'
+                                : 'bg-rose-100 text-rose-700'
+                                }`}>
+                                {formatImpactShort(lever)}
+                            </span>
+                        </div>
+                    </div>
                 </div>
-            </button>
+
+                {/* Right Arrow / Action */}
+                <div className="pl-2 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0 duration-200">
+                    <span className="material-icons text-slate-300 text-sm">chevron_right</span>
+                </div>
+            </div>
         );
     };
 
     const renderFamilyGroup = (
         entries: ReturnType<typeof groupByFamily>,
-    {
-        collapsible = true,
-        defaultOpen = 'auto',
-    }: { collapsible?: boolean; defaultOpen?: boolean | 'auto' } = {},
-) => (
-    <div className="space-y-4">
-        {entries.map(([family, items]) => {
-            const header = (
-                <div className="flex items-center justify-between rounded-lg px-2 py-1.5 text-xs font-bold uppercase tracking-wider text-slate-500">
-                    <span>{familyLabels[family] || family}</span>
-                    <span className="text-[10px] font-medium text-slate-400">{items.length}</span>
-                </div>
-            );
-            const isOpen = defaultOpen === 'auto' ? items.length <= 4 : defaultOpen;
+        {
+            collapsible = true,
+            defaultOpen = 'auto',
+        }: { collapsible?: boolean; defaultOpen?: boolean | 'auto' } = {},
+    ) => (
+        <div className="space-y-3">
+            {entries.map(([family, items]) => {
+                // Auto open small categories, close large ones
+                const isOpen = defaultOpen === 'auto' ? items.length <= 4 : defaultOpen;
 
-            if (!collapsible) {
-                return (
-                    <div key={family} className="space-y-2">
-                        {header}
-                        <div className="space-y-2">
-                            {items.map(renderLever)}
+                if (!collapsible) {
+                    return (
+                        <div key={family} className="space-y-1">
+                            {/* Header omitted in non-collapsible mode to save space if needed, 
+                                but usually we want headers. Keeping minimal. */}
+                            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-2 py-1">
+                                {familyLabels[family] || family}
+                            </div>
+                            <div className="space-y-1">
+                                {items.map(renderLeverCompact)}
+                            </div>
                         </div>
-                    </div>
-                );
-            }
+                    );
+                }
 
-            return (
-                <details key={family} open={isOpen} className="group">
-                    <summary className="flex items-center justify-between cursor-pointer select-none rounded-lg px-2 py-1.5 text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-slate-700">
-                        <span>{familyLabels[family] || family}</span>
-                        <span className="text-[10px] font-medium text-slate-400">{items.length}</span>
-                    </summary>
-                    <div className="mt-3 space-y-2">
-                        {items.map(renderLever)}
-                    </div>
-                </details>
-            );
-        })}
-    </div>
+                return (
+                    <details key={family} open={isOpen} className="group/details">
+                        <summary className="flex items-center justify-between cursor-pointer select-none rounded-lg px-2 py-1.5 text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-slate-700 hover:bg-slate-50 transition-colors">
+                            <span className="flex items-center gap-2">
+                                <span className={`material-icons text-sm text-slate-400 transition-transform duration-200 group-open/details:rotate-90`}>chevron_right</span>
+                                {familyLabels[family] || family}
+                            </span>
+                            <span className="text-[10px] font-medium text-slate-400">{items.length}</span>
+                        </summary>
+                        <div className="mt-1 space-y-1 pl-0">
+                            {items.map(renderLeverCompact)}
+                        </div>
+                    </details>
+                );
+            })}
+        </div>
     );
 
     const hasResults = levers.length > 0;
@@ -307,67 +270,54 @@ export function ReformSidebarList({
     const featuredCount = featuredLevers.length;
 
     return (
-        <div className="space-y-3 p-1 animate-in slide-in-from-left-4 duration-300">
-            <div className="px-2 space-y-1">
-                <div className="text-sm font-semibold text-slate-700 leading-tight">
-                    {subtitle || title}
+        <>
+            <div className="space-y-4 p-1 animate-in slide-in-from-left-4 duration-300 pb-20">
+                <div className="px-2 space-y-1">
+                    <div className="text-sm font-semibold text-slate-700 leading-tight">
+                        {subtitle || title}
+                    </div>
                 </div>
-                {featuredCount > 0 && (
-                    <div className="text-[11px] text-slate-400 leading-tight">
-                        Réformes principales débattues
+
+                {!hasResults && (
+                    <div className="text-center py-8 text-gray-400 text-sm italic">
+                        Aucune réforme disponible.
+                    </div>
+                )}
+
+                {hasResults && featuredCount > 0 && (
+                    <div className="px-2">
+                        <div className="text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-2">À la une</div>
+                        <div className="space-y-1">
+                            {featuredLevers.map(renderLeverCompact)}
+                        </div>
+                    </div>
+                )}
+
+                {hasResults && (
+                    <div className="space-y-3">
+                        {hasRemaining ? (
+                            renderFamilyGroup(groupByFamily(remainingLevers), { defaultOpen: false })
+                        ) : (
+                            <div className="px-2 text-xs text-slate-400 italic">
+                                Pas d&apos;autres réformes à afficher.
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
 
-            {!hasResults && (
-                <div className="text-center py-8 text-gray-400 text-sm italic">
-                    Aucune réforme disponible.
-                </div>
-            )}
-
-            {hasResults && featuredCount > 0 && (
-                <div className="px-2">
-                    <div className="flex flex-wrap gap-2">
-                        {featuredLevers.map((lever) => {
-                            const isSelected = isLeverSelected(lever.id);
-                            const impact = lever.fixedImpactEur ?? 0;
-                            const impactClass = impact > 0
-                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                                : impact < 0
-                                    ? 'bg-rose-50 text-rose-700 border-rose-200'
-                                    : 'bg-slate-100 text-slate-500 border-slate-200';
-                            return (
-                                <button
-                                    key={lever.id}
-                                    onClick={() => onSelectReform(lever)}
-                                    onMouseEnter={() => onHoverReform?.(lever.id)}
-                                    onMouseLeave={() => onHoverReform?.(null)}
-                                    title={`${lever.label} — ${formatImpactShort(lever)}`}
-                                    className={`group flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-semibold transition-all ${impactClass} ${isSelected ? 'ring-1 ring-violet-500 border-violet-500' : 'hover:border-slate-300'
-                                        }`}
-                                >
-                                    <span className="material-icons text-[14px]">
-                                        {resolveBadgeIcon(lever)}
-                                    </span>
-                                    <span className="max-w-[90px] truncate">{formatBadgeLabel(lever)}</span>
-                                </button>
-                            );
-                        })}
-                    </div>
-                </div>
-            )}
-
-            {hasResults && (
-                <div className="space-y-3">
-                    {hasRemaining ? (
-                        renderFamilyGroup(groupByFamily(remainingLevers), { defaultOpen: false })
-                    ) : (
-                        <div className="px-2 text-xs text-slate-400 italic">
-                            Pas d&apos;autres réformes à afficher.
-                        </div>
-                    )}
-                </div>
-            )}
-        </div>
+            {/* Detailed Drawer */}
+            <ReformDetailDrawer
+                reform={viewingReform}
+                onClose={() => setViewingReform(null)}
+                // This toggle wrapper ensures we keep the drawer open or close it? 
+                // Usually we keep it open, or maybe we close it on toggle? 
+                // User said "avant validation", implying validation might close it or just update state.
+                // Text says "Ajouter" then it becomes "Retirer". Just toggling is fine.
+                onToggle={(r) => onSelectReform(r)}
+                isSelected={viewingReform ? isLeverSelected(viewingReform.id) : false}
+                side={side}
+            />
+        </>
     );
 }
