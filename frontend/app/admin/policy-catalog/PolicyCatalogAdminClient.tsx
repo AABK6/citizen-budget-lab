@@ -535,9 +535,9 @@ export default function PolicyCatalogAdminClient() {
             ) : view === 'mission' ? (
               <div className="h-full overflow-x-auto">
                 <table className="min-w-full text-[11px] border-separate border-spacing-0">
-                  <thead className="bg-slate-900 sticky top-0 z-10 shadow">
+                  <thead className="bg-slate-900 sticky top-0 z-20 shadow">
                     <tr>
-                      <th className="p-3 text-left border-b-2 border-slate-700 w-64 bg-slate-900 sticky left-0 z-20">Levier</th>
+                      <th className="p-3 text-left border-b-2 border-slate-700 w-64 bg-slate-900 sticky left-0 z-30">Levier</th>
                       {missionColumns.map(m => (
                         <th key={m.id} className="p-3 text-left border-b-2 border-slate-700 w-40">
                           <span className="block break-words font-bold text-white">{m.label}</span>
