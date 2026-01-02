@@ -1361,10 +1361,27 @@ def run_scenario(dsl_b64: str, *, lens: str | None = None) -> tuple[str, Account
 
         for lid in applied_ids:
             lever_def = levers_by_id_map[lid]
+            
+            # Prefer multi_year_impact (dict of years) > impact_schedule_eur (list) > fixed_impact_eur (number)
+            multi_year = lever_def.get("multi_year_impact")
             impact = lever_def.get("impact_schedule_eur") or lever_def.get("fixed_impact_eur")
             
             impact_schedule: List[float] = []
-            if isinstance(impact, (int, float)):
+            if isinstance(multi_year, dict):
+                impact_schedule = []
+                for year_offset in range(horizon_years):
+                    target_year = str(baseline_year + year_offset)
+                    val = multi_year.get(target_year)
+                    if val is None:
+                        # Fallback to fixed_impact if year missing? 
+                        # Or just use the last known value? 
+                        # Spec says multi_year_impact is optional. 
+                        # If provided, it should probably be complete, or we fallback.
+                        fallback = lever_def.get("fixed_impact_eur") or 0.0
+                        impact_schedule.append(float(fallback))
+                    else:
+                        impact_schedule.append(float(val))
+            elif isinstance(impact, (int, float)):
                 impact_schedule = [float(impact)] * horizon_years
             elif isinstance(impact, list):
                 # If list is shorter than horizon, pad with last value
