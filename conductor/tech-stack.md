@@ -6,6 +6,7 @@
 *   **Styling:** Tailwind CSS, DSFR (Système de Design de l'État)
 *   **Visualizations:** Recharts, Apache ECharts (for complex charts like Treemaps/Sankeys)
 *   **API Client:** Apollo/GraphQL (via `graphql-codegen`)
+*   **Testing:** Vitest, React Testing Library
 
 ## Backend
 *   **Framework:** FastAPI (Asynchronous)

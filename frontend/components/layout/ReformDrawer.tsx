@@ -121,6 +121,43 @@ export function ReformDrawer({ reforms, isLeverInDsl, onLeverToggle, formatCurre
                                     <p className="text-sm text-gray-500 mt-1 line-clamp-2 group-hover:line-clamp-none transition-all">
                                         {reform.description}
                                     </p>
+
+                                    {/* Rich Metadata: Pushbacks */}
+                                    {reform.pushbacks && reform.pushbacks.length > 0 && (
+                                        <div className="mt-3 bg-orange-50 p-2 rounded-lg border border-orange-100">
+                                            <p className="text-xs font-bold text-orange-800 flex items-center gap-1 mb-1">
+                                                ⚠️ Points de vigilance
+                                            </p>
+                                            <ul className="space-y-1">
+                                                {reform.pushbacks.map((pb, idx) => (
+                                                    <li key={idx} className="text-xs text-orange-700 leading-snug">
+                                                        <span className="font-semibold">{pb.type}:</span> {pb.description}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
+
+                                    {/* Rich Metadata: Multi-year */}
+                                    {reform.multiYearImpact && Object.keys(reform.multiYearImpact).length > 0 && (
+                                        <div className="mt-3 bg-blue-50 p-2 rounded-lg border border-blue-100">
+                                            <p className="text-xs font-bold text-blue-800 mb-1">
+                                                📈 Trajectoire
+                                            </p>
+                                            <div className="grid grid-cols-3 gap-2">
+                                                {Object.entries(reform.multiYearImpact)
+                                                    .sort(([yearA], [yearB]) => Number(yearA) - Number(yearB))
+                                                    .map(([year, val]) => (
+                                                        <div key={year} className="flex flex-col">
+                                                            <span className="text-[10px] text-blue-500 font-medium">{year}</span>
+                                                            <span className={`text-xs font-mono font-bold ${val > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                                                {formatCurrency(val)}
+                                                            </span>
+                                                        </div>
+                                                    ))}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                                 <div className={`text-sm font-mono font-bold whitespace-nowrap ${reform.fixedImpactEur && reform.fixedImpactEur > 0 ? 'text-green-600' : 'text-red-600'
                                     }`}>

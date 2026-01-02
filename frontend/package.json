@@ -7,6 +7,7 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "next lint",
+    "test": "vitest",
     "codegen": "graphql-codegen --config ../graphql/codegen.yml",
     "test:a11y": "axe http://localhost:3000 --exit 1 || (echo 'Run frontend with npm run dev in another terminal' && exit 0)",
     "test:smoke": "node -e \"fetch('http://localhost:3000').then(r=>{if(!r.ok)process.exit(2); else process.exit(0)}).catch(()=>process.exit(2))\" || (echo 'Start app to run smoke test' && exit 0)"
@@ -35,17 +36,25 @@
     "@graphql-codegen/cli": "^5.0.3",
     "@graphql-codegen/typescript": "^4.0.6",
     "@graphql-codegen/typescript-operations": "^4.2.1",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.1",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "20.12.12",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.2",
+    "@vitest/coverage-v8": "^4.0.16",
     "autoprefixer": "^10.4.22",
     "eslint": "^9.39.2",
     "eslint-config-next": "^16.1.1",
     "graphql": "^16.9.0",
+    "jsdom": "^27.4.0",
     "postcss": "^8.5.6",
     "prettier": "^3.6.2",
     "tailwindcss": "^3.4.17",
-    "typescript": "5.4.5"
+    "typescript": "5.4.5",
+    "vite-tsconfig-paths": "^6.0.3",
+    "vitest": "^4.0.16"
   }
 }
