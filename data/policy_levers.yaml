@@ -1,36 +1,65 @@
 - id: amend_ifi_to_fortune_improductive
   family: TAXES
   label: Remplacer l'IFI par un impôt sur la fortune improductive
-  description: Suppression de l'Impôt sur la fortune immobilière (IFI) et création
-    d'un nouvel impôt visant le patrimoine non productif (biens somptuaires, actifs
-    non investis)[7].
+  description: >-
+    Suppression de l'Impôt sur la fortune immobilière (IFI) et création d'un nouvel impôt visant le patrimoine non
+    productif (biens somptuaires, actifs non investis)[7].
   fixed_impact_eur: 100000000
   major_amendment: true
   cofog_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    "2026": 100000000
+    "2027": 150000000
+    "2028": 200000000
+  pushbacks:
+    - type: legal
+      description: "Complexité de définition du caractère 'productif' ou 'improductif' d'un actif."
+      source: "Légifiscal (2025)"
+    - type: political
+      description: "Sujet de désaccord majeur entre la majorité et l'opposition sur le périmètre des actifs taxés."
+      source: "Sénat.fr"
+  distributional_flags:
+    openfisca: true
   feasibility:
     law: true
     adminLagMonths: 6
   conflicts_with: []
   sources:
-  - Assemblée nat. 2025, amendements PLF[7]
+    - Assemblée nat. 2025, amendements PLF[7]
   params_schema: {}
-  mission_mapping: {}
 - id: amend_ir_bracket_indexation_1pct
   family: TAXES
   label: Indexation limitée du barème de l'IR à +1,1%
-  description: Revalorisation des tranches du barème de l'impôt sur le revenu de seulement
-    +1,1% pour 2026 (soit en deçà de l'inflation prévue)[8].
+  description: >-
+    Revalorisation des tranches du barème de l'impôt sur le revenu de seulement +1,1% pour 2026 (soit en deçà de
+    l'inflation prévue)[8].
   fixed_impact_eur: 2500000000
   major_amendment: true
   cofog_mapping: {}
+  mission_mapping:
+    M_GESTION_FINANCES_PUBLIQUES: 1.0
+  multi_year_impact:
+    "2026": 2500000000
+    "2027": 2600000000
+    "2028": 2700000000
+  pushbacks:
+    - type: social
+      description: "Risque de 'perte de pouvoir d'achat' si l'inflation dépasse 1,1%."
+      source: "Capital.fr (2025)"
+    - type: political
+      description: "Amendement de compromis adopté par l'Assemblée contre l'avis initial du gouvernement (gel)."
+      source: "LCP.fr"
+  distributional_flags:
+    openfisca: true
   feasibility:
     law: true
     adminLagMonths: 6
   conflicts_with: []
   sources:
-  - Assemblée nat., PLF 2026[8]
+    - Assemblée nat., PLF 2026[8]
   params_schema: {}
-  mission_mapping: {}
 - id: amend_alimony_tax_exemption
   family: TAXES
   label: Défiscalisation des pensions alimentaires (plafond)
@@ -48,22 +77,36 @@
   params_schema: {}
   mission_mapping: {}
 - id: amend_home_service_credit_cap
-  family: TAXES
+  family: TAX_EXPENDITURES
   label: Abaissement du plafond du crédit d'impôt services à la personne
-  description: Réduire le plafond des dépenses ouvrant droit au crédit d'impôt pour
-    l'emploi à domicile de 12 000 € à 10 000 € par an, limitant l'avantage fiscal
-    accordé[10].
+  description: >-
+    Réduire le plafond des dépenses ouvrant droit au crédit d'impôt pour l'emploi à domicile de 12 000 € à 10 000 € par
+    an, limitant l'avantage fiscal accordé[10].
   fixed_impact_eur: 110000000
   major_amendment: true
   cofog_mapping: {}
+  mission_mapping:
+    M_SOLIDARITE: 1.0
+  multi_year_impact:
+    "2026": 110000000
+    "2027": 120000000
+    "2028": 130000000
+  pushbacks:
+    - type: social
+      description: "Inquiétude des ménages employeurs sur le reste à charge des services de garde d'enfants ou d'aide aux seniors."
+      source: "Notre Temps (2025)"
+    - type: economic
+      description: "Risque de favoriser le travail dissimulé (au noir) si l'avantage fiscal est trop réduit."
+      source: "Public Sénat"
+  distributional_flags:
+    openfisca: true
   feasibility:
     law: true
     adminLagMonths: 6
   conflicts_with: []
   sources:
-  - Assemblée nat., PLF 2026[10]
+    - Assemblée nat., PLF 2026[10]
   params_schema: {}
-  mission_mapping: {}
 - id: amend_dependence_reduction_to_credit
   family: TAXES
   label: Transformation de la réduction d'impôt dépendance en crédit d'impôt
@@ -359,7 +402,7 @@
   params_schema: {}
   mission_mapping: {}
 - id: amend_ondam_3pct_increase
-  family: SOCIAL_SECURITY
+  family: HEALTH
   label: Hausse de l'Ondam 2026 portée à +3 % au lieu de +1,6 %
   description: Augmenter l'objectif national de dépenses d'assurance maladie (Ondam)
     pour 2026 à +3 % (au lieu de +1,6 % initialement prévu), ce qui relève le plafond
@@ -368,6 +411,21 @@
   major_amendment: true
   cofog_mapping:
     '07': 1
+  mission_mapping:
+    M_SANTE: 1.0
+  multi_year_impact:
+    "2026": -3000000000
+    "2027": -3200000000
+    "2028": -3400000000
+  pushbacks:
+    - type: sector
+      description: "Les fédérations hospitalières (FHF) jugent cette hausse insuffisante par rapport à l'inflation médicale (4%)."
+      source: "FHF.fr (2025)"
+    - type: political
+      description: "Débat tendu au Parlement sur l'équilibre entre rigueur budgétaire et besoins du système de soin."
+      source: "Info.gouv.fr"
+  distributional_flags:
+    openfisca: true
   feasibility:
     law: true
     adminLagMonths: 6
@@ -375,7 +433,6 @@
   sources:
   - PLFSS 2026 adopté[1]
   params_schema: {}
-  mission_mapping: {}
 - id: amend_suspend_retirement_reform
   family: SOCIAL_SECURITY
   label: Suspension de la réforme des retraites (report âge 64 ans suspendu)
@@ -383,16 +440,25 @@
     de 2023 : le relèvement progressif de l''âge légal (vers 64 ans) et de la durée
     de cotisation sont mis en pause. Par exemple, la génération 1964 ne verra pas
     son âge légal passer à 64 ans mais pourra partir à 62 ans et 9 mois[29].'
-  fixed_impact_eur: -500000000
-  impact_schedule_eur:
-  - -500000000
-  - -2000000000
-  - -4000000000
-  - -7000000000
-  - -10000000000
+  fixed_impact_eur: -100000000
   major_amendment: true
   cofog_mapping:
-    '10': 1
+    '10.2': 1
+  mission_mapping:
+    M_SOLIDARITE: 1.0
+  multi_year_impact:
+    "2026": -100000000
+    "2027": -1400000000
+    "2028": -2000000000
+  pushbacks:
+    - type: financial
+      description: "Risque sur la soutenabilité à long terme du système par répartition (CSR)."
+      source: "iFRAP (2025)"
+    - type: political
+      description: "Suspension jusqu'en 2028 vue comme une 'année blanche' électorale par certains opposants."
+      source: "Public Sénat"
+  distributional_flags:
+    openfisca: true
   feasibility:
     law: true
     adminLagMonths: 6
@@ -400,7 +466,6 @@
   sources:
   - PLFSS 2026 adopté[29]
   params_schema: {}
-  mission_mapping: {}
 - id: amend_new_birth_leave
   family: SOCIAL_SECURITY
   label: Création d'un congé de naissance supplémentaire (1 à 2 mois)
