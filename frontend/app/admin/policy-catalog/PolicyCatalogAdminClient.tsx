@@ -539,7 +539,7 @@ export default function PolicyCatalogAdminClient() {
                     <tr>
                       <th className="p-3 text-left border-b-2 border-slate-700 w-64 bg-slate-900 sticky left-0 z-20">Levier</th>
                       {missionColumns.map(m => (
-                        <th key={m.id} className="p-3 text-left border-b-2 border-slate-700 min-w-[100px] whitespace-nowrap">
+                        <th key={m.id} className="p-3 text-left border-b-2 border-slate-700 min-w-[80px] whitespace-nowrap">
                           {m.label}
                         </th>
                       ))}
