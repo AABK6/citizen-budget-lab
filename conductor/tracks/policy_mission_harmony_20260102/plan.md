@@ -8,7 +8,7 @@ Goal: Upgrade the policy catalog schema and API to support administrative missio
 - [x] **Task: Update Policy Lever Schema** (1ed9559)
     - [ ] Sub-task: Modify `schemas/policy_levers.schema.json` to include `missionMapping` (required), `multiYearImpact`, `pushbacks`, and `distributionalFlags`.
     - [ ] Sub-task: Update `services/api/models.py` (or relevant Pydantic models) to reflect the new schema.
-- [ ] **Task: Enhance API for Mission-Based Resolution**
+- [x] **Task: Enhance API for Mission-Based Resolution** (ee6f264)
     - [ ] Sub-task: Write tests in `services/api/tests/` to verify that `runScenario` correctly uses `missionMapping` when the `ADMIN` lens is active.
     - [ ] Sub-task: Update `services/api/data_loader.py` to handle the new rich metadata and ensure it's returned in the GraphQL response.
 - [ ] **Task: Conductor - User Manual Verification 'Phase 1: Schema & Backend Infrastructure' (Protocol in workflow.md)**
