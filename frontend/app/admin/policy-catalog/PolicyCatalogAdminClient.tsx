@@ -533,26 +533,26 @@ export default function PolicyCatalogAdminClient() {
             {view === 'yaml' ? (
               <textarea value={yamlText} onChange={e => { setYamlText(e.target.value); setRawDirty(true); }} className="w-full h-full p-6 bg-slate-950 font-mono text-sm leading-relaxed text-slate-300 outline-none" spellCheck={false} />
             ) : view === 'mission' ? (
-              <div className="p-0">
+              <div className="h-full overflow-auto">
                 <table className="w-full text-[11px] border-separate border-spacing-0">
                   <thead className="bg-slate-900 sticky top-0 z-10 shadow">
                     <tr>
-                      <th className="p-3 text-left border-b border-slate-800 w-64 bg-slate-900">Levier</th>
+                      <th className="p-3 text-left border-b-2 border-slate-700 w-64 bg-slate-900 sticky left-0 z-20">Levier</th>
                       {missionColumns.map(m => (
-                        <th key={m.id} className="p-2 text-center border-b border-slate-800 min-w-[80px] group">
-                          <div className="rotate-[-45deg] origin-bottom-left translate-y-2 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]" title={m.label}>{m.label}</div>
+                        <th key={m.id} className="p-3 text-left border-b-2 border-slate-700 min-w-[100px] whitespace-nowrap">
+                          {m.label}
                         </th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {filteredRows.map(({ lever }) => (
-                      <tr key={lever.id} className={`hover:bg-slate-900/50 group ${activeId === lever.id ? 'bg-indigo-500/5' : ''}`} onClick={() => setActiveId(lever.id)}>
-                        <td className="p-3 border-b border-slate-800/50 font-medium whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]" title={lever.label}>{lever.label}</td>
+                      <tr key={lever.id} className={`hover:bg-slate-800/50 group ${activeId === lever.id ? 'bg-indigo-500/5' : ''}`} onClick={() => setActiveId(lever.id)}>
+                        <td className="p-3 border-b border-slate-800/50 font-medium whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px] sticky left-0 z-10 bg-slate-950 group-hover:bg-slate-800/50" title={lever.label}>{lever.label}</td>
                         {missionColumns.map(m => {
                           const val = lever.mission_mapping?.[m.id];
                           return (
-                            <td key={m.id} className={`p-2 text-center border-b border-slate-800/50 border-r border-slate-800/20 font-mono ${val ? 'bg-indigo-500/10 text-indigo-300 font-bold' : 'text-slate-700'}`}>
+                            <td key={m.id} className={`p-3 text-center border-b border-slate-800/50 border-r border-slate-800/20 font-mono ${val ? 'bg-indigo-500/10 text-indigo-300 font-bold' : 'text-slate-700'}`}>
                               {val ? val.toFixed(2) : '-'}
                             </td>
                           );
