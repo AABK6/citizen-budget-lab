@@ -36,7 +36,10 @@ This is the core interactive feature of the application, allowing users to build
 #### User Journeys
 
 1.  **Goal-First (Playground):** A user starts by adjusting the dials for high-level missions (e.g., "Decrease Defense spending by €6B"). The UI shows this as an "unspecified" target. The user is then prompted to select from a list of policy levers to account for the change.
-2.  **Policy-First (Workshop):** A user selects one or more specific reforms from the Policy Workshop. The application automatically calculates the impact on the relevant missions (default admin lens) and updates the budget visualization.
+2.  **Policy-First (Workshop):** A user selects one or more specific reforms from the Policy Workshop. The application automatically calculates the impact on the relevant missions (default admin lens) and updates the budget visualization. Reforms now provide high-fidelity context:
+    *   **Multi-year Trajectories:** Users can see how a reform's impact evolves (e.g., a "ramp-up" saving) across the 2026-2030 horizon.
+    *   **Implementation Risks:** Explicit "Points de vigilance" highlight legal, social, and political pushbacks associated with each reform.
+    *   **Rigorous Mission Alignment:** Every lever is now directly mapped to one or more Administrative Missions, ensuring total consistency with the Playground mode.
 
 #### Page Layout & Components
 

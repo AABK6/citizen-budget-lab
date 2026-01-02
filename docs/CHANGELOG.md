@@ -4,6 +4,16 @@ This changelog records **documentation** and **data pipeline conventions** chang
 
 ## 2026-01-02
 
+- **Policy Catalog Harmonization:**
+    - **Schema Evolution:** Upgraded the `policy_levers` schema to include `mission_mapping` (required), `multi_year_impact`, and `pushbacks`.
+    - **Administrative Alignment:** Systematically updated all levers in `data/policy_levers.yaml` to ensure direct mapping to PLF Missions, resolving the functional/administrative lens discrepancy in the Workshop mode.
+    - **Rich Metadata:** Added multi-year fiscal trajectories (2026-2030) and implementation risk notes ("pushbacks") to reforms.
+- **Frontend Enhancements:**
+    - **Reform Details:** Updated the Reform Drawer/Sidebar to display implementation risks and multi-year trajectories.
+    - **Stability:** Fixed a critical race condition in scenario loading where the UI would fetch a stale DSL before the new scenario ID was fully propagated.
+- **Tooling:** 
+    - **Snapshot Generator:** Updated `tools/build_snapshot.py` to include the new metadata in precomputed build page snapshots.
+    - **Testing:** Introduced Vitest and React Testing Library to the frontend for component-level TDD.
 - **Policy Catalog (YAML):** Moved the reform catalog to `data/policy_levers.yaml` (schema: `schemas/policy_levers.schema.json`) with admin editor save support and CLI validation.
 - **Dual Mapping:** Added explicit `cofog_mapping` + `mission_mapping` to levers; GraphQL now exposes `cofogMapping` / `missionMapping` while `massMapping` remains a COFOG alias for legacy clients. Admin treemap uses mission mappings by default with COFOG fallback where needed.
 - **Docs Alignment:** Updated `DATA_MANIFEST.md`, `LEGO_METHOD.md`, and `PRODUCT_SPEC.md` to reflect mission-first treemap semantics and YAML catalog sourcing.

@@ -56,20 +56,20 @@ Beneficiary Categories
 
 Policy Levers → COFOG & Mission Attribution (V1)
 
-- Each Policy Lever is defined with a fixed, pre-estimated impact (`fixed_impact_eur`).
-  - `family`: high-level grouping (PENSIONS, TAXES, HEALTH, EDUCATION, DEFENCE, ECOLOGY, JUSTICE, UNEMPLOYMENT, PUBLIC_ADMIN, DEBT, LOCAL_GOV, OTHER).
-    - Also supported in the API schema: `TAX_EXPENDITURES` for niche/targeted tax expenditures.
-  - `params_schema`: this is now typically empty, as levers are non-parametric.
-  - `cofog_mapping`: defines how the lever's fixed impact attributes to COFOG masses.
-  - `mission_mapping`: defines how the lever attributes to missions (used by the mission treemap).
-  - `feasibility`: tags `{ law: bool, adminLagMonths: int, notes: string }` surfaced in the UI.
+- Each Policy Lever is defined with a fixed, pre-estimated impact (`fixed_impact_eur`) and rich metadata for multi-year trajectories and implementation risks.
+  - `family`: high-level grouping (PENSIONS, TAXES, HEALTH, etc.).
+  - `mission_mapping`: (Required) defines how the lever attributes to administrative missions.
+  - `cofog_mapping`: defines how the lever attributes to COFOG masses (functional view).
+  - `multi_year_impact`: explicit impact values per year (2026–2030) allowing for ramp-up or phase-out simulation.
+  - `pushbacks`: structured risk notes describing legal, political, or social hurdles.
+  - `feasibility`: tags `{ law: bool, adminLagMonths: int, notes: string }`.
   - `conflicts_with`: list of lever ids to guard double counting.
-- Depending on the lens, a lever can carry both a functional attribution (`cofogMapping` / COFOG) and an administrative attribution (`missionMapping`). The API schema supports both mappings; the active lens determines which mapping is used for allocation displays. `massMapping` remains a COFOG alias for legacy clients. When `mission_mapping` is empty, the API can derive a mission attribution from COFOG as a temporary fallback.
+- Depending on the lens, a lever attributes its delta onto missions (ADMIN lens) or COFOG (functional lens). The engine handles multi-year trajectories by applying the `multi_year_impact` schedule to the relevant years in the horizon.
 - Applying a lever produces a `PolicyEffect` with:
-  - `delta_eur`: the fixed accounting impact at horizon.
-  - `mass_attribution`: how the delta paints across masses (missions in the ADMIN lens, COFOG in the functional lens).
-  - `incidence` (optional): distributional placeholders (e.g., sectors/regions; deciles if OpenFisca wired).
-  - `risk_notes`: uncertainty/implementation caveats.
+  - `delta_eur`: the accounting impact at horizon (or year-specific).
+  - `multi_year_trajectory`: the path of deltas over the horizon.
+  - `mass_attribution`: how the delta paints across the active lens.
+  - `risk_notes`: derived from `pushbacks`.
 
 Revenue Elasticities (v0.1)
 
