@@ -9,3 +9,6 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ## [x] Track: Data Consistency Audit (Pricetag vs Trajectory)
 *Link: [./conductor/tracks/data_consistency_audit_20260102/](./conductor/tracks/data_consistency_audit_20260102/)*
+
+## [x] Track: Simulation Logic & Interaction Audit
+*Link: [./conductor/tracks/simulation_logic_audit_20260102/](./conductor/tracks/simulation_logic_audit_20260102/)*

@@ -1595,7 +1595,20 @@ def run_scenario(dsl_b64: str, *, lens: str | None = None) -> tuple[str, Account
 
                 if role != "target":
                     specified_mission = resolution_specified_by_mission_dim[ledger_key].get(mission_code, 0.0)
-                    unspecified_delta = target_delta - specified_mission
+                    
+                    # Bucket filling logic: 
+                    # If specified effort (e.g. reforms) already exceeds the target in the same direction,
+                    # we do not "add back" unspecified effort to cap it. We let it overflow.
+                    # Otherwise, we fill the gap.
+                    
+                    # Case: Savings (Negative Delta)
+                    if target_delta < 0 and specified_mission < target_delta:
+                        unspecified_delta = 0.0
+                    # Case: Spending Increase (Positive Delta)
+                    elif target_delta > 0 and specified_mission > target_delta:
+                        unspecified_delta = 0.0
+                    else:
+                        unspecified_delta = target_delta - specified_mission
 
                     if recurring:
                         for i in range(horizon_years):
@@ -1796,8 +1809,13 @@ def run_scenario(dsl_b64: str, *, lens: str | None = None) -> tuple[str, Account
         cp_t = float(cp_target_by_mission.get(mid, 0.0))
         cp_s = float(cp_spec_by_mission.get(mid, 0.0))
         if abs(cp_t) > 1e-9:
-            cp_delta = cp_t
-            cp_unspecified = cp_t - cp_s
+            # Bucket filling overflow logic for UI
+            if (cp_t < 0 and cp_s < cp_t) or (cp_t > 0 and cp_s > cp_t):
+                cp_delta = cp_s
+                cp_unspecified = 0.0
+            else:
+                cp_delta = cp_t
+                cp_unspecified = cp_t - cp_s
         else:
             cp_delta = cp_s
             cp_unspecified = 0.0
@@ -1848,8 +1866,13 @@ def run_scenario(dsl_b64: str, *, lens: str | None = None) -> tuple[str, Account
         cp_t = float(cofog_cp_target_totals.get(code, 0.0))
         cp_s = float(cofog_cp_spec_totals.get(code, 0.0))
         if abs(cp_t) > 1e-9:
-            cp_delta = cp_t
-            cp_unspecified = cp_t - cp_s
+            # Bucket filling overflow logic for UI
+            if (cp_t < 0 and cp_s < cp_t) or (cp_t > 0 and cp_s > cp_t):
+                cp_delta = cp_s
+                cp_unspecified = 0.0
+            else:
+                cp_delta = cp_t
+                cp_unspecified = cp_t - cp_s
         else:
             cp_delta = cp_s
             cp_unspecified = 0.0
