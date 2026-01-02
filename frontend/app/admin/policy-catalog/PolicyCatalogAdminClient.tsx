@@ -601,7 +601,7 @@ export default function PolicyCatalogAdminClient() {
                         {lever.sources?.some(s => s.includes('http')) ? <LinkIcon size={14} className="text-blue-400 mx-auto" /> : <span className="text-slate-700">-</span>}
                       </td>
                     </tr>
-                  )})
+                  ))}
                 </tbody>
               </table>
             )}
