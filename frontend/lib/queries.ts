@@ -46,7 +46,7 @@ export const buildPageQuery = `
       label
       description
       fixedImpactEur
-      massMapping
+      cofogMapping
       missionMapping
       impact {
         householdsImpacted

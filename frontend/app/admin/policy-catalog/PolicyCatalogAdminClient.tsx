@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import yaml from 'js-yaml';
+import { gqlRequest } from '@/lib/graphql';
 
 interface Feasibility {
   law: boolean;
@@ -30,7 +31,8 @@ interface Lever {
   major_amendment?: boolean;
   popularity?: number;
   active: boolean;
-  mass_mapping: Record<string, number>;
+  cofog_mapping: Record<string, number>;
+  mission_mapping: Record<string, number>;
   feasibility: Feasibility;
   conflicts_with: string[];
   sources: string[];
@@ -60,7 +62,7 @@ const FAMILIES = [
 
 const BUDGET_SIDES = ['SPENDING', 'REVENUE', 'BOTH'];
 
-const MASS_LABELS: Record<string, string> = {
+const COFOG_LABELS: Record<string, string> = {
   '01': 'Services publics généraux',
   '02': 'Défense',
   '03': 'Ordre public',
@@ -73,7 +75,7 @@ const MASS_LABELS: Record<string, string> = {
   '10': 'Protection sociale',
 };
 
-const MASS_FORMATTER = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 2 });
+const MAPPING_FORMATTER = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 2 });
 
 const SORT_OPTIONS = [
   { id: 'order', label: 'Ordre manuel' },
@@ -115,7 +117,8 @@ function normalizeLever(raw: any): Lever {
     major_amendment: raw?.major_amendment ?? undefined,
     popularity: raw?.popularity ?? undefined,
     active: raw?.active === false ? false : true,
-    mass_mapping: normalizeMapping(raw?.mass_mapping),
+    cofog_mapping: normalizeMapping(raw?.cofog_mapping ?? raw?.mass_mapping),
+    mission_mapping: normalizeMapping(raw?.mission_mapping),
     feasibility: {
       law: Boolean(raw?.feasibility?.law),
       adminLagMonths: Number(raw?.feasibility?.adminLagMonths || 0),
@@ -160,11 +163,11 @@ function linesToList(value: string): string[] {
     .filter(Boolean);
 }
 
-function formatMassValue(value: number | undefined): string {
+function formatMappingValue(value: number | undefined): string {
   if (value === undefined || value === null || !Number.isFinite(value)) {
     return '-';
   }
-  return MASS_FORMATTER.format(value);
+  return MAPPING_FORMATTER.format(value);
 }
 
 export default function PolicyCatalogAdminClient() {
@@ -181,12 +184,13 @@ export default function PolicyCatalogAdminClient() {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [familyFilter, setFamilyFilter] = useState('ALL');
-  const [massFilter, setMassFilter] = useState('ALL');
+  const [cofogFilter, setCofogFilter] = useState('ALL');
+  const [missionFilter, setMissionFilter] = useState('ALL');
   const [sortKey, setSortKey] = useState('order');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [view, setView] = useState<'table' | 'pivot' | 'yaml'>('table');
+  const [view, setView] = useState<'table' | 'cofog' | 'mission' | 'yaml'>('table');
   const [bulkFamily, setBulkFamily] = useState('');
   const [bulkBudget, setBulkBudget] = useState('');
 
@@ -194,8 +198,11 @@ export default function PolicyCatalogAdminClient() {
   const [impactText, setImpactText] = useState('');
   const [impactScheduleText, setImpactScheduleText] = useState('');
   const [jsonError, setJsonError] = useState<string | null>(null);
-  const [mappingKey, setMappingKey] = useState('');
-  const [mappingValue, setMappingValue] = useState('');
+  const [cofogMappingKey, setCofogMappingKey] = useState('');
+  const [cofogMappingValue, setCofogMappingValue] = useState('');
+  const [missionMappingKey, setMissionMappingKey] = useState('');
+  const [missionMappingValue, setMissionMappingValue] = useState('');
+  const [missionLabelMap, setMissionLabelMap] = useState<Record<string, string>>({});
 
   const fetchCatalog = async () => {
     setLoading(true);
@@ -357,7 +364,8 @@ export default function PolicyCatalogAdminClient() {
       description: '',
       fixed_impact_eur: 0,
       active: true,
-      mass_mapping: {},
+      cofog_mapping: {},
+      mission_mapping: {},
       feasibility: { law: false, adminLagMonths: 0 },
       conflicts_with: [],
       sources: [],
@@ -401,6 +409,34 @@ export default function PolicyCatalogAdminClient() {
   }, []);
 
   useEffect(() => {
+    let active = true;
+    const loadMissionLabels = async () => {
+      try {
+        const data = await gqlRequest(`
+          query MissionLabels {
+            missionLabels { id displayLabel }
+          }
+        `);
+        if (!active) return;
+        const next: Record<string, string> = {};
+        (data?.missionLabels || []).forEach((entry: any) => {
+          if (!entry?.id) return;
+          next[String(entry.id)] = String(entry.displayLabel || entry.id);
+        });
+        setMissionLabelMap(next);
+      } catch {
+        if (active) {
+          setMissionLabelMap({});
+        }
+      }
+    };
+    loadMissionLabels();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
     if (catalog.length === 0) {
       setActiveId(null);
       return;
@@ -418,8 +454,10 @@ export default function PolicyCatalogAdminClient() {
     setImpactText(JSON.stringify(active.impact || {}, null, 2));
     setImpactScheduleText(active.impact_schedule_eur ? active.impact_schedule_eur.join(', ') : '');
     setJsonError(null);
-    setMappingKey('');
-    setMappingValue('');
+    setCofogMappingKey('');
+    setCofogMappingValue('');
+    setMissionMappingKey('');
+    setMissionMappingValue('');
   }, [activeId, catalog]);
 
   const filteredRows = useMemo(() => {
@@ -427,12 +465,21 @@ export default function PolicyCatalogAdminClient() {
     const q = search.trim().toLowerCase();
     const filtered = rows.filter(({ lever }) => {
       if (familyFilter !== 'ALL' && lever.family !== familyFilter) return false;
-      if (massFilter !== 'ALL') {
-        const hasMapping = Object.keys(lever.mass_mapping || {}).length > 0;
-        if (massFilter === 'NONE') {
+      if (cofogFilter !== 'ALL') {
+        const hasMapping = Object.keys(lever.cofog_mapping || {}).length > 0;
+        if (cofogFilter === 'NONE') {
           return !hasMapping;
         }
-        if (!lever.mass_mapping || lever.mass_mapping[massFilter] === undefined) {
+        if (!lever.cofog_mapping || lever.cofog_mapping[cofogFilter] === undefined) {
+          return false;
+        }
+      }
+      if (missionFilter !== 'ALL') {
+        const hasMapping = Object.keys(lever.mission_mapping || {}).length > 0;
+        if (missionFilter === 'NONE') {
+          return !hasMapping;
+        }
+        if (!lever.mission_mapping || lever.mission_mapping[missionFilter] === undefined) {
           return false;
         }
       }
@@ -468,15 +515,32 @@ export default function PolicyCatalogAdminClient() {
       return String(av).localeCompare(String(bv)) * dir;
     });
     return sorted;
-  }, [catalog, search, familyFilter, massFilter, sortKey, sortDir]);
+  }, [catalog, search, familyFilter, cofogFilter, missionFilter, sortKey, sortDir]);
 
-  const massTotals = useMemo(() => {
+  const missionLabelEntries = useMemo(() => {
+    return Object.entries(missionLabelMap)
+      .map(([id, label]) => [id, label] as [string, string])
+      .sort((a, b) => a[1].localeCompare(b[1], 'fr'));
+  }, [missionLabelMap]);
+
+  const missionColumns = useMemo(() => {
+    if (missionLabelEntries.length > 0) {
+      return missionLabelEntries;
+    }
+    const ids = new Set<string>();
+    catalog.forEach((lever) => {
+      Object.keys(lever.mission_mapping || {}).forEach((id) => ids.add(id));
+    });
+    return Array.from(ids).sort().map((id) => [id, id] as [string, string]);
+  }, [missionLabelEntries, catalog]);
+
+  const cofogTotals = useMemo(() => {
     const totals: Record<string, number> = {};
-    for (const code of Object.keys(MASS_LABELS)) {
+    for (const code of Object.keys(COFOG_LABELS)) {
       totals[code] = 0;
     }
     for (const { lever } of filteredRows) {
-      for (const [code, value] of Object.entries(lever.mass_mapping || {})) {
+      for (const [code, value] of Object.entries(lever.cofog_mapping || {})) {
         if (totals[code] === undefined) continue;
         const num = Number(value);
         if (Number.isFinite(num)) {
@@ -486,6 +550,23 @@ export default function PolicyCatalogAdminClient() {
     }
     return totals;
   }, [filteredRows]);
+
+  const missionTotals = useMemo(() => {
+    const totals: Record<string, number> = {};
+    missionColumns.forEach(([id]) => {
+      totals[id] = 0;
+    });
+    for (const { lever } of filteredRows) {
+      for (const [code, value] of Object.entries(lever.mission_mapping || {})) {
+        if (totals[code] === undefined) continue;
+        const num = Number(value);
+        if (Number.isFinite(num)) {
+          totals[code] += num;
+        }
+      }
+    }
+    return totals;
+  }, [filteredRows, missionColumns]);
 
   const applySortOrder = () => {
     if (sortKey === 'order') return;
@@ -543,11 +624,12 @@ export default function PolicyCatalogAdminClient() {
 
   const activeLever = activeId ? catalog.find((item) => item.id === activeId) : null;
 
-  const mappingEntries = Object.entries(activeLever?.mass_mapping || {});
+  const cofogEntries = Object.entries(activeLever?.cofog_mapping || {});
+  const missionEntries = Object.entries(activeLever?.mission_mapping || {});
   const conflictsText = listToLines(activeLever?.conflicts_with || []);
   const sourcesText = listToLines(activeLever?.sources || []);
 
-  const updateMapping = (entries: Array<[string, number]>) => {
+  const updateCofogMapping = (entries: Array<[string, number]>) => {
     const updated: Record<string, number> = {};
     entries.forEach(([key, value]) => {
       const trimmed = key.trim();
@@ -555,17 +637,38 @@ export default function PolicyCatalogAdminClient() {
       updated[trimmed] = Number(value);
     });
     if (activeId) {
-      updateLever(activeId, (lever) => ({ ...lever, mass_mapping: updated }));
+      updateLever(activeId, (lever) => ({ ...lever, cofog_mapping: updated }));
     }
   };
 
-  const addMappingEntry = () => {
-    if (!mappingKey.trim()) return;
-    const value = Number(mappingValue || 0);
-    const nextEntries = [...mappingEntries, [mappingKey.trim(), value] as [string, number]];
-    updateMapping(nextEntries);
-    setMappingKey('');
-    setMappingValue('');
+  const updateMissionMapping = (entries: Array<[string, number]>) => {
+    const updated: Record<string, number> = {};
+    entries.forEach(([key, value]) => {
+      const trimmed = key.trim();
+      if (!trimmed) return;
+      updated[trimmed] = Number(value);
+    });
+    if (activeId) {
+      updateLever(activeId, (lever) => ({ ...lever, mission_mapping: updated }));
+    }
+  };
+
+  const addCofogMappingEntry = () => {
+    if (!cofogMappingKey.trim()) return;
+    const value = Number(cofogMappingValue || 0);
+    const nextEntries = [...cofogEntries, [cofogMappingKey.trim(), value] as [string, number]];
+    updateCofogMapping(nextEntries);
+    setCofogMappingKey('');
+    setCofogMappingValue('');
+  };
+
+  const addMissionMappingEntry = () => {
+    if (!missionMappingKey.trim()) return;
+    const value = Number(missionMappingValue || 0);
+    const nextEntries = [...missionEntries, [missionMappingKey.trim(), value] as [string, number]];
+    updateMissionMapping(nextEntries);
+    setMissionMappingKey('');
+    setMissionMappingValue('');
   };
 
   const applyJsonField = (field: 'params_schema' | 'impact', text: string) => {
@@ -662,10 +765,16 @@ export default function PolicyCatalogAdminClient() {
               Table
             </button>
             <button
-              onClick={() => setView('pivot')}
-              className={`px-4 py-2 rounded-lg text-sm ${view === 'pivot' ? 'bg-slate-800' : 'bg-slate-900 border border-slate-800'}`}
+              onClick={() => setView('cofog')}
+              className={`px-4 py-2 rounded-lg text-sm ${view === 'cofog' ? 'bg-slate-800' : 'bg-slate-900 border border-slate-800'}`}
             >
-              Vue masses
+              Vue COFOG
+            </button>
+            <button
+              onClick={() => setView('mission')}
+              className={`px-4 py-2 rounded-lg text-sm ${view === 'mission' ? 'bg-slate-800' : 'bg-slate-900 border border-slate-800'}`}
+            >
+              Vue missions
             </button>
             <button
               onClick={() => {
@@ -733,7 +842,7 @@ export default function PolicyCatalogAdminClient() {
               </button>
             </div>
           </div>
-        ) : view === 'pivot' ? (
+        ) : view === 'cofog' ? (
           <div className="rounded-xl border border-slate-800 bg-slate-900/40 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="min-w-[1200px] text-sm">
@@ -741,7 +850,7 @@ export default function PolicyCatalogAdminClient() {
                   <tr>
                     <th className="px-3 py-2 text-left">Levier</th>
                     <th className="px-3 py-2 text-left">Famille</th>
-                    {Object.entries(MASS_LABELS).map(([code, label]) => (
+                    {Object.entries(COFOG_LABELS).map(([code, label]) => (
                       <th key={code} className="px-3 py-2 text-left">
                         <div className="text-xs font-semibold">{code}</div>
                         <div className="text-[11px] text-slate-500">{label}</div>
@@ -760,11 +869,11 @@ export default function PolicyCatalogAdminClient() {
                         <div className="text-slate-200">{lever.label}</div>
                       </td>
                       <td className="px-3 py-2">{lever.family}</td>
-                      {Object.keys(MASS_LABELS).map((code) => {
-                        const value = lever.mass_mapping?.[code];
+                      {Object.keys(COFOG_LABELS).map((code) => {
+                        const value = lever.cofog_mapping?.[code];
                         return (
                           <td key={`${lever.id}-${code}`} className="px-3 py-2 text-right text-slate-200">
-                            {formatMassValue(value)}
+                            {formatMappingValue(value)}
                           </td>
                         );
                       })}
@@ -775,9 +884,61 @@ export default function PolicyCatalogAdminClient() {
                   <tr className="border-t border-slate-800/70">
                     <td className="px-3 py-2 font-semibold">Total</td>
                     <td className="px-3 py-2 text-xs text-slate-500">Somme des poids</td>
-                    {Object.keys(MASS_LABELS).map((code) => (
+                    {Object.keys(COFOG_LABELS).map((code) => (
                       <td key={`total-${code}`} className="px-3 py-2 text-right font-semibold">
-                        {formatMassValue(massTotals[code])}
+                        {formatMappingValue(cofogTotals[code])}
+                      </td>
+                    ))}
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        ) : view === 'mission' ? (
+          <div className="rounded-xl border border-slate-800 bg-slate-900/40 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="min-w-[1200px] text-sm">
+                <thead className="bg-slate-900/80 text-slate-400 sticky top-0">
+                  <tr>
+                    <th className="px-3 py-2 text-left">Levier</th>
+                    <th className="px-3 py-2 text-left">Famille</th>
+                    {missionColumns.map(([code, label]) => (
+                      <th key={code} className="px-3 py-2 text-left">
+                        <div className="text-xs font-semibold">{code}</div>
+                        <div className="text-[11px] text-slate-500">{label}</div>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredRows.map(({ lever }) => (
+                    <tr
+                      key={lever.id}
+                      className={`border-t border-slate-800/70 ${lever.active === false ? 'opacity-60' : ''}`}
+                    >
+                      <td className="px-3 py-2 whitespace-nowrap">
+                        <div className="font-mono text-xs text-slate-300">{lever.id}</div>
+                        <div className="text-slate-200">{lever.label}</div>
+                      </td>
+                      <td className="px-3 py-2">{lever.family}</td>
+                      {missionColumns.map(([code]) => {
+                        const value = lever.mission_mapping?.[code];
+                        return (
+                          <td key={`${lever.id}-${code}`} className="px-3 py-2 text-right text-slate-200">
+                            {formatMappingValue(value)}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot className="bg-slate-900/80 text-slate-300">
+                  <tr className="border-t border-slate-800/70">
+                    <td className="px-3 py-2 font-semibold">Total</td>
+                    <td className="px-3 py-2 text-xs text-slate-500">Somme des poids</td>
+                    {missionColumns.map(([code]) => (
+                      <td key={`total-${code}`} className="px-3 py-2 text-right font-semibold">
+                        {formatMappingValue(missionTotals[code])}
                       </td>
                     ))}
                   </tr>
@@ -819,13 +980,24 @@ export default function PolicyCatalogAdminClient() {
                   ))}
                 </select>
                 <select
-                  value={massFilter}
-                  onChange={(e) => setMassFilter(e.target.value)}
+                  value={cofogFilter}
+                  onChange={(e) => setCofogFilter(e.target.value)}
                   className={inputClass}
                 >
-                  <option value="ALL">Tous les mappings</option>
-                  <option value="NONE">Sans mapping</option>
-                  {Object.entries(MASS_LABELS).map(([code, label]) => (
+                  <option value="ALL">Mappings COFOG</option>
+                  <option value="NONE">Sans COFOG</option>
+                  {Object.entries(COFOG_LABELS).map(([code, label]) => (
+                    <option key={code} value={code}>{label}</option>
+                  ))}
+                </select>
+                <select
+                  value={missionFilter}
+                  onChange={(e) => setMissionFilter(e.target.value)}
+                  className={inputClass}
+                >
+                  <option value="ALL">Mappings missions</option>
+                  <option value="NONE">Sans mission</option>
+                  {missionColumns.map(([code, label]) => (
                     <option key={code} value={code}>{label}</option>
                   ))}
                 </select>
@@ -899,7 +1071,7 @@ export default function PolicyCatalogAdminClient() {
                         <th className="px-3 py-2 text-left">Famille</th>
                         <th className="px-3 py-2 text-left">Label</th>
                         <th className="px-3 py-2 text-left">Impact</th>
-                        <th className="px-3 py-2 text-left">Mapping</th>
+                        <th className="px-3 py-2 text-left">Mappings</th>
                         <th className="px-3 py-2 text-left">Conflicts</th>
                       </tr>
                     </thead>
@@ -908,9 +1080,15 @@ export default function PolicyCatalogAdminClient() {
                         const isActive = lever.id === activeId;
                         const isSelected = selectedIds.has(lever.id);
                         const isInactive = lever.active === false;
-                        const mappingSummary = Object.entries(lever.mass_mapping || {})
-                          .map(([k, v]) => `${MASS_LABELS[k] || k} (${k}):${v}`)
+                        const cofogSummary = Object.entries(lever.cofog_mapping || {})
+                          .map(([k, v]) => `${COFOG_LABELS[k] || k} (${k}):${v}`)
                           .join(' ');
+                        const missionSummary = Object.entries(lever.mission_mapping || {})
+                          .map(([k, v]) => `${missionLabelMap[k] || k}:${v}`)
+                          .join(' ');
+                        const mappingSummary = [cofogSummary ? `COFOG: ${cofogSummary}` : '', missionSummary ? `Mission: ${missionSummary}` : '']
+                          .filter(Boolean)
+                          .join(' | ');
                         return (
                           <tr
                             key={lever.id}
@@ -1121,36 +1299,36 @@ export default function PolicyCatalogAdminClient() {
                       />
                     </div>
 
-                    <label className="text-xs text-slate-400">Mass mapping</label>
+                    <label className="text-xs text-slate-400">Mapping COFOG</label>
                     <div className="space-y-2">
-                      {mappingEntries.map(([key, value], idx) => (
+                      {cofogEntries.map(([key, value], idx) => (
                         <div key={`${key}-${idx}`} className="flex gap-2">
                           <input
                             value={key}
                             onChange={(e) => {
-                              const next = [...mappingEntries];
+                              const next = [...cofogEntries];
                               next[idx] = [e.target.value, value];
-                              updateMapping(next as Array<[string, number]>);
+                              updateCofogMapping(next as Array<[string, number]>);
                             }}
                             className={inputClass}
-                            placeholder="Mass ID"
-                            list="mass-ids"
+                            placeholder="Code COFOG"
+                            list="cofog-ids"
                           />
                           <input
                             type="number"
                             value={value}
                             onChange={(e) => {
-                              const next = [...mappingEntries];
+                              const next = [...cofogEntries];
                               next[idx] = [key, Number(e.target.value)];
-                              updateMapping(next as Array<[string, number]>);
+                              updateCofogMapping(next as Array<[string, number]>);
                             }}
                             className={inputClass}
-                            placeholder="Weight"
+                            placeholder="Poids"
                           />
                           <button
                             onClick={() => {
-                              const next = mappingEntries.filter((_, i) => i !== idx);
-                              updateMapping(next as Array<[string, number]>);
+                              const next = cofogEntries.filter((_, i) => i !== idx);
+                              updateCofogMapping(next as Array<[string, number]>);
                             }}
                             className="px-2 rounded bg-rose-600 text-xs"
                           >
@@ -1160,28 +1338,94 @@ export default function PolicyCatalogAdminClient() {
                       ))}
                       <div className="flex gap-2">
                         <input
-                          value={mappingKey}
-                          onChange={(e) => setMappingKey(e.target.value)}
+                          value={cofogMappingKey}
+                          onChange={(e) => setCofogMappingKey(e.target.value)}
                           className={inputClass}
-                          placeholder="Mass ID"
-                          list="mass-ids"
+                          placeholder="Code COFOG"
+                          list="cofog-ids"
                         />
                         <input
                           type="number"
-                          value={mappingValue}
-                          onChange={(e) => setMappingValue(e.target.value)}
+                          value={cofogMappingValue}
+                          onChange={(e) => setCofogMappingValue(e.target.value)}
                           className={inputClass}
-                          placeholder="Weight"
+                          placeholder="Poids"
                         />
                         <button
-                          onClick={addMappingEntry}
+                          onClick={addCofogMappingEntry}
                           className="px-3 rounded bg-slate-800 text-xs"
                         >
                           Ajouter
                         </button>
                       </div>
-                      <datalist id="mass-ids">
-                        {Object.entries(MASS_LABELS).map(([code, label]) => (
+                      <datalist id="cofog-ids">
+                        {Object.entries(COFOG_LABELS).map(([code, label]) => (
+                          <option key={code} value={code}>{label}</option>
+                        ))}
+                      </datalist>
+                    </div>
+
+                    <label className="text-xs text-slate-400">Mapping missions</label>
+                    <div className="space-y-2">
+                      {missionEntries.map(([key, value], idx) => (
+                        <div key={`${key}-${idx}`} className="flex gap-2">
+                          <input
+                            value={key}
+                            onChange={(e) => {
+                              const next = [...missionEntries];
+                              next[idx] = [e.target.value, value];
+                              updateMissionMapping(next as Array<[string, number]>);
+                            }}
+                            className={inputClass}
+                            placeholder="ID mission (M_...)"
+                            list="mission-ids"
+                          />
+                          <input
+                            type="number"
+                            value={value}
+                            onChange={(e) => {
+                              const next = [...missionEntries];
+                              next[idx] = [key, Number(e.target.value)];
+                              updateMissionMapping(next as Array<[string, number]>);
+                            }}
+                            className={inputClass}
+                            placeholder="Poids"
+                          />
+                          <button
+                            onClick={() => {
+                              const next = missionEntries.filter((_, i) => i !== idx);
+                              updateMissionMapping(next as Array<[string, number]>);
+                            }}
+                            className="px-2 rounded bg-rose-600 text-xs"
+                          >
+                            X
+                          </button>
+                        </div>
+                      ))}
+                      <div className="flex gap-2">
+                        <input
+                          value={missionMappingKey}
+                          onChange={(e) => setMissionMappingKey(e.target.value)}
+                          className={inputClass}
+                          placeholder="ID mission (M_...)"
+                          list="mission-ids"
+                        />
+                        <input
+                          type="number"
+                          value={missionMappingValue}
+                          onChange={(e) => setMissionMappingValue(e.target.value)}
+                          className={inputClass}
+                          placeholder="Poids"
+                        />
+                        <button
+                          onClick={addMissionMappingEntry}
+                          className="px-3 rounded bg-slate-800 text-xs"
+                        >
+                          Ajouter
+                        </button>
+                      </div>
+                      <datalist id="mission-ids">
+                        {missionColumns.map(([code, label]) => (
                           <option key={code} value={code}>{label}</option>
                         ))}
                       </datalist>

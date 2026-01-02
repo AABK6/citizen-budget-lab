@@ -138,6 +138,10 @@ The policy reform catalog lives in a repo-managed YAML file for readability and 
 *   **Source file:** `data/policy_levers.yaml`
 *   **Schema:** `schemas/policy_levers.schema.json`
 *   **Override path (optional):** set `POLICY_CATALOG_PATH=/path/to/policy_levers.yaml`
+*   **Mappings:**
+    * `cofog_mapping`: COFOG weights (01..10), used for macro shocks and COFOG aggregations.
+    * `mission_mapping`: mission weights (M_*), used for mission-level suggestions/treemap. If empty, it is derived from `cofog_mapping` as a temporary fallback.
+*   **GraphQL fields:** `cofogMapping` + `missionMapping` (`massMapping` is a COFOG alias for legacy clients).
 
 **Validate from CLI:**
 
@@ -153,7 +157,7 @@ python tools/validate_policy_catalog.py
    npm run dev --prefix frontend
    ```
 2. Open `http://localhost:3000/admin/policy-catalog`.
-3. Edit values in the table, click **Validate**, then **Save** to write `data/policy_levers.yaml` (a timestamped `.bak` is created).
+3. Edit values in the table (COFOG + mission mappings), click **Validate**, then **Save** to write `data/policy_levers.yaml` (a timestamped `.bak` is created).
 
 Optional: set `POLICY_CATALOG_ADMIN_TOKEN=...` in the API and frontend to require an `x-admin-token` header.
 

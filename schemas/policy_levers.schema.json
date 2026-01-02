@@ -14,7 +14,7 @@
         "label",
         "description",
         "fixed_impact_eur",
-        "mass_mapping",
+        "cofog_mapping",
         "feasibility",
         "conflicts_with",
         "sources",
@@ -55,7 +55,11 @@
         "major_amendment": { "type": "boolean" },
         "popularity": { "type": "number" },
         "active": { "type": "boolean" },
-        "mass_mapping": {
+        "cofog_mapping": {
+          "type": "object",
+          "additionalProperties": { "type": "number" }
+        },
+        "mission_mapping": {
           "type": "object",
           "additionalProperties": { "type": "number" }
         },

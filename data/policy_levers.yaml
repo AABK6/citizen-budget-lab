@@ -6,7 +6,7 @@
     productif (biens somptuaires, actifs non investis)[7].
   fixed_impact_eur: 100000000
   major_amendment: true
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -22,7 +22,7 @@
     l'inflation prévue)[8].
   fixed_impact_eur: 2500000000
   major_amendment: true
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -38,7 +38,7 @@
     par an au total)[8].
   fixed_impact_eur: 470000000
   major_amendment: true
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -54,7 +54,7 @@
     an, limitant l'avantage fiscal accordé[10].
   fixed_impact_eur: 110000000
   major_amendment: true
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -70,7 +70,7 @@
     d'impôt remboursable, afin d'en faire bénéficier même les ménages non-imposables[11].
   fixed_impact_eur: -272000000
   major_amendment: true
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -86,7 +86,7 @@
     dans la restauration), mesure initialement temporaire[12].
   fixed_impact_eur: -30000000
   major_amendment: true
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -102,7 +102,7 @@
     en 2012), au lieu de la laisser expirer fin 2025[13].
   fixed_impact_eur: 2000000000
   major_amendment: true
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -118,7 +118,7 @@
     (imposition annulée seulement après 15 ans de résidence fiscale à l'étranger, contre 2 ans aujourd'hui)[14].
   fixed_impact_eur: 70000000
   major_amendment: true
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -134,7 +134,7 @@
     profit d'un descendant (enfant, petit-enfant) ou conjoint[15].
   fixed_impact_eur: -300000000
   major_amendment: true
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -150,7 +150,7 @@
     longue durée (affection longue durée), alors qu'une fiscalisation était envisagée[16].
   fixed_impact_eur: -150000000
   major_amendment: true
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -166,7 +166,7 @@
     supérieur), alors que sa suppression était initialement prévue[17].
   fixed_impact_eur: -250000000
   major_amendment: true
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -182,7 +182,7 @@
     patrimoine) aux seuls actifs « somptuaires » (de luxe), excluant ainsi les autres biens de cette taxation[18].
   fixed_impact_eur: 100000000
   major_amendment: true
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -198,7 +198,7 @@
     afin de solliciter davantage les grands groupes qui ont réalisé des profits importants[19].
   fixed_impact_eur: 6000000000
   major_amendment: true
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -215,7 +215,7 @@
     minimum)[20].
   fixed_impact_eur: 1500000000
   major_amendment: true
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -231,7 +231,7 @@
     chiffre d'affaires mondial pour concentrer la mesure sur les très grands groupes[21].
   fixed_impact_eur: 2400000000
   major_amendment: true
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -248,7 +248,7 @@
     ETI).
   fixed_impact_eur: 1200000000
   major_amendment: true
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -265,7 +265,7 @@
     supplémentaires[24].
   fixed_impact_eur: 2000000000
   major_amendment: true
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -281,7 +281,7 @@
     un taux situé entre 20 % et 33 %, pour faire contribuer les « super-dividendes » au budget public[25].
   fixed_impact_eur: 2000000000
   major_amendment: true
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -298,7 +298,7 @@
     usage du CIR[26].
   fixed_impact_eur: 100000000
   major_amendment: true
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -315,7 +315,7 @@
     réduit[27].
   fixed_impact_eur: -200000000
   major_amendment: true
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -332,7 +332,7 @@
     titres de 4 à 6 ans[28].
   fixed_impact_eur: 2000000000
   major_amendment: true
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -348,7 +348,7 @@
     initialement prévu), ce qui relève le plafond de dépenses de santé à env. 273,9 Md€[1].
   fixed_impact_eur: -3000000000
   major_amendment: true
-  mass_mapping:
+  cofog_mapping:
     '07': 1
   feasibility:
     law: true
@@ -372,7 +372,7 @@
     - -7000000000
     - -10000000000
   major_amendment: true
-  mass_mapping:
+  cofog_mapping:
     '10': 1
   feasibility:
     law: true
@@ -390,7 +390,7 @@
     vise à renforcer le soutien à la parentalité[30].
   fixed_impact_eur: -300000000
   major_amendment: true
-  mass_mapping:
+  cofog_mapping:
     '10': 1
   feasibility:
     law: true
@@ -407,7 +407,7 @@
     SMIC, pour freiner la dynamique des dépenses de santé.
   fixed_impact_eur: 900000000
   major_amendment: true
-  mass_mapping:
+  cofog_mapping:
     '07': 1
   feasibility:
     law: true
@@ -425,7 +425,7 @@
     évitant ~3 Mds€ d'économies initialement envisagées[2].
   fixed_impact_eur: -5000000000
   major_amendment: true
-  mass_mapping:
+  cofog_mapping:
     '10': 1
   feasibility:
     law: true
@@ -444,7 +444,7 @@
   fixed_impact_eur: -1000000000
   budget_side: REVENUE
   major_amendment: true
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -462,7 +462,7 @@
   fixed_impact_eur: -900000000
   budget_side: REVENUE
   major_amendment: true
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -479,7 +479,7 @@
     Initialement, un doublement de ces franchises était envisagé[32].
   fixed_impact_eur: -800000000
   major_amendment: true
-  mass_mapping:
+  cofog_mapping:
     '07': 1
   feasibility:
     law: true
@@ -498,7 +498,7 @@
   fixed_impact_eur: 1500000000
   budget_side: REVENUE
   major_amendment: true
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -516,7 +516,7 @@
   fixed_impact_eur: 1000000000
   budget_side: REVENUE
   major_amendment: true
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -534,7 +534,7 @@
   fixed_impact_eur: -150000000
   budget_side: REVENUE
   major_amendment: true
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -552,7 +552,7 @@
   fixed_impact_eur: 260000000
   budget_side: REVENUE
   major_amendment: true
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -568,7 +568,7 @@
     un an.
   fixed_impact_eur: 6500000000
   dimension: cp
-  mass_mapping:
+  cofog_mapping:
     '10': 1
   feasibility:
     law: true
@@ -593,7 +593,7 @@
   fixed_impact_eur: 750000000
   dimension: cp
   popularity: 0.35
-  mass_mapping:
+  cofog_mapping:
     '03': 1
   feasibility:
     law: false
@@ -613,7 +613,7 @@
   fixed_impact_eur: 1200000000
   dimension: cp
   popularity: 0.28
-  mass_mapping:
+  cofog_mapping:
     '9': 1
   feasibility:
     law: false
@@ -631,7 +631,7 @@
   fixed_impact_eur: 350000000
   dimension: cp
   popularity: 0.22
-  mass_mapping:
+  cofog_mapping:
     '01': 1
   feasibility:
     law: false
@@ -648,7 +648,7 @@
     Restaurer un impôt général sur le patrimoine des ménages les plus aisés (en remplacement de l'IFI, qui ne concerne
     que l'immobilier).
   fixed_impact_eur: 5000000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 12
@@ -668,7 +668,7 @@
   label: Surtaxe sur les très hauts revenus
   description: Introduire de nouvelles tranches supérieures ou une surtaxe sur l'impôt sur le revenu pour les plus hauts revenus.
   fixed_impact_eur: 8000000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -682,7 +682,7 @@
   label: Taxe sur les 'super-profits' des entreprises
   description: Prélever une taxe exceptionnelle sur les 'super-profits' (bénéfices exceptionnels) des grandes entreprises.
   fixed_impact_eur: 4000000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -704,7 +704,7 @@
     Supprimer le Prélèvement Forfaitaire Unique (PFU) de 30% sur les dividendes et intérêts, et revenir au barème
     progressif de l'impôt.
   fixed_impact_eur: 3500000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -724,7 +724,7 @@
   label: Étendre la Taxe sur les Transactions Financières (TTF)
   description: Élargir l'assiette ou augmenter le taux de la taxe sur les transactions financières (achats d'actions, etc.).
   fixed_impact_eur: 2000000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -738,7 +738,7 @@
   label: Rendre la CSG plus progressive
   description: Augmenter la CSG sur les revenus du capital ou les hautes retraites, tout en la réduisant pour les bas revenus.
   fixed_impact_eur: 4500000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -755,7 +755,7 @@
     de la taxe carbone.
   fixed_impact_eur: 3000000000
   budget_side: REVENUE
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -775,7 +775,7 @@
   label: Réformer le Crédit d'Impôt Recherche (CIR)
   description: Réduire ou plafonner le Crédit d'Impôt Recherche (CIR) pour les entreprises afin de réaliser des économies.
   fixed_impact_eur: 2000000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -795,7 +795,7 @@
   label: Réduire le crédit d'impôt 'Services à la personne'
   description: Diminuer le crédit d'impôt pour l'emploi à domicile (ménage, garde d'enfants...) pour réduire son coût.
   fixed_impact_eur: 1000000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -811,7 +811,7 @@
     Supprimer l'abattement forfaitaire de 10% appliqué aux pensions de retraite, alignant leur fiscalité sur celle des
     salaires.
   fixed_impact_eur: 5000000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 3
@@ -825,7 +825,7 @@
   label: Supprimer l'exonération fiscale des heures supplémentaires
   description: Rendre les heures supplémentaires imposables à l'impôt sur le revenu, comme le salaire normal.
   fixed_impact_eur: 1700000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 3
@@ -839,7 +839,7 @@
   label: Lutter contre la fraude et l'évasion fiscales
   description: Renforcer les contrôles, le partage de données et les sanctions pour récupérer davantage d'impôts impayés.
   fixed_impact_eur: 2300000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 12
@@ -855,7 +855,7 @@
     Augmenter les revenus issus des entreprises multinationales du numérique (via la taxe nationale ou l'impôt minimum
     mondial).
   fixed_impact_eur: 800000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 12
@@ -871,7 +871,7 @@
     Annuler la suppression totale de la CVAE (Cotisation sur la Valeur Ajoutée des Entreprises) pour restaurer cet impôt
     de production.
   fixed_impact_eur: 4000000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 3
@@ -885,7 +885,7 @@
   label: Réduire les taxes sur le carburant (TICPE)
   description: Baisser la taxe (TICPE) sur l'essence et le diesel, ou subventionner le prix à la pompe.
   fixed_impact_eur: -5000000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 1
@@ -899,7 +899,7 @@
   label: Baisser l'impôt sur le revenu des classes moyennes
   description: 'Alléger l''impôt pour les contribuables de la classe moyenne (ex: en ajustant les tranches du barème).'
   fixed_impact_eur: -3000000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 3
@@ -913,7 +913,7 @@
   label: Étendre la défiscalisation des heures sup. / primes
   description: Réduire davantage les impôts ou charges sociales sur les heures supplémentaires ou les primes salariales.
   fixed_impact_eur: -500000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 3
@@ -928,7 +928,7 @@
   label: Baisser la TVA sur les produits de première nécessité
   description: Appliquer un taux de TVA réduit (ou nul) sur les produits essentiels (alimentation, produits d'hygiène...).
   fixed_impact_eur: -1500000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 3
@@ -942,7 +942,7 @@
   label: Baisser la TVA sur l'énergie à 5,5%
   description: Réduire la TVA sur l'électricité, le gaz et les carburants de 20% à 5,5%.
   fixed_impact_eur: -11000000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 12
@@ -956,7 +956,7 @@
   label: Geler le barème de l'impôt sur le revenu
   description: Ne pas revaloriser les tranches du barème de l'impôt sur l'inflation (ce qui augmente mécaniquement l'impôt).
   fixed_impact_eur: 6100000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 0
@@ -970,7 +970,7 @@
   label: Augmenter l'âge légal de la retraite à 65 ans
   description: Augmenter l'âge légal de départ à la retraite à 65 ans (au-delà de la réforme actuelle le fixant à 64 ans).
   fixed_impact_eur: 8000000000
-  mass_mapping:
+  cofog_mapping:
     '10': 1
   feasibility:
     law: true
@@ -993,7 +993,7 @@
   label: Revenir à l'âge légal de la retraite à 62 ans
   description: Annuler la réforme de 2023 et rétablir l'âge légal de départ à la retraite à 62 ans.
   fixed_impact_eur: -34000000000
-  mass_mapping:
+  cofog_mapping:
     '10': 1
   feasibility:
     law: true
@@ -1015,7 +1015,7 @@
   label: Abaisser l'âge légal de la retraite à 60 ans
   description: Réduire l'âge légal de départ à la retraite à 60 ans (pour ceux ayant les annuités requises).
   fixed_impact_eur: -50000000000
-  mass_mapping:
+  cofog_mapping:
     '10': 1
   feasibility:
     law: true
@@ -1031,7 +1031,7 @@
   label: Allonger la durée de cotisation pour la retraite
   description: Exiger davantage de trimestres de travail pour obtenir une retraite à taux plein.
   fixed_impact_eur: 5000000000
-  mass_mapping:
+  cofog_mapping:
     '10': 1
   feasibility:
     law: true
@@ -1046,7 +1046,7 @@
   label: Supprimer les régimes spéciaux de retraite restants
   description: Mettre fin aux régimes spéciaux de retraite encore existants et restreindre les départs anticipés.
   fixed_impact_eur: 500000000
-  mass_mapping:
+  cofog_mapping:
     '10': 1
   feasibility:
     law: true
@@ -1067,7 +1067,7 @@
   label: Geler ou sous-indexer les pensions de retraite
   description: Limiter ou retarder temporairement la revalorisation des pensions par rapport à l'inflation.
   fixed_impact_eur: 6200000000
-  mass_mapping:
+  cofog_mapping:
     '10': 1
   feasibility:
     law: true
@@ -1090,7 +1090,7 @@
     Calculer les pensions des fonctionnaires sur une période plus longue (ex: 25 ans) au lieu des 6 derniers mois, pour
     aligner sur le privé.
   fixed_impact_eur: 1500000000
-  mass_mapping:
+  cofog_mapping:
     '10': 1
   feasibility:
     law: true
@@ -1106,7 +1106,7 @@
   description: Augmenter les taux de cotisation (salariale et/ou patronale) qui financent les retraites.
   fixed_impact_eur: 10000000000
   budget_side: REVENUE
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 3
@@ -1122,7 +1122,7 @@
   label: Augmenter les pensions minimales
   description: 'Augmenter le montant de la pension minimum (ex: pour les carrières complètes) pour les retraités modestes.'
   fixed_impact_eur: -1500000000
-  mass_mapping:
+  cofog_mapping:
     '10': 1
   feasibility:
     law: true
@@ -1137,7 +1137,7 @@
   label: Durcir les règles de l'assurance chômage
   description: Restreindre l'assurance chômage en raccourcissant la durée d'indemnisation ou en durcissant les conditions d'accès.
   fixed_impact_eur: 2500000000
-  mass_mapping:
+  cofog_mapping:
     '10': 1
   feasibility:
     law: true
@@ -1161,7 +1161,7 @@
   label: Annuler les coupes dans l'assurance chômage
   description: 'Rendre l''assurance chômage plus généreuse (ex: rétablir des durées d''indemnisation plus longues).'
   fixed_impact_eur: -2500000000
-  mass_mapping:
+  cofog_mapping:
     '10': 1
   feasibility:
     law: true
@@ -1181,7 +1181,7 @@
     Exiger des bénéficiaires du RSA (Revenu de Solidarité Active) des activités (travail, formation) en contrepartie de
     l'allocation.
   fixed_impact_eur: 800000000
-  mass_mapping:
+  cofog_mapping:
     '10': 1
   feasibility:
     law: true
@@ -1200,7 +1200,7 @@
     Appliquer une 'préférence nationale' en limitant l'accès de certains non-citoyens aux aides sociales
     non-contributives (RSA, APL...).
   fixed_impact_eur: 2000000000
-  mass_mapping:
+  cofog_mapping:
     '10': 1
   feasibility:
     law: true
@@ -1215,7 +1215,7 @@
   label: Geler l'indexation des minima sociaux
   description: Suspendre temporairement la revalorisation sur l'inflation des minima sociaux (RSA, AAH...) pendant un an.
   fixed_impact_eur: 2300000000
-  mass_mapping:
+  cofog_mapping:
     '10': 1
   feasibility:
     law: true
@@ -1230,7 +1230,7 @@
   label: Réduire les Aides au Logement (APL)
   description: Réduire les dépenses d'APL (Aide Personnalisée au Logement), par exemple en durcissant les conditions d'éligibilité.
   fixed_impact_eur: 1300000000
-  mass_mapping:
+  cofog_mapping:
     '10': 1
   feasibility:
     law: true
@@ -1251,7 +1251,7 @@
   label: Réduire les allocations familiales (hauts revenus)
   description: Diminuer les allocations familiales versées aux ménages les plus aisés.
   fixed_impact_eur: 600000000
-  mass_mapping:
+  cofog_mapping:
     '10': 1
   feasibility:
     law: true
@@ -1266,7 +1266,7 @@
   label: Lutter contre la fraude aux prestations sociales
   description: Renforcer les contrôles pour détecter et prévenir la fraude aux prestations sociales (famille, chômage, santé...).
   fixed_impact_eur: 1000000000
-  mass_mapping:
+  cofog_mapping:
     '10': 1
   feasibility:
     law: false
@@ -1283,7 +1283,7 @@
   label: Supprimer l'Aide Médicale d'État (AME)
   description: Supprimer l'AME (Aide Médicale d'État), le programme de santé pour les immigrés sans papiers.
   fixed_impact_eur: 500000000
-  mass_mapping:
+  cofog_mapping:
     '07': 1
   feasibility:
     law: true
@@ -1298,7 +1298,7 @@
   label: Plafonner la croissance des dépenses de santé (ONDAM)
   description: Imposer un plafond plus strict (ONDAM) à la croissance annuelle des dépenses de santé.
   fixed_impact_eur: 5000000000
-  mass_mapping:
+  cofog_mapping:
     '07': 1
   feasibility:
     law: true
@@ -1315,7 +1315,7 @@
     Réduire les dépenses de santé jugées inefficaces (ex: moins rembourser certains médicaments, promouvoir les
     génériques).
   fixed_impact_eur: 2000000000
-  mass_mapping:
+  cofog_mapping:
     '07': 1
   feasibility:
     law: false
@@ -1334,7 +1334,7 @@
     Mettre en place ou augmenter les franchises médicales (participation forfaitaire) sur les visites ou les
     médicaments.
   fixed_impact_eur: 200000000
-  mass_mapping:
+  cofog_mapping:
     '07': 1
   feasibility:
     law: true
@@ -1349,7 +1349,7 @@
   label: Embaucher du personnel soignant supplémentaire
   description: 'Recruter davantage de personnel médical (ex: un plan pour embaucher 20 000 infirmiers et aides-soignants).'
   fixed_impact_eur: -2800000000
-  mass_mapping:
+  cofog_mapping:
     '07': 1
   feasibility:
     law: false
@@ -1364,7 +1364,7 @@
   label: Augmenter les salaires des soignants à l'hôpital
   description: Augmenter les grilles de salaires des infirmiers et autres soignants à l'hôpital public.
   fixed_impact_eur: -700000000
-  mass_mapping:
+  cofog_mapping:
     '07': 1
   feasibility:
     law: false
@@ -1383,7 +1383,7 @@
     Supprimer ou réduire les avantages des hommes et femmes politiques (ex: régimes de retraite spéciaux, budgets de
     frais).
   fixed_impact_eur: 100000000
-  mass_mapping:
+  cofog_mapping:
     '01': 1
   feasibility:
     law: true
@@ -1400,7 +1400,7 @@
   label: Geler le point d'indice des fonctionnaires
   description: Suspendre l'augmentation générale du point d'indice des fonctionnaires pendant un an.
   fixed_impact_eur: 3600000000
-  mass_mapping:
+  cofog_mapping:
     '9': 0.3
     '07': 0.2
     '03': 0.1
@@ -1426,7 +1426,7 @@
   label: Geler les promotions automatiques (Fonction Publique)
   description: Suspendre temporairement les augmentations automatiques liées à l'ancienneté (GVT) pour les fonctionnaires.
   fixed_impact_eur: 2700000000
-  mass_mapping:
+  cofog_mapping:
     '9': 0.3
     '07': 0.2
     '03': 0.1
@@ -1445,7 +1445,7 @@
   label: Augmenter le point d'indice de 10% (Fonction Publique)
   description: Augmenter la valeur du point d'indice (salaire de base des fonctionnaires) de 10%.
   fixed_impact_eur: -20000000000
-  mass_mapping:
+  cofog_mapping:
     '9': 0.3
     '07': 0.2
     '03': 0.1
@@ -1471,7 +1471,7 @@
   label: Réduire le nombre de fonctionnaires (non-remplacement)
   description: Diminuer le nombre d'agents publics en ne remplaçant qu'une partie des départs à la retraite.
   fixed_impact_eur: 2500000000
-  mass_mapping:
+  cofog_mapping:
     '9': 0.3
     '07': 0.2
     '03': 0.1
@@ -1496,7 +1496,7 @@
   label: Supprimer ou fusionner des agences publiques
   description: Éliminer ou regrouper certaines agences ou comités publics jugés redondants.
   fixed_impact_eur: 1000000000
-  mass_mapping:
+  cofog_mapping:
     '01': 1
   feasibility:
     law: true
@@ -1513,7 +1513,7 @@
   label: Réduire l'absentéisme dans la fonction publique
   description: 'Mettre en place des mesures pour réduire l''absentéisme (ex: réintroduire un jour de carence, contrôles renforcés).'
   fixed_impact_eur: 1300000000
-  mass_mapping:
+  cofog_mapping:
     '9': 0.3
     '07': 0.2
     '03': 0.1
@@ -1534,7 +1534,7 @@
   label: Réduire le budget de la Défense de 10%
   description: Réduire la croissance des dépenses militaires en annulant ou reportant des programmes d'équipement majeurs.
   fixed_impact_eur: 6000000000
-  mass_mapping:
+  cofog_mapping:
     '02': 1
   feasibility:
     law: true
@@ -1553,7 +1553,7 @@
     Diminuer les réductions générales de cotisations sociales patronales (ex-CICE), en particulier pour les grandes
     entreprises.
   fixed_impact_eur: 5000000000
-  mass_mapping:
+  cofog_mapping:
     '04': 1
   feasibility:
     law: true
@@ -1568,7 +1568,7 @@
   label: Supprimer les niches fiscales 'brunes' (fossiles)
   description: 'Supprimer les subventions et exonérations fiscales qui favorisent les énergies fossiles (ex: gazole non routier).'
   fixed_impact_eur: 1500000000
-  mass_mapping:
+  cofog_mapping:
     '05': 1
   feasibility:
     law: true
@@ -1585,7 +1585,7 @@
   label: Réduire l'aide publique au développement
   description: Réduire le budget de la France consacré à l'aide internationale et au développement.
   fixed_impact_eur: 1500000000
-  mass_mapping:
+  cofog_mapping:
     '01': 1
   feasibility:
     law: true
@@ -1600,7 +1600,7 @@
   label: Réduire les subventions aux associations
   description: Diminuer les subventions de l'État accordées à diverses associations (culturelles, communautaires, etc.).
   fixed_impact_eur: 1600000000
-  mass_mapping:
+  cofog_mapping:
     '8': 1
   feasibility:
     law: true
@@ -1615,7 +1615,7 @@
   label: Réduire ou reporter les investissements publics
   description: 'Annuler, réduire ou reporter des programmes d''investissement public prévus (ex: infrastructures, plan France 2030).'
   fixed_impact_eur: 800000000
-  mass_mapping:
+  cofog_mapping:
     '04': 1
   feasibility:
     law: true
@@ -1632,7 +1632,7 @@
   label: Embaucher des enseignants supplémentaires
   description: 'Recruter davantage d''enseignants pour réduire la taille des classes (ex: 10 000 postes).'
   fixed_impact_eur: -500000000
-  mass_mapping:
+  cofog_mapping:
     '9': 1
   feasibility:
     law: false
@@ -1649,7 +1649,7 @@
   label: Réduire les dotations aux collectivités locales
   description: 'Réduire ou geler les dotations de l''État aux mairies, départements et régions (ex: DGF).'
   fixed_impact_eur: 1500000000
-  mass_mapping:
+  cofog_mapping:
     '01': 1
   feasibility:
     law: true
@@ -1667,7 +1667,7 @@
   description: 'Prélever de nouvelles taxes écologiques (ex: sur les billets d''avion, le kérosène, ou les livraisons e-commerce).'
   fixed_impact_eur: 600000000
   budget_side: REVENUE
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 18
@@ -1683,7 +1683,7 @@
   label: Améliorer l'efficacité des achats publics
   description: Rationaliser les achats de l'État (achats groupés, meilleurs appels d'offres) pour réduire les coûts.
   fixed_impact_eur: 500000000
-  mass_mapping:
+  cofog_mapping:
     '02': 0.5
     '07': 0.5
   feasibility:
@@ -1701,7 +1701,7 @@
   label: Gel des dépenses de l'État en valeur (1 an)
   description: Geler les dépenses publiques en valeur (zéro augmentation nominale) pendant un an.
   fixed_impact_eur: 7000000000
-  mass_mapping:
+  cofog_mapping:
     '9': 0.1
     '10': 0.5
     '07': 0.2
@@ -1720,7 +1720,7 @@
   label: Construction massive de logements sociaux
   description: 'Lancer un grand programme public de construction de logements sociaux (ex: 200 000 par an).'
   fixed_impact_eur: -30000000000
-  mass_mapping:
+  cofog_mapping:
     '06': 1
   feasibility:
     law: true
@@ -1737,7 +1737,7 @@
   label: Gratuité de la cantine et des fournitures scolaires
   description: Rendre gratuites les dépenses liées à l'école (cantine, fournitures, activités périscolaires) pour les familles.
   fixed_impact_eur: -15000000000
-  mass_mapping:
+  cofog_mapping:
     '9': 1
   feasibility:
     law: true
@@ -1754,7 +1754,7 @@
     Poursuivre l'augmentation progressive de l'âge légal de la retraite de 3 mois par an pour atteindre 64 ans, comme
     prévu par la réforme de 2023.
   fixed_impact_eur: 500000000
-  mass_mapping:
+  cofog_mapping:
     '10': 1
   feasibility:
     law: true
@@ -1770,7 +1770,7 @@
   label: Augmenter l'Impôt sur les Sociétés (IS) à 33,5%
   description: Augmenter le taux de l'Impôt sur les Sociétés (IS) de 25% à 33,5%.
   fixed_impact_eur: 4400000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -1784,7 +1784,7 @@
   label: Renforcer le contrôle des prix de transfert (multinationales)
   description: Contrôles accrus sur les prix de transfert entre filiales de multinationales (optimisation fiscale).
   fixed_impact_eur: 4600000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: false
     adminLagMonths: 6
@@ -1798,7 +1798,7 @@
   label: Augmenter le taux normal de TVA de 1 point
   description: Augmenter le taux normal de TVA (de 20% à 21%).
   fixed_impact_eur: 6000000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 3
@@ -1814,7 +1814,7 @@
   label: Augmenter tous les taux de TVA de 1 point
   description: Augmenter tous les taux de TVA (normal, intermédiaire, réduit) de 1 point.
   fixed_impact_eur: 8200000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 3
@@ -1836,7 +1836,7 @@
   label: Augmenter le taux intermédiaire de TVA à 12,5%
   description: Augmenter le taux intermédiaire de TVA de 10% à 12,5% (concerne restauration, transports...)
   fixed_impact_eur: 2905982906
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 3
@@ -1852,7 +1852,7 @@
   label: Réduire le seuil de la franchise de TVA (petites entreprises)
   description: Diviser par deux le seuil de chiffre d'affaires permettant aux petites entreprises de ne pas facturer la TVA.
   fixed_impact_eur: 2200000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -1866,7 +1866,7 @@
   label: Plafonner le quotient conjugal
   description: Plafonner le bénéfice du quotient conjugal pour hauts revenus.
   fixed_impact_eur: 1100000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 3
@@ -1881,7 +1881,7 @@
   label: Supprimer le quotient conjugal
   description: Supprimer le quotient conjugal.
   fixed_impact_eur: 10600000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -1896,7 +1896,7 @@
   label: Supprimer les demi-parts fiscales 'non effectives'
   description: Supprimer les demi-parts qui ne reflètent pas des charges réelles.
   fixed_impact_eur: 2890000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 3
@@ -1910,7 +1910,7 @@
   label: Impôt minimum de 2% (Patrimoine > 100 M€)
   description: Créer un impôt minimum de 2% sur le patrimoine financier des personnes détenant plus de 100 M€.
   fixed_impact_eur: 4800000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 12
@@ -1924,7 +1924,7 @@
   label: Rétablir la Taxe d'Habitation (20% plus aisés)
   description: Réinstaurer la Taxe d'Habitation pour les 20% des ménages les plus aisés.
   fixed_impact_eur: 9300000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -1939,7 +1939,7 @@
   label: Rétablir la Taxe d'Habitation (Tous)
   description: Réinstaurer la Taxe d'Habitation sur les résidences principales pour tous les ménages.
   fixed_impact_eur: 21800000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 9
@@ -1961,7 +1961,7 @@
   description: Augmenter le barème de la taxe de solidarité ('taxe Chirac') sur les billets d'avion.
   fixed_impact_eur: 3700000000
   budget_side: REVENUE
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -1976,7 +1976,7 @@
   description: Instaurer un péage kilométrique (hors autoroutes) pour les poids lourds (transport de marchandises).
   fixed_impact_eur: 1000000000
   budget_side: REVENUE
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 12
@@ -1990,7 +1990,7 @@
   label: Supprimer la taxe au tonnage (transport maritime)
   description: Supprimer le régime favorable de la taxe au tonnage pour les transporteurs maritimes (retour à l'IS normal).
   fixed_impact_eur: 1375000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 12
@@ -2004,7 +2004,7 @@
   label: 'CIR : Réduire de 50% (Grandes Entreprises)'
   description: Réduire de moitié le Crédit d'Impôt Recherche (CIR) pour les grandes entreprises.
   fixed_impact_eur: 1500000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -2019,7 +2019,7 @@
   label: 'CIR : Supprimer le taux à 5% (> 100 M€)'
   description: Supprimer le taux réduit de 5% du CIR pour les dépenses de recherche dépassant 100 M€.
   fixed_impact_eur: 400000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 6
@@ -2034,7 +2034,7 @@
   label: Supprimer l'exonération de TICPE (Kérosène)
   description: Supprimer l'exonération de taxe (TICPE) sur le kérosène utilisé par le transport aérien.
   fixed_impact_eur: 3500000000
-  mass_mapping: {}
+  cofog_mapping: {}
   feasibility:
     law: true
     adminLagMonths: 12
@@ -2049,7 +2049,7 @@
   label: 'APL : Baisse forfaitaire de 5€'
   description: Baisse forfaitaire des APL de 5€.
   fixed_impact_eur: 60000000
-  mass_mapping:
+  cofog_mapping:
     '10': 1
   feasibility:
     law: true
@@ -2065,7 +2065,7 @@
   label: 'APL : Durcir le seuil d''accès (Revenu 18 920€)'
   description: Conditionner l'accès aux APL à un seuil de revenu net global de 18 920€.
   fixed_impact_eur: 550000000
-  mass_mapping:
+  cofog_mapping:
     '10': 1
   feasibility:
     law: true
@@ -2082,7 +2082,7 @@
   label: 'APL : Durcir le seuil d''accès (Revenu 39 020€)'
   description: Conditionner l'accès aux APL à un seuil de revenu net global de 39 020€.
   fixed_impact_eur: 820000000
-  mass_mapping:
+  cofog_mapping:
     '10': 1
   feasibility:
     law: true
@@ -2099,7 +2099,7 @@
   label: Réduire les subventions à l'enseignement privé
   description: Baisser la subvention publique aux établissements d'enseignement privé.
   fixed_impact_eur: 3500000000
-  mass_mapping:
+  cofog_mapping:
     '9': 1
   feasibility:
     law: true
@@ -2114,7 +2114,7 @@
   label: Augmenter les frais d'inscription à l'université
   description: 'Augmenter les frais d''inscription (ex: Licence 730€, Master 887€, Doctorat 1 380€).'
   fixed_impact_eur: 463000000
-  mass_mapping:
+  cofog_mapping:
     '9': 1
   feasibility:
     law: true
@@ -2129,7 +2129,7 @@
   label: Ajuster les dépenses d'éducation à la démographie
   description: Aligner les dépenses d'éducation sur la baisse du nombre d'élèves (baisse démographique).
   fixed_impact_eur: 400000000
-  mass_mapping:
+  cofog_mapping:
     '9': 1
   feasibility:
     law: false
@@ -2144,7 +2144,7 @@
   label: Geler les dotations de l'État (collectivités)
   description: Geler en valeur (sans inflation) les transferts financiers de l'État aux collectivités locales.
   fixed_impact_eur: 3408000000
-  mass_mapping:
+  cofog_mapping:
     '01': 1
   feasibility:
     law: true
@@ -2161,7 +2161,7 @@
   label: Geler les budgets des collectivités locales (hors dette)
   description: Geler en valeur le budget des collectivités locales (hors charges de dette).
   fixed_impact_eur: 6720000000
-  mass_mapping:
+  cofog_mapping:
     '01': 1
   feasibility:
     law: true
@@ -2178,7 +2178,7 @@
   label: Appliquer les 35h (collectivités locales)
   description: Harmoniser la durée légale du travail (1607h/an) dans les collectivités locales.
   fixed_impact_eur: 1300000000
-  mass_mapping:
+  cofog_mapping:
     '01': 1
   feasibility:
     law: true
@@ -2193,7 +2193,7 @@
   label: Geler les retraites (base + compl.) en 2026
   description: Gel ponctuel des retraites de base et complémentaires en 2026.
   fixed_impact_eur: 3900000000
-  mass_mapping:
+  cofog_mapping:
     '10': 1
   feasibility:
     law: true
@@ -2209,7 +2209,7 @@
   label: Désindexer les retraites de plus de 2 000€
   description: Désindexer de l'inflation les pensions de retraite supérieures à 2 000€.
   fixed_impact_eur: 2500000000
-  mass_mapping:
+  cofog_mapping:
     '10': 1
   feasibility:
     law: true
@@ -2224,7 +2224,7 @@
   label: '''MaPrimeRénov'' : Cibler les rénovations d''ampleur'
   description: Recentrer l'aide MaPrimeRénov' sur les rénovations globales ('d'ampleur') et la sortie des 'passoires thermiques'.
   fixed_impact_eur: 904000000
-  mass_mapping:
+  cofog_mapping:
     '06': 1
   feasibility:
     law: false

@@ -348,6 +348,7 @@ class PolicyLeverType:
     shortLabel: str | None = None
     popularity: float | None = None
     massMapping: JSON | None = None
+    cofogMapping: JSON | None = None
     missionMapping: JSON | None = None
     impact: ImpactStructType | None = None
 
@@ -944,7 +945,8 @@ class Query:
                     sources=[str(x) for x in (it.get("sources") or [])],
                     shortLabel=str(it.get("short_label") or ""),
                     popularity=float(it.get("popularity", 0.0)),
-                    massMapping=it.get("mass_mapping") or {},
+                    massMapping=it.get("cofog_mapping") or it.get("mass_mapping") or {},
+                    cofogMapping=it.get("cofog_mapping") or it.get("mass_mapping") or {},
                     missionMapping=it.get("mission_mapping") or {},
                     impact=(
                         ImpactStructType(
@@ -1104,7 +1106,9 @@ class Query:
                     sources=[str(x) for x in (it.get("sources") or [])],
                     shortLabel=str(it.get("short_label") or ""),
                     popularity=float(it.get("popularity", 0.0)),
-                    massMapping=it.get("mass_mapping") or {},
+                    massMapping=it.get("cofog_mapping") or it.get("mass_mapping") or {},
+                    cofogMapping=it.get("cofog_mapping") or it.get("mass_mapping") or {},
+                    missionMapping=it.get("mission_mapping") or {},
                     impact=(
                         ImpactStructType(
                             householdsImpacted=it["impact"].get("householdsImpacted"),

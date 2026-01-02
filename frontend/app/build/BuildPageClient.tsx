@@ -693,8 +693,8 @@ export default function BuildPageClient() {
     toggleRevenuePanel(true);
 
     const revenueLeversForCategory = revenueLevers.filter(lever => {
-      if (!lever.massMapping) return true;
-      const weight = lever.massMapping[category.id];
+      if (!lever.cofogMapping) return true;
+      const weight = lever.cofogMapping[category.id];
       return typeof weight === 'number' && weight > 0;
     });
     setSuggestedLevers(revenueLeversForCategory);

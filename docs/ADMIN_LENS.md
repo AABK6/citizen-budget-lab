@@ -18,10 +18,10 @@ This enables the server to compute mission allocations for a given year/basis by
 
 Policy levers can carry a mission attribution separately from their COFOG attribution:
 
-- `missionMapping` (JSON) for ADMIN lens attribution
-- `massMapping` (JSON) for COFOG / functional attribution
+- YAML fields: `mission_mapping` (missions) and `cofog_mapping` (COFOG)
+- GraphQL fields: `missionMapping` and `cofogMapping` (`massMapping` remains a COFOG alias for backwards compatibility)
 
-The active lens determines which mapping is used for allocation displays.
+The active lens determines which mapping is used for allocation displays. When `mission_mapping` is empty, the API derives a mission attribution from COFOG as a temporary fallback for suggestions/treemap.
 
 ## 2) API surface (GraphQL)
 

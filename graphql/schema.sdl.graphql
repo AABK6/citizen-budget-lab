@@ -112,6 +112,7 @@ type PolicyLeverType {
     shortLabel: String
     popularity: Float
     massMapping: JSON
+    cofogMapping: JSON
     missionMapping: JSON
 }
 

@@ -712,7 +712,7 @@ def mission_alias_map() -> Dict[str, str]:
     return aliases
 
 
-def convert_mass_mapping_to_missions(raw_mapping: Dict[str, float]) -> Dict[str, float]:
+def convert_cofog_mapping_to_missions(raw_mapping: Dict[str, float]) -> Dict[str, float]:
     mission_map: Dict[str, float] = defaultdict(float)
     _, cofog_to_mission = mission_bridges()
 
@@ -1390,8 +1390,12 @@ def run_scenario(dsl_b64: str, *, lens: str | None = None) -> tuple[str, Account
                 ledger[i] += delta
 
             # Attribute to macro shocks using raw COFOG mapping when available
-            raw_mass_mapping = lever_def.get("mass_mapping", {}) or {}
-            for mass_code, weight in raw_mass_mapping.items():
+            raw_cofog_mapping = (
+                lever_def.get("cofog_mapping")
+                or lever_def.get("mass_mapping")
+                or {}
+            )
+            for mass_code, weight in raw_cofog_mapping.items():
                 try:
                     weight_val = float(weight)
                 except Exception:
@@ -1406,7 +1410,7 @@ def run_scenario(dsl_b64: str, *, lens: str | None = None) -> tuple[str, Account
                         shock_eur = delta * weight_val
                         shocks_pct_gdp.setdefault(major, [0.0] * horizon_years)[i] += 100.0 * shock_eur / gdp_series[i]
 
-            mission_mapping = lever_def.get("mission_mapping") or convert_mass_mapping_to_missions(raw_mass_mapping)
+            mission_mapping = lever_def.get("mission_mapping") or convert_cofog_mapping_to_missions(raw_cofog_mapping)
             for mission_code, weight in mission_mapping.items():
                 try:
                     weight_val = float(weight)

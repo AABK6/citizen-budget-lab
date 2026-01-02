@@ -38,7 +38,7 @@ export type PolicyLever = {
   majorAmendment?: boolean;
   shortLabel?: string;
   popularity?: number;
-  massMapping?: Record<string, number> | undefined;
+  cofogMapping?: Record<string, number> | undefined;
   missionMapping?: Record<string, number> | undefined;
   impact?: {
     householdsImpacted?: number;

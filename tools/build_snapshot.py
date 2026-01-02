@@ -190,7 +190,8 @@ def _build_policy_levers() -> List[dict]:
             "label": str(it.get("label")),
             "description": str(it.get("description") or ""),
             "fixedImpactEur": it.get("fixed_impact_eur"),
-            "massMapping": it.get("mass_mapping") or {},
+            "massMapping": it.get("cofog_mapping") or it.get("mass_mapping") or {},
+            "cofogMapping": it.get("cofog_mapping") or it.get("mass_mapping") or {},
             "missionMapping": it.get("mission_mapping") or {},
             "impact": {
                 "householdsImpacted": impact.get("householdsImpacted"),

@@ -36,7 +36,7 @@ This document provides a central inventory of all data sources, configuration fi
 
 ### 2.1. Mass Labels (Treemap Categories)
 
-*   **Purpose:** Provides user-friendly names, descriptions, and examples for the high-level budget "masses" (COFOG categories) shown in the treemap.
+*   **Purpose:** Provides user-friendly names, descriptions, and examples for both COFOG masses and administrative missions. The treemap currently uses missions; COFOG labels remain for functional views and future toggles.
 *   **Source File:** `data/ux_labels.json`
 *   **Status:** **Exists and is complete.**
 *   **Pipeline:** Read directly by the API to enrich UI components.

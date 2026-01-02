@@ -28,14 +28,14 @@ This is the core interactive feature of the application, allowing users to build
 
 #### Core Concepts
 
-*   **Mass:** A high-level, functional budget category (e.g., Health, Defense), corresponding to COFOG classifications.
+*   **Mass (Mission):** A high-level administrative category shown in the treemap (mission IDs like `M_ADMIN`). COFOG remains the functional lens and can be toggled later.
 *   **Piece:** A granular, user-friendly budget item (e.g., "Teachers and schools").
 *   **Levers:** Concrete, named policy reforms with fixed, pre-estimated budgetary impacts (e.g., "Repeal 2023 Pension Reform").
 *   **Macro Trajectory:** A dynamic chart showing the impact of reforms on the Deficit (% GDP) and Real Growth over 4 years (2026–2029).
 
 #### User Journeys
 
-1.  **Goal-First (Playground):** A user starts by adjusting the dials for high-level masses (e.g., "Decrease Defense spending by €6B"). The UI shows this as an "unspecified" target. The user is then prompted to select from a list of policy levers to account for the change.
+1.  **Goal-First (Playground):** A user starts by adjusting the dials for high-level missions (e.g., "Decrease Defense spending by €6B"). The UI shows this as an "unspecified" target. The user is then prompted to select from a list of policy levers to account for the change.
 2.  **Policy-First (Workshop):** A user selects one or more specific reforms from the Policy Workshop. The application automatically calculates the impact on the relevant masses and updates the budget visualization.
 
 #### Page Layout & Components

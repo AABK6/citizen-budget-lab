@@ -86,8 +86,8 @@ export function RevenueCategoryPanel({
   const pillTint = lightenColor(accentColor, 0.82);
   const accentStyle = { '--panel-accent': accentColor } as CSSProperties;
   const filteredLevers = suggestedLevers.filter((lever) => {
-    if (!lever.massMapping) return true;
-    const share = lever.massMapping[category.id];
+    if (!lever.cofogMapping) return true;
+    const share = lever.cofogMapping[category.id];
     return typeof share === 'number' && share > 0;
   });
 

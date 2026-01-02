@@ -54,16 +54,17 @@ Beneficiary Categories
  - The beneficiary lens aggregates expenditure pieces using these weights to derive three categories (Households, Enterprises, Collective). This is a simplified attribution documented here to remain transparent.
  - Implementation: weights live under `beneficiaries: { households: x, enterprises: y, collective: z }` in `lego_pieces.json` and are normalized to 1.0 per piece. For pieces lacking explicit weights, a default heuristic can map ESA items to beneficiaries (e.g., D.62→households, D.3/P.2→enterprises, P.51g→collective). The final lens is a simple weighted sum across pieces.
 
-Policy Levers → Mass Attribution (V1)
+Policy Levers → COFOG & Mission Attribution (V1)
 
 - Each Policy Lever is defined with a fixed, pre-estimated impact (`fixed_impact_eur`).
   - `family`: high-level grouping (PENSIONS, TAXES, HEALTH, EDUCATION, DEFENCE, ECOLOGY, JUSTICE, UNEMPLOYMENT, PUBLIC_ADMIN, DEBT, LOCAL_GOV, OTHER).
     - Also supported in the API schema: `TAX_EXPENDITURES` for niche/targeted tax expenditures.
   - `params_schema`: this is now typically empty, as levers are non-parametric.
-  - `mapping`: defines how the lever's fixed impact attributes to different COFOG masses.
-  - `feasibility`: tags `{ law: bool, admin_lag_months: int, notes: string }` surfaced in the UI.
+  - `cofog_mapping`: defines how the lever's fixed impact attributes to COFOG masses.
+  - `mission_mapping`: defines how the lever attributes to missions (used by the mission treemap).
+  - `feasibility`: tags `{ law: bool, adminLagMonths: int, notes: string }` surfaced in the UI.
   - `conflicts_with`: list of lever ids to guard double counting.
-- Depending on the lens, a lever can carry both a functional attribution (`massMapping` / COFOG) and an administrative attribution (`missionMapping`). The API schema supports both mappings; the active lens determines which mapping is used for allocation displays.
+- Depending on the lens, a lever can carry both a functional attribution (`cofogMapping` / COFOG) and an administrative attribution (`missionMapping`). The API schema supports both mappings; the active lens determines which mapping is used for allocation displays. `massMapping` remains a COFOG alias for legacy clients. When `mission_mapping` is empty, the API can derive a mission attribution from COFOG as a temporary fallback.
 - Applying a lever produces a `PolicyEffect` with:
   - `delta_eur`: the fixed accounting impact at horizon.
   - `mass_attribution`: how the delta paints across masses (for ribbons on the Lens Switch).

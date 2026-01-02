@@ -144,7 +144,7 @@ def _normalize_budget_side(lever: dict) -> str:
     family = str(lever.get("family") or "").upper()
     if family in {"TAXES", "TAX_EXPENDITURES"}:
         return "REVENUE"
-    if lever.get("mass_mapping") or lever.get("mission_mapping"):
+    if lever.get("cofog_mapping") or lever.get("mission_mapping") or lever.get("mass_mapping"):
         return "SPENDING"
     if family in {"PENSIONS", "HEALTH", "DEFENSE", "STAFFING", "SUBSIDIES", "PROCUREMENT", "OPERATIONS"}:
         return "SPENDING"
@@ -155,6 +155,8 @@ def _normalize_budget_side(lever: dict) -> str:
 def _normalized_lever(lever: dict) -> dict:
     normalized = dict(lever)
     normalized["active"] = lever.get("active", True) is not False
+    normalized["cofog_mapping"] = lever.get("cofog_mapping") or lever.get("mass_mapping") or {}
+    normalized["mission_mapping"] = lever.get("mission_mapping") or {}
     normalized["budget_side"] = _normalize_budget_side(lever)
     normalized["major_amendment"] = bool(lever.get("major_amendment", False))
     return normalized
@@ -209,10 +211,11 @@ def list_policy_levers(family: Optional[str] = None, search: Optional[str] = Non
 def suggest_levers_for_mass(mass_id: str, limit: int = 5) -> List[dict]:
     """
     Return a list of policy levers relevant to a specific budget mass/mission.
-    Heuristic: check mass_mapping keys or family relevance.
+    Heuristic: check COFOG/mission mappings or family relevance.
     """
     results = []
-    mass_id_clean = mass_id.replace("M_", "")  # Strip prefix if present for COFOG
+    mass_id_clean = mass_id.strip()
+    is_mission = mass_id_clean.upper().startswith("M_")
 
     for lever in load_policy_catalog():
         if not _is_active(lever):
@@ -220,26 +223,44 @@ def suggest_levers_for_mass(mass_id: str, limit: int = 5) -> List[dict]:
         normalized = _normalized_lever(lever)
         if normalized.get("budget_side") == "REVENUE":
             continue
-        mapping = lever.get("mass_mapping") or {}
+        cofog_mapping = normalized.get("cofog_mapping") or {}
+        mission_mapping = normalized.get("mission_mapping") or {}
+        if not mission_mapping and cofog_mapping:
+            try:
+                from .data_loader import convert_cofog_mapping_to_missions
+                mission_mapping = convert_cofog_mapping_to_missions(cofog_mapping)
+            except Exception:
+                mission_mapping = {}
 
         # 1. Direct match in mapping
-        # COFOG keys are usually 01, 02...
-        # Mission keys might be mapped later.
-        # For now, simplistic check if any key roughly matches
         match = False
-        for k in mapping.keys():
-            if k in mass_id_clean or mass_id_clean in k:
+        if is_mission:
+            mission_id = mass_id_clean.upper()
+            if mission_id in {str(k).upper() for k in mission_mapping.keys()}:
                 match = True
-                break
+            else:
+                stripped = mission_id.replace("M_", "")
+                for k in mission_mapping.keys():
+                    key_norm = str(k).upper().replace("M_", "")
+                    if stripped == key_norm:
+                        match = True
+                        break
+        else:
+            major = mass_id_clean.split(".")[0][:2]
+            for k in cofog_mapping.keys():
+                if major and (major == str(k).split(".")[0][:2]):
+                    match = True
+                    break
 
         # 2. Family match heuristics (optional)
         # e.g. M_HEALTH -> HEALTH family
         family = normalized.get("family", "")
-        if "HEALTH" in mass_id_clean and family == "HEALTH":
+        clean_upper = mass_id_clean.upper()
+        if "HEALTH" in clean_upper and family == "HEALTH":
             match = True
-        elif "DEFENSE" in mass_id_clean and family == "DEFENSE":
+        elif "DEFENSE" in clean_upper and family == "DEFENSE":
             match = True
-        elif "EDU" in mass_id_clean and family == "STAFFING":
+        elif "EDU" in clean_upper and family == "STAFFING":
             match = True
 
         if match:
