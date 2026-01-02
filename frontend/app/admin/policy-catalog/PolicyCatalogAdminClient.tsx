@@ -529,18 +529,19 @@ export default function PolicyCatalogAdminClient() {
             </div>
           </div>
 
-          <div className="flex-1 overflow-auto relative">
+          <div className="flex-1 overflow-auto relative min-w-0">
             {view === 'yaml' ? (
               <textarea value={yamlText} onChange={e => { setYamlText(e.target.value); setRawDirty(true); }} className="w-full h-full p-6 bg-slate-950 font-mono text-sm leading-relaxed text-slate-300 outline-none" spellCheck={false} />
             ) : view === 'mission' ? (
-              <div className="overflow-x-auto">
-                <table className="w-full table-fixed text-[11px] border-separate border-spacing-0">
+              <div className="h-full overflow-x-auto">
+                <table className="min-w-full text-[11px] border-separate border-spacing-0">
                   <thead className="bg-slate-900 sticky top-0 z-10 shadow">
                     <tr>
                       <th className="p-3 text-left border-b-2 border-slate-700 w-64 bg-slate-900 sticky left-0 z-20">Levier</th>
                       {missionColumns.map(m => (
-                        <th key={m.id} className="p-3 text-left border-b-2 border-slate-700 w-32">
-                          <span className="block break-words">{m.label}</span>
+                        <th key={m.id} className="p-3 text-left border-b-2 border-slate-700 w-40">
+                          <span className="block break-words font-bold text-white">{m.label}</span>
+                          <span className="block font-mono text-xs text-slate-500">{m.id}</span>
                         </th>
                       ))}
                     </tr>
