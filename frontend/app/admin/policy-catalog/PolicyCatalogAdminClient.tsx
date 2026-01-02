@@ -462,6 +462,12 @@ export default function PolicyCatalogAdminClient() {
 
   return (
     <div className="h-full overflow-hidden flex flex-col bg-slate-950 text-slate-100 font-sans">
+      <style jsx global>{`
+        option {
+          background-color: #0f172a !important; /* slate-900 */
+          color: white !important;
+        }
+      `}</style>
       {showDiff && (
         <DiffModal oldText={initialYamlText} newText={view === 'yaml' ? yamlText : dumpYaml(catalog)} onConfirm={executeSave} onCancel={() => setShowDiff(false)} />
       )}
