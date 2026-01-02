@@ -5,7 +5,7 @@ This plan follows the Conductor methodology: 80% test coverage, per-task commits
 ## Phase 1: Schema & Backend Infrastructure
 Goal: Upgrade the policy catalog schema and API to support administrative missions and rich metadata.
 
-- [ ] **Task: Update Policy Lever Schema**
+- [x] **Task: Update Policy Lever Schema** (1ed9559)
     - [ ] Sub-task: Modify `schemas/policy_levers.schema.json` to include `missionMapping` (required), `multiYearImpact`, `pushbacks`, and `distributionalFlags`.
     - [ ] Sub-task: Update `services/api/models.py` (or relevant Pydantic models) to reflect the new schema.
 - [ ] **Task: Enhance API for Mission-Based Resolution**
