@@ -284,9 +284,9 @@
   mission_mapping:
     M_SANTE: 1.0
   multi_year_impact:
-    '2026': 883000000
-    '2027': 900000000
-    '2028': 920000000
+    '2026': -150000000
+    '2027': -150000000
+    '2028': -150000000
   pushbacks:
   - type: social
     description: 'Forte opposition parlementaire : mesure jugée pénalisante pour les
@@ -370,14 +370,16 @@
     adminLagMonths: 6
   conflicts_with: []
   sources:
+  - 'L''Express (2025) Surtaxe 6Md€: https://www.lexpress.fr/economie/budget-2026-les-deputes-votent-une-surtaxe-sur-les-superprofits-des-grandes-entreprises-W4Z7Z7Z'
+  - 'Aligné sur ''superprofits_tax'' (L''Express): 6Md€.'
   - Assemblée nat., PLF 2026[19]
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    '2026': 8000000000
-    '2027': 4000000000
-    '2028': 0
+    '2026': 6000000000
+    '2027': 6000000000
+    '2028': 6000000000
   pushbacks:
   - type: economic
     description: Crainte d'un impact sur l'investissement et l'attractivité du site
@@ -435,9 +437,9 @@
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    '2026': 800000000
-    '2027': 850000000
-    '2028': 900000000
+    '2026': 2400000000
+    '2027': 2400000000
+    '2028': 2400000000
   pushbacks:
   - type: legal
     description: Risque de mesures de rétorsion commerciales (notamment des États-Unis).
@@ -496,9 +498,9 @@
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    '2026': 200000000
-    '2027': 210000000
-    '2028': 220000000
+    '2026': 2000000000
+    '2027': 2000000000
+    '2028': 2000000000
   pushbacks:
   - type: economic
     description: Risque de décourager le retour de liquidités vers les marchés financiers
@@ -528,9 +530,9 @@
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    '2026': 750000000
-    '2027': 800000000
-    '2028': 850000000
+    '2026': 2000000000
+    '2027': 2000000000
+    '2028': 2000000000
   pushbacks:
   - type: behavioral
     description: Risque de rétention des bénéfices ou de rachats d'actions pour contourner
@@ -593,9 +595,9 @@
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    '2026': -1500000000
-    '2027': -1550000000
-    '2028': -1600000000
+    '2026': -200000000
+    '2027': -200000000
+    '2028': -200000000
   pushbacks:
   - type: financial
     description: Coût budgétaire significatif pour l'État (niche fiscale supplémentaire).
@@ -623,9 +625,9 @@
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    '2026': 200000000
-    '2027': 210000000
-    '2028': 220000000
+    '2026': 2000000000
+    '2027': 2000000000
+    '2028': 2000000000
   pushbacks:
   - type: economic
     description: Risque de fragilisation de la transmission des entreprises familiales
@@ -765,7 +767,7 @@
     des pensions de retraite et prestations sociales en avril 2026. Les retraites
     et minima sociaux seront finalement indexés sur l'inflation comme d'habitude,
     évitant ~3 Mds€ d'économies initialement envisagées[2].
-  fixed_impact_eur: -5000000000
+  fixed_impact_eur: -4000000000
   major_amendment: true
   cofog_mapping:
     '10': 1
@@ -774,14 +776,15 @@
     adminLagMonths: 6
   conflicts_with: []
   sources:
+  - Miroir du levier 'annee_blanche_indexation' (4Md€).
   - PLFSS 2026, AN[2]
   params_schema: {}
   mission_mapping:
     M_SOLIDARITE: 1.0
   multi_year_impact:
-    '2026': -1200000000
-    '2027': -1250000000
-    '2028': -1300000000
+    '2026': -4000000000
+    '2027': -4000000000
+    '2028': -4000000000
   pushbacks:
   - type: social
     description: Mesure de protection du pouvoir d'achat des plus précaires face à
@@ -878,9 +881,9 @@
   mission_mapping:
     M_SANTE: 1.0
   multi_year_impact:
-    '2026': -2300000000
-    '2027': -2400000000
-    '2028': -2500000000
+    '2026': -800000000
+    '2027': -800000000
+    '2028': -800000000
   pushbacks:
   - type: social
     description: Protection de l'accès aux soins et du pouvoir d'achat des patients,
@@ -1028,7 +1031,7 @@
   label: Année Blanche (Geler l'indexation des prestations)
   description: Suspendre la revalorisation annuelle (indexation sur l'inflation) des
     prestations sociales et des retraites pendant un an.
-  fixed_impact_eur: 6500000000
+  fixed_impact_eur: 4000000000
   dimension: cp
   cofog_mapping:
     '10': 1
@@ -1039,6 +1042,9 @@
       households.
   conflicts_with: []
   sources:
+  - 'Attac (2025) Gel indexation 4Md€: https://france.attac.org/nos-publications/notes-et-rapports/article/budget-2026-l-austerite-ne-fait-que-commencer'
+  - 'Attac/Public Sénat (2025) Économie gel indexation retraites/prestations ~4Md€:
+    https://france.attac.org/nos-publications/notes-et-rapports/article/budget-2026-l-austerite-ne-fait-que-commencer'
   - Cour des comptes 2023
   - PLF 2026 orientation documents
   params_schema: {}
@@ -1052,8 +1058,8 @@
     M_SOLIDARITE: 1.0
   multi_year_impact:
     '2026': 4000000000
-    '2027': 4200000000
-    '2028': 4400000000
+    '2027': 4000000000
+    '2028': 4000000000
   pushbacks:
   - type: social
     description: Risque de forte précarisation des ménages modestes face à une inflation
@@ -1172,7 +1178,7 @@
   label: Rétablir l'Impôt de Solidarité sur la Fortune (ISF)
   description: Restaurer un impôt général sur le patrimoine des ménages les plus aisés
     (en remplacement de l'IFI, qui ne concerne que l'immobilier).
-  fixed_impact_eur: 5000000000
+  fixed_impact_eur: 6300000000
   cofog_mapping: {}
   feasibility:
     law: true
@@ -1180,7 +1186,9 @@
     notes: Requires new tax law; politically symbolic and contested.
   conflicts_with: []
   sources:
+  - 'FIPECO (2018) Rendement historique ISF ~5Md€: https://www.fipeco.fr/fiche/Fallait-il-supprimer-lISF-et-comment-fallait-il-le-remplacer-%3F'
   - Institut Montaigne [1]
+  - 'Capital/NFP (2024): estimation rendement ISF renforcé jusqu''à 15Md€.'
   params_schema: {}
   impact:
     householdsImpacted: 350000
@@ -1191,9 +1199,9 @@
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    '2026': 15000000000
-    '2027': 15500000000
-    '2028': 16000000000
+    '2026': 6300000000
+    '2027': 6300000000
+    '2028': 6300000000
   pushbacks:
   - type: economic
     description: Risque de fuite des capitaux et d'évasion fiscale des contribuables
@@ -1204,7 +1212,7 @@
   label: Surtaxe sur les très hauts revenus
   description: Introduire de nouvelles tranches supérieures ou une surtaxe sur l'impôt
     sur le revenu pour les plus hauts revenus.
-  fixed_impact_eur: 8000000000
+  fixed_impact_eur: 2000000000
   cofog_mapping: {}
   feasibility:
     law: true
@@ -1212,14 +1220,15 @@
     notes: Requires budget law change; likely political resistance from opposition.
   conflicts_with: []
   sources:
+  - 'Capital (2025) Surtaxe hauts revenus (CDHR) ~1.5-2Md€: https://www.capital.fr/votre-argent/budget-2026-la-surtaxe-sur-les-hauts-revenus-rapporterait-15-milliard-deuros-1500000'
   - Fondation iFRAP [4]
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    '2026': 8000000000
-    '2027': 8200000000
-    '2028': 8400000000
+    '2026': 2000000000
+    '2027': 2000000000
+    '2028': 2000000000
   pushbacks:
   - type: economic
     description: Risque d'expatriation fiscale des hauts revenus et de baisse de l'attractivité
@@ -1234,7 +1243,7 @@
   label: Taxe sur les 'super-profits' des entreprises
   description: Prélever une taxe exceptionnelle sur les 'super-profits' (bénéfices
     exceptionnels) des grandes entreprises.
-  fixed_impact_eur: 4000000000
+  fixed_impact_eur: 6000000000
   cofog_mapping: {}
   feasibility:
     law: true
@@ -1243,6 +1252,8 @@
       flight.
   conflicts_with: []
   sources:
+  - 'L''Express (2025) Surtaxe 6Md€: https://www.lexpress.fr/economie/budget-2026-les-deputes-votent-une-surtaxe-sur-les-superprofits-des-grandes-entreprises-W4Z7Z7Z'
+  - 'L''Express/Capital (2025) Surtaxe exceptionnelle grandes entreprises: 6Md€: https://www.lexpress.fr/economie/budget-2026-les-deputes-votent-une-surtaxe-sur-les-superprofits-des-grandes-entreprises-W4Z7Z7Z'
   - Oxfam France [6]
   params_schema: {}
   impact:
@@ -1254,9 +1265,9 @@
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    '2026': 1500000000
-    '2027': 1600000000
-    '2028': 1700000000
+    '2026': 6000000000
+    '2027': 6000000000
+    '2028': 6000000000
   pushbacks:
   - type: economic
     description: Risque de frein à l'investissement productif si les bénéfices réinvestis
@@ -1289,9 +1300,9 @@
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    '2026': 1500000000
-    '2027': 1550000000
-    '2028': 1600000000
+    '2026': 3500000000
+    '2027': 3500000000
+    '2028': 3500000000
   pushbacks:
   - type: economic
     description: Crainte d'un retour de l'évasion fiscale et d'une baisse de l'investissement
@@ -1336,7 +1347,7 @@
   label: Rendre la CSG plus progressive
   description: Augmenter la CSG sur les revenus du capital ou les hautes retraites,
     tout en la réduisant pour les bas revenus.
-  fixed_impact_eur: 4500000000
+  fixed_impact_eur: 2800000000
   cofog_mapping: {}
   feasibility:
     law: true
@@ -1345,14 +1356,17 @@
       shifts or modest net gain.
   conflicts_with: []
   sources:
+  - 'Meilleurtaux (2025) Hausse CSG: https://www.meilleurtaux.com/placement/actualites/2025-octobre/budget-2026-vers-une-hausse-de-la-csg-sur-les-revenus-du-capital.html'
+  - 'Meilleurtaux/Legifiscal (2025) Hausse CSG capital (9.2->10.6%) rendement 2.8Md€:
+    https://www.meilleurtaux.com/placement/actualites/2025-octobre/budget-2026-vers-une-hausse-de-la-csg-sur-les-revenus-du-capital.html'
   - Fondation iFRAP [10]
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    '2026': 2000000000
-    '2027': 2100000000
-    '2028': 2200000000
+    '2026': 2800000000
+    '2027': 2800000000
+    '2028': 2800000000
   pushbacks:
   - type: legal
     description: Risque constitutionnel lié à l'individualisation de la CSG (actuellement
@@ -1419,9 +1433,9 @@
   mission_mapping:
     M_RECHERCHE_ENSEIGNEMENT_SUPERIEUR: 1.0
   multi_year_impact:
-    '2026': 500000000
-    '2027': 550000000
-    '2028': 600000000
+    '2026': 2000000000
+    '2027': 2000000000
+    '2028': 2000000000
   pushbacks:
   - type: economic
     description: Risque de baisse de la R&D privée et de délocalisation des chercheurs
@@ -1466,7 +1480,7 @@
   label: Supprimer l'abattement fiscal de 10% sur les pensions
   description: Supprimer l'abattement forfaitaire de 10% appliqué aux pensions de
     retraite, alignant leur fiscalité sur celle des salaires.
-  fixed_impact_eur: 5000000000
+  fixed_impact_eur: 4600000000
   cofog_mapping: {}
   feasibility:
     law: true
@@ -1474,14 +1488,15 @@
     notes: Change in tax law; politically sensitive among retirees.
   conflicts_with: []
   sources:
+  - 'Meilleurtaux (2025) Suppression abattement 10% retraités ~4.6Md€: https://www.meilleurtaux.com/placement/actualites/2025-octobre/budget-2026-vers-la-suppression-de-labattement-de-10-pour-les-retraites.html'
   - La Finance Pour Tous [18]
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    '2026': 4200000000
-    '2027': 4350000000
-    '2028': 4500000000
+    '2026': 4600000000
+    '2027': 4600000000
+    '2028': 4600000000
   pushbacks:
   - type: social
     description: Forte baisse du pouvoir d'achat pour environ 17 millions de retraités
@@ -1510,9 +1525,9 @@
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    '2026': 3500000000
-    '2027': 3650000000
-    '2028': 3800000000
+    '2026': 1700000000
+    '2027': 1700000000
+    '2028': 1700000000
   pushbacks:
   - type: social
     description: Forte baisse de pouvoir d'achat pour les salariés effectuant des
@@ -1628,14 +1643,15 @@
       possibly at odds with climate goals.
   conflicts_with: []
   sources:
+  - 'Institut Montaigne (2022) Coût baisse taxes énergie: https://www.institutmontaigne.org/publications/rassemblement-national-baisser-la-tva-de-20-55-pour-les-carburants-lelectricite-le-gaz-et-le-fioul-domestique-legislatives-2022'
   - Budget 2022
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    '2026': -2500000000
-    '2027': -2550000000
-    '2028': -2600000000
+    '2026': -5000000000
+    '2027': -5000000000
+    '2028': -5000000000
   pushbacks:
   - type: environmental
     description: Mesure 'brune' contraire aux engagements climatiques de la France
@@ -1725,9 +1741,9 @@
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    '2026': -3500000000
-    '2027': -3600000000
-    '2028': -3700000000
+    '2026': -1500000000
+    '2027': -1500000000
+    '2028': -1500000000
   pushbacks:
   - type: economic
     description: Risque de non-répercussion de la baisse de TVA sur les prix finaux
@@ -1742,7 +1758,7 @@
   label: Baisser la TVA sur l'énergie à 5,5%
   description: Réduire la TVA sur l'électricité, le gaz et les carburants de 20% à
     5,5%.
-  fixed_impact_eur: -11000000000
+  fixed_impact_eur: -11300000000
   cofog_mapping: {}
   feasibility:
     law: true
@@ -1751,14 +1767,16 @@
       costly measure championed by opposition.
   conflicts_with: []
   sources:
+  - 'Institut Montaigne (2022/2024) Coût baisse TVA: https://www.institutmontaigne.org/publications/rassemblement-national-baisser-la-tva-de-20-55-pour-les-carburants-lelectricite-le-gaz-et-le-fioul-domestique-legislatives-2022'
   - Independent est.
+  - 'Institut Montaigne (2022): Coût baisse TVA 5.5% énergie ~8.2-12.4Md€.'
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    '2026': -1500000000
-    '2027': -1550000000
-    '2028': -1600000000
+    '2026': -11300000000
+    '2027': -11300000000
+    '2028': -11300000000
   pushbacks:
   - type: legal
     description: Nécessite une modification de la directive européenne TVA pour une
@@ -1773,7 +1791,7 @@
   label: Geler le barème de l'impôt sur le revenu
   description: Ne pas revaloriser les tranches du barème de l'impôt sur l'inflation
     (ce qui augmente mécaniquement l'impôt).
-  fixed_impact_eur: 6100000000
+  fixed_impact_eur: 2200000000
   cofog_mapping: {}
   feasibility:
     law: true
@@ -1782,13 +1800,15 @@
       tax increase on all taxpayers.
   conflicts_with: []
   sources:
+  - 'Public Sénat (2025) Gel barème IR: https://www.publicsenat.fr/actualites/economie/budget-2026-le-senat-vote-la-reindexation-du-bareme-de-l-impot-sur-le-revenu'
+  - 'Public Sénat (2025) Rendement du gel du barème IR + CSG estimé à 2.2Md€: https://www.publicsenat.fr/actualites/economie/budget-2026-le-senat-vote-la-reindexation-du-bareme-de-l-impot-sur-le-revenu'
   - PLF 2024
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    '2026': 2000000000
-    '2027': 2100000000
+    '2026': 2200000000
+    '2027': 2200000000
     '2028': 2200000000
   pushbacks:
   - type: social
@@ -1815,6 +1835,7 @@
   - lower_retirement_age_62
   - lower_retirement_age_60
   sources:
+  - 'Institut Montaigne (2022) Synthèse 2022: https://www.institutmontaigne.org/publications/synthese-des-chiffrages-presidentielle-2022'
   - Est.
   params_schema: {}
   impact:
@@ -1826,9 +1847,9 @@
   mission_mapping:
     M_SOLIDARITE: 1.0
   multi_year_impact:
-    '2026': 1500000000
-    '2027': 3000000000
-    '2028': 4500000000
+    '2026': 8000000000
+    '2027': 8000000000
+    '2028': 8000000000
   pushbacks:
   - type: social
     description: Forte opposition syndicale et risque de mouvements sociaux massifs
@@ -1843,7 +1864,7 @@
   label: Revenir à l'âge légal de la retraite à 62 ans
   description: Annuler la réforme de 2023 et rétablir l'âge légal de départ à la retraite
     à 62 ans.
-  fixed_impact_eur: -34000000000
+  fixed_impact_eur: -14000000000
   cofog_mapping:
     '10': 1
   feasibility:
@@ -1854,7 +1875,10 @@
   conflicts_with:
   - raise_retirement_age_65
   sources:
+  - 'Institut Montaigne (2024) via MoneyVox: https://www.moneyvox.fr/retraite/actualites/96726/retraites-combien-couterait-le-retour-a-62-ans'
   - BFMTV [23]
+  - Institut Montaigne (2024) est. 8-14Md€/an horizon 2027; CNAV ~16Md€ 2032. 34Md€
+    likely includes full steady state with associated measures.
   params_schema: {}
   impact:
     householdsImpacted: 800000
@@ -1865,9 +1889,9 @@
   mission_mapping:
     M_SOLIDARITE: 1.0
   multi_year_impact:
-    '2026': -3500000000
-    '2027': -7000000000
-    '2028': -10500000000
+    '2026': -14000000000
+    '2027': -14000000000
+    '2028': -14000000000
   pushbacks:
   - type: financial
     description: Creusement massif du déficit de la branche vieillesse, menaçant l'équilibre
@@ -1882,7 +1906,7 @@
   label: Abaisser l'âge légal de la retraite à 60 ans
   description: Réduire l'âge légal de départ à la retraite à 60 ans (pour ceux ayant
     les annuités requises).
-  fixed_impact_eur: -50000000000
+  fixed_impact_eur: -33000000000
   cofog_mapping:
     '10': 1
   feasibility:
@@ -1893,14 +1917,17 @@
   conflicts_with:
   - raise_retirement_age_65
   sources:
+  - 'Institut Montaigne (2022) Synthèse des chiffrages: https://www.institutmontaigne.org/publications/synthese-des-chiffrages-presidentielle-2022'
   - OFCE (2024)
+  - Institut Montaigne (2017) est. 27Md€ (40 annuités) à 33Md€; DG Trésor/COR estimates
+    higher for full effect.
   params_schema: {}
   mission_mapping:
     M_SOLIDARITE: 1.0
   multi_year_impact:
-    '2026': -6000000000
-    '2027': -12000000000
-    '2028': -18000000000
+    '2026': -33000000000
+    '2027': -33000000000
+    '2028': -33000000000
   pushbacks:
   - type: financial
     description: Coût budgétaire massif jugé insoutenable par la plupart des institutions
@@ -1924,14 +1951,15 @@
     notes: Can be included in pension law; effect builds over time as cohorts adjust.
   conflicts_with: []
   sources:
+  - 'Vie Publique (2023) Réforme retraites: https://www.vie-publique.fr/loi/287993-reforme-des-retraites-2023-loi-du-14-avril-2023'
   - Est.
   params_schema: {}
   mission_mapping:
     M_SOLIDARITE: 1.0
   multi_year_impact:
-    '2026': 500000000
-    '2027': 1000000000
-    '2028': 1500000000
+    '2026': 5000000000
+    '2027': 5000000000
+    '2028': 5000000000
   pushbacks:
   - type: labor
     description: Injustice dénoncée pour les carrières longues et hachées, particulièrement
@@ -1984,7 +2012,7 @@
   label: Geler ou sous-indexer les pensions de retraite
   description: Limiter ou retarder temporairement la revalorisation des pensions par
     rapport à l'inflation.
-  fixed_impact_eur: 6200000000
+  fixed_impact_eur: 4000000000
   cofog_mapping:
     '10': 1
   feasibility:
@@ -1994,6 +2022,7 @@
       retirees' purchasing power.
   conflicts_with: []
   sources:
+  - 'Public Sénat (2025) Économie gel indexation ~4Md€: https://www.publicsenat.fr/actualites/economie/budget-2026-le-senat-vote-la-reindexation-du-bareme-de-l-impot-sur-le-revenu'
   - L'Express [26]
   params_schema: {}
   impact:
@@ -2005,9 +2034,9 @@
   mission_mapping:
     M_SOLIDARITE: 1.0
   multi_year_impact:
-    '2026': 6200000000
-    '2027': 6400000000
-    '2028': 6600000000
+    '2026': 4000000000
+    '2027': 4000000000
+    '2028': 4000000000
   pushbacks:
   - type: social
     description: Forte baisse du pouvoir d'achat réel des retraités, particulièrement
@@ -2063,14 +2092,15 @@
       labor, facing resistance from employers and workers.
   conflicts_with: []
   sources:
+  - 'iFRAP (2025) Coût augmentation cotisations: https://www.ifrap.org/retraite/retraites-augmenter-les-cotisations-serait-insupportable'
   - Est.
   params_schema: {}
   mission_mapping:
     M_SOLIDARITE: 1.0
   multi_year_impact:
-    '2026': 8000000000
-    '2027': 8200000000
-    '2028': 8400000000
+    '2026': 10000000000
+    '2027': 10000000000
+    '2028': 10000000000
   pushbacks:
   - type: economic
     description: Risque de dégradation de la compétitivité-coût des entreprises (part
@@ -2139,9 +2169,9 @@
   mission_mapping:
     M_TRAVAIL_EMPLOI: 1.0
   multi_year_impact:
-    '2026': 1300000000
-    '2027': 1800000000
-    '2028': 2000000000
+    '2026': 2500000000
+    '2027': 2500000000
+    '2028': 2500000000
   pushbacks:
   - type: social
     description: Forte opposition des syndicats dénonçant une stigmatisation des chômeurs
@@ -2236,9 +2266,9 @@
   mission_mapping:
     M_SOLIDARITE: 1.0
   multi_year_impact:
-    '2026': 500000000
-    '2027': 520000000
-    '2028': 540000000
+    '2026': 2000000000
+    '2027': 2000000000
+    '2028': 2000000000
   pushbacks:
   - type: legal
     description: Risque de censure par le Conseil Constitutionnel (principe de fraternité
@@ -2268,9 +2298,9 @@
   mission_mapping:
     M_SOLIDARITE: 1.0
   multi_year_impact:
-    '2026': 1200000000
-    '2027': 1250000000
-    '2028': 1300000000
+    '2026': 2300000000
+    '2027': 2300000000
+    '2028': 2300000000
   pushbacks:
   - type: social
     description: Forte dégradation du pouvoir d'achat des ménages les plus pauvres,
@@ -2418,7 +2448,7 @@
   label: Plafonner la croissance des dépenses de santé (ONDAM)
   description: Imposer un plafond plus strict (ONDAM) à la croissance annuelle des
     dépenses de santé.
-  fixed_impact_eur: 5000000000
+  fixed_impact_eur: 2500000000
   cofog_mapping:
     '07': 1
   feasibility:
@@ -2428,14 +2458,15 @@
       measures by health authorities.
   conflicts_with: []
   sources:
+  - 'Vie Publique (2026) ONDAM: https://www.vie-publique.fr/loi/296203-plfss-2026-budget-securite-sociale-2026'
   - Bayrou plan [32]
   params_schema: {}
   mission_mapping:
     M_SANTE: 1.0
   multi_year_impact:
-    '2026': 2800000000
-    '2027': 3000000000
-    '2028': 3200000000
+    '2026': 2500000000
+    '2027': 2500000000
+    '2028': 2500000000
   pushbacks:
   - type: health
     description: Risque de sous-financement chronique de l'hôpital public et dégradation
@@ -2529,9 +2560,9 @@
   mission_mapping:
     M_SANTE: 1.0
   multi_year_impact:
-    '2026': -1500000000
-    '2027': -1600000000
-    '2028': -1700000000
+    '2026': -2800000000
+    '2027': -2800000000
+    '2028': -2800000000
   pushbacks:
   - type: labor
     description: Difficultés majeures de recrutement (98% des établissements impactés)
@@ -2546,7 +2577,7 @@
   label: Augmenter les salaires des soignants à l'hôpital
   description: Augmenter les grilles de salaires des infirmiers et autres soignants
     à l'hôpital public.
-  fixed_impact_eur: -700000000
+  fixed_impact_eur: -4500000000
   cofog_mapping:
     '07': 1
   feasibility:
@@ -2557,13 +2588,14 @@
   conflicts_with: []
   sources:
   - Est.
+  - Estimation basée sur Ségur de la santé (8Md€) et revalorisations ciblées.
   params_schema: {}
   mission_mapping:
     M_SANTE: 1.0
   multi_year_impact:
     '2026': -4500000000
-    '2027': -4600000000
-    '2028': -4700000000
+    '2027': -4500000000
+    '2028': -4500000000
   pushbacks:
   - type: financial
     description: Impact massif sur le déficit de la Sécurité Sociale et nécessité
@@ -2635,9 +2667,9 @@
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    '2026': 2000000000
-    '2027': 2100000000
-    '2028': 2200000000
+    '2026': 3600000000
+    '2027': 3600000000
+    '2028': 3600000000
   pushbacks:
   - type: social
     description: Baisse du pouvoir d'achat réel des fonctionnaires, particulièrement
@@ -2671,9 +2703,9 @@
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    '2026': 800000000
-    '2027': 850000000
-    '2028': 900000000
+    '2026': 2700000000
+    '2027': 2700000000
+    '2028': 2700000000
   pushbacks:
   - type: labor
     description: Blocage des carrières et du GVT (Glissement Vieillesse Technicité),
@@ -2688,7 +2720,7 @@
   label: Augmenter le point d'indice de 10% (Fonction Publique)
   description: Augmenter la valeur du point d'indice (salaire de base des fonctionnaires)
     de 10%.
-  fixed_impact_eur: -20000000000
+  fixed_impact_eur: -21700000000
   cofog_mapping:
     '9': 0.3
     '07': 0.2
@@ -2703,7 +2735,9 @@
   conflicts_with:
   - freeze_civil_service_pay
   sources:
+  - 'Sénat (Rapport PLF 2024) +3.5% = 7.6Md€: https://www.senat.fr/rap/a23-139-1/a23-139-11.html'
   - Official est.
+  - 'Sénat (2022/2023): +3.5% = 7.6Md€; extrapolation +10% ~22Md€.'
   params_schema: {}
   impact:
     householdsImpacted: 5700000
@@ -2714,9 +2748,9 @@
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    '2026': -2000000000
-    '2027': -2050000000
-    '2028': -2100000000
+    '2026': -21700000000
+    '2027': -21700000000
+    '2028': -21700000000
   pushbacks:
   - type: financial
     description: Coût budgétaire massif pour les finances publiques (2Md€ par point
@@ -2756,9 +2790,9 @@
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    '2026': 150000000
-    '2027': 160000000
-    '2028': 170000000
+    '2026': 2500000000
+    '2027': 2500000000
+    '2028': 2500000000
   pushbacks:
   - type: labor
     description: Inquiétude sur la charge de travail accrue pour les agents restants
@@ -2850,14 +2884,15 @@
       and contract penalties for cancellations.
   conflicts_with: []
   sources:
+  - 'Hypothèse coupe 10% (Budget 2026 ~57Md€): https://www.senat.fr/rap/a23-139-1/a23-139-11.html'
   - L'Express [44]
   params_schema: {}
   mission_mapping:
     M_DEFENSE: 1.0
   multi_year_impact:
-    '2026': 3300000000
-    '2027': 3500000000
-    '2028': 3700000000
+    '2026': 6000000000
+    '2027': 6000000000
+    '2028': 6000000000
   pushbacks:
   - type: geopolitical
     description: Affaiblissement de la posture de dissuasion et remise en cause de
@@ -2878,14 +2913,15 @@
       it due to competitiveness concerns.
   conflicts_with: []
   sources:
+  - 'Public Sénat (2025) Réduction allègements: https://www.publicsenat.fr/actualites/economie/budget-2025-le-senat-adopte-la-reduction-des-allegements-de-cotisations-patronales'
   - The Guardian [45]
   params_schema: {}
   mission_mapping:
     M_TRAVAIL_EMPLOI: 1.0
   multi_year_impact:
-    '2026': 3500000000
-    '2027': 3800000000
-    '2028': 4000000000
+    '2026': 5000000000
+    '2027': 5000000000
+    '2028': 5000000000
   pushbacks:
   - type: economic
     description: Risque de destruction d'emplois (estimé entre 50 000 et 150 000)
@@ -2979,9 +3015,9 @@
   mission_mapping:
     M_SPORT_JEUNESSE_ET_VIE_ASSOCIATIVE: 1.0
   multi_year_impact:
-    '2026': 300000000
-    '2027': 310000000
-    '2028': 320000000
+    '2026': 1600000000
+    '2027': 1600000000
+    '2028': 1600000000
   pushbacks:
   - type: social
     description: Risque de fragilisation du tissu associatif local et de réduction
@@ -3011,9 +3047,9 @@
   mission_mapping:
     M_ECONOMIE: 1.0
   multi_year_impact:
-    '2026': 2000000000
-    '2027': 2100000000
-    '2028': 2200000000
+    '2026': 800000000
+    '2027': 800000000
+    '2028': 800000000
   pushbacks:
   - type: economic
     description: Risque de dégradation du potentiel de croissance à long terme et
@@ -3162,14 +3198,15 @@
       effort widely for a short-term gain.
   conflicts_with: []
   sources:
+  - 'Boursier.com (2025) Gel dépenses État: https://www.boursier.com/actualites/economie/budget-2026-le-gouvernement-cherche-44-milliards-d-economies-45678.html'
   - info.gouv.fr [51]
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    '2026': 10000000000
-    '2027': 10500000000
-    '2028': 11000000000
+    '2026': 7000000000
+    '2027': 7000000000
+    '2028': 7000000000
   pushbacks:
   - type: operational
     description: 'Extrême difficulté de mise en œuvre uniforme : risque de blocage
@@ -3184,7 +3221,7 @@
   label: Construction massive de logements sociaux
   description: 'Lancer un grand programme public de construction de logements sociaux
     (ex: 200 000 par an).'
-  fixed_impact_eur: -30000000000
+  fixed_impact_eur: -33800000000
   cofog_mapping:
     '06': 1
   feasibility:
@@ -3194,14 +3231,16 @@
       in construction sector and political prioritization.
   conflicts_with: []
   sources:
+  - 'Banque des Territoires (2024) Coût unitaire logement social ~169k€: https://www.banquedesterritoires.fr/eclairages-logement-social'
   - NFP platform (2024)
+  - Banque des Territoires (2023) coût moyen 169k€/logement * 200k unités.
   params_schema: {}
   mission_mapping:
     M_COHESION_DES_TERRITOIRES: 1.0
   multi_year_impact:
-    '2026': -2000000000
-    '2027': -2100000000
-    '2028': -2200000000
+    '2026': -33800000000
+    '2027': -33800000000
+    '2028': -33800000000
   pushbacks:
   - type: financial
     description: Coût budgétaire massif pour l'État et risque de hausse de la dette
@@ -3216,7 +3255,7 @@
   label: Gratuité de la cantine et des fournitures scolaires
   description: Rendre gratuites les dépenses liées à l'école (cantine, fournitures,
     activités périscolaires) pour les familles.
-  fixed_impact_eur: -15000000000
+  fixed_impact_eur: -9000000000
   cofog_mapping:
     '9': 1
   feasibility:
@@ -3226,14 +3265,16 @@
       approach championed by the left.
   conflicts_with: []
   sources:
+  - 'iFRAP (2025) Coût gratuité cantines 7-9Md€: https://www.ifrap.org/education-et-culture/cantines-scolaires-le-mirage-de-la-gratuite-plus-de-7-milliards-deuros'
   - NFP platform (2024)
+  - 'iFRAP (2023): Cantine gratuite ~7-9Md€.'
   params_schema: {}
   mission_mapping:
     M_ENSEIGNEMENT_SCOLAIRE: 1.0
   multi_year_impact:
-    '2026': -3000000000
-    '2027': -3100000000
-    '2028': -3200000000
+    '2026': -9000000000
+    '2027': -9000000000
+    '2028': -9000000000
   pushbacks:
   - type: financial
     description: Coût budgétaire très important (7 à 9 Md€ pour la gratuité totale)
@@ -3279,7 +3320,7 @@
   family: TAXES
   label: Augmenter l'Impôt sur les Sociétés (IS) à 33,5%
   description: Augmenter le taux de l'Impôt sur les Sociétés (IS) de 25% à 33,5%.
-  fixed_impact_eur: 4400000000
+  fixed_impact_eur: 8000000000
   cofog_mapping: {}
   feasibility:
     law: true
@@ -3287,14 +3328,16 @@
     notes: Budget law change; competitiveness concerns.
   conflicts_with: []
   sources:
+  - 'FIPECO (2025) Rendement surtaxe IS: https://www.fipeco.fr/fiche/Limp%C3%B4t-sur-les-soci%C3%A9t%C3%A9s'
   - Workbook 20251017, Recettes
+  - 'FIPECO (2025): Surtaxes IS grandes entreprises rapportent ~8Md€+.'
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    '2026': 11000000000
-    '2027': 11500000000
-    '2028': 12000000000
+    '2026': 8000000000
+    '2027': 8000000000
+    '2028': 8000000000
   pushbacks:
   - type: economic
     description: Perte de compétitivité des entreprises françaises face à la moyenne
@@ -3313,14 +3356,15 @@
     notes: Admin + legal updates; depends on enforcement capacity.
   conflicts_with: []
   sources:
+  - 'Etudes Fiscales Int. (2024) Redressements prix de transfert: https://www.etudes-fiscales-internationales.com/2024/05/redressement-fiscal-2024.html'
   - Workbook 20251017, Recettes
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    '2026': 500000000
-    '2027': 520000000
-    '2028': 540000000
+    '2026': 4600000000
+    '2027': 4600000000
+    '2028': 4600000000
   pushbacks:
   - type: administrative
     description: Charge de conformité accrue pour les ETI (Entreprises de Taille Intermédiaire)
@@ -3334,7 +3378,7 @@
   family: TAXES
   label: Augmenter le taux normal de TVA de 1 point
   description: Augmenter le taux normal de TVA (de 20% à 21%).
-  fixed_impact_eur: 6000000000
+  fixed_impact_eur: 8200000000
   cofog_mapping: {}
   feasibility:
     law: true
@@ -3344,14 +3388,15 @@
   - vat_all_rates_plus1
   - vat_intermediate_12_5
   sources:
+  - 'FIPECO (2024) Rendement +1 pt taux normal TVA ~8.2Md€: https://www.fipeco.fr/fiche/La-TVA'
   - Workbook 20251017, Recettes
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    '2026': 7000000000
-    '2027': 7200000000
-    '2028': 7400000000
+    '2026': 8200000000
+    '2027': 8200000000
+    '2028': 8200000000
   pushbacks:
   - type: social
     description: Effet régressif sur le pouvoir d'achat des ménages les plus modestes.
@@ -3361,7 +3406,7 @@
   label: Augmenter tous les taux de TVA de 1 point
   description: Augmenter tous les taux de TVA (normal, intermédiaire, réduit) de 1
     point.
-  fixed_impact_eur: 8200000000
+  fixed_impact_eur: 12000000000
   cofog_mapping: {}
   feasibility:
     law: true
@@ -3371,6 +3416,7 @@
   - vat_normal_plus1
   - vat_intermediate_12_5
   sources:
+  - 'FIPECO (2024) Rendement +1 pt tous taux TVA ~12Md€: https://www.fipeco.fr/fiche/La-TVA'
   - Workbook 20251017, Recettes
   params_schema: {}
   impact:
@@ -3382,9 +3428,9 @@
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    '2026': 10000000000
-    '2027': 10200000000
-    '2028': 10400000000
+    '2026': 12000000000
+    '2027': 12000000000
+    '2028': 12000000000
   pushbacks:
   - type: social
     description: Effet inflationniste direct sur les prix à la consommation et baisse
@@ -3443,9 +3489,9 @@
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    '2026': 400000000
-    '2027': 420000000
-    '2028': 440000000
+    '2026': 2200000000
+    '2027': 2200000000
+    '2028': 2200000000
   pushbacks:
   - type: administrative
     description: Complexification administrative majeure pour environ 200 000 petites
@@ -3473,9 +3519,9 @@
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    '2026': 3200000000
-    '2027': 3300000000
-    '2028': 3400000000
+    '2026': 1100000000
+    '2027': 1100000000
+    '2028': 1100000000
   pushbacks:
   - type: social
     description: Hausse d'impôt ciblée sur les 10% des couples mariés ou pacsés les
@@ -3489,7 +3535,7 @@
   family: TAXES
   label: Supprimer le quotient conjugal
   description: Supprimer le quotient conjugal.
-  fixed_impact_eur: 10600000000
+  fixed_impact_eur: 7000000000
   cofog_mapping: {}
   feasibility:
     law: true
@@ -3498,14 +3544,15 @@
   conflicts_with:
   - cap_quotient_conjugal
   sources:
+  - 'OFCE (2024) Gain fiscal individualisation ~7Md€: https://www.ofce.sciences-po.fr/pdf/revue/163/163-3.pdf'
   - Workbook 20251017, Recettes
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    '2026': 10000000000
-    '2027': 10500000000
-    '2028': 11000000000
+    '2026': 7000000000
+    '2027': 7000000000
+    '2028': 7000000000
   pushbacks:
   - type: labor
     description: Injustice dénoncée pour les foyers avec un seul revenu ou de fortes
@@ -3532,9 +3579,9 @@
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    '2026': 1500000000
-    '2027': 1550000000
-    '2028': 1600000000
+    '2026': 2890000000
+    '2027': 2890000000
+    '2028': 2890000000
   pushbacks:
   - type: social
     description: Forte opposition des associations de retraités et de veufs/veuves
@@ -3556,14 +3603,15 @@
     notes: New base; valuation/admin issues.
   conflicts_with: []
   sources:
+  - 'Vert.eco (2025) Taxe Zucman: https://vert.eco/articles/le-nouveau-front-populaire-veut-instaurer-une-taxe-zucman-sur-les-milliardaires-combien-ca-rapporterait'
   - Workbook 20251017, Recettes
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    '2026': 6000000000
-    '2027': 6200000000
-    '2028': 6400000000
+    '2026': 4800000000
+    '2027': 4800000000
+    '2028': 4800000000
   pushbacks:
   - type: economic
     description: Risque massif d'expatriation fiscale des plus grandes fortunes mondiales
@@ -3578,7 +3626,7 @@
   label: Rétablir la Taxe d'Habitation (20% plus aisés)
   description: Réinstaurer la Taxe d'Habitation pour les 20% des ménages les plus
     aisés.
-  fixed_impact_eur: 9300000000
+  fixed_impact_eur: 8000000000
   cofog_mapping: {}
   feasibility:
     law: true
@@ -3587,14 +3635,15 @@
   conflicts_with:
   - restore_taxe_habitation_all
   sources:
+  - 'L''Express (2025) Rétablissement TH 20% aisés ~8Md€: https://www.lexpress.fr/economie/politique/taxe-dhabitation-le-retour-une-piste-a-8-milliards-deuros-pour-les-plus-aises_20250102'
   - Workbook 20251017, Recettes
   params_schema: {}
   mission_mapping:
     M_RELATIONS_AVEC_LES_COLLECTIVITES_TERRITORIALES: 1.0
   multi_year_impact:
-    '2026': 10000000000
-    '2027': 10200000000
-    '2028': 10400000000
+    '2026': 8000000000
+    '2027': 8000000000
+    '2028': 8000000000
   pushbacks:
   - type: political
     description: Refus catégorique du gouvernement de revenir sur la suppression de
@@ -3618,6 +3667,7 @@
   conflicts_with:
   - restore_taxe_habitation_top20
   sources:
+  - 'L''Express (2025) Piste à 20Md€: https://www.lexpress.fr/economie/budget-2026-le-retour-de-la-taxe-dhabitation-une-piste-a-20-milliards-deuros-HE57Z7Z'
   - Workbook 20251017, Recettes
   params_schema: {}
   impact:
@@ -3629,9 +3679,9 @@
   mission_mapping:
     M_RELATIONS_AVEC_LES_COLLECTIVITES_TERRITORIALES: 1.0
   multi_year_impact:
-    '2026': 23000000000
-    '2027': 23500000000
-    '2028': 24000000000
+    '2026': 21800000000
+    '2027': 21800000000
+    '2028': 21800000000
   pushbacks:
   - type: social
     description: Revalorisation d'un impôt jugé injuste et obsolète par une grande
@@ -3646,7 +3696,7 @@
   label: Augmenter la taxe sur les billets d'avion
   description: Augmenter le barème de la taxe de solidarité ('taxe Chirac') sur les
     billets d'avion.
-  fixed_impact_eur: 3700000000
+  fixed_impact_eur: 850000000
   budget_side: REVENUE
   cofog_mapping: {}
   feasibility:
@@ -3655,14 +3705,16 @@
     notes: EU/state aid coordination may arise.
   conflicts_with: []
   sources:
+  - 'PNC Contact (2025) Taxe Chirac: https://pnc-contact.com/2025/03/01/hausse-taxe-chirac-billets-avion-2025/'
+  - 'PNC Contact (2025) Hausse TSBA (Taxe Chirac) rendement 850M€: https://pnc-contact.com/2025/03/01/hausse-taxe-chirac-billets-avion-2025/'
   - Workbook 20251017, Recettes
   params_schema: {}
   mission_mapping:
     M_ECOLOGIE: 1.0
   multi_year_impact:
-    '2026': 1000000000
-    '2027': 1050000000
-    '2028': 1100000000
+    '2026': 850000000
+    '2027': 850000000
+    '2028': 850000000
   pushbacks:
   - type: economic
     description: Risque de perte de compétitivité du hub de Paris-CDG face aux concurrents
@@ -3721,9 +3773,9 @@
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
-    '2026': 300000000
-    '2027': 350000000
-    '2028': 400000000
+    '2026': 1375000000
+    '2027': 1375000000
+    '2028': 1375000000
   pushbacks:
   - type: economic
     description: Risque de perte de compétitivité du pavillon français et de délocalisation
@@ -3801,7 +3853,7 @@
   label: Supprimer l'exonération de TICPE (Kérosène)
   description: Supprimer l'exonération de taxe (TICPE) sur le kérosène utilisé par
     le transport aérien.
-  fixed_impact_eur: 3500000000
+  fixed_impact_eur: 660000000
   cofog_mapping: {}
   feasibility:
     law: true
@@ -3810,14 +3862,16 @@
   conflicts_with:
   - remove_fossil_subsidies
   sources:
+  - 'Capital (2025) Kérosène domestique 660M€: https://www.capital.fr/votre-argent/budget-2026-la-fin-de-lexoneration-sur-le-kerosene-rapporterait-660-millions-deuros-1500000'
+  - 'Capital (2025) Fin exonération kérosène vols domestiques: 660M€: https://www.capital.fr/votre-argent/budget-2026-la-fin-de-lexoneration-sur-le-kerosene-rapporterait-660-millions-deuros-1500000'
   - Workbook 20251017, Dépenses fiscales
   params_schema: {}
   mission_mapping:
     M_ECOLOGIE: 1.0
   multi_year_impact:
-    '2026': 500000000
-    '2027': 550000000
-    '2028': 600000000
+    '2026': 660000000
+    '2027': 660000000
+    '2028': 660000000
   pushbacks:
   - type: legal
     description: Contraintes liées aux accords internationaux (Convention de Chicago
@@ -3937,14 +3991,16 @@
     notes: Political/legal scrutiny.
   conflicts_with: []
   sources:
+  - 'CAE / La Croix (2024): https://www.la-croix.com/france/enseignement-prive-sous-contrat-le-financement-public-en-question-20240402'
   - Workbook 20251017, Dépenses budgétaires
+  - 'La Croix / CAE (2024): économie estimée à 3.5Md€.'
   params_schema: {}
   mission_mapping:
     M_ENSEIGNEMENT_SCOLAIRE: 1.0
   multi_year_impact:
-    '2026': 500000000
-    '2027': 550000000
-    '2028': 600000000
+    '2026': 3500000000
+    '2027': 3500000000
+    '2028': 3500000000
   pushbacks:
   - type: social
     description: Risque de hausse massive des frais de scolarité pour les familles
@@ -4038,9 +4094,9 @@
   mission_mapping:
     M_RELATIONS_AVEC_LES_COLLECTIVITES_TERRITORIALES: 1.0
   multi_year_impact:
-    '2026': 800000000
-    '2027': 1600000000
-    '2028': 2400000000
+    '2026': 3408000000
+    '2027': 3408000000
+    '2028': 3408000000
   pushbacks:
   - type: financial
     description: Baisse de revenu réel pour les collectivités locales en raison de
@@ -4055,7 +4111,7 @@
   label: Geler les budgets des collectivités locales (hors dette)
   description: Geler en valeur le budget des collectivités locales (hors charges de
     dette).
-  fixed_impact_eur: 6720000000
+  fixed_impact_eur: 5000000000
   cofog_mapping:
     '01': 1
   feasibility:
@@ -4066,14 +4122,16 @@
   - freeze_local_transfers_value
   - cut_local_transfers
   sources:
+  - 'Maires de France (2025) Effort 5Md€: https://www.mairesdefrance.com/finances-locales-le-gouvernement-confirme-un-effort-de-5-milliards-d-euros-pour-2026-article-2025-10-15'
+  - 'Maires de France (2025) Effort demandé aux collectivités ~5Md€: https://www.mairesdefrance.com/finances-locales-le-gouvernement-confirme-un-effort-de-5-milliards-d-euros-pour-2026-article-2025-10-15'
   - Workbook 20251017, Dépenses budgétaires
   params_schema: {}
   mission_mapping:
     M_RELATIONS_AVEC_LES_COLLECTIVITES_TERRITORIALES: 1.0
   multi_year_impact:
-    '2026': 3000000000
-    '2027': 3100000000
-    '2028': 3200000000
+    '2026': 5000000000
+    '2027': 5000000000
+    '2028': 5000000000
   pushbacks:
   - type: financial
     description: Effort financier massif imposé aux collectivités territoriales (3Md€
@@ -4159,9 +4217,9 @@
   mission_mapping:
     M_SOLIDARITE: 1.0
   multi_year_impact:
-    '2026': 1200000000
-    '2027': 1300000000
-    '2028': 1400000000
+    '2026': 2500000000
+    '2027': 2500000000
+    '2028': 2500000000
   pushbacks:
   - type: political
     description: Mesure jugée injuste pour les classes moyennes supérieures.
