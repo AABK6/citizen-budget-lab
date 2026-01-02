@@ -3,6 +3,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import yaml from 'js-yaml';
 import { gqlRequest } from '@/lib/graphql';
+import { 
+  ArrowDown, ArrowUp, ArrowUpDown, 
+  AlertCircle, Link as LinkIcon, AlertTriangle, 
+  Filter, Trash2, Plus, ExternalLink, TrendingUp,
+  Check, X, FileText
+} from 'lucide-react';
 
 interface Feasibility {
   law: boolean;
@@ -46,18 +52,9 @@ interface ValidationResult {
 }
 
 const FAMILIES = [
-  'PENSIONS',
-  'TAXES',
-  'TAX_EXPENDITURES',
-  'HEALTH',
-  'DEFENSE',
-  'STAFFING',
-  'SUBSIDIES',
-  'CLIMATE',
-  'SOCIAL_SECURITY',
-  'PROCUREMENT',
-  'OPERATIONS',
-  'OTHER',
+  'PENSIONS', 'TAXES', 'TAX_EXPENDITURES', 'HEALTH', 'DEFENSE', 
+  'STAFFING', 'SUBSIDIES', 'CLIMATE', 'SOCIAL_SECURITY', 
+  'PROCUREMENT', 'OPERATIONS', 'OTHER',
 ];
 
 const BUDGET_SIDES = ['SPENDING', 'REVENUE', 'BOTH'];
@@ -77,25 +74,207 @@ const COFOG_LABELS: Record<string, string> = {
 
 const MAPPING_FORMATTER = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 2 });
 
-const SORT_OPTIONS = [
-  { id: 'order', label: 'Ordre manuel' },
-  { id: 'id', label: 'ID' },
-  { id: 'label', label: 'Libelle' },
-  { id: 'family', label: 'Famille' },
-  { id: 'impact', label: 'Impact (EUR)' },
-];
-
 const inputClass =
-  'w-full rounded-lg bg-slate-900 border border-slate-800 px-3 py-2 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/50';
+  'w-full rounded-lg bg-slate-900 border border-slate-800 px-3 py-2 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all';
 
 const textareaClass =
-  'w-full rounded-lg bg-slate-900 border border-slate-800 px-3 py-2 text-sm text-slate-100 font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500/50';
+  'w-full rounded-lg bg-slate-900 border border-slate-800 px-3 py-2 text-sm text-slate-100 font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all';
+
+// --- HELPER COMPONENTS ---
+
+const SortHeader = ({ label, id, currentKey, currentDir, onSort }: { label: string, id: string, currentKey: string, currentDir: string, onSort: (id: string) => void }) => {
+  const isActive = currentKey === id;
+  return (
+    <th 
+      className="px-3 py-2 text-left cursor-pointer hover:bg-slate-800 transition-colors select-none group"
+      onClick={() => onSort(id)}
+    >
+      <div className="flex items-center gap-1">
+        {label}
+        <span className={`text-slate-500 transition-opacity ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-50'}`}>
+          {isActive ? (currentDir === 'asc' ? <ArrowUp size={14} /> : <ArrowDown size={14} />) : <ArrowUpDown size={14} />}
+        </span>
+      </div>
+    </th>
+  );
+};
+
+const QualityBadge = ({ type, tooltip }: { type: 'error' | 'warning', tooltip: string }) => {
+  const color = type === 'error' ? 'text-rose-500' : 'text-amber-500';
+  const Icon = type === 'error' ? AlertCircle : AlertTriangle;
+  return (
+    <div className={`group relative ${color}`}>
+      <Icon size={14} />
+      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block w-max max-w-[200px] px-2 py-1 bg-slate-800 text-slate-200 text-xs rounded shadow-xl z-50">
+        {tooltip}
+      </div>
+    </div>
+  );
+};
+
+export const SourceManager = ({ sources, onChange }: { sources: string[], onChange: (next: string[]) => void }) => {
+  const updateSource = (index: number, val: string) => {
+    const next = [...sources];
+    next[index] = val;
+    onChange(next);
+  };
+  const removeSource = (index: number) => {
+    onChange(sources.filter((_, i) => i !== index));
+  };
+  const addSource = () => {
+    onChange([...sources, '']);
+  };
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <label className="text-xs text-slate-400 uppercase font-bold tracking-wider">Sources & Liens</label>
+        <button onClick={addSource} className="text-indigo-400 hover:text-indigo-300 flex items-center gap-1 text-[10px] uppercase font-bold">
+          <Plus size={12} /> Ajouter
+        </button>
+      </div>
+      {sources.map((src, idx) => (
+        <div key={idx} className="flex gap-2 group">
+          <div className="relative flex-1">
+            <input
+              value={src}
+              onChange={(e) => updateSource(idx, e.target.value)}
+              className={inputClass}
+              placeholder="Nom de la source ou URL"
+            />
+            {src.includes('http') && (
+              <a href={src} target="_blank" rel="noreferrer" className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 hover:text-indigo-400">
+                <ExternalLink size={14} />
+              </a>
+            )}
+          </div>
+          <button onClick={() => removeSource(idx)} className="text-slate-600 hover:text-rose-500 transition-colors">
+            <Trash2 size={16} />
+          </button>
+        </div>
+      ))}
+      {sources.length === 0 && <p className="text-[10px] text-slate-600 italic text-center py-2">Aucune source renseignée.</p>}
+    </div>
+  );
+};
+
+export const TrajectoryEditor = ({ fixed, schedule, onChange }: { fixed: number, schedule?: number[], onChange: (next: number[]) => void }) => {
+  const years = [2026, 2027, 2028, 2029, 2030];
+  const currentValues = schedule && schedule.length >= 5 ? schedule : years.map(() => fixed);
+  
+  const updateYear = (index: number, val: string) => {
+    const next = [...currentValues];
+    const num = Number(val) * 1e9;
+    next[index] = Number.isFinite(num) ? num : 0;
+    onChange(next);
+  };
+
+  return (
+    <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-3 space-y-3">
+      <div className="flex items-center gap-2 text-indigo-400 mb-1">
+        <TrendingUp size={16} />
+        <span className="text-xs font-bold uppercase tracking-wider">Trajectoire 5 ans (Md€)</span>
+      </div>
+      <div className="grid grid-cols-5 gap-2">
+        {years.map((year, idx) => (
+          <div key={year} className="space-y-1">
+            <div className="text-[10px] text-center text-slate-500 font-mono">{year}</div>
+            <input
+              type="number"
+              step="0.1"
+              value={currentValues[idx] / 1e9}
+              onChange={(e) => updateYear(idx, e.target.value)}
+              className="w-full bg-slate-950 border border-slate-800 rounded px-1 py-1 text-[11px] text-center text-slate-200 focus:ring-1 focus:ring-indigo-500 outline-none"
+            />
+          </div>
+        ))}
+      </div>
+      <p className="text-[9px] text-slate-500 italic leading-tight">
+        Valeurs en Milliards d&apos;euros. 2026 doit idéalement correspondre à l'impact fixe.
+      </p>
+    </div>
+  );
+};
+
+// --- DIFF LOGIC ---
+
+type DiffLine = { type: 'add' | 'remove' | 'same', text: string };
+
+export function simpleDiff(oldText: string, newText: string): DiffLine[] {
+  const oldLines = oldText.split('\n');
+  const newLines = newText.split('\n');
+  const result: DiffLine[] = [];
+  
+  let i = 0, j = 0;
+  while (i < oldLines.length || j < newLines.length) {
+    if (i < oldLines.length && j < newLines.length && oldLines[i] === newLines[j]) {
+      result.push({ type: 'same', text: oldLines[i] });
+      i++; j++;
+    } else if (i < oldLines.length && (j >= newLines.length || !newLines.slice(j).includes(oldLines[i]))) {
+      result.push({ type: 'remove', text: oldLines[i] });
+      i++;
+    } else if (j < newLines.length) {
+      result.push({ type: 'add', text: newLines[j] });
+      j++;
+    }
+  }
+  return result;
+}
+
+const DiffModal = ({ oldText, newText, onConfirm, onCancel }: { oldText: string, newText: string, onConfirm: () => void, onCancel: () => void }) => {
+  const lines = useMemo(() => simpleDiff(oldText, newText), [oldText, newText]);
+  const hasChanges = lines.some(l => l.type !== 'same');
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-6">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+          <div className="flex items-center gap-2 text-indigo-400">
+            <FileText size={20} />
+            <h2 className="text-lg font-bold">Révision des changements (YAML)</h2>
+          </div>
+          <button onClick={onCancel} className="text-slate-500 hover:text-slate-300 transition-colors">
+            <X size={20} />
+          </button>
+        </div>
+        
+        <div className="flex-1 overflow-auto p-4 bg-slate-950 font-mono text-xs leading-relaxed">
+          {!hasChanges ? (
+            <div className="h-full flex items-center justify-center text-slate-500 italic">Aucun changement détecté.</div>
+          ) : (
+            lines.map((line, idx) => (
+              <div key={idx} className={`whitespace-pre-wrap px-2 ${ 
+                line.type === 'add' ? 'bg-emerald-500/10 text-emerald-400 border-l-2 border-emerald-500' :
+                line.type === 'remove' ? 'bg-rose-500/10 text-rose-400 border-l-2 border-rose-500 line-through opacity-50' :
+                'text-slate-500'
+              }`}>
+                <span className="inline-block w-6 select-none opacity-30">{line.type === 'add' ? '+' : line.type === 'remove' ? '-' : ' '}</span>
+                {line.text || ' '}
+              </div>
+            ))
+          )}
+        </div>
+
+        <div className="px-6 py-4 border-t border-slate-800 bg-slate-900/50 flex justify-end gap-3">
+          <button onClick={onCancel} className="px-4 py-2 rounded-lg text-sm text-slate-400 hover:bg-slate-800">Annuler</button>
+          <button 
+            onClick={onConfirm} 
+            disabled={!hasChanges}
+            className="px-6 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-sm font-bold shadow-lg shadow-emerald-900/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          >
+            <Check size={16} /> Confirmer et Enregistrer
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- UTILS ---
 
 function normalizeMapping(value: any): Record<string, number> {
   const out: Record<string, number> = {};
-  if (!value || typeof value !== 'object') {
-    return out;
-  }
+  if (!value || typeof value !== 'object') return out;
   for (const [key, raw] of Object.entries(value)) {
     const num = typeof raw === 'number' ? raw : Number(raw);
     out[String(key)] = Number.isFinite(num) ? num : 0;
@@ -111,7 +290,7 @@ function normalizeLever(raw: any): Lever {
     description: String(raw?.description || ''),
     short_label: raw?.short_label ? String(raw.short_label) : undefined,
     fixed_impact_eur: Number(raw?.fixed_impact_eur || 0),
-    impact_schedule_eur: Array.isArray(raw?.impact_schedule_eur) ? raw.impact_schedule_eur.map((v: any) => Number(v)) : undefined,
+    impact_schedule_eur: Array.isArray(raw?.impact_schedule_eur) ? raw.impact_schedule_eur.map(Number) : undefined,
     budget_side: raw?.budget_side ? String(raw.budget_side) : undefined,
     dimension: raw?.dimension ? String(raw.dimension) : undefined,
     major_amendment: raw?.major_amendment ?? undefined,
@@ -134,9 +313,7 @@ function normalizeLever(raw: any): Lever {
 function serializeLever(lever: Lever): Record<string, any> {
   const { active, ...rest } = lever;
   const out: Record<string, any> = { ...rest };
-  if (active === false) {
-    out.active = false;
-  }
+  if (active === false) out.active = false;
   return out;
 }
 
@@ -146,32 +323,15 @@ function dumpYaml(data: Lever[]): string {
 
 function parseYaml(text: string): Lever[] {
   const parsed = yaml.load(text);
-  if (!Array.isArray(parsed)) {
-    throw new Error('Le YAML doit contenir une liste de leviers.');
-  }
+  if (!Array.isArray(parsed)) throw new Error('Le YAML doit contenir une liste de leviers.');
   return parsed.map(normalizeLever);
 }
 
-function listToLines(items: string[]): string {
-  return items.join('\n');
-}
-
-function linesToList(value: string): string[] {
-  return value
-    .split('\n')
-    .map((line) => line.trim())
-    .filter(Boolean);
-}
-
-function formatMappingValue(value: number | undefined): string {
-  if (value === undefined || value === null || !Number.isFinite(value)) {
-    return '-';
-  }
-  return MAPPING_FORMATTER.format(value);
-}
+// --- MAIN CLIENT COMPONENT ---
 
 export default function PolicyCatalogAdminClient() {
   const [yamlText, setYamlText] = useState('');
+  const [initialYamlText, setInitialYamlText] = useState('');
   const [rawDirty, setRawDirty] = useState(false);
   const [catalog, setCatalog] = useState<Lever[]>([]);
   const [parseError, setParseError] = useState<string | null>(null);
@@ -179,1313 +339,275 @@ export default function PolicyCatalogAdminClient() {
   const [loading, setLoading] = useState(false);
   const [validating, setValidating] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [showDiff, setShowDiff] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const [status, setStatus] = useState<string | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
+  
+  // Filtering & Sorting
   const [search, setSearch] = useState('');
   const [familyFilter, setFamilyFilter] = useState('ALL');
   const [cofogFilter, setCofogFilter] = useState('ALL');
   const [missionFilter, setMissionFilter] = useState('ALL');
+  const [issueFilter, setIssueFilter] = useState<'ALL' | 'MISSING_SOURCE' | 'MISSING_MAPPING' | 'ZERO_IMPACT'>('ALL');
   const [sortKey, setSortKey] = useState('order');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [view, setView] = useState<'table' | 'cofog' | 'mission' | 'yaml'>('table');
-  const [bulkFamily, setBulkFamily] = useState('');
-  const [bulkBudget, setBulkBudget] = useState('');
-
-  const [paramsText, setParamsText] = useState('');
-  const [impactText, setImpactText] = useState('');
-  const [impactScheduleText, setImpactScheduleText] = useState('');
-  const [jsonError, setJsonError] = useState<string | null>(null);
-  const [cofogMappingKey, setCofogMappingKey] = useState('');
-  const [cofogMappingValue, setCofogMappingValue] = useState('');
-  const [missionMappingKey, setMissionMappingKey] = useState('');
-  const [missionMappingValue, setMissionMappingValue] = useState('');
+  const [view, setView] = useState<'table' | 'mission' | 'yaml'>('table');
+  
   const [missionLabelMap, setMissionLabelMap] = useState<Record<string, string>>({});
 
   const fetchCatalog = async () => {
-    setLoading(true);
-    setLoadError(null);
-    setStatus(null);
+    setLoading(true); setLoadError(null); setStatus(null);
     try {
       const headers: Record<string, string> = {};
       if (token) headers['x-admin-token'] = token;
       const res = await fetch('/api/admin/policy-catalog', { headers, cache: 'no-store' });
-      if (!res.ok) {
-        const msg = await res.text();
-        throw new Error(msg || `HTTP ${res.status}`);
-      }
+      if (!res.ok) throw new Error(await res.text() || `HTTP ${res.status}`);
       const text = await res.text();
-      const parsed = parseYaml(text);
-      setCatalog(parsed);
+      setCatalog(parseYaml(text));
       setYamlText(text);
-      setParseError(null);
-      setRawDirty(false);
-    } catch (err: any) {
-      setLoadError(err instanceof Error ? err.message : 'Unable to load catalog');
-    } finally {
-      setLoading(false);
-    }
+      setInitialYamlText(text);
+      setParseError(null); setRawDirty(false);
+    } catch (err: any) { setLoadError(err.message); } finally { setLoading(false); }
   };
 
   const validateCatalog = async () => {
-    setValidating(true);
-    setErrors([]);
-    setStatus(null);
+    setValidating(true); setErrors([]); setStatus(null);
     try {
       const payloadYaml = view === 'yaml' ? yamlText : dumpYaml(catalog);
       const headers: Record<string, string> = { 'content-type': 'application/json' };
       if (token) headers['x-admin-token'] = token;
       const res = await fetch('/api/admin/policy-catalog', {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({ yaml: payloadYaml }),
-      });
-      const payload = (await res.json()) as ValidationResult;
-      if (!res.ok) {
-        throw new Error(payload?.errors?.join('\n') || `HTTP ${res.status}`);
-      }
-      const errs = payload.errors || [];
-      setErrors(errs);
-      setStatus(errs.length === 0 ? 'Validation OK.' : 'Validation failed.');
-    } catch (err: any) {
-      setErrors([err instanceof Error ? err.message : 'Validation failed']);
-      setStatus('Validation failed.');
-    } finally {
-      setValidating(false);
-    }
-  };
-
-  const saveCatalog = async () => {
-    setSaving(true);
-    setErrors([]);
-    setStatus(null);
-    try {
-      const payloadYaml = view === 'yaml' ? yamlText : dumpYaml(catalog);
-      const headers: Record<string, string> = { 'content-type': 'application/json' };
-      if (token) headers['x-admin-token'] = token;
-      const res = await fetch('/api/admin/policy-catalog', {
-        method: 'PUT',
-        headers,
-        body: JSON.stringify({ yaml: payloadYaml }),
+        method: 'POST', headers, body: JSON.stringify({ yaml: payloadYaml }),
       });
       const payload = await res.json();
-      if (!res.ok) {
-        const errs = payload?.errors || [`HTTP ${res.status}`];
-        throw new Error(errs.join('\n'));
-      }
+      if (!res.ok) throw new Error(payload?.errors?.join('\n') || `HTTP ${res.status}`);
+      setErrors(payload.errors || []);
+      setStatus(payload.errors?.length === 0 ? 'Validation OK.' : 'Validation failed.');
+    } catch (err: any) { setErrors([err.message]); setStatus('Validation failed.'); } finally { setValidating(false); }
+  };
+
+  const executeSave = async () => {
+    setSaving(true); setErrors([]); setStatus(null);
+    try {
+      const payloadYaml = view === 'yaml' ? yamlText : dumpYaml(catalog);
+      const headers: Record<string, string> = { 'content-type': 'application/json' };
+      if (token) headers['x-admin-token'] = token;
+      const res = await fetch('/api/admin/policy-catalog', {
+        method: 'PUT', headers, body: JSON.stringify({ yaml: payloadYaml }),
+      });
+      const payload = await res.json();
+      if (!res.ok) throw new Error(payload?.errors?.join('\n') || `HTTP ${res.status}`);
       setYamlText(payloadYaml);
+      setInitialYamlText(payloadYaml);
       setRawDirty(false);
-      try {
-        setCatalog(parseYaml(payloadYaml));
-      } catch (err) {
-        // Validation passed server-side; keep table state.
-      }
-      const backup = payload.backup_path ? ` Backup: ${payload.backup_path}` : '';
-      setStatus(`Enregistre dans ${payload.path}.${backup}`);
-    } catch (err: any) {
-      setErrors([err instanceof Error ? err.message : 'Save failed']);
-      setStatus('Enregistrement echoue.');
-    } finally {
-      setSaving(false);
-    }
+      setShowDiff(false);
+      try { setCatalog(parseYaml(payloadYaml)); } catch {}
+      setStatus(`Enregistré. Backup: ${payload.backup_path || 'N/A'}`);
+    } catch (err: any) { setErrors([err.message]); setStatus('Échec sauvegarde.'); } finally { setSaving(false); }
   };
 
-  const downloadCatalog = () => {
-    const payloadYaml = view === 'yaml' ? yamlText : dumpYaml(catalog);
-    const blob = new Blob([payloadYaml], { type: 'text/yaml' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'policy_levers.yaml';
-    link.click();
-    URL.revokeObjectURL(url);
-    setStatus('Downloaded policy_levers.yaml.');
+  const handleSaveClick = () => {
+    setShowDiff(true);
   };
 
-  const copyCatalog = async () => {
-    try {
-      await navigator.clipboard.writeText(yamlText);
-      setStatus('YAML copied to clipboard.');
-    } catch (err) {
-      setStatus('Copy failed.');
-    }
-  };
-
-  const applyYaml = () => {
-    try {
-      const parsed = parseYaml(yamlText);
-      setCatalog(parsed);
-      setParseError(null);
-      setRawDirty(false);
-      setStatus('YAML loaded into the table.');
-    } catch (err: any) {
-      setParseError(err instanceof Error ? err.message : 'Invalid YAML');
-    }
-  };
-
-  const setCatalogAndYaml = (next: Lever[]) => {
-    setCatalog(next);
-    if (view === 'yaml' && !rawDirty) {
-      setYamlText(dumpYaml(next));
-    }
+  const handleHeaderSort = (key: string) => {
+    if (sortKey === key) { setSortDir(sortDir === 'asc' ? 'desc' : 'asc'); } 
+    else { setSortKey(key); setSortDir('asc'); }
   };
 
   const updateLever = (id: string, updater: (lever: Lever) => Lever) => {
-    setCatalogAndYaml(
-      catalog.map((item) => (item.id === id ? updater(item) : item))
-    );
+    const next = catalog.map((item) => (item.id === id ? updater(item) : item));
+    setCatalog(next);
+    if (view === 'yaml' && !rawDirty) setYamlText(dumpYaml(next));
   };
 
-  const swapLever = (index: number, direction: number) => {
-    const target = index + direction;
-    if (target < 0 || target >= catalog.length) return;
-    const next = [...catalog];
-    const temp = next[index];
-    next[index] = next[target];
-    next[target] = temp;
-    setCatalogAndYaml(next);
-  };
-
-  const addLever = () => {
-    const base = 'new_lever';
-    let suffix = catalog.length + 1;
-    let candidate = `${base}_${suffix}`;
-    const ids = new Set(catalog.map((l) => l.id));
-    while (ids.has(candidate)) {
-      suffix += 1;
-      candidate = `${base}_${suffix}`;
-    }
-    const next: Lever = {
-      id: candidate,
-      family: 'OTHER',
-      label: 'Nouveau levier',
-      description: '',
-      fixed_impact_eur: 0,
-      active: true,
-      cofog_mapping: {},
-      mission_mapping: {},
-      feasibility: { law: false, adminLagMonths: 0 },
-      conflicts_with: [],
-      sources: [],
-      params_schema: {},
-    };
-    const updated = [...catalog, next];
-    setCatalogAndYaml(updated);
-    setActiveId(candidate);
-  };
-
-  const duplicateLever = (id: string) => {
-    const lever = catalog.find((item) => item.id === id);
-    if (!lever) return;
-    const copy = { ...lever, id: `${lever.id}_copy` } as Lever;
-    const ids = new Set(catalog.map((l) => l.id));
-    let candidate = copy.id;
-    let i = 2;
-    while (ids.has(candidate)) {
-      candidate = `${copy.id}_${i}`;
-      i += 1;
-    }
-    copy.id = candidate;
-    const updated = [...catalog, copy];
-    setCatalogAndYaml(updated);
-    setActiveId(candidate);
-  };
-
-  const deleteLever = (id: string) => {
-    const updated = catalog.filter((item) => item.id !== id);
-    setCatalogAndYaml(updated);
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      next.delete(id);
-      return next;
-    });
-  };
+  useEffect(() => { fetchCatalog(); }, []);
 
   useEffect(() => {
-    fetchCatalog();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    let active = true;
     const loadMissionLabels = async () => {
       try {
-        const data = await gqlRequest(`
-          query MissionLabels {
-            missionLabels { id displayLabel }
-          }
-        `);
-        if (!active) return;
+        const data = await gqlRequest(`query MissionLabels { missionLabels { id displayLabel } }`);
         const next: Record<string, string> = {};
-        (data?.missionLabels || []).forEach((entry: any) => {
-          if (!entry?.id) return;
-          next[String(entry.id)] = String(entry.displayLabel || entry.id);
-        });
+        (data?.missionLabels || []).forEach((e: any) => next[String(e.id)] = String(e.displayLabel || e.id));
         setMissionLabelMap(next);
-      } catch {
-        if (active) {
-          setMissionLabelMap({});
-        }
-      }
+      } catch { setMissionLabelMap({}); }
     };
     loadMissionLabels();
-    return () => {
-      active = false;
-    };
   }, []);
-
-  useEffect(() => {
-    if (catalog.length === 0) {
-      setActiveId(null);
-      return;
-    }
-    if (!activeId || !catalog.some((item) => item.id === activeId)) {
-      setActiveId(catalog[0].id);
-    }
-  }, [catalog, activeId]);
-
-  useEffect(() => {
-    if (!activeId) return;
-    const active = catalog.find((item) => item.id === activeId);
-    if (!active) return;
-    setParamsText(JSON.stringify(active.params_schema || {}, null, 2));
-    setImpactText(JSON.stringify(active.impact || {}, null, 2));
-    setImpactScheduleText(active.impact_schedule_eur ? active.impact_schedule_eur.join(', ') : '');
-    setJsonError(null);
-    setCofogMappingKey('');
-    setCofogMappingValue('');
-    setMissionMappingKey('');
-    setMissionMappingValue('');
-  }, [activeId, catalog]);
 
   const filteredRows = useMemo(() => {
     const rows = catalog.map((lever, index) => ({ lever, index }));
     const q = search.trim().toLowerCase();
     const filtered = rows.filter(({ lever }) => {
       if (familyFilter !== 'ALL' && lever.family !== familyFilter) return false;
+      if (issueFilter === 'MISSING_SOURCE') { if (lever.sources?.some(s => s.includes('http'))) return false; }
+      if (issueFilter === 'MISSING_MAPPING') { if (Object.keys(lever.mission_mapping || {}).length > 0) return false; }
+      if (issueFilter === 'ZERO_IMPACT') { if (lever.fixed_impact_eur !== 0) return false; }
+      
       if (cofogFilter !== 'ALL') {
-        const hasMapping = Object.keys(lever.cofog_mapping || {}).length > 0;
-        if (cofogFilter === 'NONE') {
-          return !hasMapping;
-        }
-        if (!lever.cofog_mapping || lever.cofog_mapping[cofogFilter] === undefined) {
-          return false;
-        }
+        if (cofogFilter === 'NONE') { if (Object.keys(lever.cofog_mapping || {}).length > 0) return false; }
+        else if (lever.cofog_mapping?.[cofogFilter] === undefined) return false;
       }
       if (missionFilter !== 'ALL') {
-        const hasMapping = Object.keys(lever.mission_mapping || {}).length > 0;
-        if (missionFilter === 'NONE') {
-          return !hasMapping;
-        }
-        if (!lever.mission_mapping || lever.mission_mapping[missionFilter] === undefined) {
-          return false;
-        }
+        if (missionFilter === 'NONE') { if (Object.keys(lever.mission_mapping || {}).length > 0) return false; }
+        else if (lever.mission_mapping?.[missionFilter] === undefined) return false;
       }
       if (!q) return true;
-      const hay = `${lever.id} ${lever.label} ${lever.description}`.toLowerCase();
-      return hay.includes(q);
+      return `${lever.id} ${lever.label} ${lever.description}`.toLowerCase().includes(q);
     });
 
-    if (sortKey === 'order') {
-      return filtered;
-    }
-
+    if (sortKey === 'order') return filtered;
     const dir = sortDir === 'asc' ? 1 : -1;
-    const sorted = [...filtered].sort((a, b) => {
-      let av: any = '';
-      let bv: any = '';
-      if (sortKey === 'id') {
-        av = a.lever.id;
-        bv = b.lever.id;
-      } else if (sortKey === 'label') {
-        av = a.lever.label;
-        bv = b.lever.label;
-      } else if (sortKey === 'family') {
-        av = a.lever.family;
-        bv = b.lever.family;
-      } else if (sortKey === 'impact') {
-        av = a.lever.fixed_impact_eur || 0;
-        bv = b.lever.fixed_impact_eur || 0;
-      }
-      if (typeof av === 'number' && typeof bv === 'number') {
-        return (av - bv) * dir;
-      }
+    return [...filtered].sort((a, b) => {
+      let av: any = a.lever[sortKey as keyof Lever] ?? '';
+      let bv: any = b.lever[sortKey as keyof Lever] ?? '';
+      if (sortKey === 'impact') { av = a.lever.fixed_impact_eur; bv = b.lever.fixed_impact_eur; }
+      if (typeof av === 'number' && typeof bv === 'number') return (av - bv) * dir;
       return String(av).localeCompare(String(bv)) * dir;
     });
-    return sorted;
-  }, [catalog, search, familyFilter, cofogFilter, missionFilter, sortKey, sortDir]);
+  }, [catalog, search, familyFilter, cofogFilter, missionFilter, sortKey, sortDir, issueFilter]);
 
-  const missionLabelEntries = useMemo(() => {
-    return Object.entries(missionLabelMap)
-      .map(([id, label]) => [id, label] as [string, string])
-      .sort((a, b) => a[1].localeCompare(b[1], 'fr'));
-  }, [missionLabelMap]);
-
-  const missionColumns = useMemo(() => {
-    if (missionLabelEntries.length > 0) {
-      return missionLabelEntries;
-    }
-    const ids = new Set<string>();
-    catalog.forEach((lever) => {
-      Object.keys(lever.mission_mapping || {}).forEach((id) => ids.add(id));
-    });
-    return Array.from(ids).sort().map((id) => [id, id] as [string, string]);
-  }, [missionLabelEntries, catalog]);
-
-  const cofogTotals = useMemo(() => {
-    const totals: Record<string, number> = {};
-    for (const code of Object.keys(COFOG_LABELS)) {
-      totals[code] = 0;
-    }
-    for (const { lever } of filteredRows) {
-      for (const [code, value] of Object.entries(lever.cofog_mapping || {})) {
-        if (totals[code] === undefined) continue;
-        const num = Number(value);
-        if (Number.isFinite(num)) {
-          totals[code] += num;
-        }
-      }
-    }
-    return totals;
-  }, [filteredRows]);
-
-  const missionTotals = useMemo(() => {
-    const totals: Record<string, number> = {};
-    missionColumns.forEach(([id]) => {
-      totals[id] = 0;
-    });
-    for (const { lever } of filteredRows) {
-      for (const [code, value] of Object.entries(lever.mission_mapping || {})) {
-        if (totals[code] === undefined) continue;
-        const num = Number(value);
-        if (Number.isFinite(num)) {
-          totals[code] += num;
-        }
-      }
-    }
-    return totals;
-  }, [filteredRows, missionColumns]);
-
-  const applySortOrder = () => {
-    if (sortKey === 'order') return;
-    const dir = sortDir === 'asc' ? 1 : -1;
-    const sortedAll = [...catalog].sort((a, b) => {
-      let av: any = '';
-      let bv: any = '';
-      if (sortKey === 'id') {
-        av = a.id;
-        bv = b.id;
-      } else if (sortKey === 'label') {
-        av = a.label;
-        bv = b.label;
-      } else if (sortKey === 'family') {
-        av = a.family;
-        bv = b.family;
-      } else if (sortKey === 'impact') {
-        av = a.fixed_impact_eur || 0;
-        bv = b.fixed_impact_eur || 0;
-      }
-      if (typeof av === 'number' && typeof bv === 'number') {
-        return (av - bv) * dir;
-      }
-      return String(av).localeCompare(String(bv)) * dir;
-    });
-    setCatalogAndYaml(sortedAll);
-    setStatus('Ordre applique.');
-  };
-
-  const toggleSelect = (id: string) => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-      return next;
-    });
-  };
-
-  const bulkApply = () => {
-    if (!bulkFamily && !bulkBudget) return;
-    const next = catalog.map((lever) => {
-      if (!selectedIds.has(lever.id)) return lever;
-      return {
-        ...lever,
-        family: bulkFamily || lever.family,
-        budget_side: bulkBudget || lever.budget_side,
-      };
-    });
-    setCatalogAndYaml(next);
-    setStatus('Mise a jour appliquee.');
-  };
-
-  const activeLever = activeId ? catalog.find((item) => item.id === activeId) : null;
-
-  const cofogEntries = Object.entries(activeLever?.cofog_mapping || {});
-  const missionEntries = Object.entries(activeLever?.mission_mapping || {});
-  const conflictsText = listToLines(activeLever?.conflicts_with || []);
-  const sourcesText = listToLines(activeLever?.sources || []);
-
-  const updateCofogMapping = (entries: Array<[string, number]>) => {
-    const updated: Record<string, number> = {};
-    entries.forEach(([key, value]) => {
-      const trimmed = key.trim();
-      if (!trimmed) return;
-      updated[trimmed] = Number(value);
-    });
-    if (activeId) {
-      updateLever(activeId, (lever) => ({ ...lever, cofog_mapping: updated }));
-    }
-  };
-
-  const updateMissionMapping = (entries: Array<[string, number]>) => {
-    const updated: Record<string, number> = {};
-    entries.forEach(([key, value]) => {
-      const trimmed = key.trim();
-      if (!trimmed) return;
-      updated[trimmed] = Number(value);
-    });
-    if (activeId) {
-      updateLever(activeId, (lever) => ({ ...lever, mission_mapping: updated }));
-    }
-  };
-
-  const addCofogMappingEntry = () => {
-    if (!cofogMappingKey.trim()) return;
-    const value = Number(cofogMappingValue || 0);
-    const nextEntries = [...cofogEntries, [cofogMappingKey.trim(), value] as [string, number]];
-    updateCofogMapping(nextEntries);
-    setCofogMappingKey('');
-    setCofogMappingValue('');
-  };
-
-  const addMissionMappingEntry = () => {
-    if (!missionMappingKey.trim()) return;
-    const value = Number(missionMappingValue || 0);
-    const nextEntries = [...missionEntries, [missionMappingKey.trim(), value] as [string, number]];
-    updateMissionMapping(nextEntries);
-    setMissionMappingKey('');
-    setMissionMappingValue('');
-  };
-
-  const applyJsonField = (field: 'params_schema' | 'impact', text: string) => {
-    try {
-      const parsed = text.trim() ? JSON.parse(text) : {};
-      if (activeId) {
-        updateLever(activeId, (lever) => ({ ...lever, [field]: parsed }));
-      }
-      setJsonError(null);
-    } catch (err: any) {
-      setJsonError(err instanceof Error ? err.message : 'Invalid JSON');
-    }
-  };
-
-  const applyImpactSchedule = () => {
-    const values = impactScheduleText
-      .split(',')
-      .map((v) => v.trim())
-      .filter(Boolean)
-      .map((v) => Number(v))
-      .filter((v) => Number.isFinite(v));
-    if (activeId) {
-      updateLever(activeId, (lever) => ({
-        ...lever,
-        impact_schedule_eur: values.length ? values : undefined,
-      }));
-    }
-  };
+  const activeLever = activeId ? catalog.find(l => l.id === activeId) : null;
 
   return (
-    <div className="h-full overflow-y-auto bg-slate-950 text-slate-100 px-6 py-10">
-      <div className="max-w-7xl mx-auto space-y-6">
-        <header className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Admin - Policy Catalog</p>
-            <h1 className="text-3xl font-semibold">Policy Lever Catalog Editor</h1>
-            <p className="text-slate-400">
-              Vue tableur pour modifier les leviers, leurs mappings et leurs familles. Enregistre directement le YAML puis commit.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={fetchCatalog}
-              className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-sm"
-              disabled={loading}
-            >
-              {loading ? 'Chargement...' : 'Recharger fichier'}
-            </button>
-            <button
-              onClick={validateCatalog}
-              className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-sm"
-              disabled={validating}
-            >
-              {validating ? 'Validation...' : 'Valider contenu'}
-            </button>
-            <button
-              onClick={saveCatalog}
-              className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-sm"
-              disabled={saving}
-            >
-              {saving ? 'Enregistrement...' : 'Enregistrer'}
-            </button>
-            <button
-              onClick={copyCatalog}
-              className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-sm"
-            >
-              Copier YAML
-            </button>
-            <button
-              onClick={downloadCatalog}
-              className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-sm"
-            >
-              Telecharger YAML
-            </button>
-          </div>
-        </header>
+    <div className="h-full overflow-hidden flex flex-col bg-slate-950 text-slate-100">
+      {showDiff && (
+        <DiffModal 
+          oldText={initialYamlText} 
+          newText={view === 'yaml' ? yamlText : dumpYaml(catalog)} 
+          onConfirm={executeSave} 
+          onCancel={() => setShowDiff(false)} 
+        />
+      )}
 
-        <div className="grid gap-4 md:grid-cols-[1fr_auto]">
-          <div className="space-y-2">
-            <label className="text-sm text-slate-400">Admin token (optionnel)</label>
-            <input
-              type="password"
-              value={token}
-              onChange={(e) => setToken(e.target.value)}
-              className={inputClass}
-              placeholder="x-admin-token"
-            />
-          </div>
-          <div className="flex items-end gap-2">
-            <button
-              onClick={() => setView('table')}
-              className={`px-4 py-2 rounded-lg text-sm ${view === 'table' ? 'bg-slate-800' : 'bg-slate-900 border border-slate-800'}`}
-            >
-              Table
-            </button>
-            <button
-              onClick={() => setView('cofog')}
-              className={`px-4 py-2 rounded-lg text-sm ${view === 'cofog' ? 'bg-slate-800' : 'bg-slate-900 border border-slate-800'}`}
-            >
-              Vue COFOG
-            </button>
-            <button
-              onClick={() => setView('mission')}
-              className={`px-4 py-2 rounded-lg text-sm ${view === 'mission' ? 'bg-slate-800' : 'bg-slate-900 border border-slate-800'}`}
-            >
-              Vue missions
-            </button>
-            <button
-              onClick={() => {
-                setView('yaml');
-                setYamlText(dumpYaml(catalog));
-                setRawDirty(false);
-              }}
-              className={`px-4 py-2 rounded-lg text-sm ${view === 'yaml' ? 'bg-slate-800' : 'bg-slate-900 border border-slate-800'}`}
-            >
-              YAML
-            </button>
-          </div>
+      <header className="px-6 py-4 border-b border-slate-800 bg-slate-900/50 flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-bold">Policy Catalog Back-Office</h1>
+          <p className="text-xs text-slate-500">Gérez les leviers, trajectoires et sources.</p>
         </div>
+        <div className="flex gap-2">
+          <button onClick={fetchCatalog} className="px-3 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-xs" disabled={loading}>Recharger</button>
+          <button onClick={validateCatalog} className="px-3 py-1.5 rounded bg-indigo-600 hover:bg-indigo-500 text-xs" disabled={validating}>Valider</button>
+          <button onClick={handleSaveClick} className="px-3 py-1.5 rounded bg-emerald-600 hover:bg-emerald-500 text-xs" disabled={saving}>Enregistrer</button>
+        </div>
+      </header>
 
-        {loadError && (
-          <div className="rounded-lg border border-rose-500/40 bg-rose-500/10 px-4 py-3 text-rose-200">
-            {loadError}
-          </div>
-        )}
-        {parseError && (
-          <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-amber-200">
-            {parseError}
-          </div>
-        )}
-
-        {status && <div className="text-sm text-slate-400">{status}</div>}
-
-        {errors.length > 0 && (
-          <div className="rounded-xl border border-rose-500/40 bg-rose-500/10 px-4 py-3">
-            <p className="text-sm font-semibold text-rose-200 mb-2">Validation errors</p>
-            <ul className="text-sm text-rose-100 space-y-1">
-              {errors.map((err, idx) => (
-                <li key={idx}>• {err}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {view === 'yaml' ? (
-          <div className="space-y-3">
-            <textarea
-              value={yamlText}
-              onChange={(e) => {
-                setYamlText(e.target.value);
-                setRawDirty(true);
-              }}
-              className={`${textareaClass} min-h-[520px]`}
-              spellCheck={false}
-            />
+      <div className="flex-1 overflow-hidden flex">
+        {/* LIST PANEL */}
+        <section className="w-2/3 border-r border-slate-800 flex flex-col">
+          <div className="p-4 border-b border-slate-800 space-y-3">
             <div className="flex gap-2">
-              <button
-                onClick={applyYaml}
-                className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-sm"
-              >
-                Charger dans la table
-              </button>
-              <button
-                onClick={() => {
-                  setYamlText(dumpYaml(catalog));
-                  setRawDirty(false);
-                }}
-                className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-sm"
-              >
-                Reset YAML
-              </button>
+              <input value={search} onChange={e => setSearch(e.target.value)} className={inputClass} placeholder="Recherche..." />
+              <select value={issueFilter} onChange={e => setIssueFilter(e.target.value as any)} className="bg-slate-900 border border-slate-800 rounded-lg px-2 text-sm">
+                <option value="ALL">Tous les statuts</option>
+                <option value="MISSING_SOURCE">Source manquante</option>
+                <option value="MISSING_MAPPING">Mapping manquant</option>
+                <option value="ZERO_IMPACT">Impact nul</option>
+              </select>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <select value={familyFilter} onChange={e => setFamilyFilter(e.target.value)} className="bg-slate-900 border border-slate-800 rounded px-2 py-1 text-xs">
+                <option value="ALL">Toutes les familles</option>
+                {FAMILIES.map(f => <option key={f} value={f}>{f}</option>)}
+              </select>
+              <div className="flex-1" />
+              <div className="flex gap-1">
+                <button onClick={() => setView('table')} className={`px-3 py-1 rounded text-xs ${view === 'table' ? 'bg-indigo-600' : 'bg-slate-800'}`}>Liste</button>
+                <button onClick={() => setView('mission')} className={`px-3 py-1 rounded text-xs ${view === 'mission' ? 'bg-indigo-600' : 'bg-slate-800'}`}>Missions</button>
+                <button onClick={() => setView('yaml')} className={`px-3 py-1 rounded text-xs ${view === 'yaml' ? 'bg-indigo-600' : 'bg-slate-800'}`}>YAML</button>
+              </div>
             </div>
           </div>
-        ) : view === 'cofog' ? (
-          <div className="rounded-xl border border-slate-800 bg-slate-900/40 overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="min-w-[1200px] text-sm">
-                <thead className="bg-slate-900/80 text-slate-400 sticky top-0">
+
+          <div className="flex-1 overflow-auto">
+            {view === 'yaml' ? (
+              <textarea value={yamlText} onChange={e => { setYamlText(e.target.value); setRawDirty(true); }} className="w-full h-full p-4 bg-slate-950 font-mono text-sm" />
+            ) : (
+              <table className="w-full text-sm">
+                <thead className="bg-slate-900 sticky top-0 z-10 shadow-sm backdrop-blur-sm">
                   <tr>
-                    <th className="px-3 py-2 text-left">Levier</th>
-                    <th className="px-3 py-2 text-left">Famille</th>
-                    {Object.entries(COFOG_LABELS).map(([code, label]) => (
-                      <th key={code} className="px-3 py-2 text-left">
-                        <div className="text-xs font-semibold">{code}</div>
-                        <div className="text-[11px] text-slate-500">{label}</div>
-                      </th>
-                    ))}
+                    <SortHeader label="ID" id="id" currentKey={sortKey} currentDir={sortDir} onSort={handleHeaderSort} />
+                    <SortHeader label="Famille" id="family" currentKey={sortKey} currentDir={sortDir} onSort={handleHeaderSort} />
+                    <SortHeader label="Label" id="label" currentKey={sortKey} currentDir={sortDir} onSort={handleHeaderSort} />
+                    <SortHeader label="Impact" id="impact" currentKey={sortKey} currentDir={sortDir} onSort={handleHeaderSort} />
+                    <th className="px-3 py-2 text-center">Q</th>
+                    <th className="px-3 py-2 text-center">Src</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredRows.map(({ lever }) => (
-                    <tr
-                      key={lever.id}
-                      className={`border-t border-slate-800/70 ${lever.active === false ? 'opacity-60' : ''}`}
-                    >
-                      <td className="px-3 py-2 whitespace-nowrap">
-                        <div className="font-mono text-xs text-slate-300">{lever.id}</div>
-                        <div className="text-slate-200">{lever.label}</div>
+                    <tr key={lever.id} onClick={() => setActiveId(lever.id)} className={`border-t border-slate-800/50 cursor-pointer ${activeId === lever.id ? 'bg-indigo-500/10' : 'hover:bg-slate-900'}`}>
+                      <td className="px-3 py-2 font-mono text-xs text-slate-400">{lever.id}</td>
+                      <td className="px-3 py-2 text-xs">{lever.family}</td>
+                      <td className="px-3 py-2 font-medium">{lever.label}</td>
+                      <td className={`px-3 py-2 text-right font-mono ${lever.fixed_impact_eur >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                        {(lever.fixed_impact_eur / 1e9).toFixed(1)} Md€
                       </td>
-                      <td className="px-3 py-2">{lever.family}</td>
-                      {Object.keys(COFOG_LABELS).map((code) => {
-                        const value = lever.cofog_mapping?.[code];
-                        return (
-                          <td key={`${lever.id}-${code}`} className="px-3 py-2 text-right text-slate-200">
-                            {formatMappingValue(value)}
-                          </td>
-                        );
-                      })}
+                      <td className="px-3 py-2 text-center">
+                        <div className="flex gap-1 justify-center">
+                          {Object.keys(lever.mission_mapping).length === 0 && <QualityBadge type="error" tooltip="Mapping manquant" />}
+                          {lever.fixed_impact_eur === 0 && <QualityBadge type="warning" tooltip="Impact nul" />}
+                        </div>
+                      </td>
+                      <td className="px-3 py-2 text-center">
+                        {lever.sources?.some(s => s.includes('http')) ? <LinkIcon size={14} className="text-blue-400 mx-auto" /> : <span className="text-slate-600">-</span>}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
-                <tfoot className="bg-slate-900/80 text-slate-300">
-                  <tr className="border-t border-slate-800/70">
-                    <td className="px-3 py-2 font-semibold">Total</td>
-                    <td className="px-3 py-2 text-xs text-slate-500">Somme des poids</td>
-                    {Object.keys(COFOG_LABELS).map((code) => (
-                      <td key={`total-${code}`} className="px-3 py-2 text-right font-semibold">
-                        {formatMappingValue(cofogTotals[code])}
-                      </td>
-                    ))}
-                  </tr>
-                </tfoot>
               </table>
-            </div>
+            )}
           </div>
-        ) : view === 'mission' ? (
-          <div className="rounded-xl border border-slate-800 bg-slate-900/40 overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="min-w-[1200px] text-sm">
-                <thead className="bg-slate-900/80 text-slate-400 sticky top-0">
-                  <tr>
-                    <th className="px-3 py-2 text-left">Levier</th>
-                    <th className="px-3 py-2 text-left">Famille</th>
-                    {missionColumns.map(([code, label]) => (
-                      <th key={code} className="px-3 py-2 text-left">
-                        <div className="text-xs font-semibold">{code}</div>
-                        <div className="text-[11px] text-slate-500">{label}</div>
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredRows.map(({ lever }) => (
-                    <tr
-                      key={lever.id}
-                      className={`border-t border-slate-800/70 ${lever.active === false ? 'opacity-60' : ''}`}
-                    >
-                      <td className="px-3 py-2 whitespace-nowrap">
-                        <div className="font-mono text-xs text-slate-300">{lever.id}</div>
-                        <div className="text-slate-200">{lever.label}</div>
-                      </td>
-                      <td className="px-3 py-2">{lever.family}</td>
-                      {missionColumns.map(([code]) => {
-                        const value = lever.mission_mapping?.[code];
-                        return (
-                          <td key={`${lever.id}-${code}`} className="px-3 py-2 text-right text-slate-200">
-                            {formatMappingValue(value)}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  ))}
-                </tbody>
-                <tfoot className="bg-slate-900/80 text-slate-300">
-                  <tr className="border-t border-slate-800/70">
-                    <td className="px-3 py-2 font-semibold">Total</td>
-                    <td className="px-3 py-2 text-xs text-slate-500">Somme des poids</td>
-                    {missionColumns.map(([code]) => (
-                      <td key={`total-${code}`} className="px-3 py-2 text-right font-semibold">
-                        {formatMappingValue(missionTotals[code])}
-                      </td>
-                    ))}
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
-          </div>
-        ) : (
-          <div className="grid gap-6 lg:grid-cols-[1.7fr_1fr] lg:items-start">
-            <section className="space-y-4 order-2 lg:order-1 min-w-0">
-              <div className="flex flex-wrap gap-3 items-center">
-                <button
-                  onClick={addLever}
-                  className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-sm"
-                >
-                  + Nouveau levier
-                </button>
-                <button
-                  onClick={applySortOrder}
-                  className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-sm"
-                >
-                  Appliquer le tri
-                </button>
-                <input
-                  type="text"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className={inputClass}
-                  placeholder="Recherche (id, label, description)"
-                />
-                <select
-                  value={familyFilter}
-                  onChange={(e) => setFamilyFilter(e.target.value)}
-                  className={inputClass}
-                >
-                  <option value="ALL">Toutes les familles</option>
-                  {FAMILIES.map((fam) => (
-                    <option key={fam} value={fam}>{fam}</option>
-                  ))}
-                </select>
-                <select
-                  value={cofogFilter}
-                  onChange={(e) => setCofogFilter(e.target.value)}
-                  className={inputClass}
-                >
-                  <option value="ALL">Mappings COFOG</option>
-                  <option value="NONE">Sans COFOG</option>
-                  {Object.entries(COFOG_LABELS).map(([code, label]) => (
-                    <option key={code} value={code}>{label}</option>
-                  ))}
-                </select>
-                <select
-                  value={missionFilter}
-                  onChange={(e) => setMissionFilter(e.target.value)}
-                  className={inputClass}
-                >
-                  <option value="ALL">Mappings missions</option>
-                  <option value="NONE">Sans mission</option>
-                  {missionColumns.map(([code, label]) => (
-                    <option key={code} value={code}>{label}</option>
-                  ))}
-                </select>
-                <select
-                  value={sortKey}
-                  onChange={(e) => setSortKey(e.target.value)}
-                  className={inputClass}
-                >
-                  {SORT_OPTIONS.map((opt) => (
-                    <option key={opt.id} value={opt.id}>{opt.label}</option>
-                  ))}
-                </select>
-                <select
-                  value={sortDir}
-                  onChange={(e) => setSortDir(e.target.value as 'asc' | 'desc')}
-                  className={inputClass}
-                >
-                  <option value="asc">Asc</option>
-                  <option value="desc">Desc</option>
-                </select>
+        </section>
+
+        {/* EDITOR PANEL */}
+        <section className="w-1/3 bg-slate-900/30 p-6 overflow-y-auto space-y-6">
+          {activeLever ? (
+            <>
+              <div className="space-y-1">
+                <label className="text-[10px] uppercase font-bold text-slate-500 tracking-widest">Identification</label>
+                <input value={activeLever.id} readOnly className={`${inputClass} opacity-50 cursor-not-allowed`} />
+                <input value={activeLever.label} onChange={e => updateLever(activeLever.id, l => ({ ...l, label: e.target.value }))} className={inputClass} placeholder="Libellé" />
               </div>
 
-              {selectedIds.size > 0 && (
-                <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-3 space-y-2">
-                  <div className="text-sm text-slate-300">Selection: {selectedIds.size} elements</div>
-                  <div className="flex flex-wrap gap-2">
-                    <select
-                      value={bulkFamily}
-                      onChange={(e) => setBulkFamily(e.target.value)}
-                      className={inputClass}
-                    >
-                      <option value="">Famille (bulk)</option>
-                      {FAMILIES.map((fam) => (
-                        <option key={fam} value={fam}>{fam}</option>
-                      ))}
-                    </select>
-                    <select
-                      value={bulkBudget}
-                      onChange={(e) => setBulkBudget(e.target.value)}
-                      className={inputClass}
-                    >
-                      <option value="">Budget side (bulk)</option>
-                      {BUDGET_SIDES.map((side) => (
-                        <option key={side} value={side}>{side}</option>
-                      ))}
-                    </select>
-                    <button
-                      onClick={bulkApply}
-                      className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-sm"
-                    >
-                      Appliquer
-                    </button>
-                    <button
-                      onClick={() => setSelectedIds(new Set())}
-                      className="px-4 py-2 rounded-lg bg-slate-900 border border-slate-800 text-sm"
-                    >
-                      Vider la selection
-                    </button>
-                  </div>
-                </div>
-              )}
+              <div className="space-y-4">
+                <label className="text-[10px] uppercase font-bold text-slate-500 tracking-widest">Description</label>
+                <textarea value={activeLever.description} onChange={e => updateLever(activeLever.id, l => ({ ...l, description: e.target.value }))} className={`${textareaClass} h-32`} />
+              </div>
 
-              <div className="rounded-xl border border-slate-800 bg-slate-900/40 overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="min-w-full text-sm">
-                    <thead className="bg-slate-900/80 text-slate-400 sticky top-0 z-10">
-                      <tr>
-                        <th className="px-3 py-2 text-left">Sel</th>
-                        <th className="px-3 py-2 text-left">Ordre</th>
-                        <th className="px-3 py-2 text-left">ID</th>
-                        <th className="px-3 py-2 text-left">Famille</th>
-                        <th className="px-3 py-2 text-left">Label</th>
-                        <th className="px-3 py-2 text-left">Impact</th>
-                        <th className="px-3 py-2 text-left">Mappings</th>
-                        <th className="px-3 py-2 text-left">Conflicts</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredRows.map(({ lever, index }) => {
-                        const isActive = lever.id === activeId;
-                        const isSelected = selectedIds.has(lever.id);
-                        const isInactive = lever.active === false;
-                        const cofogSummary = Object.entries(lever.cofog_mapping || {})
-                          .map(([k, v]) => `${COFOG_LABELS[k] || k} (${k}):${v}`)
-                          .join(' ');
-                        const missionSummary = Object.entries(lever.mission_mapping || {})
-                          .map(([k, v]) => `${missionLabelMap[k] || k}:${v}`)
-                          .join(' ');
-                        const mappingSummary = [cofogSummary ? `COFOG: ${cofogSummary}` : '', missionSummary ? `Mission: ${missionSummary}` : '']
-                          .filter(Boolean)
-                          .join(' | ');
-                        return (
-                          <tr
-                            key={lever.id}
-                            className={`border-t border-slate-800/70 ${isActive ? 'bg-indigo-500/10' : 'hover:bg-slate-800/40'} ${isInactive ? 'opacity-60' : ''}`}
-                            onClick={() => setActiveId(lever.id)}
-                          >
-                            <td className="px-3 py-2">
-                              <input
-                                type="checkbox"
-                                checked={isSelected}
-                                onChange={(e) => {
-                                  e.stopPropagation();
-                                  toggleSelect(lever.id);
-                                }}
-                              />
-                            </td>
-                            <td className="px-3 py-2 whitespace-nowrap">
-                              <div className="flex gap-1">
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    swapLever(index, -1);
-                                  }}
-                                  className="px-2 py-1 rounded bg-slate-800 text-xs"
-                                >
-                                  Up
-                                </button>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    swapLever(index, 1);
-                                  }}
-                                  className="px-2 py-1 rounded bg-slate-800 text-xs"
-                                >
-                                  Down
-                                </button>
-                              </div>
-                            </td>
-                            <td className="px-3 py-2 whitespace-nowrap font-mono text-xs text-slate-300">{lever.id}</td>
-                            <td className="px-3 py-2">{lever.family}</td>
-                            <td className="px-3 py-2 max-w-[240px]">
-                              <div className="truncate" title={lever.label}>{lever.label}</div>
-                            </td>
-                            <td className="px-3 py-2 whitespace-nowrap">{lever.fixed_impact_eur.toLocaleString()}</td>
-                            <td className="px-3 py-2 max-w-[220px]">
-                              <div className="truncate" title={mappingSummary}>{mappingSummary || '-'}</div>
-                            </td>
-                            <td className="px-3 py-2 text-center">{lever.conflicts_with?.length || 0}</td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-xs text-slate-400">Impact Annuel (Md€)</label>
+                  <input type="number" step="0.1" value={activeLever.fixed_impact_eur / 1e9} onChange={e => updateLever(activeLever.id, l => ({ ...l, fixed_impact_eur: Number(e.target.value) * 1e9 }))} className={inputClass} />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs text-slate-400">Budget Side</label>
+                  <select value={activeLever.budget_side || ''} onChange={e => updateLever(activeLever.id, l => ({ ...l, budget_side: e.target.value || undefined }))} className={inputClass}>
+                    <option value="">Auto</option>
+                    {BUDGET_SIDES.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
                 </div>
               </div>
-            </section>
 
-            <section className="rounded-xl border border-slate-800 bg-slate-900/50 p-4 space-y-4 order-1 lg:order-2 lg:sticky lg:top-6 lg:max-h-[80vh] lg:overflow-auto self-start">
-              {!activeLever ? (
-                <p className="text-slate-400">Selectionne un levier pour l'editer.</p>
-              ) : (
-                <>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Detail</p>
-                      <h2 className="text-xl font-semibold">{activeLever.label || activeLever.id}</h2>
-                    </div>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => duplicateLever(activeLever.id)}
-                        className="px-3 py-2 rounded bg-slate-800 text-xs"
-                      >
-                        Dupliquer
-                      </button>
-                      <button
-                        onClick={() => deleteLever(activeLever.id)}
-                        className="px-3 py-2 rounded bg-rose-600 text-xs"
-                      >
-                        Supprimer
-                      </button>
-                    </div>
-                  </div>
+              <TrajectoryEditor fixed={activeLever.fixed_impact_eur} schedule={activeLever.impact_schedule_eur} onChange={next => updateLever(activeLever.id, l => ({ ...l, impact_schedule_eur: next }))} />
+              
+              <SourceManager sources={activeLever.sources || []} onChange={next => updateLever(activeLever.id, l => ({ ...l, sources: next }))} />
 
-                  <div className="grid gap-3">
-                    <label className="text-xs text-slate-400">ID</label>
-                    <input
-                      value={activeLever.id}
-                      onChange={(e) => updateLever(activeLever.id, (lever) => ({ ...lever, id: e.target.value }))}
-                      className={inputClass}
-                    />
-
-                    <label className="text-xs text-slate-400">Actif</label>
-                    <label className="flex items-center gap-2 text-sm text-slate-200">
-                      <input
-                        type="checkbox"
-                        checked={activeLever.active !== false}
-                        onChange={(e) =>
-                          updateLever(activeLever.id, (lever) => ({ ...lever, active: e.target.checked }))
-                        }
-                      />
-                      Visible dans la simulation
-                    </label>
-
-                    <label className="text-xs text-slate-400">Famille</label>
-                    <select
-                      value={activeLever.family}
-                      onChange={(e) => updateLever(activeLever.id, (lever) => ({ ...lever, family: e.target.value }))}
-                      className={inputClass}
-                    >
-                      {FAMILIES.map((fam) => (
-                        <option key={fam} value={fam}>{fam}</option>
-                      ))}
-                    </select>
-
-                    <label className="text-xs text-slate-400">Label</label>
-                    <input
-                      value={activeLever.label}
-                      onChange={(e) => updateLever(activeLever.id, (lever) => ({ ...lever, label: e.target.value }))}
-                      className={inputClass}
-                    />
-
-                    <label className="text-xs text-slate-400">Description</label>
-                    <textarea
-                      value={activeLever.description}
-                      onChange={(e) => updateLever(activeLever.id, (lever) => ({ ...lever, description: e.target.value }))}
-                      className={`${textareaClass} min-h-[120px]`}
-                    />
-
-                    <label className="text-xs text-slate-400">Impact fixe (EUR)</label>
-                    <input
-                      type="number"
-                      value={activeLever.fixed_impact_eur}
-                      onChange={(e) => updateLever(activeLever.id, (lever) => ({ ...lever, fixed_impact_eur: Number(e.target.value) }))}
-                      className={inputClass}
-                    />
-
-                    <label className="text-xs text-slate-400">Impact schedule (CSV)</label>
-                    <div className="flex gap-2">
-                      <input
-                        value={impactScheduleText}
-                        onChange={(e) => setImpactScheduleText(e.target.value)}
-                        className={inputClass}
-                        placeholder="-500000000, -2000000000, ..."
-                      />
-                      <button
-                        onClick={applyImpactSchedule}
-                        className="px-3 py-2 rounded bg-slate-800 text-xs"
-                      >
-                        Appliquer
-                      </button>
-                    </div>
-
-                    <label className="text-xs text-slate-400">Budget side</label>
-                    <select
-                      value={activeLever.budget_side || ''}
-                      onChange={(e) => updateLever(activeLever.id, (lever) => ({ ...lever, budget_side: e.target.value || undefined }))}
-                      className={inputClass}
-                    >
-                      <option value="">Auto</option>
-                      {BUDGET_SIDES.map((side) => (
-                        <option key={side} value={side}>{side}</option>
-                      ))}
-                    </select>
-
-                    <label className="text-xs text-slate-400">Major amendment</label>
-                    <select
-                      value={activeLever.major_amendment ? 'true' : 'false'}
-                      onChange={(e) => updateLever(activeLever.id, (lever) => ({ ...lever, major_amendment: e.target.value === 'true' }))}
-                      className={inputClass}
-                    >
-                      <option value="false">Non</option>
-                      <option value="true">Oui</option>
-                    </select>
-
-                    <label className="text-xs text-slate-400">Feasibility</label>
-                    <div className="grid gap-2">
-                      <div className="flex gap-2">
-                        <select
-                          value={activeLever.feasibility.law ? 'true' : 'false'}
-                          onChange={(e) => updateLever(activeLever.id, (lever) => ({
-                            ...lever,
-                            feasibility: { ...lever.feasibility, law: e.target.value === 'true' },
-                          }))}
-                          className={inputClass}
-                        >
-                          <option value="false">Law: Non</option>
-                          <option value="true">Law: Oui</option>
-                        </select>
-                        <input
-                          type="number"
-                          value={activeLever.feasibility.adminLagMonths}
-                          onChange={(e) => updateLever(activeLever.id, (lever) => ({
-                            ...lever,
-                            feasibility: { ...lever.feasibility, adminLagMonths: Number(e.target.value) },
-                          }))}
-                          className={inputClass}
-                          placeholder="Admin lag (months)"
-                        />
-                      </div>
-                      <textarea
-                        value={activeLever.feasibility.notes || ''}
-                        onChange={(e) => updateLever(activeLever.id, (lever) => ({
-                          ...lever,
-                          feasibility: { ...lever.feasibility, notes: e.target.value },
-                        }))}
-                        className={`${textareaClass} min-h-[80px]`}
-                        placeholder="Notes"
-                      />
-                    </div>
-
-                    <label className="text-xs text-slate-400">Mapping COFOG</label>
-                    <div className="space-y-2">
-                      {cofogEntries.map(([key, value], idx) => (
-                        <div key={`${key}-${idx}`} className="flex gap-2">
-                          <input
-                            value={key}
-                            onChange={(e) => {
-                              const next = [...cofogEntries];
-                              next[idx] = [e.target.value, value];
-                              updateCofogMapping(next as Array<[string, number]>);
-                            }}
-                            className={inputClass}
-                            placeholder="Code COFOG"
-                            list="cofog-ids"
-                          />
-                          <input
-                            type="number"
-                            value={value}
-                            onChange={(e) => {
-                              const next = [...cofogEntries];
-                              next[idx] = [key, Number(e.target.value)];
-                              updateCofogMapping(next as Array<[string, number]>);
-                            }}
-                            className={inputClass}
-                            placeholder="Poids"
-                          />
-                          <button
-                            onClick={() => {
-                              const next = cofogEntries.filter((_, i) => i !== idx);
-                              updateCofogMapping(next as Array<[string, number]>);
-                            }}
-                            className="px-2 rounded bg-rose-600 text-xs"
-                          >
-                            X
-                          </button>
-                        </div>
-                      ))}
-                      <div className="flex gap-2">
-                        <input
-                          value={cofogMappingKey}
-                          onChange={(e) => setCofogMappingKey(e.target.value)}
-                          className={inputClass}
-                          placeholder="Code COFOG"
-                          list="cofog-ids"
-                        />
-                        <input
-                          type="number"
-                          value={cofogMappingValue}
-                          onChange={(e) => setCofogMappingValue(e.target.value)}
-                          className={inputClass}
-                          placeholder="Poids"
-                        />
-                        <button
-                          onClick={addCofogMappingEntry}
-                          className="px-3 rounded bg-slate-800 text-xs"
-                        >
-                          Ajouter
-                        </button>
-                      </div>
-                      <datalist id="cofog-ids">
-                        {Object.entries(COFOG_LABELS).map(([code, label]) => (
-                          <option key={code} value={code}>{label}</option>
-                        ))}
-                      </datalist>
-                    </div>
-
-                    <label className="text-xs text-slate-400">Mapping missions</label>
-                    <div className="space-y-2">
-                      {missionEntries.map(([key, value], idx) => (
-                        <div key={`${key}-${idx}`} className="flex gap-2">
-                          <input
-                            value={key}
-                            onChange={(e) => {
-                              const next = [...missionEntries];
-                              next[idx] = [e.target.value, value];
-                              updateMissionMapping(next as Array<[string, number]>);
-                            }}
-                            className={inputClass}
-                            placeholder="ID mission (M_...)"
-                            list="mission-ids"
-                          />
-                          <input
-                            type="number"
-                            value={value}
-                            onChange={(e) => {
-                              const next = [...missionEntries];
-                              next[idx] = [key, Number(e.target.value)];
-                              updateMissionMapping(next as Array<[string, number]>);
-                            }}
-                            className={inputClass}
-                            placeholder="Poids"
-                          />
-                          <button
-                            onClick={() => {
-                              const next = missionEntries.filter((_, i) => i !== idx);
-                              updateMissionMapping(next as Array<[string, number]>);
-                            }}
-                            className="px-2 rounded bg-rose-600 text-xs"
-                          >
-                            X
-                          </button>
-                        </div>
-                      ))}
-                      <div className="flex gap-2">
-                        <input
-                          value={missionMappingKey}
-                          onChange={(e) => setMissionMappingKey(e.target.value)}
-                          className={inputClass}
-                          placeholder="ID mission (M_...)"
-                          list="mission-ids"
-                        />
-                        <input
-                          type="number"
-                          value={missionMappingValue}
-                          onChange={(e) => setMissionMappingValue(e.target.value)}
-                          className={inputClass}
-                          placeholder="Poids"
-                        />
-                        <button
-                          onClick={addMissionMappingEntry}
-                          className="px-3 rounded bg-slate-800 text-xs"
-                        >
-                          Ajouter
-                        </button>
-                      </div>
-                      <datalist id="mission-ids">
-                        {missionColumns.map(([code, label]) => (
-                          <option key={code} value={code}>{label}</option>
-                        ))}
-                      </datalist>
-                    </div>
-
-                    <label className="text-xs text-slate-400">Conflicts (1 par ligne)</label>
-                    <textarea
-                      value={conflictsText}
-                      onChange={(e) => updateLever(activeLever.id, (lever) => ({
-                        ...lever,
-                        conflicts_with: linesToList(e.target.value),
-                      }))}
-                      className={`${textareaClass} min-h-[80px]`}
-                    />
-
-                    <label className="text-xs text-slate-400">Sources (1 par ligne)</label>
-                    <textarea
-                      value={sourcesText}
-                      onChange={(e) => updateLever(activeLever.id, (lever) => ({
-                        ...lever,
-                        sources: linesToList(e.target.value),
-                      }))}
-                      className={`${textareaClass} min-h-[80px]`}
-                    />
-
-                    <label className="text-xs text-slate-400">Params schema (JSON)</label>
-                    <textarea
-                      value={paramsText}
-                      onChange={(e) => setParamsText(e.target.value)}
-                      className={`${textareaClass} min-h-[100px]`}
-                    />
-                    <button
-                      onClick={() => applyJsonField('params_schema', paramsText)}
-                      className="px-3 py-2 rounded bg-slate-800 text-xs"
-                    >
-                      Appliquer JSON
-                    </button>
-
-                    <label className="text-xs text-slate-400">Impact (JSON)</label>
-                    <textarea
-                      value={impactText}
-                      onChange={(e) => setImpactText(e.target.value)}
-                      className={`${textareaClass} min-h-[100px]`}
-                    />
-                    <button
-                      onClick={() => applyJsonField('impact', impactText)}
-                      className="px-3 py-2 rounded bg-slate-800 text-xs"
-                    >
-                      Appliquer JSON
-                    </button>
-
-                    {jsonError && (
-                      <div className="text-xs text-rose-300">{jsonError}</div>
-                    )}
-                  </div>
-                </>
-              )}
-            </section>
-          </div>
-        )}
+              <div className="space-y-4 p-4 rounded-xl border border-slate-800 bg-slate-900/50">
+                <label className="text-[10px] uppercase font-bold text-slate-500 tracking-widest">Faisabilité</label>
+                <div className="flex gap-4">
+                  <label className="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" checked={activeLever.feasibility.law} onChange={e => updateLever(activeLever.id, l => ({ ...l, feasibility: { ...l.feasibility, law: e.target.checked } }))} /> Loi requise</label>
+                  <div className="flex-1 flex items-center gap-2"><span className="text-xs text-slate-400">Délai:</span><input type="number" value={activeLever.feasibility.adminLagMonths} onChange={e => updateLever(activeLever.id, l => ({ ...l, feasibility: { ...l.feasibility, adminLagMonths: Number(e.target.value) } }))} className="w-16 bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs" /></div>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="h-full flex items-center justify-center text-slate-600 italic">Sélectionnez un levier pour l&apos;éditer</div>
+          )}
+        </section>
       </div>
     </div>
   );

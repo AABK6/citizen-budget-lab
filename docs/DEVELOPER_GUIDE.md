@@ -51,9 +51,19 @@
     npm run dev
     ```
     *   **Application:** [http://localhost:3000](http://localhost:3000)
+    *   **Policy Catalog Admin:** [http://localhost:3000/admin/policy-catalog](http://localhost:3000/admin/policy-catalog)
     *   The frontend automatically proxies GraphQL requests from its `/api/graphql` path to the backend running on port 8000, as configured in `next.config.js`.
 
-#### **1.4. Docker**
+#### **1.4. Admin Tools**
+
+The project includes a specialized back-office for managing the simulation data:
+
+*   **Policy Catalog Editor:** Located at `/admin/policy-catalog`.
+    *   **Features:** Deep editing of reforms, multi-year trajectories (in Md€), source management, and visual YAML diffing before saving.
+    *   **Data Flow:** Reads and writes directly to `data/policy_levers.yaml`.
+    *   **Usage:** Used by policy experts to keep the catalog consistent with official reports (Senate, FIPECO, etc.).
+
+#### **1.5. Docker**
 
 *   **Run both services together** (API on port 8000, frontend on 3000):
     ```bash

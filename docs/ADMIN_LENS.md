@@ -24,6 +24,12 @@ Policy levers can carry a mission attribution separately from their COFOG attrib
 
 The active lens determines which mapping is used for allocation displays. When `mission_mapping` is empty, the API derives a mission attribution from COFOG as a temporary fallback for suggestions/treemap.
 
+### 1.3 Managing Mappings
+
+Mappings are managed via the **Policy Catalog Editor**:
+*   **Path:** `/admin/policy-catalog`
+*   **Role:** This tool allows experts to manually assign mission weights to each policy lever, ensuring the "Playground" (Masses) and "Workshop" (Reforms) views are consistent.
+
 ## 2) API surface (GraphQL)
 
 Canonical SDL is `graphql/schema.sdl.graphql`.

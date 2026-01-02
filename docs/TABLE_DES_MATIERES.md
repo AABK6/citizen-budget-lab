@@ -15,7 +15,7 @@ Ce dossier contient la documentation technique et fonctionnelle du projet **Citi
     *   **Pour qui :** Tout le monde. C'est le point de départ pour comprendre "pourquoi" et "quoi".
 
 *   **[`DEVELOPER_GUIDE.md`](./DEVELOPER_GUIDE.md)**
-    *   **Quoi :** Guide d'installation (backend/frontend), architecture technique, commandes de build, et processus de CI/CD.
+    *   **Quoi :** Guide d'installation (backend/frontend), architecture technique, commandes de build, outils d'administration (Editor), et processus de CI/CD.
     *   **Pour qui :** Développeurs souhaitant installer ou contribuer au projet.
 
 *   **[`DATA_MANIFEST.md`](./DATA_MANIFEST.md)**
