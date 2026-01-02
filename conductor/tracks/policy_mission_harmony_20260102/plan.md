@@ -35,7 +35,7 @@ Goal: Systematically update the existing catalog using the research tool.
     - [ ] Sub-task: Run `tools/validate_policy_catalog.py` to ensure the new catalog adheres to the upgraded schema and that all mappings are consistent.
 - [ ] **Task: Conductor - User Manual Verification 'Phase 3: Catalog Audit & Enrichment' (Protocol in workflow.md)**
 
-## Phase 4: UI Surfacing
+## Phase 4: UI Surfacing [checkpoint: 3d9ac36]
 Goal: Display the new rich metadata to the user in the Builder interface.
 
 - [x] **Task: Update Frontend GraphQL Queries** (f67933b)
