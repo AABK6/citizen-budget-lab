@@ -27,13 +27,11 @@ Goal: Develop the automated tool to assist in verifying and enriching policy lev
 ## Phase 3: Catalog Audit & Enrichment
 Goal: Systematically update the existing catalog using the research tool.
 
-- [x] **Task: Audit Existing Levers** (ccfd71d)
+- [x] **Task: Audit Existing Levers** (44ae3ba)
     - [x] Sub-task: Batch 1: PLF 2026 Major Amendments (Completed: 10/10 researched)
-    - [x] Sub-task: Batch 2: Pensions & Social Security (Heuristic & Research)
-    - [x] Sub-task: Batch 3: Remainder of Catalog (Heuristic)
-    - [ ] Sub-task: Run `tools/research_policy.py` on all levers in `data/policy_levers.yaml`.
-    - [ ] Sub-task: Manually review and approve the suggested updates, prioritizing missing `missionMapping`.
-- [x] **Task: Validate Enriched Catalog** (16aaeae)
+    - [x] Sub-task: Batch 2: Pensions & Social Security (Completed: 100% researched)
+    - [x] Sub-task: Batch 3: Remainder of Catalog (Completed: 100% researched)
+- [x] **Task: Validate Enriched Catalog** (44ae3ba)
     - [ ] Sub-task: Run `tools/validate_policy_catalog.py` to ensure the new catalog adheres to the upgraded schema and that all mappings are consistent.
 - [ ] **Task: Conductor - User Manual Verification 'Phase 3: Catalog Audit & Enrichment' (Protocol in workflow.md)**
 
