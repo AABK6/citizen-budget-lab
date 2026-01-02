@@ -193,6 +193,15 @@ def _build_policy_levers() -> List[dict]:
             "massMapping": it.get("cofog_mapping") or it.get("mass_mapping") or {},
             "cofogMapping": it.get("cofog_mapping") or it.get("mass_mapping") or {},
             "missionMapping": it.get("mission_mapping") or {},
+            "multiYearImpact": it.get("multi_year_impact"),
+            "pushbacks": [
+                {
+                    "type": str(p.get("type")),
+                    "description": str(p.get("description")),
+                    "source": p.get("source"),
+                }
+                for p in (it.get("pushbacks") or [])
+            ] if it.get("pushbacks") else None,
             "impact": {
                 "householdsImpacted": impact.get("householdsImpacted"),
                 "decile1ImpactEur": impact.get("decile1ImpactEur"),

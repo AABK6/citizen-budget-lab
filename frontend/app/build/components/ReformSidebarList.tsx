@@ -156,10 +156,10 @@ export function ReformSidebarList({
     }, [levers]);
 
     const remainingLevers = useMemo(() => {
-        if (featuredLevers.length === 0) return levers;
-        const featuredIds = new Set(featuredLevers.map((lever) => lever.id));
-        return levers.filter((lever) => !featuredIds.has(lever.id));
-    }, [featuredLevers, levers]);
+        // We want to show ALL levers in the list, even if they are featured at the top.
+        // This ensures users can see the details (pushbacks, trajectory) for major amendments.
+        return levers;
+    }, [levers]);
 
     const renderLever = (lever: PolicyLever) => {
         const isSelected = isLeverSelected(lever.id);
@@ -195,6 +195,39 @@ export function ReformSidebarList({
                 </p>
 
                 <div className="flex flex-col gap-2 pt-2 border-t border-slate-100 w-full mt-2">
+                    {lever.pushbacks && lever.pushbacks.length > 0 && (
+                        <div className="flex flex-col gap-1 mb-1">
+                            <span className="text-[10px] font-bold text-rose-600 uppercase tracking-tight flex items-center gap-1">
+                                <span className="material-icons text-[12px]">warning</span>
+                                Risques et points de vigilance
+                            </span>
+                            {lever.pushbacks.slice(0, 2).map((pb, idx) => (
+                                <p key={idx} className="text-[10px] text-slate-600 italic leading-tight border-l-2 border-rose-200 pl-2">
+                                    {pb.description}
+                                </p>
+                            ))}
+                        </div>
+                    )}
+
+                    {lever.multiYearImpact && Object.keys(lever.multiYearImpact).length > 1 && (
+                        <div className="flex flex-col gap-1 mb-1">
+                            <span className="text-[10px] font-bold text-blue-600 uppercase tracking-tight flex items-center gap-1">
+                                <span className="material-icons text-[12px]">trending_up</span>
+                                Trajectoire pluriannuelle
+                            </span>
+                            <div className="flex gap-3 overflow-x-auto pb-1 no-scrollbar">
+                                {Object.entries(lever.multiYearImpact).sort().map(([year, val]) => (
+                                    <div key={year} className="flex flex-col">
+                                        <span className="text-[9px] text-slate-400 font-medium">{year}</span>
+                                        <span className="text-[10px] text-slate-700 font-bold whitespace-nowrap">
+                                            {val > 0 ? '+' : ''}{(val / 1e9).toFixed(1)} Md€
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
                     {lever.impact ? (
                         <>
                             <div className="flex flex-wrap gap-2">

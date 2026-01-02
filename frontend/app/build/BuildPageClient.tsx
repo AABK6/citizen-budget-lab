@@ -339,7 +339,9 @@ export default function BuildPageClient() {
   useEffect(() => {
     const urlScenarioId = new URLSearchParams(searchParamsString).get('scenarioId');
     if (urlScenarioId) {
-      if (urlScenarioId !== scenarioId) {
+      // If the URL ID matches what we have in state OR what we just set in the ref (via runScenario),
+      // then we are in sync, do nothing.
+      if (urlScenarioId !== scenarioId && urlScenarioId !== scenarioIdRef.current) {
         setScenarioId(urlScenarioId);
         const fetchDsl = async () => {
           try {
