@@ -1068,6 +1068,7 @@ export default function BuildPageClient() {
                   }}
                   onHoverReform={setPreviewReformId}
                   isLeverSelected={isLeverInDsl}
+                  side="right"
                 />
               ) : (
                 !isRevenuePanelExpanded ? (
