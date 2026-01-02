@@ -28,7 +28,7 @@ This is the core interactive feature of the application, allowing users to build
 
 #### Core Concepts
 
-*   **Mass (Mission):** A high-level administrative category shown in the treemap (mission IDs like `M_ADMIN`). COFOG remains the functional lens and can be toggled later.
+*   **Mission (admin mass):** A high-level administrative category shown in the treemap (mission IDs like `M_ADMIN`). COFOG remains the functional lens and can be toggled when the lens switcher exposes it.
 *   **Piece:** A granular, user-friendly budget item (e.g., "Teachers and schools").
 *   **Levers:** Concrete, named policy reforms with fixed, pre-estimated budgetary impacts (e.g., "Repeal 2023 Pension Reform").
 *   **Macro Trajectory:** A dynamic chart showing the impact of reforms on the Deficit (% GDP) and Real Growth over 4 years (2026–2029).
@@ -36,17 +36,17 @@ This is the core interactive feature of the application, allowing users to build
 #### User Journeys
 
 1.  **Goal-First (Playground):** A user starts by adjusting the dials for high-level missions (e.g., "Decrease Defense spending by €6B"). The UI shows this as an "unspecified" target. The user is then prompted to select from a list of policy levers to account for the change.
-2.  **Policy-First (Workshop):** A user selects one or more specific reforms from the Policy Workshop. The application automatically calculates the impact on the relevant masses and updates the budget visualization.
+2.  **Policy-First (Workshop):** A user selects one or more specific reforms from the Policy Workshop. The application automatically calculates the impact on the relevant missions (default admin lens) and updates the budget visualization.
 
 #### Page Layout & Components
 
 -   **Three-Column Layout:**
-    *   **Left Panel (Spending):** Lists spending categories (masses). Clicking a category expands a detailed view with underlying pieces and relevant policy reforms.
-    *   **Center Panel (Canvas):** An interactive treemap visualizes the budget masses. Below are charts showing the scenario's impact on the deficit, debt, and economic growth.
+    *   **Left Panel (Spending):** Lists spending categories (missions, admin lens). Clicking a category expands a detailed view with underlying pieces and relevant policy reforms.
+    *   **Center Panel (Canvas):** An interactive treemap visualizes the budget missions by default. Below are charts showing the scenario's impact on the deficit, debt, and economic growth.
     *   **Right Panel (Revenues):** Lists revenue categories with controls for adjustments.
 -   **Baseline Transparency:** The "Current deficit" stat card and the deficit chart display the absolute baseline deficit (normalized to **5.0% of GDP** in 2026) with deltas layered on top. Users start with the "drift" scenario and must actively reform to change the trajectory.
 -   **Top HUD Bar:** A persistent header provides global feedback: the Macro Trajectory charts, EU compliance lights, year selector, and scenario controls (Run, Reset, Undo/Redo).
--   **Lens Switcher:** A toggle in the center panel allows users to re-color the treemap visualization based on different perspectives (e.g., by budget mass, by reform family).
+-   **Lens Switcher:** A toggle in the center panel allows users to re-color the treemap visualization based on different perspectives (e.g., by mission, by COFOG, by reform family).
 
 ## 3. Scope & Roadmap
 

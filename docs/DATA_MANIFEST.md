@@ -21,9 +21,10 @@ This document provides a central inventory of all data sources, configuration fi
 ### 1.3. Policy Levers (Reform Catalog)
 
 *   **Purpose:** Defines the list of concrete, named policy reforms available in the "Policy Workshop". Each lever has a fixed, pre-estimated budgetary impact.
-*   **Source File:** `services/api/policy_catalog.py`
-*   **Status:** **Exists and is populated.** Updated on **2025-12-30** with 38 new major amendments from PLF/PLFSS 2026 debates; conservative impact estimates filled on **2025-12-30** from `docs/French Budget Analyst Fiscal Impact.md`.
-*   **Pipeline:** This is a static Python file. To add more reforms, this file must be edited manually with data from credible sources (e.g., government reports, economic analyses).
+*   **Source File:** `data/policy_levers.yaml`
+*   **Schema:** `schemas/policy_levers.schema.json`
+*   **Status:** **Exists and is populated.** Updated on **2025-12-30** with 38 new major amendments from PLF/PLFSS 2026 debates; conservative impact estimates filled on **2025-12-30** from `docs/French Budget Analyst Fiscal Impact.md`. Catalog migrated to YAML on **2026-01-02** with explicit COFOG + mission mappings.
+*   **Pipeline:** Loaded by `services/api/policy_catalog.py` from the YAML file (override via `POLICY_CATALOG_PATH`). Validate with `python tools/validate_policy_catalog.py`, or use the admin editor to edit and save back to the repo (with a timestamped `.bak`).
 
 ### 1.4. Revenue Splits
 
@@ -34,9 +35,9 @@ This document provides a central inventory of all data sources, configuration fi
 
 ## 2. User Experience & Labeling Data
 
-### 2.1. Mass Labels (Treemap Categories)
+### 2.1. Mission + COFOG Labels (Treemap Categories)
 
-*   **Purpose:** Provides user-friendly names, descriptions, and examples for both COFOG masses and administrative missions. The treemap currently uses missions; COFOG labels remain for functional views and future toggles.
+*   **Purpose:** Provides user-friendly names, descriptions, and examples for both COFOG (functional) categories and administrative missions. The treemap currently uses missions; COFOG labels remain for functional views and future toggles.
 *   **Source File:** `data/ux_labels.json`
 *   **Status:** **Exists and is complete.**
 *   **Pipeline:** Read directly by the API to enrich UI components.

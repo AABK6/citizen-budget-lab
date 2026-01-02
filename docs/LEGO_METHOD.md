@@ -5,8 +5,8 @@ Overview
 This note documents how the LEGO “pieces” for expenditures and revenues are mapped to official aggregates, how beneficiary categories are derived, and how simple elasticities are used for revenue simulations in v0.1. It is intentionally transparent and conservative; parameters are versioned and easy to audit.
 
 From MVP+ onward, the LEGO layer powers two synchronized lenses:
-- Masses (Budget Playground): big functional/admin blocks with Budget Dials and pending state.
-- Named Reforms (Policy Workshop): hierarchical families → levers that compose and attribute onto masses.
+- Missions (Budget Playground, ADMIN lens): big administrative blocks with Budget Dials and pending state. COFOG remains the functional lens for alternate views.
+- Named Reforms (Policy Workshop): hierarchical families → levers that compose and attribute onto missions by default (COFOG mappings stay available for the functional view).
 
 Datasets & Scope
 
@@ -67,7 +67,7 @@ Policy Levers → COFOG & Mission Attribution (V1)
 - Depending on the lens, a lever can carry both a functional attribution (`cofogMapping` / COFOG) and an administrative attribution (`missionMapping`). The API schema supports both mappings; the active lens determines which mapping is used for allocation displays. `massMapping` remains a COFOG alias for legacy clients. When `mission_mapping` is empty, the API can derive a mission attribution from COFOG as a temporary fallback.
 - Applying a lever produces a `PolicyEffect` with:
   - `delta_eur`: the fixed accounting impact at horizon.
-  - `mass_attribution`: how the delta paints across masses (for ribbons on the Lens Switch).
+  - `mass_attribution`: how the delta paints across masses (missions in the ADMIN lens, COFOG in the functional lens).
   - `incidence` (optional): distributional placeholders (e.g., sectors/regions; deciles if OpenFisca wired).
   - `risk_notes`: uncertainty/implementation caveats.
 
@@ -98,9 +98,9 @@ Uncertainty Bands & Assumption Chips
 
 - Keep elasticities conservative; attach bands to lever families (e.g., procurement cancellations → risk notes; pensions indexation → fan bounds). Display assumption chips near each impact: “Multiplier 0.3–0.8”, “Compliance −0.1–0.3pp”.
 
-From Mass Goals to Policy Mixes
+From Mission Goals to Policy Mixes
 
-- The Policy Workshop computes progress to a mass target by summing `specified_delta_eur` from applied levers mapped to that mass. The global **Resolution Meter** reports `overall_pct = sum(specified)/sum(target)` across masses, while the UI keeps unresolved masses visibly striped.
+- The Policy Workshop computes progress to a mission target by summing `specified_delta_eur` from applied levers mapped to that mission. The global **Resolution Meter** reports `overall_pct = sum(specified)/sum(target)` across missions, while the UI keeps unresolved missions visibly striped.
 
 Distance‑to‑budget Metric
 

@@ -2,6 +2,11 @@
 
 This changelog records **documentation** and **data pipeline conventions** changes that impact reproducibility.
 
+## 2026-01-02
+
+- **Policy Catalog (YAML):** Moved the reform catalog to `data/policy_levers.yaml` (schema: `schemas/policy_levers.schema.json`) with admin editor save support and CLI validation.
+- **Dual Mapping:** Added explicit `cofog_mapping` + `mission_mapping` to levers; GraphQL now exposes `cofogMapping` / `missionMapping` while `massMapping` remains a COFOG alias for legacy clients. Admin treemap uses mission mappings by default with COFOG fallback where needed.
+
 ## 2026-01-01
 
 - **Architecture Overhaul (Postgres Consolidation):**
