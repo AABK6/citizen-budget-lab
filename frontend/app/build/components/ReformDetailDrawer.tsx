@@ -125,7 +125,10 @@ export function ReformDetailDrawer({ reform, onClose, onToggle, isSelected, side
                 {/* Footer Action */}
                 <div className="p-5 pt-3 shrink-0 border-t border-slate-50">
                     <button
-                        onClick={() => onToggle(reform)}
+                        onClick={() => {
+                            onToggle(reform);
+                            onClose();
+                        }}
                         className={`w-full py-3.5 px-4 rounded-xl font-bold text-xs transition-transform active:scale-[0.98] flex items-center justify-center gap-2 ${isSelected
                             ? 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                             : 'bg-violet-600 text-white shadow-lg shadow-violet-200 hover:bg-violet-700'

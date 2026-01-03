@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import type { PolicyLever, PopularIntent, MassCategory } from '../types';
 import type { CSSProperties, ChangeEvent } from 'react';
+import { ReformDetailDrawer } from './ReformDetailDrawer';
 
 export type MassCategoryPanelProps = {
   category: MassCategory;
@@ -38,6 +40,8 @@ export function MassCategoryPanel({
   formatShare,
   displayMode,
 }: MassCategoryPanelProps) {
+  const [viewingReform, setViewingReform] = useState<PolicyLever | null>(null);
+
   const percentStep = 0.5;
   const defaultRange = 10;
   const expandedRange = 25;
@@ -250,7 +254,7 @@ export function MassCategoryPanel({
                     ? 'bg-emerald-50/50 border-emerald-200/50'
                     : 'bg-white border-slate-100 hover:border-slate-300 hover:shadow-sm'
                     }`}
-                  onClick={() => onLeverToggle(reform)}
+                  onClick={() => setViewingReform(reform)}
                 >
                   <div className="flex justify-between items-center gap-2">
                     <div className="flex-1 min-w-0">
@@ -294,6 +298,15 @@ export function MassCategoryPanel({
 
         </div>
       </div>
+
+      {/* Detail Drawer */}
+      <ReformDetailDrawer
+        reform={viewingReform}
+        onClose={() => setViewingReform(null)}
+        onToggle={onLeverToggle}
+        isSelected={viewingReform ? isLeverSelected(viewingReform.id) : false}
+        side="left" // Usually left panel is on left
+      />
     </>
   );
 }

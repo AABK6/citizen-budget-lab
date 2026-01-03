@@ -167,54 +167,36 @@ export function ReformSidebarList({
 
     const renderLeverCompact = (lever: PolicyLever) => {
         const isSelected = isLeverSelected(lever.id);
-        const icon = resolveBadgeIcon(lever);
-
+        
+        // Exact styling from MassCategoryPanel for harmony
         return (
             <div
                 key={lever.id}
                 onMouseEnter={() => onHoverReform?.(lever.id)}
                 onMouseLeave={() => onHoverReform?.(null)}
-                // Forced height 60px as requested, dense packing
-                className={`relative group flex items-center justify-between h-[60px] px-3 bg-white rounded-xl transition-all duration-200 cursor-pointer border ${isSelected
-                    ? 'border-violet-500/30 bg-violet-50/40 shadow-[0_2px_12px_rgba(139,92,246,0.1)]'
-                    : 'border-transparent hover:border-violet-200 hover:bg-white hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:-translate-y-[1px]'
+                className={`group relative p-2 px-3 rounded-lg border transition-all duration-200 cursor-pointer ${isSelected
+                    ? 'bg-emerald-50/50 border-emerald-200/50'
+                    : 'bg-white border-slate-100 hover:border-slate-300 hover:shadow-sm'
                     }`}
                 onClick={(e) => {
                     setViewingReform(lever);
                 }}
             >
-                {/* Selection Indicator Bar */}
-                <div
-                    className={`absolute left-0 top-3 bottom-3 w-1 rounded-r-full transition-all duration-300 ${isSelected ? 'bg-violet-500' : 'bg-transparent group-hover:bg-violet-200/50'
-                        }`}
-                />
-
-                <div className="flex items-center gap-3 overflow-hidden flex-1 pl-2">
-                    <div className={`p-2 rounded-lg shrink-0 transition-all duration-300 flex items-center justify-center w-9 h-9 ${isSelected
-                        ? 'bg-violet-500 text-white shadow-lg shadow-violet-200 scale-105'
-                        : 'bg-slate-50 text-slate-400 group-hover:bg-violet-50 group-hover:text-violet-600'
-                        }`}>
-                        <span className="material-icons text-[18px]">{icon}</span>
-                    </div>
-                    <div className="flex flex-col min-w-0 justify-center">
-                        <span className={`text-xs font-bold truncate leading-tight transition-colors ${isSelected ? 'text-violet-900' : 'text-slate-700 group-hover:text-slate-900'
-                            }`}>
-                            {lever.label}
-                        </span>
-                        <div className="flex items-center gap-2 mt-0.5">
-                            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${(lever.fixedImpactEur || 0) > 0
-                                ? 'bg-emerald-100 text-emerald-700'
-                                : 'bg-rose-100 text-rose-700'
-                                }`}>
-                                {formatImpactShort(lever)}
-                            </span>
+                <div className="flex justify-between items-center gap-2">
+                    <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                            <span className="font-semibold text-xs text-slate-800 truncate">{lever.label}</span>
+                            {isSelected && <i className="material-icons text-[10px] text-emerald-600">check_circle</i>}
+                        </div>
+                        {/* Subtitle/Description as requested */}
+                        <div className="text-[10px] text-slate-400 truncate opacity-70 group-hover:opacity-100">
+                            {lever.description || lever.shortLabel || "Pas de description"}
                         </div>
                     </div>
-                </div>
 
-                {/* Right Arrow / Action */}
-                <div className="pl-2 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0 duration-200">
-                    <span className="material-icons text-slate-300 text-sm">chevron_right</span>
+                    <div className={`text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-50 border border-slate-100 ${(lever.fixedImpactEur || 0) > 0 ? 'text-emerald-700' : 'text-rose-700'}`}>
+                        {formatImpactShort(lever)}
+                    </div>
                 </div>
             </div>
         );
@@ -223,43 +205,26 @@ export function ReformSidebarList({
     const renderFamilyGroup = (
         entries: ReturnType<typeof groupByFamily>,
         {
-            collapsible = true,
+            collapsible = true, // Kept for API compat, but ignored for "open all the time" request
             defaultOpen = 'auto',
         }: { collapsible?: boolean; defaultOpen?: boolean | 'auto' } = {},
     ) => (
-        <div className="space-y-3">
+        <div className="space-y-4">
             {entries.map(([family, items]) => {
-                // Auto open small categories, close large ones
-                const isOpen = defaultOpen === 'auto' ? items.length <= 4 : defaultOpen;
-
-                if (!collapsible) {
-                    return (
-                        <div key={family} className="space-y-1">
-                            {/* Header omitted in non-collapsible mode to save space if needed, 
-                                but usually we want headers. Keeping minimal. */}
-                            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-2 py-1">
-                                {familyLabels[family] || family}
-                            </div>
-                            <div className="space-y-1">
-                                {items.map(renderLeverCompact)}
-                            </div>
-                        </div>
-                    );
-                }
-
+                // "Cartes s'ouvrent tout le temps" - forcing open state by using a simple list with header
                 return (
-                    <details key={family} open={isOpen} className="group/details">
-                        <summary className="flex items-center justify-between cursor-pointer select-none rounded-lg px-2 py-1.5 text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-slate-700 hover:bg-slate-50 transition-colors">
-                            <span className="flex items-center gap-2">
-                                <span className={`material-icons text-sm text-slate-400 transition-transform duration-200 group-open/details:rotate-90`}>chevron_right</span>
+                    <div key={family} className="space-y-1">
+                        <div className="flex items-center justify-between px-1 py-1">
+                            <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                                <i className="material-icons text-[12px]">{familyIcons[family] || 'label'}</i>
                                 {familyLabels[family] || family}
                             </span>
-                            <span className="text-[10px] font-medium text-slate-400">{items.length}</span>
-                        </summary>
-                        <div className="mt-1 space-y-1 pl-0">
+                            <span className="text-[10px] font-medium text-slate-300 bg-slate-50 px-1.5 rounded">{items.length}</span>
+                        </div>
+                        <div className="space-y-1.5">
                             {items.map(renderLeverCompact)}
                         </div>
-                    </details>
+                    </div>
                 );
             })}
         </div>
