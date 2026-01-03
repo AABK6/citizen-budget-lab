@@ -1,10 +1,16 @@
 import { useMemo, useRef, useEffect } from 'react';
 import type { ScenarioResult } from '@/lib/types';
-import { MacroPathChart } from './MacroPathChart';
+import type { DslAction, PolicyLever } from '../types';
+import { ScenarioDashboard } from './ScenarioDashboard';
 
 interface ScoreboardProps {
     scenarioResult: ScenarioResult | null;
     baselineTotals: { spending: number; revenue: number };
+    currentTotals: { spending: number; revenue: number };
+    baselineMasses?: Map<string, { name: string; amount: number }>;
+    piecesById?: Map<string, { label: string; amount: number; type: 'expenditure' | 'revenue' }>;
+    actions: DslAction[];
+    policyLevers: PolicyLever[];
     onReset: () => void;
     onShare: () => void;
     onRunTutorial?: () => void;
@@ -22,6 +28,11 @@ const formatPercent = (val: number) => `${(val * 100).toFixed(1)}%`;
 export function Scoreboard({
     scenarioResult,
     baselineTotals,
+    currentTotals,
+    baselineMasses,
+    piecesById,
+    actions,
+    policyLevers,
     onReset,
     onShare,
     onRunTutorial,
@@ -75,8 +86,23 @@ export function Scoreboard({
     const showPreview = previewDeficit !== undefined && previewDeficit !== null && previewDeficit !== stats.deficit;
     const previewDiff = showPreview ? (previewDeficit! - stats.deficit) : 0;
 
+    const baselineDeficit = useMemo(() => {
+        const basePath = scenarioResult?.accounting?.baselineDeficitPath;
+        if (Array.isArray(basePath) && basePath.length > 0) {
+            const val = Number(basePath[0]);
+            if (Number.isFinite(val)) {
+                return val;
+            }
+        }
+        return baselineTotals.revenue - baselineTotals.spending;
+    }, [baselineTotals, scenarioResult]);
+
+    const deficitDelta = useMemo(() => {
+        const val = stats.deficit - baselineDeficit;
+        return Number.isFinite(val) ? val : 0;
+    }, [baselineDeficit, stats.deficit]);
     return (
-        <div className="w-full bg-white/80 backdrop-blur-md border-b border-white/50 shadow-sm sticky top-0 z-50 px-6 py-4 flex items-center justify-between font-['Outfit']">
+        <div className="w-full bg-white/80 backdrop-blur-md border-b border-white/50 shadow-sm sticky top-0 z-50 px-6 py-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4 font-['Outfit']">
 
             {/* LEFT: Context & Year */}
             <div className="flex items-center gap-4">
@@ -121,9 +147,17 @@ export function Scoreboard({
                 </div>
             </div>
 
-            {/* CENTER: Macro Trajectory Chart */}
-            <div id="scoreboard-resolution" className="flex-1 max-w-lg mx-8 h-full">
-                <MacroPathChart scenarioResult={scenarioResult} year={year} />
+            {/* CENTER: Scenario Dashboard */}
+            <div id="scoreboard-resolution" className="w-full lg:flex-1 lg:max-w-2xl lg:mx-6">
+                <ScenarioDashboard
+                    baselineTotals={baselineTotals}
+                    currentTotals={currentTotals}
+                    deficitDelta={deficitDelta}
+                    baselineMasses={baselineMasses}
+                    piecesById={piecesById}
+                    actions={actions}
+                    policyLevers={policyLevers}
+                />
             </div>
 
             {/* RIGHT: Actions */}

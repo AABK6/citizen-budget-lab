@@ -859,14 +859,39 @@ export default function BuildPageClient() {
     return map;
   }, [revenuePieces]);
 
+  const baselineMasses = useMemo(() => {
+    const map = new Map<string, { name: string; amount: number }>();
+    (baselineMassDataByLens.MISSION || []).forEach((category) => {
+      const amount = category.baselineAmount ?? category.amount ?? 0;
+      map.set(category.id, { name: category.name, amount });
+    });
+    return map;
+  }, [baselineMassDataByLens]);
+
+  const piecesById = useMemo(() => {
+    const map = new Map<string, { label: string; amount: number; type: 'expenditure' | 'revenue' }>();
+    [...(spendingPieces || []), ...(revenuePieces || [])].forEach((piece) => {
+      map.set(piece.id, { label: piece.label, amount: piece.amountEur ?? 0, type: piece.type });
+    });
+    return map;
+  }, [revenuePieces, spendingPieces]);
+
   const totalSpending = useMemo(() => {
     const sum = (masses || []).reduce((acc, m) => acc + Math.max(m.amount, 0), 0);
     return sum > 0 ? sum : baselineTotals.spending;
   }, [masses, baselineTotals.spending]);
+  const baselineBalance = useMemo(
+    () => baselineTotals.revenue - baselineTotals.spending,
+    [baselineTotals.revenue, baselineTotals.spending],
+  );
+  const deficitForTotals = latestDeficit ?? baselineBalance;
   const totalRevenue = useMemo(() => {
-    const sum = (revenuePieces || []).reduce((acc, p) => acc + (p.amountEur || 0), 0);
-    return sum > 0 ? sum : baselineTotals.revenue;
-  }, [baselineTotals.revenue, revenuePieces]);
+    if (!Number.isFinite(deficitForTotals)) {
+      return baselineTotals.revenue;
+    }
+    const total = totalSpending + deficitForTotals;
+    return Number.isFinite(total) ? total : baselineTotals.revenue;
+  }, [baselineTotals.revenue, deficitForTotals, totalSpending]);
 
   // Calculate deficit from pieces to ensure consistency with filtered revenue
   const calculatedDeficit = totalSpending - totalRevenue;
@@ -886,6 +911,11 @@ export default function BuildPageClient() {
       <Scoreboard
         scenarioResult={scenarioResult}
         baselineTotals={baselineTotals}
+        currentTotals={{ spending: totalSpending, revenue: totalRevenue }}
+        baselineMasses={baselineMasses}
+        piecesById={piecesById}
+        actions={dslObject.actions}
+        policyLevers={policyLevers}
         onReset={reset}
         onShare={() => setIsDebriefOpen(true)}
         onRunTutorial={handleRunTutorial}

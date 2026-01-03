@@ -1,0 +1,260 @@
+import { useMemo } from 'react';
+import type { DslAction, PolicyLever } from '../types';
+
+interface ScenarioDashboardProps {
+  baselineTotals: { spending: number; revenue: number };
+  currentTotals: { spending: number; revenue: number };
+  deficitDelta: number;
+  baselineMasses?: Map<string, { name: string; amount: number }>;
+  piecesById?: Map<string, { label: string; amount: number; type: 'expenditure' | 'revenue' }>;
+  actions: DslAction[];
+  policyLevers: PolicyLever[];
+}
+
+const revenueFamilies = new Set(['TAXES', 'TAX_EXPENDITURES']);
+
+const formatTotal = (value: number) => `${(Math.abs(value) / 1e9).toFixed(1)} Md€`;
+const formatDelta = (value: number) => {
+  const sign = value > 0 ? '+' : value < 0 ? '-' : '';
+  return `${sign}${(Math.abs(value) / 1e9).toFixed(1)} Md€`;
+};
+
+const resolveBudgetSide = (lever: PolicyLever) =>
+  lever.budgetSide ?? (revenueFamilies.has(lever.family) ? 'REVENUE' : 'SPENDING');
+
+const resolveImpact = (action: DslAction, lever: PolicyLever) => {
+  const leverImpact = Number(lever.fixedImpactEur ?? 0);
+  if (Number.isFinite(leverImpact) && leverImpact !== 0) {
+    return leverImpact;
+  }
+  const amount = Number(action.amount_eur ?? 0);
+  if (!Number.isFinite(amount) || amount === 0) {
+    return 0;
+  }
+  const side = resolveBudgetSide(lever);
+  if (side === 'REVENUE') {
+    return action.op === 'increase' ? amount : -amount;
+  }
+  if (side === 'SPENDING') {
+    return action.op === 'increase' ? -amount : amount;
+  }
+  return action.op === 'increase' ? amount : -amount;
+};
+
+const resolveDelta = (action: DslAction) => {
+  const amount = Number(action.amount_eur ?? 0);
+  if (!Number.isFinite(amount) || amount === 0) {
+    return 0;
+  }
+  if (action.op === 'increase') {
+    return amount;
+  }
+  if (action.op === 'decrease') {
+    return -amount;
+  }
+  return 0;
+};
+
+const formatOrientationLabel = (verb: string, percent: number | null, amount: number, label: string) => {
+  if (Number.isFinite(percent)) {
+    return `${verb} de ${percent!.toFixed(1)}% ${label}`;
+  }
+  return `${verb} ${formatTotal(amount)} ${label}`;
+};
+
+export function ScenarioDashboard({
+  baselineTotals,
+  currentTotals,
+  deficitDelta,
+  baselineMasses,
+  piecesById,
+  actions,
+  policyLevers,
+}: ScenarioDashboardProps) {
+  const safeDeficitDelta = Number.isFinite(deficitDelta) ? deficitDelta : 0;
+  const spendingDelta = currentTotals.spending - baselineTotals.spending;
+  const revenueDelta = useMemo(() => {
+    if (!actions?.length) return 0;
+    const leverMap = new Map(policyLevers.map((lever) => [lever.id, lever]));
+    let delta = 0;
+    for (const action of actions) {
+      const lever = leverMap.get(action.id);
+      if (lever) {
+        const side = resolveBudgetSide(lever);
+        if (side === 'REVENUE' || side === 'BOTH') {
+          delta += resolveImpact(action, lever);
+        }
+        continue;
+      }
+      if (!action.id?.startsWith('target_')) {
+        continue;
+      }
+      const target = String(action.target || '');
+      if (!target.startsWith('piece.')) {
+        continue;
+      }
+      const pieceId = target.slice('piece.'.length);
+      const piece = piecesById?.get(pieceId);
+      if (piece?.type !== 'revenue') {
+        continue;
+      }
+      delta += resolveDelta(action);
+    }
+    return delta;
+  }, [actions, piecesById, policyLevers]);
+
+  const levers = useMemo(() => {
+    if (!actions?.length) return [];
+    const leverMap = new Map(policyLevers.map((lever) => [lever.id, lever]));
+    const seen = new Set<string>();
+    const items: Array<{ id: string; label: string; fullLabel: string; impact: number }> = [];
+
+    for (const action of actions) {
+      const lever = leverMap.get(action.id);
+      if (lever) {
+        if (seen.has(lever.id)) continue;
+        seen.add(lever.id);
+        items.push({
+          id: lever.id,
+          label: lever.shortLabel || lever.label,
+          fullLabel: lever.label,
+          impact: resolveImpact(action, lever),
+        });
+        continue;
+      }
+
+      const target = String(action.target || '');
+      const delta = resolveDelta(action);
+      if (!delta) {
+        continue;
+      }
+      const isOrientation = action.id?.startsWith('target_') || target.startsWith('mission.');
+      if (!isOrientation) {
+        continue;
+      }
+
+      if (target.startsWith('mission.')) {
+        const massId = target.slice('mission.'.length).toUpperCase();
+        const base = baselineMasses?.get(massId);
+        const baseAmount = Math.abs(base?.amount ?? 0);
+        const percent = baseAmount > 0 ? (Math.abs(delta) / baseAmount) * 100 : null;
+        const name = base?.name ?? massId;
+        const verb = delta >= 0 ? 'Augmenter' : 'Diminuer';
+        const label = formatOrientationLabel(verb, percent, Math.abs(delta), name);
+        const impact = -delta;
+        const itemId = action.id || target;
+        if (!seen.has(itemId)) {
+          seen.add(itemId);
+          items.push({ id: itemId, label, fullLabel: label, impact });
+        }
+        continue;
+      }
+
+      if (target.startsWith('piece.')) {
+        const pieceId = target.slice('piece.'.length);
+        const piece = piecesById?.get(pieceId);
+        const baseAmount = Math.abs(piece?.amount ?? 0);
+        const percent = baseAmount > 0 ? (Math.abs(delta) / baseAmount) * 100 : null;
+        const name = piece?.label ?? pieceId;
+        const verb = delta >= 0 ? 'Augmenter' : 'Diminuer';
+        const label = formatOrientationLabel(verb, percent, Math.abs(delta), name);
+        let impact = delta;
+        if (piece?.type === 'expenditure') {
+          impact = -delta;
+        } else if (piece?.type === 'revenue') {
+          impact = delta;
+        }
+        const itemId = action.id || target;
+        if (!seen.has(itemId)) {
+          seen.add(itemId);
+          items.push({ id: itemId, label, fullLabel: label, impact });
+        }
+      }
+    }
+
+    return items.sort((a, b) => {
+      const impactA = Math.abs(a.impact);
+      const impactB = Math.abs(b.impact);
+      if (impactA !== impactB) return impactB - impactA;
+      return a.fullLabel.localeCompare(b.fullLabel, 'fr');
+    });
+  }, [actions, baselineMasses, piecesById, policyLevers]);
+
+  const topLevers = levers.slice(0, 3);
+  const extraLevers = Math.max(0, levers.length - topLevers.length);
+
+  const spendingDeltaTone = spendingDelta > 0 ? 'text-rose-600' : spendingDelta < 0 ? 'text-emerald-600' : 'text-slate-500';
+  const revenueDeltaTone = revenueDelta > 0 ? 'text-emerald-600' : revenueDelta < 0 ? 'text-rose-600' : 'text-slate-500';
+  const balanceAbs = Math.abs(safeDeficitDelta);
+  const trendLabel = safeDeficitDelta === 0
+    ? 'déficit stable'
+    : safeDeficitDelta > 0
+      ? `déficit réduit de ${formatTotal(balanceAbs)}`
+      : `déficit augmenté de ${formatTotal(balanceAbs)}`;
+  const trendIcon = safeDeficitDelta >= 0 ? 'trending_up' : 'trending_down';
+  const trendPill = safeDeficitDelta >= 0
+    ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
+    : 'bg-rose-50 border-rose-200 text-rose-700';
+
+  return (
+    <div className="w-full">
+      <div className="relative bg-white/70 border border-slate-200/80 rounded-xl px-3 py-2 shadow-sm overflow-hidden lg:h-[60px]">
+        <div className="absolute inset-0 bg-gradient-to-r from-white via-white to-blue-50/60 pointer-events-none" />
+        <div className="relative flex h-full items-center gap-3 min-w-0">
+          <div className="flex flex-col gap-1 min-w-[220px]">
+            <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wider text-slate-400">
+              <span className="material-icons text-[12px] text-blue-500">insights</span>
+              Recap budget
+              <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full border text-[9px] font-bold ${trendPill}`}>
+                <span className="material-icons text-[10px]">{trendIcon}</span>
+                {trendLabel}
+              </span>
+            </div>
+            <div className="flex flex-wrap lg:flex-nowrap items-center gap-3 text-[11px] leading-tight">
+              <div className="flex items-center gap-1 whitespace-nowrap">
+                <span className="material-icons text-[12px] text-rose-500">payments</span>
+                <span className="text-slate-500 font-semibold">Dép.</span>
+                <span className="text-slate-800 font-bold">{formatTotal(currentTotals.spending)}</span>
+                <span className={`font-semibold ${spendingDeltaTone}`}>{formatDelta(spendingDelta)}</span>
+              </div>
+              <div className="flex items-center gap-1 whitespace-nowrap">
+                <span className="material-icons text-[12px] text-emerald-500">account_balance_wallet</span>
+                <span className="text-slate-500 font-semibold">Rec.</span>
+                <span className="text-slate-800 font-bold">{formatTotal(currentTotals.revenue)}</span>
+                <span className={`font-semibold ${revenueDeltaTone}`}>{formatDelta(revenueDelta)}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="hidden lg:block h-10 w-px bg-slate-200/70"></div>
+
+          <div className="flex-1 min-w-0 flex items-center gap-1">
+            <span className="material-icons text-[12px] text-indigo-500">bolt</span>
+            <div className="flex flex-wrap lg:flex-nowrap items-center gap-1 overflow-hidden">
+              {topLevers.length > 0 ? (
+                <>
+                  {topLevers.map((lever) => (
+                    <span
+                      key={lever.id}
+                      className="inline-flex items-center px-1.5 py-0.5 rounded-lg border text-[10px] font-bold max-w-[150px] text-slate-700 border-slate-200 bg-white/70"
+                      title={lever.fullLabel}
+                    >
+                      <span className="truncate">{lever.label}</span>
+                    </span>
+                  ))}
+                  {extraLevers > 0 && (
+                    <span className="hidden xl:inline-flex items-center px-1.5 py-0.5 rounded-lg border border-slate-200 text-[10px] font-bold text-slate-500">
+                      +{extraLevers}
+                    </span>
+                  )}
+                </>
+              ) : (
+                <span className="text-[11px] text-slate-400">Aucun levier activé.</span>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

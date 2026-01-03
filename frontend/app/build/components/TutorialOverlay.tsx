@@ -17,8 +17,8 @@ const STEPS: TutorialStep[] = [
     },
     {
         targetId: 'treemap-container',
-        title: `492 Milliards d'Euros`,
-        content: `Voici la totalité des dépenses de l'État. La taille des blocs reflète le poids réel de chaque politique publique. Cliquez sur un bloc pour modifier son budget.`,
+        title: `1 324 Milliards d'Euros`,
+        content: `Voici la totalité des dépenses publiques (État, Sécu, Collectivités). La taille des blocs reflète le poids réel de chaque politique publique. Cliquez sur un bloc pour modifier son budget.`,
         position: 'right',
     },
     {
