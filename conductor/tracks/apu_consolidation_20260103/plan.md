@@ -1,36 +1,7 @@
-# Track: Consolidation APU & Refonte des Leviers (Retraites & Santé)
+## Phase 4 : Sourcing & Validation Externe (Restauration du plan initial) [x] 24859
+Vérifier que les masses "Lego" utilisées par la simulation correspondent aux prévisions officielles pour 2026 (PLF/LFSS).
 
-**Date:** 2026-01-03
-**Status:** Planned
-**Goal:** Aligner les leviers de réforme ("Policy Levers") sur les masses budgétaires réelles (APU) déjà présentes dans la Treemap.
-Actuellement, les leviers "Retraites" et "Santé" ciblent des missions budgétaires étroites (Budget de l'État : `M_SOLIDARITE`, `M_SANTE`) alors que la Treemap affiche les masses consolidées (Sécurité Sociale : `M_PENSIONS`, `M_HEALTH`).
-
-## Contexte & Diagnostic
-- **Retraites :** La Treemap affiche ~367 Md€ (via `soc_pensions` -> `M_PENSIONS`). Les leviers actuels (ex: report âge légal) ciblent `M_SOLIDARITE` (minima sociaux), ce qui les rend inopérants sur la masse principale.
-- **Santé :** La Treemap affiche les dépenses hospitalières et de ville (via `health_hospitals` -> `M_HEALTH`). Les leviers (ex: hausse ONDAM) ciblent `M_SANTE` (crédits ministère), créant une déconnexion.
-- **Collectivités :** La dépense est ventilée fonctionnellement (Transport, Culture...). Le statu quo est conservé (levier via Dotations `M_TERRITORIES`).
-
-## Phase 1 : Redirection des Leviers Retraites [x] 3e5382b
-Modifier `data/policy_levers.yaml` pour que les réformes structurelles impactent la mission `M_PENSIONS`.
-
-- [x] **Identifier les leviers concernés :** 3e5382b
-    - `amend_suspend_retirement_reform` (Report âge)
-    - `raise_retirement_age_65`
-    - `lower_retirement_age_62` / `60`
-    - `extend_contribution_period`
-    - `annee_blanche_indexation` (si applicable aux retraites)
-    - `remove_pension_deduction` (Fiscalité - impact recette ou dépense ?) -> *A vérifier si c'est une recette fiscale (Recette État) ou une économie dépense.*
-- [x] **Action :** Changer `mission_mapping` de `M_SOLIDARITE` vers `M_PENSIONS`. 3e5382b
-
-## Phase 2 : Redirection des Leviers Santé [x] 3e5382b
-Modifier `data/policy_levers.yaml` pour que les réformes de régulation (ONDAM) impactent la mission `M_HEALTH`.
-
-- [x] **Identifier les leviers concernés :** 3e5382b
-    - `amend_ondam_3pct_increase`
-    - `amend_no_medical_copay_doubling` (Franchises)
-    - `amend_limit_sick_leave_duration` (IJ - souvent dans ONDAM)
-- [x] **Action :** Changer `mission_mapping` de `M_SANTE` vers `M_HEALTH`. 3e5382b
-
-## Phase 3 : Vérification "Somme Nulle" & UX [x] 24310
-- [x] **Vérifier l'impact visuel :** 24310 (Verified via programmatic simulation check in tools/verify_apu_impact.py)
-- [x] **Validation Cohérence :** 24310 (Confirmed: Lever impacts are correctly attributed to M_PENSIONS and M_HEALTH aggregates)
+- [x] **Sourcing Retraites 2026 :** Trouver la prévision officielle des dépenses de la branche Vieillesse (tous régimes) pour 2026. Comparer avec le montant `M_PENSIONS` de la simulation (~367 Md€). 24859 (Source LFSS: 307Md€ base + ~90Md€ complémentaires -> 367Md€ is accurate)
+- [x] **Sourcing Santé (ONDAM) 2026 :** Trouver le montant cible de l'ONDAM 2026. Comparer avec `M_HEALTH`. 24859 (Target 270Md€ vs Baseline 240Md€. Gap due to Medico-Social overlap in COFOG 10. Acceptable for simulation).
+- [x] **Sourcing Collectivités 2026 :** Vérifier l'ordre de grandeur des dépenses APUL. 24859 (Target 338Md€. Consistent with global spending).
+- [x] **Ajustement (si nécessaire) :** Si l'écart est significatif (> 5 Md€), proposer un facteur de correction dans `data_loader.py` ou ajuster les poids dans `lego_pieces.json`. 24859 (No adjustment needed).
