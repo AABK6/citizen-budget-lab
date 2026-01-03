@@ -31,7 +31,7 @@ export function NewsTicker() {
                         className={`absolute inset-0 flex items-center transition-all duration-700 ease-in-out ${i === index ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'
                             }`}
                     >
-                        <p className="text-xs text-white font-medium truncate w-full">
+                        <p className="text-xs text-white font-medium truncate w-full pt-[2px]">
                             {msg}
                         </p>
                     </div>

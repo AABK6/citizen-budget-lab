@@ -16,6 +16,8 @@ interface ScoreboardProps {
     onRunTutorial?: () => void;
     year: number;
     previewDeficit?: number | null;
+    displayMode: 'amount' | 'share';
+    setDisplayMode: (mode: 'amount' | 'share') => void;
 }
 
 const formatCurrencyShort = (amount: number) => {
@@ -38,6 +40,8 @@ export function Scoreboard({
     onRunTutorial,
     year,
     previewDeficit,
+    displayMode,
+    setDisplayMode,
 }: ScoreboardProps) {
 
     // Extract critical metrics from the scenario result (or fallback to baseline)
@@ -162,6 +166,24 @@ export function Scoreboard({
 
             {/* RIGHT: Actions */}
             <div className="flex items-center gap-3">
+                {/* View Mode Toggle */}
+                <div className="flex bg-slate-100 p-1 rounded-lg mr-2 border border-slate-200">
+                    <button
+                        onClick={() => setDisplayMode('amount')}
+                        className={`px-2 py-1 rounded text-xs font-bold transition-all ${displayMode === 'amount' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                        title="Voir en Montants (€)"
+                    >
+                        €
+                    </button>
+                    <button
+                        onClick={() => setDisplayMode('share')}
+                        className={`px-2 py-1 rounded text-xs font-bold transition-all ${displayMode === 'share' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                        title="Voir en Pourcentages (%)"
+                    >
+                        %
+                    </button>
+                </div>
+
                 {onRunTutorial && (
                     <button
                         onClick={onRunTutorial}

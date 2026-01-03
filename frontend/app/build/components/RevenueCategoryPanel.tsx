@@ -56,8 +56,8 @@ export function RevenueCategoryPanel({
   const expandedRange = 25;
   const isExpanded = targetRangeMax > defaultRange;
   const percentLabel = `${targetPercent > 0 ? '+' : targetPercent < 0 ? '' : ''}${targetPercent.toFixed(1)}%`;
-  const rawAmount = (category.amountEur || 0) * targetPercent / 100;
-  const amountLabel = `${rawAmount > 0 ? '+' : ''}${formatCurrency(rawAmount)}`;
+  const targetAmount = (category.amountEur || 0) * targetPercent / 100;
+  const amountLabel = `${targetAmount > 0 ? '+' : ''}${formatCurrency(targetAmount)}`;
   const rangeLabel = isExpanded ? '±25% ◂' : '±10% ▸';
   const clampToRange = (value: number) => Math.max(-targetRangeMax, Math.min(targetRangeMax, value));
   const roundToStep = (value: number) => Math.round(value / percentStep) * percentStep;
@@ -91,6 +91,11 @@ export function RevenueCategoryPanel({
     return typeof share === 'number' && share > 0;
   });
 
+  // Calculate Resolved Amount from selected reforms
+  const resolvedAmount = (filteredLevers.length ? filteredLevers : suggestedLevers)
+    .filter(l => isLeverSelected(l.id))
+    .reduce((sum, l) => sum + (l.fixedImpactEur || 0), 0);
+
   const relevantIntents = popularIntents.filter((intent) => {
     const actions = intent.seed?.actions as DslAction[] | undefined;
     return actions?.some((action) => action.target === `piece.${category.id}`) ?? false;
@@ -98,33 +103,29 @@ export function RevenueCategoryPanel({
 
   return (
     <>
-      <button
-        className="mb-4 px-4 py-2 text-sm font-medium text-gray-600 bg-white/40 hover:bg-white/70 backdrop-blur-md rounded-xl transition-all shadow-sm hover:shadow-md border border-white/30 flex items-center gap-2 group"
-        onClick={onBack}
-      >
-        <i className="material-icons text-sm transition-transform group-hover:-translate-x-1" aria-hidden="true">arrow_back</i>
-        Retour
-      </button>
-
-      <div className="relative overflow-hidden rounded-3xl border border-white/40 shadow-2xl bg-white/60 backdrop-blur-2xl transition-all duration-300" style={accentStyle}>
+      <div className="relative flex flex-col h-full overflow-hidden rounded-3xl border border-white/60 shadow-xl bg-white/90 backdrop-blur-xl transition-all duration-300" style={accentStyle}>
         {/* Decorative gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-white/80 to-transparent pointer-events-none" />
 
-        {/* Header Section */}
-        <div className="relative p-6 border-b border-gray-100/50">
-          <div className="flex items-start gap-4">
-            <span
-              className="flex items-center justify-center w-12 h-12 rounded-xl text-2xl shadow-inner"
-              aria-hidden="true"
-              style={{ backgroundColor: iconTint, color: accentColor }}
-            >
-              {visual?.icon || '💶'}
-            </span>
-            <div className="flex-1 min-w-0">
-              <h2 className="text-xl font-bold text-gray-900 truncate leading-tight">{category.label}</h2>
-              <div className="mt-1 text-sm font-medium text-gray-500">
-                {formatCurrency(category.amountEur || 0)}
-              </div>
+        {/* Header Section - Compact */}
+        <div className="relative px-4 py-3 border-b border-slate-100 shrink-0 bg-white/50 flex items-center gap-3">
+          <button
+            className="p-1.5 -ml-1 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-full transition-colors flex-shrink-0"
+            onClick={onBack}
+          >
+            <i className="material-icons text-xl">arrow_back</i>
+          </button>
+          <span
+            className="flex items-center justify-center w-8 h-8 rounded-lg text-lg shadow-sm ring-1 ring-black/5 flex-shrink-0"
+            aria-hidden="true"
+            style={{ backgroundColor: iconTint, color: accentColor }}
+          >
+            {visual?.icon || '💶'}
+          </span>
+          <div className="flex-1 min-w-0 flex items-baseline gap-2 overflow-hidden">
+            <h2 className="text-base font-bold text-slate-800 truncate">{category.label}</h2>
+            <div className="text-xs font-medium text-slate-500 whitespace-nowrap">
+              {formatCurrency(category.amountEur || 0)}
             </div>
           </div>
         </div>
@@ -132,79 +133,108 @@ export function RevenueCategoryPanel({
         {/* Controls Section */}
         <div className="relative p-6 space-y-6">
 
-          {/* Target Control */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <label className="text-xs font-bold uppercase tracking-wider text-gray-500">Objectif de recettes</label>
+          {/* Unified Simulator Card */}
+          <div className="bg-slate-50/80 rounded-xl p-3 border border-slate-200/80 shadow-sm space-y-3">
+
+            {/* Row 1: Label + Toggles */}
+            <div className="flex items-center justify-between h-6">
+              <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 flex items-center gap-1">
+                <i className="material-icons text-xs">tune</i> Objectif
+              </label>
               <button
                 type="button"
-                className="text-xs font-medium text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded transition-colors"
+                className="text-[10px] font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-2 py-0.5 rounded transition-colors"
                 onClick={handleRangeToggle}
               >
                 {rangeLabel}
               </button>
             </div>
 
-            <div className="bg-gray-50/50 rounded-xl p-4 border border-gray-100 shadow-inner">
-              <div className="flex items-center gap-4 mb-4">
-                <button
-                  type="button"
-                  className="w-8 h-8 flex items-center justify-center rounded-full bg-white shadow-sm border border-gray-200 text-gray-600 hover:text-blue-600 hover:border-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                  onClick={() => handleNudge(-1)}
-                  disabled={atMin}
-                  aria-label="Diminuer l'objectif"
-                >
-                  <i className="material-icons text-sm">remove</i>
-                </button>
-
-                <div className="flex-1 relative h-10 flex items-center">
-                  <input
-                    type="range"
-                    className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
-                    min={-targetRangeMax}
-                    max={targetRangeMax}
-                    step={percentStep}
-                    value={targetPercent}
-                    onChange={handleSliderChange}
-                    aria-label="Pourcentage cible"
+            {/* Row 2: Slider + Quick Actions */}
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                className="w-6 h-6 flex items-center justify-center rounded-md bg-white border border-slate-200 text-slate-400 hover:text-blue-600 hover:border-blue-400 disabled:opacity-30"
+                onClick={() => handleNudge(-1)}
+                disabled={atMin}
+              >
+                <i className="material-icons text-xs">remove</i>
+              </button>
+              <div className="flex-1 relative h-6 flex items-center">
+                <div className="absolute left-0 right-0 h-1 bg-slate-200 rounded-full overflow-hidden">
+                  {/* Center mark */}
+                  <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-slate-300 -translate-x-1/2" />
+                  {/* Fill - Inverted colors for Revenue: Positive % is Green (more revenue), Negative is Red */}
+                  <div
+                    className={`absolute h-full ${targetPercent > 0 ? 'bg-emerald-400' : 'bg-rose-400'} transition-all`}
+                    style={{
+                      left: targetPercent < 0 ? `${50 + (targetPercent / targetRangeMax) * 50}%` : '50%',
+                      right: targetPercent > 0 ? `${50 - (targetPercent / targetRangeMax) * 50}%` : '50%'
+                    }}
                   />
                 </div>
-
-                <button
-                  type="button"
-                  className="w-8 h-8 flex items-center justify-center rounded-full bg-white shadow-sm border border-gray-200 text-gray-600 hover:text-blue-600 hover:border-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                  onClick={() => handleNudge(1)}
-                  disabled={atMax}
-                  aria-label="Augmenter l'objectif"
-                >
-                  <i className="material-icons text-sm">add</i>
-                </button>
+                <input
+                  type="range"
+                  className="relative w-full h-6 bg-transparent appearance-none cursor-pointer focus:outline-none z-10 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-blue-600 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-md"
+                  min={-targetRangeMax}
+                  max={targetRangeMax}
+                  step={percentStep}
+                  value={targetPercent}
+                  onChange={handleSliderChange}
+                />
               </div>
-
-              <div className="flex items-baseline justify-between" aria-live="polite">
-                <div className={`text-2xl font-mono font-bold ${targetPercent > 0 ? 'text-green-600' : targetPercent < 0 ? 'text-red-600' : 'text-gray-700'}`}>
-                  {percentLabel}
-                </div>
-                <div className="text-sm font-medium text-gray-500">
-                  {amountLabel}
-                </div>
-              </div>
+              <button
+                type="button"
+                className="w-6 h-6 flex items-center justify-center rounded-md bg-white border border-slate-200 text-slate-400 hover:text-blue-600 hover:border-blue-400 disabled:opacity-30"
+                onClick={() => handleNudge(1)}
+                disabled={atMax}
+              >
+                <i className="material-icons text-xs">add</i>
+              </button>
             </div>
 
-            <div className="flex gap-2">
+            {/* Row 3: Metrics & Visualization (Only show if active) */}
+            {targetAmount !== 0 && (
+              <div className="animate-in fade-in slide-in-from-top-1 duration-200">
+                <div className="flex justify-between items-end mb-1">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] text-slate-500 font-medium">Changement souhaité</span>
+                    <span className={`text-sm font-bold ${targetAmount > 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                      {targetAmount > 0 ? '+' : ''}{formatCurrency(targetAmount)}
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-end">
+                    <span className="text-[10px] text-slate-500 font-medium">
+                      Couvert par des mesures concrètes
+                    </span>
+                    <span className={`text-sm font-bold ${resolvedAmount !== 0 ? 'text-slate-800' : 'text-slate-400'}`}>
+                      {resolvedAmount > 0 ? '+' : ''}{formatCurrency(resolvedAmount)}
+                    </span>
+                  </div>
+                </div>
+                {/* Mini Bar */}
+                <div className="h-1.5 bg-slate-200 rounded-full overflow-hidden flex w-full">
+                  <div className="h-full bg-slate-500 transition-all text-opacity-50" style={{ width: `${Math.min(100, Math.abs(resolvedAmount / targetAmount) * 100)}%` }} />
+                  <div className="h-full bg-slate-300/30 relative" style={{
+                    width: `${Math.max(0, 100 - Math.min(100, Math.abs(resolvedAmount / targetAmount) * 100))}%`,
+                  }} />
+                </div>
+              </div>
+            )}
+
+            {/* Row 4: Actions */}
+            <div className="flex gap-2 pt-1">
               <button
-                id="revenue-apply-target"
-                className="flex-1 py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-sm shadow-blue-200 transition-all active:scale-[0.98]"
+                className="flex-1 h-8 flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg shadow-sm transition-all"
                 onClick={onApplyTarget}
               >
-                Appliquer l'objectif
+                Appliquer
               </button>
               <button
-                id="revenue-reset-target"
-                className="px-4 py-2 text-gray-600 hover:text-gray-900 font-medium hover:bg-gray-100 rounded-lg transition-colors"
+                className="h-8 px-3 text-slate-500 hover:text-slate-800 text-xs font-semibold hover:bg-slate-100 rounded-lg transition-colors border border-transparent"
                 onClick={handleClear}
               >
-                Réinitialiser
+                Reset
               </button>
             </div>
           </div>

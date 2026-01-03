@@ -32,32 +32,64 @@ type TreemapProps = {
 const defaultColors = ['#2563eb', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#ef4444', '#6366f1', '#14b8a6', '#a855f7', '#d946ef'];
 const EPSILON = 1e-6;
 
-const CustomTooltip = ({ active, payload }: any) => {
+const CustomTooltip = ({ active, payload, mode }: any) => {
   if (!active || !payload || !payload.length) {
     return null;
   }
 
-  const { name, pieces } = payload[0].payload;
-  const hasDescriptions = Array.isArray(pieces) && pieces.length > 0;
+  const data = payload[0].payload;
+  const { name, pieces, amount, share } = data;
+
+  // Format Value
+  const displayValue = mode === 'share'
+    ? `${((share || 0) * 100).toFixed(1)}%`
+    : `${((amount || 0) / 1e9).toFixed(1)} Md€`;
+
+  const topPieces = (pieces || []).slice(0, 5);
+  const remaining = (pieces || []).length - topPieces.length;
 
   return (
-    <div className="custom-tooltip">
-      <p className="label">{name}</p>
-      {hasDescriptions && (
-        <ul className="tooltip-pieces">
-          {pieces.slice(0, 4).map((piece: any) => {
-            const label = piece.label || piece.id;
-            const description = piece.description || '';
-            return (
-              <li key={piece.id}>
-                <span className="tooltip-piece-label">{label}</span>
-                {description && <span className="tooltip-piece-separator">:</span>}
-                {description && <span className="tooltip-piece-description">{description}</span>}
-              </li>
-            );
-          })}
-        </ul>
-      )}
+    <div className="min-w-[200px] max-w-[280px] bg-white/95 backdrop-blur-xl border border-white/40 shadow-xl rounded-xl p-3 font-['Outfit'] animate-in fade-in zoom-in-95 duration-150 z-50 pointer-events-none">
+      {/* Header */}
+      <div className="flex items-center justify-between gap-4 mb-2">
+        <h4 className="text-sm font-bold text-slate-800 leading-tight">{name}</h4>
+        <span className="text-xs font-mono font-bold text-violet-600 bg-violet-50 border border-violet-100 px-1.5 py-0.5 rounded shadow-sm whitespace-nowrap">
+          {displayValue}
+        </span>
+      </div>
+
+      {/* Content */}
+      <div className="space-y-1.5">
+        {topPieces.map((piece: any, i: number) => (
+          <div key={i} className="flex items-start gap-2">
+            <div className="mt-1.5 w-1 h-1 rounded-full bg-slate-400 flex-shrink-0 shadow-sm" />
+            <div className="min-w-0 flex-1">
+              <p className="text-[11px] font-medium text-slate-600 leading-tight truncate">
+                {piece.label || piece.id}
+              </p>
+              {piece.description && (
+                <p className="text-[9px] text-slate-400 leading-tight line-clamp-1 opacity-80">
+                  {piece.description}
+                </p>
+              )}
+            </div>
+            {/* Show amount for top pieces if significant? Optional, keeping it clean for now */}
+          </div>
+        ))}
+        {remaining > 0 && (
+          <div className="flex items-center gap-2 pl-3">
+            <span className="text-[10px] font-medium text-slate-400 italic">
+              + {remaining} autres postes...
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Footer Hint */}
+      <div className="mt-3 pt-2 border-t border-slate-100 text-[9px] text-slate-400 text-center uppercase tracking-widest font-bold opacity-50 flex items-center justify-center gap-1">
+        <span className="material-icons text-[10px]">touch_app</span>
+        Cliquer pour explorer
+      </div>
     </div>
   );
 };
@@ -145,10 +177,6 @@ const CustomizedContent = (props: any) => {
     <g
       style={wrapperStyle}
       className={`transition-all duration-200 ease-out origin-center ${onSelect ? 'hover:brightness-110 hover:z-50 hover:shadow-lg' : ''}`}
-      onClick={(e) => {
-        e.stopPropagation();
-        if (onSelect && props.payload?.id) onSelect(props.payload);
-      }}
     >
       {/* 1. Base Color Block - Sharp Corners */}
       <rect
@@ -159,6 +187,10 @@ const CustomizedContent = (props: any) => {
         fill={baseColor}
         stroke="#fff"
         strokeWidth={1}
+        style={{ cursor: onSelect ? 'pointer' : 'default' }}
+        onClick={(e) => {
+          if (onSelect && props.payload?.id) onSelect(props.payload);
+        }}
       />
 
       {/* 2. Hatching Overlay (Target Gap) */}
@@ -175,18 +207,16 @@ const CustomizedContent = (props: any) => {
         />
       )}
 
-      {/* 3. Content Label */}
-      {showName && (
+      {/* 4. Content Label */}
+      {width > 30 && height > 30 && (
         <foreignObject x={x + 2} y={y + 2} width={width - 4} height={height - 4} style={{ pointerEvents: 'none' }}>
-          <div className="w-full h-full flex flex-col justify-between p-0.5 select-none text-white antialiased overflow-hidden">
-            <div className="font-bold text-[11px] leading-tight truncate">
+          <div className="w-full h-full flex flex-col justify-start gap-0.5 p-1 select-none text-white antialiased overflow-hidden">
+            <div className="font-bold text-[13px] leading-tight break-words" style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
               {name}
             </div>
-            {showAmount && (
-              <div className="text-[10px] font-medium opacity-90 tracking-wide truncate mt-auto">
-                {mode === 'share' ? `${(dataValue * 100).toFixed(1)}%` : `€${(currentAmount / 1e9).toFixed(1)}B`}
-              </div>
-            )}
+            <div className="text-[11px] font-medium opacity-80 mt-0.5">
+              {mode === 'share' ? `${(dataValue * 100).toFixed(1)}%` : `€${(currentAmount / 1e9).toFixed(1)} Md`}
+            </div>
           </div>
         </foreignObject>
       )}
@@ -241,6 +271,13 @@ export const TreemapChart = ({ data, colors, resolutionData, mode, onSelect }: T
   return (
     <ResponsiveContainer width="100%" height="100%">
       <Treemap
+        onClick={(node: any) => {
+          if (onSelect && node) {
+            const item = node.payload || node;
+            // Ensure it's a valid item with ID before selecting
+            if (item && item.id) onSelect(item);
+          }
+        }}
         data={dataWithResolution}
         dataKey="value"
         aspectRatio={16 / 9}
@@ -287,7 +324,7 @@ export const TreemapChart = ({ data, colors, resolutionData, mode, onSelect }: T
             <stop offset="100%" stopColor="white" stopOpacity="0" />
           </linearGradient>
         </defs>
-        <Tooltip content={<CustomTooltip mode={mode} />} />
+        <Tooltip content={<CustomTooltip mode={mode} />} wrapperStyle={{ pointerEvents: 'none' }} />
       </Treemap>
     </ResponsiveContainer>
   );

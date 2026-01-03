@@ -921,6 +921,8 @@ export default function BuildPageClient() {
         onRunTutorial={handleRunTutorial}
         year={year}
         previewDeficit={previewDeficit}
+        displayMode={displayMode}
+        setDisplayMode={setDisplayMode}
       />
 
       <div className="w-full flex-1 min-h-0 flex flex-col overflow-hidden relative">
@@ -1030,21 +1032,7 @@ export default function BuildPageClient() {
                 }}
               />
 
-              {/* Minimal view toggles at top right */}
-              <div className="absolute top-4 right-4 bg-white/90 backdrop-blur rounded-lg shadow-sm border border-slate-200 p-1 flex gap-1 z-10 transition-opacity hover:opacity-100 opacity-60">
-                <button
-                  onClick={() => setDisplayMode('amount')}
-                  className={`px-3 py-1 rounded text-xs font-bold transition-colors ${displayMode === 'amount' ? 'bg-blue-100 text-blue-700' : 'text-slate-500 hover:bg-slate-50'}`}
-                >
-                  €
-                </button>
-                <button
-                  onClick={() => setDisplayMode('share')}
-                  className={`px-3 py-1 rounded text-xs font-bold transition-colors ${displayMode === 'share' ? 'bg-blue-100 text-blue-700' : 'text-slate-500 hover:bg-slate-50'}`}
-                >
-                  %
-                </button>
-              </div>
+
             </div>
 
             <NewsTicker />
