@@ -411,7 +411,7 @@
     {
       "id": "M_ADMIN",
       "displayLabel": "Services généraux de l’État",
-      "description": "Fonctions support, finances publiques",
+      "description": "Gestion des finances publiques (DGFiP, Douanes), administration territoriale (Préfectures), support interministériel et immobilier de l'État.",
       "examples": [
         "DGFiP",
         "Préfectures"

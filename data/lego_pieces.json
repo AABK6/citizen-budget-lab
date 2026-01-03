@@ -1194,7 +1194,7 @@
       "id": "admin_services",
       "type": "expenditure",
       "label": "Services publics au quotidien",
-      "description": "Préfectures, impôts, numérique, bâtiments.",
+      "description": "Gestion des finances publiques (DGFiP, Douanes), préfectures, support interministériel et immobilier de l'État.",
       "examples": [
         "Démarches",
         "Systèmes d’information"
