@@ -268,6 +268,24 @@ function normalizeMapping(value: any): Record<string, number> {
   return out;
 }
 
+function formatMissionLabel(id: string, labels: Record<string, string>): string {
+  const mapped = labels[id];
+  if (mapped) return mapped;
+  if (id === 'UNKNOWN' || id === 'M_UNKNOWN') return 'Unspecified';
+  const raw = id.replace(/^M_/, '');
+  if (!raw) return id;
+  const lowerWords = new Set(['de', 'du', 'des', 'la', 'le', 'les', 'et', 'd', 'l', 'au', 'aux']);
+  return raw
+    .split('_')
+    .filter(Boolean)
+    .map((word, index) => {
+      const lower = word.toLowerCase();
+      if (index > 0 && lowerWords.has(lower)) return lower;
+      return lower.charAt(0).toUpperCase() + lower.slice(1);
+    })
+    .join(' ');
+}
+
 function normalizeLever(raw: any): Lever {
   return {
     id: String(raw?.id || ''),
@@ -457,8 +475,13 @@ export default function PolicyCatalogAdminClient() {
   const missionColumns = useMemo(() => {
     const ids = new Set<string>();
     catalog.forEach(l => Object.keys(l.mission_mapping || {}).forEach(m => ids.add(m)));
-    return Array.from(ids).sort().map(id => ({ id, label: missionLabelMap[id] || id }));
+    return Array.from(ids).sort().map(id => ({ id, label: formatMissionLabel(id, missionLabelMap) }));
   }, [catalog, missionLabelMap]);
+  const missionTableMinWidth = useMemo(() => {
+    const labelColRem = 16; // matches w-64
+    const missionColRem = 10; // matches w-40
+    return `${labelColRem + missionColumns.length * missionColRem}rem`;
+  }, [missionColumns.length]);
 
   return (
     <div className="h-full overflow-hidden flex flex-col bg-slate-950 text-slate-100 font-sans">
@@ -492,9 +515,9 @@ export default function PolicyCatalogAdminClient() {
         </div>
       </header>
 
-      <div className="flex-1 overflow-hidden flex">
+      <div className="flex-1 min-w-0 overflow-hidden flex">
         {/* LIST PANEL */}
-        <section className="flex-1 border-r border-slate-800 flex flex-col bg-slate-950">
+        <section className="flex-1 min-w-0 border-r border-slate-800 flex flex-col bg-slate-950">
           <div className="p-4 bg-slate-900/30 border-b border-slate-800 space-y-3 shadow-inner">
             <div className="flex gap-3">
               <div className="relative flex-1">
@@ -529,12 +552,12 @@ export default function PolicyCatalogAdminClient() {
             </div>
           </div>
 
-          <div className="flex-1 overflow-auto relative">
+          <div className="flex-1 min-w-0 overflow-x-auto overflow-y-auto relative">
             {view === 'yaml' ? (
               <textarea value={yamlText} onChange={e => { setYamlText(e.target.value); setRawDirty(true); }} className="w-full h-full p-6 bg-slate-950 font-mono text-sm leading-relaxed text-slate-300 outline-none" spellCheck={false} />
             ) : view === 'mission' ? (
-              <div className="h-full overflow-auto">
-                <table className="min-w-full text-[11px] border-separate border-spacing-0">
+              <div className="h-full min-w-0">
+                <table style={{ minWidth: missionTableMinWidth }} className="text-[11px] border-separate border-spacing-0">
                   <thead className="bg-slate-900 sticky top-0 z-20 shadow">
                     <tr>
                       <th className="p-3 text-left border-b-2 border-slate-700 w-64 bg-slate-900 sticky left-0 z-30">Levier</th>
