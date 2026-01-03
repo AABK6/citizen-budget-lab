@@ -985,7 +985,8 @@ export default function BuildPageClient() {
 
           {/* CENTER PANEL: TREEMAP */}
           <div id="treemap-container" className="flex flex-col bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden relative">
-            <div className="flex-1 relative p-1 min-h-0">
+            {/* Added pb-11 to create safe space for the absolute positioned NewsTicker (h-10) */}
+            <div className="flex-1 relative p-1 min-h-0 pb-11">
               <TreemapChart
                 data={treemapData}
                 colors={treemapColors}
@@ -999,17 +1000,17 @@ export default function BuildPageClient() {
                 }}
               />
 
-              {/* Minimal view toggles at bottom left */}
-              <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur rounded-lg shadow-sm border border-slate-200 p-1 flex gap-1 z-10">
+              {/* Minimal view toggles at top right */}
+              <div className="absolute top-4 right-4 bg-white/90 backdrop-blur rounded-lg shadow-sm border border-slate-200 p-1 flex gap-1 z-10 transition-opacity hover:opacity-100 opacity-60">
                 <button
                   onClick={() => setDisplayMode('amount')}
-                  className={`px-3 py-1 rounded text-xs font-bold ${displayMode === 'amount' ? 'bg-blue-100 text-blue-700' : 'text-slate-500 hover:bg-slate-50'}`}
+                  className={`px-3 py-1 rounded text-xs font-bold transition-colors ${displayMode === 'amount' ? 'bg-blue-100 text-blue-700' : 'text-slate-500 hover:bg-slate-50'}`}
                 >
                   €
                 </button>
                 <button
                   onClick={() => setDisplayMode('share')}
-                  className={`px-3 py-1 rounded text-xs font-bold ${displayMode === 'share' ? 'bg-blue-100 text-blue-700' : 'text-slate-500 hover:bg-slate-50'}`}
+                  className={`px-3 py-1 rounded text-xs font-bold transition-colors ${displayMode === 'share' ? 'bg-blue-100 text-blue-700' : 'text-slate-500 hover:bg-slate-50'}`}
                 >
                   %
                 </button>

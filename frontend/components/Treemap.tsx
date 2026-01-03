@@ -94,105 +94,102 @@ const CustomizedContent = (props: any) => {
   const unspecifiedAmountRaw = Number(payload?.unspecifiedAmount ?? 0);
   const unspecifiedAmount =
     Math.abs(deltaAmount) > EPSILON ? unspecifiedAmountRaw : 0;
-  const hasOverlay =
-    Math.abs(unspecifiedAmount) > EPSILON &&
-    (Math.abs(deltaAmount) > EPSILON || Math.abs(baselineAmount) > EPSILON);
+
+  // Overlay Logic (Hatching)
   const totalChange = Math.abs(deltaAmount) > EPSILON ? deltaAmount : unspecifiedAmount;
-  const overlayRatio = hasOverlay
+  const overlayRatio = (Math.abs(unspecifiedAmount) > EPSILON && (Math.abs(deltaAmount) > EPSILON || Math.abs(baselineAmount) > EPSILON))
     ? Math.min(1, Math.abs(unspecifiedAmount) / Math.max(Math.abs(totalChange), EPSILON))
     : 0;
+
+  // No gap for sharp corners
+  const GAP = 0;
+
   let overlayHeight = overlayRatio > 0 ? height * overlayRatio : 0;
-  if (overlayHeight > 0 && overlayHeight < 2) {
-    overlayHeight = Math.min(2, height);
-  } else if (overlayHeight > height) {
-    overlayHeight = height;
-  }
+  if (overlayHeight > 0 && overlayHeight < 2) overlayHeight = Math.min(2, height);
+  else if (overlayHeight > height) overlayHeight = height;
+
   const isIncrease = deltaAmount > 0;
   const overlayY = isIncrease ? (y + height - overlayHeight) : y;
-
   const overlayFill = deltaAmount >= 0 ? `url(#${patternPosId})` : `url(#${patternNegId})`;
-  const overlayStroke = deltaAmount >= 0 ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.7)';
+  const overlayStroke = deltaAmount >= 0 ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)';
 
-  if (process.env.NODE_ENV !== 'production' && overlayRatio > 0) {
-    // eslint-disable-next-line no-console
-    console.debug('[Treemap] hatch', { name, deltaAmount, unspecifiedAmount, overlayRatio });
-  }
+  // Hover & Interaction Style
+  const wrapperStyle = {
+    cursor: onSelect && props.payload?.id ? 'pointer' : 'default',
+    // No drop shadow by default for clean flat look, maybe add on hover
+    zIndex: onSelect ? 10 : 1
+  };
 
-  const commonOverlay = overlayRatio > 0 && (
-    <rect
-      x={x}
-      y={overlayY}
-      width={width}
-      height={overlayHeight}
-      style={{
-        fill: overlayFill,
-        stroke: overlayStroke,
-        strokeWidth: 1,
-        pointerEvents: 'none',
-      }}
-    />
-  );
-
-  const wrapperStyle = { cursor: onSelect && props.payload?.id ? 'pointer' : 'default' };
-
-  if (width < 50 || height < 30) {
+  // Skip tiny blocks
+  if (width < 20 || height < 20) {
+    // Just a colored rect, no text, no border stroke overload
     return (
-      <g style={wrapperStyle}>
+      <g>
         <rect
           x={x}
           y={y}
           width={width}
           height={height}
-          style={{
-            fill: baseColor,
-            stroke: '#fff',
-            strokeWidth: 2 / (depth + 1e-10),
-            strokeOpacity: 1 / (depth + 1e-10),
-          }}
+          fill={baseColor}
+          stroke="none"
         />
-        {commonOverlay}
       </g>
     );
   }
 
+  // Label Logic
+  const showName = width > 40 && height > 25;
+  const showAmount = width > 70 && height > 50;
+
   return (
-    <g style={wrapperStyle}>
+    <g
+      style={wrapperStyle}
+      className={`transition-all duration-200 ease-out origin-center ${onSelect ? 'hover:brightness-110 hover:z-50 hover:shadow-lg' : ''}`}
+      onClick={(e) => {
+        e.stopPropagation();
+        if (onSelect && props.payload?.id) onSelect(props.payload);
+      }}
+    >
+      {/* 1. Base Color Block - Sharp Corners */}
       <rect
         x={x}
         y={y}
         width={width}
         height={height}
-        style={{
-          fill: baseColor,
-          stroke: '#fff',
-          strokeWidth: 2 / (depth + 1e-10),
-          strokeOpacity: 1 / (depth + 1e-10),
-        }}
+        fill={baseColor}
+        stroke="#fff"
+        strokeWidth={1}
       />
-      {commonOverlay}
-      <foreignObject x={x + 4} y={y + 4} width={width - 8} height={height - 8} style={{ pointerEvents: 'none' }}>
-        <div
-          style={{
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'flex-start',
-            alignItems: 'flex-start',
-            color: 'white',
-            fontSize: '14px',
-            fontWeight: '600',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            wordWrap: 'break-word',
-          }}
-        >
-          <div>{name}</div>
-          <div style={{ fontSize: '12px', opacity: 0.8, marginTop: '4px' }}>
-            {mode === 'share' ? `${(dataValue * 100).toFixed(1)}%` : `€${(currentAmount / 1e9).toFixed(1)}B`}
+
+      {/* 2. Hatching Overlay (Target Gap) */}
+      {overlayRatio > 0 && (
+        <rect
+          x={x}
+          y={overlayY}
+          width={width}
+          height={overlayHeight}
+          fill={overlayFill}
+          stroke={overlayStroke}
+          strokeWidth={0}
+          style={{ pointerEvents: 'none' }}
+        />
+      )}
+
+      {/* 3. Content Label */}
+      {showName && (
+        <foreignObject x={x + 2} y={y + 2} width={width - 4} height={height - 4} style={{ pointerEvents: 'none' }}>
+          <div className="w-full h-full flex flex-col justify-between p-0.5 select-none text-white antialiased overflow-hidden">
+            <div className="font-bold text-[11px] leading-tight truncate">
+              {name}
+            </div>
+            {showAmount && (
+              <div className="text-[10px] font-medium opacity-90 tracking-wide truncate mt-auto">
+                {mode === 'share' ? `${(dataValue * 100).toFixed(1)}%` : `€${(currentAmount / 1e9).toFixed(1)}B`}
+              </div>
+            )}
           </div>
-        </div>
-      </foreignObject>
+        </foreignObject>
+      )}
     </g>
   );
 };
@@ -246,10 +243,13 @@ export const TreemapChart = ({ data, colors, resolutionData, mode, onSelect }: T
       <Treemap
         data={dataWithResolution}
         dataKey="value"
-        aspectRatio={4 / 3}
-        stroke="#fff"
-        fill="#8884d8"
-        isAnimationActive={false}
+        aspectRatio={16 / 9}
+        stroke="transparent"
+        fill="transparent"
+        // Animation
+        isAnimationActive={true}
+        animationDuration={500}
+        animationEasing="ease-out"
         content={(
           <CustomizedContent
             colors={palette}
@@ -259,39 +259,33 @@ export const TreemapChart = ({ data, colors, resolutionData, mode, onSelect }: T
             patternNegId={patternIds.neg}
           />
         )}
-        onClick={(node: any) => {
-          if (!onSelect) {
-            return;
-          }
-          const index = typeof node?.index === 'number' ? node.index : undefined;
-          if (index === undefined) {
-            return;
-          }
-          const selected = dataWithResolution[index];
-          if (selected) {
-            onSelect(selected);
-          }
-        }}
       >
         <defs>
           <pattern
             id={patternIds.neg}
-            width="0.12"
-            height="0.12"
-            patternUnits="objectBoundingBox"
+            width="8"
+            height="8"
+            patternUnits="userSpaceOnUse"
             patternTransform="rotate(45)"
           >
-            <rect width="0.5" height="1" fill="rgba(0,0,0,0.55)" />
+            <rect width="4" height="8" fill="rgba(0,0,0,0.15)" />
           </pattern>
           <pattern
             id={patternIds.pos}
-            width="0.12"
-            height="0.12"
-            patternUnits="objectBoundingBox"
+            width="8"
+            height="8"
+            patternUnits="userSpaceOnUse"
             patternTransform="rotate(45)"
           >
-            <rect width="0.5" height="1" fill="rgba(255,255,255,0.6)" />
+            <rect width="4" height="8" fill="rgba(255,255,255,0.25)" />
           </pattern>
+
+          {/* Glass Gloss Gradient - Stronger and Simpler */}
+          <linearGradient id="treemap-gloss" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="white" stopOpacity="0.5" />
+            <stop offset="30%" stopColor="white" stopOpacity="0.1" />
+            <stop offset="100%" stopColor="white" stopOpacity="0" />
+          </linearGradient>
         </defs>
         <Tooltip content={<CustomTooltip mode={mode} />} />
       </Treemap>
