@@ -282,7 +282,7 @@
   - Assemblée nat., PLF 2026[17]
   params_schema: {}
   mission_mapping:
-    M_SANTE: 1.0
+    M_HEALTH: 1.0
   multi_year_impact:
     '2026': -150000000
     '2027': -150000000
@@ -647,7 +647,7 @@
   cofog_mapping:
     '07': 1
   mission_mapping:
-    M_SANTE: 1.0
+    M_HEALTH: 1.0
   multi_year_impact:
     '2026': -3000000000
     '2027': -3200000000
@@ -682,7 +682,7 @@
   cofog_mapping:
     '10.2': 1
   mission_mapping:
-    M_SOLIDARITE: 1.0
+    M_PENSIONS: 1.0
   multi_year_impact:
     '2026': -100000000
     '2027': -1400000000
@@ -724,7 +724,7 @@
   - PLFSS 2026 adopté[30]
   params_schema: {}
   mission_mapping:
-    M_SOLIDARITE: 1.0
+    M_SOLIDARITY: 1.0
   multi_year_impact:
     '2026': -800000000
     '2027': -1200000000
@@ -751,7 +751,7 @@
   - PLFSS 2026, Rapport Commission Affaires Sociales
   params_schema: {}
   mission_mapping:
-    M_SANTE: 1.0
+    M_HEALTH: 1.0
   multi_year_impact:
     '2026': 900000000
     '2027': 950000000
@@ -780,7 +780,7 @@
   - PLFSS 2026, AN[2]
   params_schema: {}
   mission_mapping:
-    M_SOLIDARITE: 1.0
+    M_PENSIONS: 1.0
   multi_year_impact:
     '2026': -4000000000
     '2027': -4000000000
@@ -879,7 +879,7 @@
   - PLFSS 2026, débats[32]
   params_schema: {}
   mission_mapping:
-    M_SANTE: 1.0
+    M_HEALTH: 1.0
   multi_year_impact:
     '2026': -800000000
     '2027': -800000000
@@ -945,7 +945,7 @@
   - PLFSS 2026 adopté[4]
   params_schema: {}
   mission_mapping:
-    M_SANTE: 1.0
+    M_HEALTH: 1.0
   multi_year_impact:
     '2026': 1100000000
     '2027': 0
@@ -1012,7 +1012,7 @@
   - PLFSS 2026 adopté[34]
   params_schema: {}
   mission_mapping:
-    M_SOLIDARITE: 1.0
+    M_SOLIDARITY: 1.0
   multi_year_impact:
     '2026': 600000000
     '2027': 620000000
@@ -1055,7 +1055,7 @@
     gdpImpactPct: -0.05
     jobsImpactCount: -2000
   mission_mapping:
-    M_SOLIDARITE: 1.0
+    M_PENSIONS: 1.0
   multi_year_impact:
     '2026': 4000000000
     '2027': 4000000000
@@ -1461,7 +1461,7 @@
   - La Finance Pour Tous [17]
   params_schema: {}
   mission_mapping:
-    M_SOLIDARITE: 1.0
+    M_SOLIDARITY: 1.0
   multi_year_impact:
     '2026': 1000000000
     '2027': 1050000000
@@ -1839,13 +1839,13 @@
   - Est.
   params_schema: {}
   impact:
-    householdsImpacted: 1600000
+    householdsImpacted: 16000000
     decile1ImpactEur: -800
     decile10ImpactEur: -200
     gdpImpactPct: 0.1
     jobsImpactCount: 200000
   mission_mapping:
-    M_SOLIDARITE: 1.0
+    M_PENSIONS: 1.0
   multi_year_impact:
     '2026': 8000000000
     '2027': 8000000000
@@ -1887,7 +1887,7 @@
     gdpImpactPct: -0.4
     jobsImpactCount: -300000
   mission_mapping:
-    M_SOLIDARITE: 1.0
+    M_PENSIONS: 1.0
   multi_year_impact:
     '2026': -14000000000
     '2027': -14000000000
@@ -1923,7 +1923,7 @@
     higher for full effect.
   params_schema: {}
   mission_mapping:
-    M_SOLIDARITE: 1.0
+    M_PENSIONS: 1.0
   multi_year_impact:
     '2026': -33000000000
     '2027': -33000000000
@@ -1955,7 +1955,7 @@
   - Est.
   params_schema: {}
   mission_mapping:
-    M_SOLIDARITE: 1.0
+    M_PENSIONS: 1.0
   multi_year_impact:
     '2026': 5000000000
     '2027': 5000000000
@@ -1993,7 +1993,7 @@
     gdpImpactPct: 0
     jobsImpactCount: 0
   mission_mapping:
-    M_SOLIDARITE: 1.0
+    M_PENSIONS: 1.0
   multi_year_impact:
     '2026': 300000000
     '2027': 600000000
