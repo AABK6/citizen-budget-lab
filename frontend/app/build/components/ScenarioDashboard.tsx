@@ -197,64 +197,86 @@ export function ScenarioDashboard({
     : 'bg-rose-50 border-rose-200 text-rose-700';
 
   return (
-    <div className="w-full">
-      <div className="relative bg-white/70 border border-slate-200/80 rounded-xl px-3 py-2 shadow-sm overflow-hidden lg:h-[60px]">
-        <div className="absolute inset-0 bg-gradient-to-r from-white via-white to-blue-50/60 pointer-events-none" />
-        <div className="relative flex h-full items-center gap-3 min-w-0">
-          <div className="flex flex-col gap-1 min-w-[220px]">
-            <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wider text-slate-400">
-              <span className="material-icons text-[12px] text-blue-500">insights</span>
-              Recap budget
-              <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full border text-[9px] font-bold ${trendPill}`}>
-                <span className="material-icons text-[10px]">{trendIcon}</span>
-                {trendLabel}
-              </span>
-            </div>
-            <div className="flex flex-wrap lg:flex-nowrap items-center gap-3 text-[11px] leading-tight">
-              <div className="flex items-center gap-1 whitespace-nowrap">
-                <span className="material-icons text-[12px] text-rose-500">payments</span>
-                <span className="text-slate-500 font-semibold">Dép.</span>
-                <span className="text-slate-800 font-bold">{formatTotal(currentTotals.spending)}</span>
-                <span className={`font-semibold ${spendingDeltaTone}`}>{formatDelta(spendingDelta)}</span>
-              </div>
-              <div className="flex items-center gap-1 whitespace-nowrap">
-                <span className="material-icons text-[12px] text-emerald-500">account_balance_wallet</span>
-                <span className="text-slate-500 font-semibold">Rec.</span>
-                <span className="text-slate-800 font-bold">{formatTotal(currentTotals.revenue)}</span>
-                <span className={`font-semibold ${revenueDeltaTone}`}>{formatDelta(revenueDelta)}</span>
-              </div>
+  return (
+    <div className="w-full font-['Outfit']">
+      <div className="flex flex-col lg:flex-row items-center bg-white border border-slate-200 rounded-xl shadow-sm px-4 py-2 gap-4 lg:h-[64px] transition-all hover:shadow-md">
+        
+        {/* SECTION 1: TITLE & TREND */}
+        <div className="flex flex-col items-start min-w-[140px] border-r border-slate-100 pr-4">
+          <div className="flex items-center gap-2 mb-0.5">
+            <span className="material-icons text-[16px] text-slate-400">analytics</span>
+            <span className="text-[11px] font-black uppercase tracking-widest text-slate-800">
+              SYNTHÈSE
+            </span>
+          </div>
+          <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-bold ${safeDeficitDelta >= 0 ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-rose-50 text-rose-700 border border-rose-100'}`}>
+            <span className="material-icons text-[10px]">{safeDeficitDelta >= 0 ? 'trending_up' : 'trending_down'}</span>
+            {trendLabel}
+          </div>
+        </div>
+
+        {/* SECTION 2: KEY METRICS (SPENDING / REVENUE) */}
+        <div className="flex items-center gap-6 min-w-[280px]">
+          {/* Spending */}
+          <div className="flex flex-col">
+            <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Dépenses</span>
+            <div className="flex items-baseline gap-2">
+              <span className="text-sm font-bold text-slate-700">{formatTotal(currentTotals.spending)}</span>
+              {spendingDelta !== 0 && (
+                <span className={`text-[10px] font-bold px-1.5 rounded-full ${spendingDelta > 0 ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}`}>
+                  {formatDelta(spendingDelta)}
+                </span>
+              )}
             </div>
           </div>
 
-          <div className="hidden lg:block h-10 w-px bg-slate-200/70"></div>
+          {/* Vertical Separator */}
+          <div className="w-px h-8 bg-slate-100"></div>
 
-          <div className="flex-1 min-w-0 flex items-center gap-1">
-            <span className="material-icons text-[12px] text-indigo-500">bolt</span>
-            <div className="flex flex-wrap lg:flex-nowrap items-center gap-1 overflow-hidden">
-              {topLevers.length > 0 ? (
-                <>
-                  {topLevers.map((lever) => (
-                    <span
-                      key={lever.id}
-                      className="inline-flex items-center px-1.5 py-0.5 rounded-lg border text-[10px] font-bold max-w-[150px] text-slate-700 border-slate-200 bg-white/70"
-                      title={lever.fullLabel}
-                    >
-                      <span className="truncate">{lever.label}</span>
-                    </span>
-                  ))}
-                  {extraLevers > 0 && (
-                    <span className="hidden xl:inline-flex items-center px-1.5 py-0.5 rounded-lg border border-slate-200 text-[10px] font-bold text-slate-500">
-                      +{extraLevers}
-                    </span>
-                  )}
-                </>
-              ) : (
-                <span className="text-[11px] text-slate-400">Aucun levier activé.</span>
+          {/* Revenue */}
+          <div className="flex flex-col">
+            <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Recettes</span>
+            <div className="flex items-baseline gap-2">
+              <span className="text-sm font-bold text-slate-700">{formatTotal(currentTotals.revenue)}</span>
+              {revenueDelta !== 0 && (
+                 <span className={`text-[10px] font-bold px-1.5 rounded-full ${revenueDelta > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>
+                  {formatDelta(revenueDelta)}
+                </span>
               )}
             </div>
           </div>
         </div>
+
+        {/* SECTION 3: ACTIVE LEVERS */}
+        <div className="flex-1 min-w-0 flex items-center justify-end border-l border-slate-100 pl-4 h-full">
+            {topLevers.length > 0 ? (
+              <div className="flex items-center gap-2 overflow-hidden justify-end w-full">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider whitespace-nowrap mr-1">Impacts :</span>
+                 {topLevers.map((lever) => (
+                    <div
+                      key={lever.id}
+                      className="inline-flex items-center gap-1 pl-1.5 pr-2 py-1 rounded-lg border border-slate-200 bg-slate-50 text-[10px] font-bold text-slate-700 max-w-[140px] shadow-sm"
+                      title={lever.fullLabel}
+                    >
+                      <span className={`w-1.5 h-1.5 rounded-full ${lever.impact > 0 ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
+                      <span className="truncate">{lever.label}</span>
+                    </div>
+                  ))}
+                   {extraLevers > 0 && (
+                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 text-[10px] font-bold text-slate-500 border border-slate-200" title={`${extraLevers} autres mesures`}>
+                      +{extraLevers}
+                    </span>
+                  )}
+              </div>
+            ) : (
+               <div className="flex items-center gap-2 text-slate-400 opacity-60">
+                  <span className="material-icons text-sm">auto_fix_off</span>
+                  <span className="text-xs font-medium italic">Aucune mesure activée</span>
+               </div>
+            )}
+        </div>
       </div>
     </div>
+  );
   );
 }
