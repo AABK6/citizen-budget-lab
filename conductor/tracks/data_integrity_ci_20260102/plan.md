@@ -5,7 +5,7 @@
 ## Phase 1: Enhanced Validator Development
 Goal: Upgrade the catalog validator with semantic rules derived from the recent audit.
 
-- [ ] **Task: Implement Strict YAML Loading**
+- [x] **Task: Implement Strict YAML Loading** [commit: 2a399a9]
     - [ ] Update `tools/validate_policy_catalog.py` to use a loader that rejects duplicate keys (standard YAML loaders often silently overwrite them).
 - [ ] **Task: Add Impact Consistency Rule**
     - [ ] Logic: Fail validation if `abs(fixed_impact_eur - multi_year_impact['2026'])` exceeds a threshold (e.g., 100M€ or 1%).
