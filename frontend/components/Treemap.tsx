@@ -273,7 +273,7 @@ const CustomizedContent = (props: any) => {
               if (showBadge) {
                 return (
                   <div className="absolute bottom-1 right-1 bg-white/95 backdrop-blur-sm shadow-sm rounded px-1.5 py-0.5 flex items-center border border-gray-200/50">
-                    <span className={`text-[10px] font-bold leading-none ${isPositive ? 'text-emerald-700' : 'text-red-700'}`}>
+                    <span className={`text-[10px] font-bold leading-none ${isPositive ? 'text-rose-700' : 'text-emerald-700'}`}>
                       {isPositive ? '+' : ''}{percentVal.toFixed(1)}%
                     </span>
                   </div>
@@ -283,7 +283,7 @@ const CustomizedContent = (props: any) => {
               // Dot fallback for smaller blocks
               return (
                 <div className="absolute bottom-1 right-1 bg-white/90 shadow-sm rounded-full p-0.5">
-                  <div className={`w-2 h-2 rounded-full ${isPositive ? 'bg-emerald-600' : 'bg-red-600'}`} />
+                  <div className={`w-2 h-2 rounded-full ${isPositive ? 'bg-rose-600' : 'bg-emerald-600'}`} />
                 </div>
               );
             })()}

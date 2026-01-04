@@ -18,19 +18,19 @@ const STEPS: TutorialStep[] = [
     {
         targetId: 'treemap-container',
         title: `1 324 Milliards d'Euros`,
-        content: `Voici la totalité des dépenses publiques (État, Sécu, Collectivités). La taille des blocs reflète le poids réel de chaque politique publique. Cliquez sur un bloc pour modifier son budget.`,
+        content: `Voici la totalité des dépenses publiques (État, Sécu, Collectivités). La taille des blocs reflète le poids réel de chaque politique publique. Cliquez sur un bloc pour modifier son budget selon vos préférences.`,
         position: 'right',
     },
     {
         targetId: 'left-panel-tabs',
         title: `Deux Leviers d'Action`,
-        content: `Ici, l'onglet 'Orientations' vous permet de fixer des objectifs politiques globaux (ex: -5% sur les mobilités ou +10% sur les transports), et l'onglet 'Mesures' permet d'activer des réformes précises chiffrées (ex: geler le point d'indice) pour y parvenir.`,
+        content: `Ici, l'onglet 'Orientations' vous permet de fixer des objectifs politiques globaux (ex: -5% sur les mobilités ou +10% sur l'agriculture), et l'onglet 'Mesures' permet d'activer des réformes précises chiffrées (ex: geler le point d'indice) pour y parvenir.`,
         position: 'right',
     },
     {
         targetId: 'left-panel-list',
         title: `Fixer vos Priorités`,
-        content: `Sélectionnez une mission pour ajuster son budget. C'est ici que vous décidez d'investir ou d'économiser. Chaque choix modifie l'équilibre global en temps réel.`,
+        content: `Lorsque vous avez séléctionné une mission, vous pouvez soit ajuster son budget d'ensemble (ex: le baisser de -5%), soit activer des mesures précises. Les mesures viennent préciser la façon dont vous allez atteindre votre objectif. Vous pouvez aussi les utiliser seules. Chaque choix modifie l'équilibre global en temps réel.`,
         position: 'right',
     },
     {
@@ -41,8 +41,8 @@ const STEPS: TutorialStep[] = [
     },
     {
         targetId: 'scoreboard-resolution',
-        title: `Trajectoire Macro`,
-        content: `Visualisez l'impact de vos choix à moyen terme (2026-2029). La zone bleue indique le déficit, la ligne verte la croissance.`,
+        title: `Vos choix en action`,
+        content: `Visualisez l'impact de vos choix en temps réel`,
         position: 'bottom',
     },
     {

@@ -143,11 +143,11 @@ export function MassCategoryPanel({
             {/* Row 1: Label + Toggles */}
             {/* Row 1: Label + Scale Selector */}
             <div className="flex items-center justify-between h-6">
-              <div className="flex items-baseline gap-2">
+              <div className="flex items-center gap-2">
                 <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 flex items-center gap-1">
                   <i className="material-icons text-xs">tune</i> Objectif
                 </label>
-                <div className={`text-sm font-bold ${targetPercent === 0 ? 'text-slate-300' : (targetPercent > 0 ? 'text-rose-600' : 'text-emerald-600')}`}>
+                <div className={`text-sm font-bold ${targetPercent === 0 ? 'text-slate-300' : (targetPercent > 0 ? 'text-rose-500' : 'text-emerald-500')}`}>
                   {targetPercent > 0 ? '+' : ''}{targetPercent.toFixed(1)}%
                 </div>
               </div>
