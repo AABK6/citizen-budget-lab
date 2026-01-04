@@ -203,9 +203,9 @@ export function ScenarioDashboard({
         {/* SECTION 1: TITLE & TREND */}
         <div className="flex flex-col items-start min-w-fit border-r border-slate-100 pr-3 flex-shrink-0">
           <div className="flex items-center gap-2 mb-0.5">
-            <span className="material-icons text-[16px] text-slate-400">analytics</span>
+            <span className="material-icons text-[16px] text-slate-400">checklist</span>
             <span className="text-[11px] font-black uppercase tracking-widest text-slate-800">
-              SYNTHÈSE
+              VOTRE BUDGET
             </span>
           </div>
           <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-bold ${safeDeficitDelta >= 0 ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-rose-50 text-rose-700 border border-rose-100'}`}>
@@ -254,10 +254,7 @@ export function ScenarioDashboard({
         <div className="flex-1 min-w-0 flex flex-col justify-center border-l border-slate-100 pl-3 h-full overflow-hidden">
           {topLevers.length > 0 ? (
             <div className="flex flex-col justify-center w-full">
-              <div className="flex items-center justify-between mb-0.5">
-                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Principaux impacts</span>
-                {extraLevers > 0 && <span className="text-[9px] font-bold text-slate-400">+{extraLevers} autres</span>}
-              </div>
+              {/* No header, direct list */}
               <div className="flex flex-col gap-[1px]">
                 {topLevers.map((lever) => (
                   <div key={lever.id} className="flex items-center gap-2 w-full">

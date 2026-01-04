@@ -42,7 +42,7 @@ const STEPS: TutorialStep[] = [
     {
         targetId: 'scoreboard-resolution',
         title: `Vos choix en action`,
-        content: `Visualisez l'impact de vos choix en temps réel`,
+        content: `Ici, suivez l'évolution de VOTRE scénario budgétaire. La liste de droite se remplit automatiquement avec vos choix (hausses, baisses, réformes) pour vous montrer d'un coup d'œil comment vous transformez le pays.`,
         position: 'bottom',
     },
     {
