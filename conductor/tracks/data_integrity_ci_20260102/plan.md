@@ -15,7 +15,7 @@ Goal: Upgrade the catalog validator with semantic rules derived from the recent 
 ## Phase 2: CI Integration
 Goal: Automate these checks on every code/data change.
 
-- [ ] **Task: Configure GitHub Actions**
+- [x] **Task: Configure GitHub Actions** [commit: 407caed]
     - [ ] Ensure `tools/validate_policy_catalog.py` is executed in the CI environment (e.g., in `.github/workflows/ci.yml`).
     - [ ] Verify that data errors correctly block PR merges.
 
