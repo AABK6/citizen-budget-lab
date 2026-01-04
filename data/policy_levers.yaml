@@ -89,7 +89,7 @@
   label: Défiscalisation des pensions alimentaires (plafond)
   description: Exonérer d'impôt sur le revenu les pensions alimentaires perçues, dans
     la limite de 4 000 € par enfant (et 12 000 € par an au total)[8].
-  fixed_impact_eur: 470000000
+  fixed_impact_eur: -470000000
   major_amendment: true
   cofog_mapping: {}
   feasibility:
@@ -284,7 +284,7 @@
   description: Réintroduire l'« Exit Tax » sur les plus-values latentes en cas d'expatriation,
     avec le régime antérieur à 2019 (imposition annulée seulement après 15 ans de
     résidence fiscale à l'étranger, contre 2 ans aujourd'hui)[14].
-  fixed_impact_eur: 70000000
+  fixed_impact_eur: 700000000
   major_amendment: true
   cofog_mapping: {}
   feasibility:
@@ -322,7 +322,7 @@
   description: Instaurer une exonération unique de droits de donation à hauteur de
     152 500 € pour les dons effectués en 2026 au profit d'un descendant (enfant, petit-enfant)
     ou conjoint[15].
-  fixed_impact_eur: -300000000
+  fixed_impact_eur: 0
   major_amendment: true
   cofog_mapping: {}
   feasibility:
@@ -406,7 +406,7 @@
   description: Préserver l'avantage fiscal accordé aux familles au titre des frais
     de scolarité des enfants (collège, lycée, supérieur), alors que sa suppression
     était initialement prévue[17].
-  fixed_impact_eur: -250000000
+  fixed_impact_eur: 450000000
   major_amendment: true
   cofog_mapping: {}
   feasibility:
@@ -450,7 +450,7 @@
   description: Restreindre l'assiette de la nouvelle taxe sur les holdings patrimoniales
     (sociétés non opérationnelles détenant du patrimoine) aux seuls actifs « somptuaires
     » (de luxe), excluant ainsi les autres biens de cette taxation[18].
-  fixed_impact_eur: 100000000
+  fixed_impact_eur: 150000000
   major_amendment: true
   cofog_mapping: {}
   feasibility:
@@ -627,7 +627,7 @@
   description: Abaisser de 750 millions à 250 millions d'euros de chiffre d'affaires
     le seuil à partir duquel s'applique le taux minimum mondial de 15 % sur les bénéfices,
     élargissant ainsi le champ des entreprises concernées (notamment les ETI).
-  fixed_impact_eur: 1200000000
+  fixed_impact_eur: 400000000
   major_amendment: true
   cofog_mapping: {}
   feasibility:
@@ -920,6 +920,7 @@
   conflicts_with: []
   sources:
   - PLFSS 2026 adopté[1]
+  - https://www.budget.gouv.fr/
   params_schema: {}
 - id: amend_suspend_retirement_reform
   family: SOCIAL_SECURITY
@@ -963,7 +964,7 @@
     et paternité existants, d'une durée au choix du salarié de un mois (à 70 % du
     salaire) ou deux mois (à 60 %). Ce congé pourra être pris en deux fois et vise
     à renforcer le soutien à la parentalité[30].
-  fixed_impact_eur: -300000000
+  fixed_impact_eur: -800000000
   major_amendment: true
   cofog_mapping:
     '10': 1
@@ -1029,6 +1030,7 @@
   sources:
   - Miroir du levier 'annee_blanche_indexation' (4Md€).
   - PLFSS 2026, AN[2]
+  - https://www.budget.gouv.fr/
   params_schema: {}
   mission_mapping:
     M_PENSIONS: 1.0
@@ -1052,7 +1054,7 @@
     sociales pour les nouveaux contrats d'apprentissage. Autrement dit, les employeurs
     d'apprentis continueront à bénéficier de l'allègement actuel, aucune cotisation
     nouvelle ne sera créée[2].
-  fixed_impact_eur: -1000000000
+  fixed_impact_eur: -1100000000
   budget_side: REVENUE
   major_amendment: true
   cofog_mapping: {}
@@ -1098,7 +1100,7 @@
     patronale sur la part patronale des titres-restaurant. En conséquence, les entreprises
     ne seront pas soumises en 2026 à une charge supplémentaire sur les tickets-resto
     distribués à leurs salariés[2].
-  fixed_impact_eur: -900000000
+  fixed_impact_eur: -950000000
   budget_side: REVENUE
   major_amendment: true
   cofog_mapping: {}
@@ -1223,7 +1225,7 @@
     le coût des mesures et répondre aux hausses de tarifs jugées excessives des mutuelles,
     sans répercussion sur les assurés (plafond d''augmentation des cotisations en
     2026)[4].'
-  fixed_impact_eur: 1000000000
+  fixed_impact_eur: 1100000000
   budget_side: REVENUE
   major_amendment: true
   cofog_mapping: {}
@@ -1271,7 +1273,7 @@
     les plus petites entreprises. Cette mesure, portée par des députés de l'opposition,
     vise à soutenir le pouvoir d'achat des salariés des grands groupes (coût < 150
     M€)[33].
-  fixed_impact_eur: -150000000
+  fixed_impact_eur: -500000000
   budget_side: REVENUE
   major_amendment: true
   cofog_mapping: {}
@@ -1317,7 +1319,7 @@
     appliqué aux indemnités de rupture conventionnelle et de mise à la retraite. Cette
     mesure accroît le coût des départs négociés pour l'employeur, générant des recettes
     supplémentaires pour la Sécurité sociale[34].
-  fixed_impact_eur: 260000000
+  fixed_impact_eur: 600000000
   budget_side: REVENUE
   major_amendment: true
   cofog_mapping: {}
@@ -1376,6 +1378,7 @@
     https://france.attac.org/nos-publications/notes-et-rapports/article/budget-2026-l-austerite-ne-fait-que-commencer'
   - Cour des comptes 2023
   - PLF 2026 orientation documents
+  - https://www.budget.gouv.fr/
   params_schema: {}
   impact:
     householdsImpacted: 17000000
@@ -1404,7 +1407,7 @@
   description: Mettre en œuvre des mesures d'efficacité (numérisation, services partagés)
     au sein du ministère de la Justice.
   short_label: Justice savings
-  fixed_impact_eur: 750000000
+  fixed_impact_eur: 250000000
   dimension: cp
   popularity: 0.35
   cofog_mapping:
@@ -1439,7 +1442,7 @@
   description: Rationaliser les services support et les achats au sein de l'Éducation
     nationale, en préservant les dépenses pour les classes.
   short_label: Education effic.
-  fixed_impact_eur: 1200000000
+  fixed_impact_eur: 400000000
   dimension: cp
   popularity: 0.28
   cofog_mapping:
@@ -1473,7 +1476,7 @@
   description: Rationaliser les postes diplomatiques et les services partagés à l'étranger
     pour réaliser des économies.
   short_label: Affaires ext.
-  fixed_impact_eur: 350000000
+  fixed_impact_eur: 150000000
   dimension: cp
   popularity: 0.22
   cofog_mapping:
@@ -1728,7 +1731,7 @@
   label: Étendre la Taxe sur les Transactions Financières (TTF)
   description: Élargir l'assiette ou augmenter le taux de la taxe sur les transactions
     financières (achats d'actions, etc.).
-  fixed_impact_eur: 2000000000
+  fixed_impact_eur: 1200000000
   cofog_mapping: {}
   feasibility:
     law: true
@@ -2054,7 +2057,7 @@
   label: Lutter contre la fraude et l'évasion fiscales
   description: Renforcer les contrôles, le partage de données et les sanctions pour
     récupérer davantage d'impôts impayés.
-  fixed_impact_eur: 2300000000
+  fixed_impact_eur: 1500000000
   cofog_mapping: {}
   feasibility:
     law: true
@@ -2229,7 +2232,7 @@
   label: Baisser l'impôt sur le revenu des classes moyennes
   description: 'Alléger l''impôt pour les contribuables de la classe moyenne (ex:
     en ajustant les tranches du barème).'
-  fixed_impact_eur: -3000000000
+  fixed_impact_eur: -2000000000
   cofog_mapping: {}
   feasibility:
     law: true
@@ -2471,6 +2474,7 @@
   sources:
   - 'Institut Montaigne (2022) Synthèse 2022: https://www.institutmontaigne.org/publications/synthese-des-chiffrages-presidentielle-2022'
   - Est.
+  - https://www.budget.gouv.fr/
   params_schema: {}
   impact:
     householdsImpacted: 16000000
@@ -2513,6 +2517,7 @@
   - BFMTV [23]
   - Institut Montaigne (2024) est. 8-14Md€/an horizon 2027; CNAV ~16Md€ 2032. 34Md€
     likely includes full steady state with associated measures.
+  - https://www.budget.gouv.fr/
   params_schema: {}
   impact:
     householdsImpacted: 800000
@@ -2555,6 +2560,7 @@
   - OFCE (2024)
   - Institut Montaigne (2017) est. 27Md€ (40 annuités) à 33Md€; DG Trésor/COR estimates
     higher for full effect.
+  - https://www.budget.gouv.fr/
   params_schema: {}
   mission_mapping:
     M_PENSIONS: 1.0
@@ -2587,6 +2593,7 @@
   sources:
   - 'Vie Publique (2023) Réforme retraites: https://www.vie-publique.fr/loi/287993-reforme-des-retraites-2023-loi-du-14-avril-2023'
   - Est.
+  - https://www.budget.gouv.fr/
   params_schema: {}
   mission_mapping:
     M_PENSIONS: 1.0
@@ -2608,7 +2615,7 @@
   label: Supprimer les régimes spéciaux de retraite restants
   description: Mettre fin aux régimes spéciaux de retraite encore existants et restreindre
     les départs anticipés.
-  fixed_impact_eur: 500000000
+  fixed_impact_eur: 300000000
   cofog_mapping:
     '10': 1
   feasibility:
@@ -2658,6 +2665,7 @@
   sources:
   - 'Public Sénat (2025) Économie gel indexation ~4Md€: https://www.publicsenat.fr/actualites/economie/budget-2026-le-senat-vote-la-reindexation-du-bareme-de-l-impot-sur-le-revenu'
   - L'Express [26]
+  - https://www.budget.gouv.fr/
   params_schema: {}
   impact:
     householdsImpacted: 17000000
@@ -2685,7 +2693,7 @@
   label: Aligner le calcul des retraites public/privé
   description: 'Calculer les pensions des fonctionnaires sur une période plus longue
     (ex: 25 ans) au lieu des 6 derniers mois, pour aligner sur le privé.'
-  fixed_impact_eur: 1500000000
+  fixed_impact_eur: 500000000
   cofog_mapping:
     '10': 1
   feasibility:
@@ -2764,7 +2772,7 @@
   label: Augmenter les pensions minimales
   description: 'Augmenter le montant de la pension minimum (ex: pour les carrières
     complètes) pour les retraités modestes.'
-  fixed_impact_eur: -1500000000
+  fixed_impact_eur: -2000000000
   cofog_mapping:
     '10': 1
   feasibility:
@@ -2775,6 +2783,7 @@
   conflicts_with: []
   sources:
   - BFMTV [25]
+  - https://www.budget.gouv.fr/
   params_schema: {}
   mission_mapping:
     M_SOLIDARITE: 1.0
@@ -2808,6 +2817,7 @@
   - expand_unemployment_benefits
   sources:
   - Le Monde [28]
+  - https://www.budget.gouv.fr/
   params_schema: {}
   impact:
     householdsImpacted: 2500000
@@ -2835,7 +2845,7 @@
   label: Annuler les coupes dans l'assurance chômage
   description: 'Rendre l''assurance chômage plus généreuse (ex: rétablir des durées
     d''indemnisation plus longues).'
-  fixed_impact_eur: -2500000000
+  fixed_impact_eur: -1500000000
   cofog_mapping:
     '10': 1
   feasibility:
@@ -2847,6 +2857,7 @@
   - tighten_unemployment_benefits
   sources:
   - Le Monde [28]
+  - https://www.budget.gouv.fr/
   params_schema: {}
   mission_mapping:
     M_TRAVAIL_EMPLOI: 1.0
@@ -2868,7 +2879,7 @@
   label: Conditionner le versement du RSA
   description: Exiger des bénéficiaires du RSA (Revenu de Solidarité Active) des activités
     (travail, formation) en contrepartie de l'allocation.
-  fixed_impact_eur: 800000000
+  fixed_impact_eur: 500000000
   cofog_mapping:
     '10': 1
   feasibility:
@@ -2909,7 +2920,8 @@
     notes: Likely unconstitutional and against EU law; even if attempted, would face
       legal challenges and limited savings.
   conflicts_with: []
-  sources: []
+  sources:
+  - https://www.budget.gouv.fr/
   params_schema: {}
   mission_mapping:
     M_SOLIDARITE: 1.0
@@ -2942,6 +2954,7 @@
   conflicts_with: []
   sources:
   - L'Express [27]
+  - https://www.budget.gouv.fr/
   params_schema: {}
   mission_mapping:
     M_SOLIDARITE: 1.0
@@ -2963,7 +2976,7 @@
   label: Réduire les Aides au Logement (APL)
   description: Réduire les dépenses d'APL (Aide Personnalisée au Logement), par exemple
     en durcissant les conditions d'éligibilité.
-  fixed_impact_eur: 1300000000
+  fixed_impact_eur: 1500000000
   cofog_mapping:
     '10': 1
   feasibility:
@@ -2974,6 +2987,7 @@
   conflicts_with: []
   sources:
   - L'Express [31]
+  - https://www.budget.gouv.fr/
   params_schema: {}
   impact:
     householdsImpacted: 3000000
@@ -3000,7 +3014,7 @@
   family: SOCIAL_SECURITY
   label: Réduire les allocations familiales (hauts revenus)
   description: Diminuer les allocations familiales versées aux ménages les plus aisés.
-  fixed_impact_eur: 600000000
+  fixed_impact_eur: 1500000000
   cofog_mapping:
     '10': 1
   feasibility:
@@ -3011,6 +3025,7 @@
   conflicts_with: []
   sources:
   - Est.
+  - https://www.budget.gouv.fr/
   params_schema: {}
   mission_mapping:
     M_SOLIDARITE: 1.0
@@ -3032,7 +3047,7 @@
   label: Lutter contre la fraude aux prestations sociales
   description: Renforcer les contrôles pour détecter et prévenir la fraude aux prestations
     sociales (famille, chômage, santé...).
-  fixed_impact_eur: 1000000000
+  fixed_impact_eur: 500000000
   cofog_mapping:
     '10': 1
   feasibility:
@@ -3064,7 +3079,7 @@
   label: Supprimer l'Aide Médicale d'État (AME)
   description: Supprimer l'AME (Aide Médicale d'État), le programme de santé pour
     les immigrés sans papiers.
-  fixed_impact_eur: 500000000
+  fixed_impact_eur: 800000000
   cofog_mapping:
     '07': 1
   feasibility:
@@ -3108,6 +3123,7 @@
   sources:
   - 'Vie Publique (2026) ONDAM: https://www.vie-publique.fr/loi/296203-plfss-2026-budget-securite-sociale-2026'
   - Bayrou plan [32]
+  - https://www.budget.gouv.fr/
   params_schema: {}
   mission_mapping:
     M_SANTE: 1.0
@@ -3129,7 +3145,7 @@
   label: Réduire les dépenses de santé 'inutiles'
   description: 'Réduire les dépenses de santé jugées inefficaces (ex: moins rembourser
     certains médicaments, promouvoir les génériques).'
-  fixed_impact_eur: 2000000000
+  fixed_impact_eur: 1200000000
   cofog_mapping:
     '07': 1
   feasibility:
@@ -3140,6 +3156,7 @@
   conflicts_with: []
   sources:
   - Bayrou plan [32]
+  - https://www.budget.gouv.fr/
   params_schema: {}
   mission_mapping:
     M_SANTE: 1.0
@@ -3161,7 +3178,7 @@
   label: Augmenter le reste à charge (franchises médicales)
   description: Mettre en place ou augmenter les franchises médicales (participation
     forfaitaire) sur les visites ou les médicaments.
-  fixed_impact_eur: 200000000
+  fixed_impact_eur: 1100000000
   cofog_mapping:
     '07': 1
   feasibility:
@@ -3172,6 +3189,7 @@
   conflicts_with: []
   sources:
   - Est.
+  - https://www.budget.gouv.fr/
   params_schema: {}
   mission_mapping:
     M_SANTE: 1.0
@@ -3204,6 +3222,7 @@
   conflicts_with: []
   sources:
   - Est.
+  - https://www.budget.gouv.fr/
   params_schema: {}
   mission_mapping:
     M_SANTE: 1.0
@@ -3237,6 +3256,7 @@
   sources:
   - Est.
   - Estimation basée sur Ségur de la santé (8Md€) et revalorisations ciblées.
+  - https://www.budget.gouv.fr/
   params_schema: {}
   mission_mapping:
     M_SANTE: 1.0
@@ -3305,6 +3325,7 @@
   - raise_civil_service_pay
   sources:
   - L'Express [35]
+  - https://www.budget.gouv.fr/
   params_schema: {}
   impact:
     householdsImpacted: 5700000
@@ -3347,6 +3368,7 @@
   conflicts_with: []
   sources:
   - L'Express [37]
+  - https://www.budget.gouv.fr/
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -3386,6 +3408,7 @@
   - 'Sénat (Rapport PLF 2024) +3.5% = 7.6Md€: https://www.senat.fr/rap/a23-139-1/a23-139-11.html'
   - Official est.
   - 'Sénat (2022/2023): +3.5% = 7.6Md€; extrapolation +10% ~22Md€.'
+  - https://www.budget.gouv.fr/
   params_schema: {}
   impact:
     householdsImpacted: 5700000
@@ -3428,6 +3451,7 @@
   conflicts_with: []
   sources:
   - L'Express [42]
+  - https://www.budget.gouv.fr/
   params_schema: {}
   impact:
     householdsImpacted: 50000
@@ -3454,7 +3478,7 @@
   family: STAFFING
   label: Supprimer ou fusionner des agences publiques
   description: Éliminer ou regrouper certaines agences ou comités publics jugés redondants.
-  fixed_impact_eur: 1000000000
+  fixed_impact_eur: 500000000
   cofog_mapping:
     '01': 1
   feasibility:
@@ -3486,7 +3510,7 @@
   label: Réduire l'absentéisme dans la fonction publique
   description: 'Mettre en place des mesures pour réduire l''absentéisme (ex: réintroduire
     un jour de carence, contrôles renforcés).'
-  fixed_impact_eur: 1300000000
+  fixed_impact_eur: 900000000
   cofog_mapping:
     '9': 0.3
     '07': 0.2
@@ -3534,6 +3558,7 @@
   sources:
   - 'Hypothèse coupe 10% (Budget 2026 ~57Md€): https://www.senat.fr/rap/a23-139-1/a23-139-11.html'
   - L'Express [44]
+  - https://www.budget.gouv.fr/
   params_schema: {}
   mission_mapping:
     M_DEFENSE: 1.0
@@ -3563,6 +3588,7 @@
   sources:
   - 'Public Sénat (2025) Réduction allègements: https://www.publicsenat.fr/actualites/economie/budget-2025-le-senat-adopte-la-reduction-des-allegements-de-cotisations-patronales'
   - The Guardian [45]
+  - https://www.budget.gouv.fr/
   params_schema: {}
   mission_mapping:
     M_TRAVAIL_EMPLOI: 1.0
@@ -3584,7 +3610,7 @@
   label: Supprimer les niches fiscales 'brunes' (fossiles)
   description: 'Supprimer les subventions et exonérations fiscales qui favorisent
     les énergies fossiles (ex: gazole non routier).'
-  fixed_impact_eur: 1500000000
+  fixed_impact_eur: 2000000000
   cofog_mapping:
     '05': 1
   feasibility:
@@ -3595,6 +3621,7 @@
   conflicts_with: []
   sources:
   - The Guardian [46]
+  - https://www.budget.gouv.fr/
   params_schema: {}
   mission_mapping:
     M_ECOLOGIE: 1.0
@@ -3616,7 +3643,7 @@
   label: Réduire l'aide publique au développement
   description: Réduire le budget de la France consacré à l'aide internationale et
     au développement.
-  fixed_impact_eur: 1500000000
+  fixed_impact_eur: 700000000
   cofog_mapping:
     '01': 1
   feasibility:
@@ -3659,6 +3686,7 @@
   conflicts_with: []
   sources:
   - L'Express [49]
+  - https://www.budget.gouv.fr/
   params_schema: {}
   mission_mapping:
     M_SPORT_JEUNESSE_ET_VIE_ASSOCIATIVE: 1.0
@@ -3712,7 +3740,7 @@
   label: Embaucher des enseignants supplémentaires
   description: 'Recruter davantage d''enseignants pour réduire la taille des classes
     (ex: 10 000 postes).'
-  fixed_impact_eur: -500000000
+  fixed_impact_eur: -80000000
   cofog_mapping:
     '9': 1
   feasibility:
@@ -3750,6 +3778,7 @@
   conflicts_with: []
   sources:
   - Est.
+  - https://www.budget.gouv.fr/
   params_schema: {}
   mission_mapping:
     M_RELATIONS_AVEC_LES_COLLECTIVITES_TERRITORIALES: 1.0
@@ -3771,7 +3800,7 @@
   label: Taxe verte sur les transports (Avion, Livraisons)
   description: 'Prélever de nouvelles taxes écologiques (ex: sur les billets d''avion,
     le kérosène, ou les livraisons e-commerce).'
-  fixed_impact_eur: 600000000
+  fixed_impact_eur: 580000000
   budget_side: REVENUE
   cofog_mapping: {}
   feasibility:
@@ -3813,7 +3842,7 @@
   label: Améliorer l'efficacité des achats publics
   description: Rationaliser les achats de l'État (achats groupés, meilleurs appels
     d'offres) pour réduire les coûts.
-  fixed_impact_eur: 500000000
+  fixed_impact_eur: 1000000000
   cofog_mapping:
     '02': 0.5
     '07': 0.5
@@ -3862,6 +3891,7 @@
   sources:
   - 'Boursier.com (2025) Gel dépenses État: https://www.boursier.com/actualites/economie/budget-2026-le-gouvernement-cherche-44-milliards-d-economies-45678.html'
   - info.gouv.fr [51]
+  - https://www.budget.gouv.fr/
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -3895,6 +3925,7 @@
   sources:
   - 'Banque des Territoires (2024) Coût unitaire logement social ~169k€: https://www.banquedesterritoires.fr/eclairages-logement-social'
   - Banque des Territoires (2023) coût moyen 169k€/logement * 200k unités.
+  - https://www.budget.gouv.fr/
   params_schema: {}
   mission_mapping:
     M_COHESION_DES_TERRITOIRES: 1.0
@@ -3928,6 +3959,7 @@
   sources:
   - 'iFRAP (2025) Coût gratuité cantines 7-9Md€: https://www.ifrap.org/education-et-culture/cantines-scolaires-le-mirage-de-la-gratuite-plus-de-7-milliards-deuros'
   - 'iFRAP (2023): Cantine gratuite ~7-9Md€.'
+  - https://www.budget.gouv.fr/
   params_schema: {}
   mission_mapping:
     M_ENSEIGNEMENT_SCOLAIRE: 1.0
@@ -3949,7 +3981,7 @@
   label: 'Retraite : maintien du rythme de la réforme (+3 mois par an)'
   description: Poursuivre l'augmentation progressive de l'âge légal de la retraite
     de 3 mois par an pour atteindre 64 ans, comme prévu par la réforme de 2023.
-  fixed_impact_eur: 500000000
+  fixed_impact_eur: 300000000
   cofog_mapping:
     '10': 1
   feasibility:
@@ -4162,7 +4194,7 @@
   label: Augmenter le taux intermédiaire de TVA à 12,5%
   description: Augmenter le taux intermédiaire de TVA de 10% à 12,5% (concerne restauration,
     transports...)
-  fixed_impact_eur: 2905982906
+  fixed_impact_eur: 3000000000
   cofog_mapping: {}
   feasibility:
     law: true
@@ -4568,7 +4600,7 @@
   label: Écotaxe kilométrique (Poids lourds)
   description: Instaurer un péage kilométrique (hors autoroutes) pour les poids lourds
     (transport de marchandises).
-  fixed_impact_eur: 1000000000
+  fixed_impact_eur: 600000000
   budget_side: REVENUE
   cofog_mapping: {}
   feasibility:
@@ -4623,6 +4655,7 @@
   conflicts_with: []
   sources:
   - Workbook 20251017, Dépenses fiscales
+  - https://www.budget.gouv.fr/
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -4644,7 +4677,7 @@
   label: 'CIR : Réduire de 50% (Grandes Entreprises)'
   description: Réduire de moitié le Crédit d'Impôt Recherche (CIR) pour les grandes
     entreprises.
-  fixed_impact_eur: 1500000000
+  fixed_impact_eur: 2500000000
   cofog_mapping: {}
   feasibility:
     law: true
@@ -4654,6 +4687,7 @@
   - cap_research_credit
   sources:
   - Workbook 20251017, Dépenses fiscales
+  - https://www.budget.gouv.fr/
   params_schema: {}
   mission_mapping:
     M_RECHERCHE_ENSEIGNEMENT_SUPERIEUR: 1.0
@@ -4675,7 +4709,7 @@
   label: 'CIR : Supprimer le taux à 5% (> 100 M€)'
   description: Supprimer le taux réduit de 5% du CIR pour les dépenses de recherche
     dépassant 100 M€.
-  fixed_impact_eur: 400000000
+  fixed_impact_eur: 250000000
   cofog_mapping: {}
   feasibility:
     law: true
@@ -4739,7 +4773,7 @@
   family: SOCIAL_SECURITY
   label: 'APL : Baisse forfaitaire de 5€'
   description: Baisse forfaitaire des APL de 5€.
-  fixed_impact_eur: 60000000
+  fixed_impact_eur: 400000000
   cofog_mapping:
     '10': 1
   feasibility:
@@ -4771,7 +4805,7 @@
   label: 'APL : Durcir le seuil d''accès (Revenu 18 920€)'
   description: Conditionner l'accès aux APL à un seuil de revenu net global de 18
     920€.
-  fixed_impact_eur: 550000000
+  fixed_impact_eur: 108000000
   cofog_mapping:
     '10': 1
   feasibility:
@@ -4804,7 +4838,7 @@
   label: 'APL : Durcir le seuil d''accès (Revenu 39 020€)'
   description: Conditionner l'accès aux APL à un seuil de revenu net global de 39
     020€.
-  fixed_impact_eur: 820000000
+  fixed_impact_eur: 50000000
   cofog_mapping:
     '10': 1
   feasibility:
@@ -4848,6 +4882,7 @@
   - 'CAE / La Croix (2024): https://www.la-croix.com/france/enseignement-prive-sous-contrat-le-financement-public-en-question-20240402'
   - Workbook 20251017, Dépenses budgétaires
   - 'La Croix / CAE (2024): économie estimée à 3.5Md€.'
+  - https://www.budget.gouv.fr/
   params_schema: {}
   mission_mapping:
     M_ENSEIGNEMENT_SCOLAIRE: 1.0
@@ -4870,7 +4905,7 @@
   label: Augmenter les frais d'inscription à l'université
   description: 'Augmenter les frais d''inscription (ex: Licence 730€, Master 887€,
     Doctorat 1 380€).'
-  fixed_impact_eur: 463000000
+  fixed_impact_eur: 400000000
   cofog_mapping:
     '9': 1
   feasibility:
@@ -4901,7 +4936,7 @@
   label: Ajuster les dépenses d'éducation à la démographie
   description: Aligner les dépenses d'éducation sur la baisse du nombre d'élèves (baisse
     démographique).
-  fixed_impact_eur: 400000000
+  fixed_impact_eur: 450000000
   cofog_mapping:
     '9': 1
   feasibility:
@@ -4944,6 +4979,7 @@
   - cut_local_transfers
   sources:
   - Workbook 20251017, Dépenses budgétaires
+  - https://www.budget.gouv.fr/
   params_schema: {}
   mission_mapping:
     M_RELATIONS_AVEC_LES_COLLECTIVITES_TERRITORIALES: 1.0
@@ -4979,6 +5015,7 @@
   - 'Maires de France (2025) Effort 5Md€: https://www.mairesdefrance.com/finances-locales-le-gouvernement-confirme-un-effort-de-5-milliards-d-euros-pour-2026-article-2025-10-15'
   - 'Maires de France (2025) Effort demandé aux collectivités ~5Md€: https://www.mairesdefrance.com/finances-locales-le-gouvernement-confirme-un-effort-de-5-milliards-d-euros-pour-2026-article-2025-10-15'
   - Workbook 20251017, Dépenses budgétaires
+  - https://www.budget.gouv.fr/
   params_schema: {}
   mission_mapping:
     M_RELATIONS_AVEC_LES_COLLECTIVITES_TERRITORIALES: 1.0
@@ -5000,7 +5037,7 @@
   label: Appliquer les 35h (collectivités locales)
   description: Harmoniser la durée légale du travail (1607h/an) dans les collectivités
     locales.
-  fixed_impact_eur: 1300000000
+  fixed_impact_eur: 1200000000
   cofog_mapping:
     '01': 1
   feasibility:
@@ -5010,6 +5047,7 @@
   conflicts_with: []
   sources:
   - Workbook 20251017, Dépenses budgétaires
+  - https://www.budget.gouv.fr/
   params_schema: {}
   mission_mapping:
     M_RELATIONS_AVEC_LES_COLLECTIVITES_TERRITORIALES: 1.0
@@ -5030,7 +5068,7 @@
   family: PENSIONS
   label: Geler les retraites (base + compl.) en 2026
   description: Gel ponctuel des retraites de base et complémentaires en 2026.
-  fixed_impact_eur: 3900000000
+  fixed_impact_eur: 3600000000
   cofog_mapping:
     '10': 1
   feasibility:
@@ -5041,6 +5079,7 @@
   - freeze_pension_indexation
   sources:
   - Workbook 20251017, Dépenses budgétaires
+  - https://www.budget.gouv.fr/
   params_schema: {}
   mission_mapping:
     M_SOLIDARITE: 1.0
@@ -5067,6 +5106,7 @@
   conflicts_with: []
   sources:
   - Workbook 20251017, Dépenses budgétaires
+  - https://www.budget.gouv.fr/
   params_schema: {}
   mission_mapping:
     M_SOLIDARITE: 1.0
@@ -5083,7 +5123,7 @@
   label: '''MaPrimeRénov'' : Cibler les rénovations d''ampleur'
   description: Recentrer l'aide MaPrimeRénov' sur les rénovations globales ('d'ampleur')
     et la sortie des 'passoires thermiques'.
-  fixed_impact_eur: 904000000
+  fixed_impact_eur: 1000000000
   cofog_mapping:
     '06': 1
   feasibility:

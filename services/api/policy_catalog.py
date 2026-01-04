@@ -319,10 +319,13 @@ def suggest_levers_for_mass(mass_id: str, limit: int = 5) -> List[dict]:
         if not _is_active(lever):
             continue
         normalized = _normalized_lever(lever)
-        if normalized.get("budget_side") == "REVENUE":
-            continue
+        
         cofog_mapping = normalized.get("cofog_mapping") or {}
         mission_mapping = normalized.get("mission_mapping") or {}
+        
+        # Support revenue mapping
+        target_rev_id = normalized.get("target_revenue_category_id")
+        
         if not mission_mapping and cofog_mapping:
             try:
                 from .data_loader import convert_cofog_mapping_to_missions
@@ -332,34 +335,40 @@ def suggest_levers_for_mass(mass_id: str, limit: int = 5) -> List[dict]:
 
         # 1. Direct match in mapping
         match = False
-        if is_mission:
-            mission_id = mass_id_clean.upper()
-            if mission_id in {str(k).upper() for k in mission_mapping.keys()}:
-                match = True
+        
+        # Check target revenue category first
+        if target_rev_id and target_rev_id == mass_id_clean:
+            match = True
+            
+        if not match:
+            if is_mission:
+                mission_id = mass_id_clean.upper()
+                if mission_id in {str(k).upper() for k in mission_mapping.keys()}:
+                    match = True
+                else:
+                    stripped = mission_id.replace("M_", "")
+                    for k in mission_mapping.keys():
+                        key_norm = str(k).upper().replace("M_", "")
+                        if stripped == key_norm:
+                            match = True
+                            break
             else:
-                stripped = mission_id.replace("M_", "")
-                for k in mission_mapping.keys():
-                    key_norm = str(k).upper().replace("M_", "")
-                    if stripped == key_norm:
+                major = mass_id_clean.split(".")[0][:2]
+                for k in cofog_mapping.keys():
+                    if major and (major == str(k).split(".")[0][:2]):
                         match = True
                         break
-        else:
-            major = mass_id_clean.split(".")[0][:2]
-            for k in cofog_mapping.keys():
-                if major and (major == str(k).split(".")[0][:2]):
-                    match = True
-                    break
 
         # 2. Family match heuristics (optional)
-        # e.g. M_HEALTH -> HEALTH family
-        family = normalized.get("family", "")
-        clean_upper = mass_id_clean.upper()
-        if "HEALTH" in clean_upper and family == "HEALTH":
-            match = True
-        elif "DEFENSE" in clean_upper and family == "DEFENSE":
-            match = True
-        elif "EDU" in clean_upper and family == "STAFFING":
-            match = True
+        if not match:
+            family = normalized.get("family", "")
+            clean_upper = mass_id_clean.upper()
+            if "HEALTH" in clean_upper and family == "HEALTH":
+                match = True
+            elif "DEFENSE" in clean_upper and family == "DEFENSE":
+                match = True
+            elif "EDU" in clean_upper and family == "STAFFING":
+                match = True
 
         if match:
             results.append(normalized)

@@ -92,3 +92,52 @@ actions:
     assert acc.deficit_delta_path[0] == pytest.approx(-lever["fixed_impact_eur"], abs=1e-6)
     assert acc.commitments_path is not None
     assert acc.commitments_path[0] == pytest.approx(0.0, abs=1e-6)
+
+
+def test_revenue_reform_metadata():
+    app = create_app()
+    client = TestClient(app)
+
+    q = """
+      query {
+        policyLevers(search: "ISF") {
+          id
+          vigilancePoints
+          authoritativeSources
+          targetRevenueCategoryId
+        }
+      }
+    """
+    res = client.post("/graphql", json={"query": q})
+    assert res.status_code == 200
+    js = res.json()
+    assert "errors" not in js
+    levers = js["data"]["policyLevers"]
+    # We enriched wealth_tax in Phase 1
+    wt = next((l for l in levers if l["id"] == "wealth_tax"), None)
+    assert wt is not None
+    assert wt["targetRevenueCategoryId"] == "rev_property_taxes"
+    assert isinstance(wt["vigilancePoints"], list)
+    assert len(wt["vigilancePoints"]) > 0
+
+
+def test_suggest_levers_for_revenue_category():
+    app = create_app()
+    client = TestClient(app)
+
+    q = """
+      query Q($mid: String!){
+        suggestLevers(massId: $mid) {
+          id
+          label
+        }
+      }
+    """
+    # rev_vat_standard was mapped to vat_normal_plus1
+    res = client.post("/graphql", json={"query": q, "variables": {"mid": "rev_vat_standard"}})
+    assert res.status_code == 200
+    js = res.json()
+    assert "errors" not in js
+    suggestions = js["data"]["suggestLevers"]
+    # Currently this will FAIL because suggest_levers_for_mass skips REVENUE
+    assert any(s["id"] == "vat_normal_plus1" for s in suggestions)
