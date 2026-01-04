@@ -23,7 +23,7 @@
 - [x] Task: Conduct a visual audit to ensure DSFR compliance and strict parity with the Expenses UI. [commit: 4b9ea81]
 - [x] Task: Conductor - User Manual Verification 'Phase 3: Frontend UI/UX Alignment' (Protocol in workflow.md) [checkpoint: 58d448c]
 
-## Phase 4: Verification & Finalization
-- [ ] Task: Run full end-to-end check: Select a revenue category -> View reforms -> Toggle reform -> Verify impact in summary charts.
-- [ ] Task: Run project linting and type-checking (`npm run lint`, `tsc`, etc.).
-- [ ] Task: Conductor - User Manual Verification 'Phase 4: Verification & Finalization' (Protocol in workflow.md)
+## Phase 4: Verification & Finalization [checkpoint: a78e7fa]
+- [x] Task: Run full end-to-end check: Select a revenue category -> View reforms -> Toggle reform -> Verify impact in summary charts. [commit: 534b576]
+- [x] Task: Run project linting and type-checking (`npm run lint`, `tsc`, etc.). [commit: 534b576]
+- [x] Task: Conductor - User Manual Verification 'Phase 4: Verification & Finalization' (Protocol in workflow.md) [checkpoint: a78e7fa]
