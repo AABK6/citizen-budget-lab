@@ -1207,6 +1207,30 @@
     description: Risque de fuite des capitaux et d'évasion fiscale des contribuables
       les plus aisés.
     source: Conseil d'Analyse Économique
+  - type: vigilance
+    description: Risque de fuite des capitaux et d'expatriation fiscale des contribuables
+      les plus aisés.
+    source: Gemini Research
+  - type: vigilance
+    description: Impact potentiel sur le financement des entreprises (Business Angels,
+      investissement PME).
+    source: Gemini Research
+  - type: vigilance
+    description: Complexité d'évaluation des actifs non cotés (œuvres d'art, parts
+      de sociétés fermées).
+    source: Gemini Research
+  vigilance_points:
+  - Risque de fuite des capitaux et d'expatriation fiscale des contribuables les plus
+    aisés.
+  - Impact potentiel sur le financement des entreprises (Business Angels, investissement
+    PME).
+  - Complexité d'évaluation des actifs non cotés (œuvres d'art, parts de sociétés
+    fermées).
+  authoritative_sources:
+  - Cour des Comptes
+  - FIPECO
+  - Institut Montaigne
+  target_revenue_category_id: rev_property_taxes
 - id: high_income_surtax
   family: TAXES
   label: Surtaxe sur les très hauts revenus
@@ -1276,6 +1300,29 @@
   - type: legal
     description: Instabilité fiscale dénoncée par les organisations patronales (MEDEF).
     source: Le Figaro
+  - type: vigilance
+    description: Risque constitutionnel lié à la rupture d'égalité devant les charges
+      publiques.
+    source: Gemini Research
+  - type: vigilance
+    description: Impact négatif sur la capacité d'investissement futur des secteurs
+      ciblés (énergie, etc.).
+    source: Gemini Research
+  - type: vigilance
+    description: Difficulté technique à définir la notion de 'super-profit' par rapport
+      au cycle économique.
+    source: Gemini Research
+  vigilance_points:
+  - Risque constitutionnel lié à la rupture d'égalité devant les charges publiques.
+  - Impact négatif sur la capacité d'investissement futur des secteurs ciblés (énergie,
+    etc.).
+  - Difficulté technique à définir la notion de 'super-profit' par rapport au cycle
+    économique.
+  authoritative_sources:
+  - Conseil Constitutionnel
+  - Conseil d'État
+  - OCDE
+  target_revenue_category_id: rev_cit
 - id: end_flat_tax
   family: TAXES
   label: Supprimer la 'Flat Tax' (PFU) sur les revenus du capital
@@ -1312,6 +1359,26 @@
     description: Mesure de justice fiscale visant à aligner la taxation du capital
       sur celle du travail.
     source: Alternatives Économiques
+  - type: vigilance
+    description: Risque de fuite des capitaux et moindre attractivité pour les investisseurs
+      étrangers.
+    source: Gemini Research
+  - type: vigilance
+    description: Instabilité fiscale décourageant l'épargne longue et l'actionnariat.
+    source: Gemini Research
+  - type: vigilance
+    description: Risque de baisse de l'assiette taxable (optimisation ou baisse des
+      distributions) réduisant le rendement attendu.
+    source: Gemini Research
+  vigilance_points:
+  - Risque de fuite des capitaux et moindre attractivité pour les investisseurs étrangers.
+  - Instabilité fiscale décourageant l'épargne longue et l'actionnariat.
+  - Risque de baisse de l'assiette taxable (optimisation ou baisse des distributions)
+    réduisant le rendement attendu.
+  authoritative_sources:
+  - France Stratégie
+  - Cour des Comptes
+  target_revenue_category_id: rev_pit
 - id: expand_ftt
   family: TAXES
   label: Étendre la Taxe sur les Transactions Financières (TTF)
@@ -1409,6 +1476,27 @@
     description: Risque de contestation sociale type 'Gilets Jaunes' en cas de hausse
       brutale sans compensation.
     source: Note de la CAE
+  - type: vigilance
+    description: Acceptabilité sociale faible et risque de contestation (type Gilets
+      Jaunes).
+    source: Gemini Research
+  - type: vigilance
+    description: Caractère régressif impactant davantage les ménages modestes et ruraux.
+    source: Gemini Research
+  - type: vigilance
+    description: Nécessité impérative de mécanismes de redistribution (chèque vert)
+      pour compenser la perte de pouvoir d'achat.
+    source: Gemini Research
+  vigilance_points:
+  - Acceptabilité sociale faible et risque de contestation (type Gilets Jaunes).
+  - Caractère régressif impactant davantage les ménages modestes et ruraux.
+  - Nécessité impérative de mécanismes de redistribution (chèque vert) pour compenser
+    la perte de pouvoir d'achat.
+  authoritative_sources:
+  - Haut Conseil pour le Climat
+  - Conseil d'Analyse Économique
+  - Institut des Politiques Publiques
+  target_revenue_category_id: rev_excise_energy
 - id: cap_research_credit
   family: TAXES
   label: Réformer le Crédit d'Impôt Recherche (CIR)
@@ -3401,6 +3489,24 @@
   - type: social
     description: Effet régressif sur le pouvoir d'achat des ménages les plus modestes.
     source: INSEE
+  - type: vigilance
+    description: Impact inflationniste direct pesant sur le pouvoir d'achat des ménages.
+    source: Gemini Research
+  - type: vigilance
+    description: Impôt régressif touchant proportionnellement plus les ménages modestes.
+    source: Gemini Research
+  - type: vigilance
+    description: Risque de ralentissement de la consommation, moteur de la croissance.
+    source: Gemini Research
+  vigilance_points:
+  - Impact inflationniste direct pesant sur le pouvoir d'achat des ménages.
+  - Impôt régressif touchant proportionnellement plus les ménages modestes.
+  - Risque de ralentissement de la consommation, moteur de la croissance.
+  authoritative_sources:
+  - INSEE
+  - DG Trésor
+  - OFCE
+  target_revenue_category_id: rev_vat_standard
 - id: vat_all_rates_plus1
   family: TAXES
   label: Augmenter tous les taux de TVA de 1 point
