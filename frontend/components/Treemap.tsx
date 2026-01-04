@@ -85,11 +85,7 @@ const CustomTooltip = ({ active, payload, mode }: any) => {
         )}
       </div>
 
-      {/* Footer Hint */}
-      <div className="mt-3 pt-2 border-t border-slate-100 text-[9px] text-slate-400 text-center uppercase tracking-widest font-bold opacity-50 flex items-center justify-center gap-1">
-        <span className="material-icons text-[10px]">touch_app</span>
-        Cliquer pour explorer
-      </div>
+
     </div>
   );
 };
@@ -118,14 +114,18 @@ const CustomizedContent = (props: any) => {
     typeof amount === 'number' ? amount : (payload?.amount ?? 0),
   );
   const baselineAmount = Number(
-    typeof payload?.baselineAmount === 'number' ? payload.baselineAmount : currentAmount,
+    typeof props.baselineAmount === 'number' ? props.baselineAmount :
+      (typeof payload?.baselineAmount === 'number' ? payload.baselineAmount : currentAmount),
   );
   const deltaAmount = Number(
-    typeof payload?.deltaAmount === 'number' ? payload.deltaAmount : 0,
+    typeof props.deltaAmount === 'number' ? props.deltaAmount :
+      (typeof payload?.deltaAmount === 'number' ? payload.deltaAmount : 0),
   );
   const unspecifiedAmountRaw = Number(payload?.unspecifiedAmount ?? 0);
   const unspecifiedAmount =
     Math.abs(deltaAmount) > EPSILON ? unspecifiedAmountRaw : 0;
+
+
 
   // Overlay Logic (Hatching)
   const totalChange = Math.abs(deltaAmount) > EPSILON ? deltaAmount : unspecifiedAmount;
@@ -207,16 +207,86 @@ const CustomizedContent = (props: any) => {
         />
       )}
 
-      {/* 4. Content Label */}
-      {width > 30 && height > 30 && (
+      {/* 4. Content Label - Dynamic Sizing */}
+      {width > 25 && height > 25 && (
         <foreignObject x={x + 2} y={y + 2} width={width - 4} height={height - 4} style={{ pointerEvents: 'none' }}>
-          <div className="w-full h-full flex flex-col justify-start gap-0.5 p-1 select-none text-white antialiased overflow-hidden">
-            <div className="font-bold text-[13px] leading-tight break-words" style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-              {name}
-            </div>
-            <div className="text-[11px] font-medium opacity-80 mt-0.5">
-              {mode === 'share' ? `${(dataValue * 100).toFixed(1)}%` : `€${(currentAmount / 1e9).toFixed(1)} Md`}
-            </div>
+          <div className="w-full h-full flex flex-col justify-start p-0.5 select-none text-white antialiased overflow-hidden">
+            {(() => {
+              const minDim = Math.min(width, height);
+              // Dynamic font scaling: 
+              // Cap max size to 18px to match medium blocks like "Travail & emploi"
+              // Small blocks (40px) -> ~10-11px
+              const titleFontSize = Math.max(10, Math.min(18, minDim / 6));
+              const amountFontSize = Math.max(9, titleFontSize * 0.75);
+
+              // Estimate lines based on height available vs font size
+              // (Rough approximation: line-height is ~1.1em)
+              const availableHeightForTitle = height - amountFontSize - 8;
+              const maxLines = Math.max(1, Math.floor(availableHeightForTitle / (titleFontSize * 1.1)));
+
+              return (
+                <>
+                  <div
+                    className="font-bold leading-[1.1] break-words"
+                    style={{
+                      fontSize: `${titleFontSize}px`,
+                      display: '-webkit-box',
+                      WebkitLineClamp: maxLines,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden'
+                    }}
+                  >
+                    {name}
+                  </div>
+                  {/* Only show amount if there's reasonable vertical space left or if box is large enough */}
+                  {height > 40 && (
+                    <div
+                      className="font-medium opacity-90 leading-tight mt-0.5"
+                      style={{ fontSize: `${amountFontSize}px` }}
+                    >
+                      {mode === 'share' ? `${(dataValue * 100).toFixed(1)}%` : `€${(currentAmount / 1e9).toFixed(1)} Md`}
+                    </div>
+                  )}
+                </>
+              );
+            })()}
+          </div>
+        </foreignObject>
+      )}
+
+      {/* 5. Modified Indicator (Badge or Dot) */}
+      {Math.abs(deltaAmount) > EPSILON && width > 30 && height > 30 && (
+        <foreignObject
+          x={x}
+          y={y}
+          width={width}
+          height={height}
+          style={{ pointerEvents: 'none' }}
+        >
+          <div className="w-full h-full relative">
+            {(() => {
+              const percentVal = baselineAmount !== 0 ? (deltaAmount / baselineAmount) * 100 : 0;
+              const isPositive = percentVal >= 0;
+              // Show full badge if block is large enough, otherwise just a dot
+              const showBadge = width > 70 && height > 45;
+
+              if (showBadge) {
+                return (
+                  <div className="absolute bottom-1 right-1 bg-white/95 backdrop-blur-sm shadow-sm rounded px-1.5 py-0.5 flex items-center border border-gray-200/50">
+                    <span className={`text-[10px] font-bold leading-none ${isPositive ? 'text-emerald-700' : 'text-red-700'}`}>
+                      {isPositive ? '+' : ''}{percentVal.toFixed(1)}%
+                    </span>
+                  </div>
+                );
+              }
+
+              // Dot fallback for smaller blocks
+              return (
+                <div className="absolute bottom-1 right-1 bg-white/90 shadow-sm rounded-full p-0.5">
+                  <div className={`w-2 h-2 rounded-full ${isPositive ? 'bg-emerald-600' : 'bg-red-600'}`} />
+                </div>
+              );
+            })()}
           </div>
         </foreignObject>
       )}
@@ -259,13 +329,14 @@ export const TreemapChart = ({ data, colors, resolutionData, mode, onSelect }: T
     const unspecifiedAmount = typeof item.unspecifiedAmount === 'number'
       ? item.unspecifiedAmount
       : (Math.abs(deltaAmount) > EPSILON ? fallbackUnspecified : 0);
-    return {
+    const newItem = {
       ...item,
       baselineAmount,
       deltaAmount,
       unspecifiedAmount,
       color: item.color,
     };
+    return newItem;
   });
 
   return (
