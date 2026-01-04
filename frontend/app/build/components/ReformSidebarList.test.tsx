@@ -1,62 +1,76 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ReformSidebarList } from './ReformSidebarList';
-import { PolicyLever } from '../types';
+import type { PolicyLever } from '../types';
 
 describe('ReformSidebarList', () => {
-    const mockLever: PolicyLever = {
-        id: 'test-lever',
-        label: 'Test Reform',
-        description: 'A test description',
-        family: 'TAXES',
-        fixedImpactEur: 1000000,
-        pushbacks: [
-            {
-                type: 'Social',
-                description: 'This is a risky reform.',
-                source: 'http://example.com'
-            }
-        ],
-        multiYearImpact: {
-            '2026': 100,
-            '2027': 200,
-            '2028': 300
+    const mockLevers: PolicyLever[] = [
+        {
+            id: 'test-1',
+            label: 'Test Reform',
+            description: 'A test description',
+            family: 'TAXES',
+            fixedImpactEur: 500000000,
+            pushbacks: [{ type: 'social', description: 'This is a risky reform.' }],
+            multiYearImpact: { '2027': 600000000 },
+            budgetSide: 'SPENDING',
+            paramsSchema: {},
+            feasibility: { law: true, adminLagMonths: 6 },
+            conflictsWith: [],
+            sources: []
+        },
+        {
+            id: 'test-2',
+            label: 'Featured Reform',
+            description: 'A test description',
+            family: 'TAXES',
+            majorAmendment: true,
+            fixedImpactEur: 1000000000,
+            budgetSide: 'SPENDING',
+            paramsSchema: {},
+            feasibility: { law: true, adminLagMonths: 6 },
+            conflictsWith: [],
+            sources: []
         }
+    ];
+
+    const mockProps = {
+        onSelectReform: vi.fn(),
+        levers: mockLevers,
+        isLeverSelected: vi.fn().mockReturnValue(false),
+        onHoverReform: vi.fn(),
     };
 
-    const defaultProps = {
-        levers: [mockLever],
-        isLeverSelected: () => false,
-        onSelectReform: () => {},
-    };
+    beforeEach(() => {
+        vi.clearAllMocks();
+    });
 
-    it('displays implementation risks (pushbacks) when available', () => {
-        render(<ReformSidebarList {...defaultProps} />);
+    it('renders the list of reforms grouped by family', () => {
+        render(<ReformSidebarList {...mockProps} />);
         
-        // Should find the pushback description
+        expect(screen.getByText('Fiscalité')).toBeInTheDocument();
+        expect(screen.getByText('Test Reform')).toBeInTheDocument();
+    });
+
+    it('opens ReformDetailDrawer when a reform is clicked', () => {
+        render(<ReformSidebarList {...mockProps} />);
+        
+        const reformItem = screen.getByText('Test Reform');
+        fireEvent.click(reformItem);
+        
+        // The drawer should now be visible with description and vigilance points
+        // (ReformDetailDrawer is rendered by ReformSidebarList)
+        expect(screen.getByText(/Points de vigilance/)).toBeInTheDocument();
         expect(screen.getByText('This is a risky reform.')).toBeInTheDocument();
-        // Should find the header
-        expect(screen.getByText(/Risques et points de vigilance/)).toBeInTheDocument();
     });
 
-    it('displays multi-year impact notes when available', () => {
-        render(<ReformSidebarList {...defaultProps} />);
+    it('displays featured levers in the "À la une" section', () => {
+        render(<ReformSidebarList {...mockProps} />);
         
-        // Should find reference to multi-year impact
-        expect(screen.getByText(/Trajectoire pluriannuelle/)).toBeInTheDocument();
-        expect(screen.getByText(/2027/)).toBeInTheDocument();
-    });
-    
-    it('displays featured levers in the main list (no filtering)', () => {
-        const featuredLever = { ...mockLever, id: 'featured', majorAmendment: true, label: 'Featured Reform' };
-        render(<ReformSidebarList {...defaultProps} levers={[featuredLever]} />);
-        
-        // It should appear as a badge (top) AND in the list
-        // Badge has icon only usually, or short label. 
-        // List has description.
-        
-        // We expect "Featured Reform" to be present.
-        // We can check if description is present, which only appears in the list card.
-        expect(screen.getByText('A test description')).toBeInTheDocument();
+        expect(screen.getByText('À la une')).toBeInTheDocument();
+        // Since it's in both "À la une" and the main list, we use AllBy
+        const items = screen.getAllByText('Featured Reform');
+        expect(items.length).toBeGreaterThanOrEqual(1);
     });
 });

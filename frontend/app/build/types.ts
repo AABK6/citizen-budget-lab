@@ -6,6 +6,9 @@ export type LegoPiece = {
   cofogMajors: string[];
   missions: MissionWeight[];
   amountEur?: number;
+  share?: number;
+  sources?: string[];
+  locked?: boolean;
 };
 
 export type MissionWeight = {
@@ -53,6 +56,13 @@ export type PolicyLever = {
     description: string;
     source?: string;
   }>;
+  conflictsWith: string[];
+  sources: string[];
+  vigilancePoints?: string[];
+  authoritativeSources?: string[];
+  targetRevenueCategoryId?: string;
+  paramsSchema?: any;
+  feasibility?: any;
 };
 
 export type PopularIntent = {

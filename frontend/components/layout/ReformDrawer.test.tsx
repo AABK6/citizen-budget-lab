@@ -1,4 +1,6 @@
 import React from 'react';
+import '@testing-library/jest-dom';
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { ReformDrawer } from './ReformDrawer';
 import { PolicyLever } from '@/app/build/types';
@@ -21,7 +23,9 @@ describe('ReformDrawer', () => {
             '2026': 100,
             '2027': 200,
             '2028': 300
-        }
+        },
+        conflictsWith: [],
+        sources: []
     };
 
     const defaultProps = {
