@@ -137,17 +137,34 @@ export function RevenueCategoryPanel({
           <div className="bg-slate-50/80 rounded-xl p-3 border border-slate-200/80 shadow-sm space-y-3">
 
             {/* Row 1: Label + Toggles */}
+            {/* Row 1: Label + Scale Selector */}
             <div className="flex items-center justify-between h-6">
-              <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 flex items-center gap-1">
-                <i className="material-icons text-xs">tune</i> Objectif
-              </label>
-              <button
-                type="button"
-                className="text-[10px] font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-2 py-0.5 rounded transition-colors"
-                onClick={handleRangeToggle}
-              >
-                {rangeLabel}
-              </button>
+              <div className="flex items-baseline gap-2">
+                <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 flex items-center gap-1">
+                  <i className="material-icons text-xs">tune</i> Objectif
+                </label>
+                <div className={`text-sm font-bold ${targetPercent === 0 ? 'text-slate-300' : (targetPercent > 0 ? 'text-emerald-600' : 'text-rose-600')}`}>
+                  {targetPercent > 0 ? '+' : ''}{targetPercent.toFixed(1)}%
+                </div>
+              </div>
+
+              {/* Scale Selector */}
+              <div className="flex bg-slate-200/50 p-0.5 rounded-md">
+                <button
+                  type="button"
+                  onClick={() => onRangeChange(defaultRange)}
+                  className={`text-[9px] font-bold px-1.5 py-0.5 rounded transition-all ${!isExpanded ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                >
+                  ±10%
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onRangeChange(expandedRange)}
+                  className={`text-[9px] font-bold px-1.5 py-0.5 rounded transition-all ${isExpanded ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                >
+                  ±25%
+                </button>
+              </div>
             </div>
 
             {/* Row 2: Slider + Quick Actions */}
