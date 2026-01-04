@@ -1,0 +1,8 @@
+{
+  "track_id": "revenue_drawer_alignment_20260104",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-01-04T12:00:00Z",
+  "updated_at": "2026-01-04T12:00:00Z",
+  "description": "Ameliorer le drawer de droite 'recettes', pour l'aligner sur les fonctionnalités du drawer de gauche depenses (cartes de réformes, lien catégories-réformes, pipeline de recherche)."
+}
