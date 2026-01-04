@@ -260,6 +260,7 @@ export enum PolicyFamilyEnum {
 
 export type PolicyLeverType = {
   __typename?: "PolicyLeverType";
+  authoritativeSources?: Maybe<Array<Scalars["String"]["output"]>>;
   budgetSide: BudgetSideEnum;
   cofogMapping?: Maybe<Scalars["JSON"]["output"]>;
   conflictsWith: Array<Scalars["ID"]["output"]>;
@@ -276,6 +277,8 @@ export type PolicyLeverType = {
   popularity?: Maybe<Scalars["Float"]["output"]>;
   shortLabel?: Maybe<Scalars["String"]["output"]>;
   sources: Array<Scalars["String"]["output"]>;
+  targetRevenueCategoryId?: Maybe<Scalars["ID"]["output"]>;
+  vigilancePoints?: Maybe<Array<Scalars["String"]["output"]>>;
 };
 
 export type ProcurementItem = {
