@@ -9,6 +9,7 @@ from typing import Dict, List, Optional
 import unicodedata
 
 import yaml
+from yaml.constructor import ConstructorError
 from jsonschema import Draft202012Validator
 
 
@@ -63,9 +64,24 @@ def _load_schema() -> dict:
         return json.load(f)
 
 
+class UniqueKeyLoader(yaml.SafeLoader):
+    def construct_mapping(self, node, deep=False):
+        mapping = set()
+        for key_node, value_node in node.value:
+            key = self.construct_object(key_node, deep=deep)
+            if key in mapping:
+                raise ConstructorError(
+                    None, None,
+                    f"duplicate key '{key}' found",
+                    key_node.start_mark
+                )
+            mapping.add(key)
+        return super().construct_mapping(node, deep)
+
+
 def _parse_catalog(text: str) -> list[dict]:
     try:
-        data = yaml.safe_load(text)
+        data = yaml.load(text, Loader=UniqueKeyLoader)
     except yaml.YAMLError as exc:  # pragma: no cover - surface full error
         raise ValueError(f"Invalid YAML: {exc}") from exc
     if data is None:
