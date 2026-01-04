@@ -456,7 +456,10 @@ export default function BuildPageClient() {
       const allPieces: LegoPiece[] = data.legoPieces.map((p: any) => ({ ...p, amountEur: baselineAmounts[p.id] || 0 }));
 
       const spending = allPieces.filter((p) => p.type === 'expenditure');
-      const revenue = allPieces.filter((p) => p.type === 'revenue');
+      const revenue = allPieces.filter((p) =>
+        p.type === 'revenue' &&
+        p.id !== 'rev_public_income' // Hiding dividends as per user request (0 in this dataset)
+      );
 
       const missionLabelMap: Record<string, MissionLabel> = {};
       (data.missionLabels || []).forEach((label: MissionLabel) => {
