@@ -1,8 +1,8 @@
 # Implementation Plan: Revenue Drawer Alignment & Reform Cards
 
 ## Phase 1: Data Infrastructure & Research Pipeline
-- [ ] Task: Audit `data/policy_levers.yaml` and `data/lego_pieces.json` to identify current revenue reforms and categories.
-- [ ] Task: Adapt `tools/research_policy.py` to handle revenue-specific search queries and data structures.
+- [x] Task: Audit `data/policy_levers.yaml` and `data/lego_pieces.json` to identify current revenue reforms and categories.
+- [x] Task: Adapt `tools/research_policy.py` to handle revenue-specific search queries and data structures. [commit: 9600830]
 - [ ] Task: Execute the research pipeline for all revenue reforms to gather metadata, vigilance points, and source links.
 - [ ] Task: Update `data/policy_levers.yaml` with the newly researched metadata.
 - [ ] Task: Map revenue reforms to their parent categories in `data/lego_pieces.json` or `data/policy_levers.yaml` (using `target_revenue_category_id`).
