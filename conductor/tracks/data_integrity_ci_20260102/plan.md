@@ -2,7 +2,7 @@
 
 **Goal:** Permanently safeguard data quality by integrating strict semantic checks into the Continuous Integration (CI) pipeline. This prevents regression of the "Pricetag vs Trajectory" alignment and ensures all high-impact policy levers remain properly sourced.
 
-## Phase 1: Enhanced Validator Development
+## Phase 1: Enhanced Validator Development [checkpoint: 696fded]
 Goal: Upgrade the catalog validator with semantic rules derived from the recent audit.
 
 - [x] **Task: Implement Strict YAML Loading** [commit: 2a399a9]
