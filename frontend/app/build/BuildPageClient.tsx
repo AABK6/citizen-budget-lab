@@ -739,12 +739,19 @@ export default function BuildPageClient() {
     setSelectedRevenueCategory(category);
     toggleRevenuePanel(true);
 
-    const revenueLeversForCategory = revenueLevers.filter(lever => {
-      if (!lever.cofogMapping) return true;
-      const weight = lever.cofogMapping[category.id];
-      return typeof weight === 'number' && weight > 0;
-    });
-    setSuggestedLevers(revenueLeversForCategory);
+    try {
+      const data = await gqlRequest(suggestLeversQuery, { massId: pieceId });
+      setSuggestedLevers(data.suggestLevers);
+    } catch (err: any) {
+      console.error('[Build] Failed to fetch revenue suggestions', err);
+      // Fallback to local filter if query fails
+      const revenueLeversForCategory = revenueLevers.filter(lever => {
+        if (!lever.cofogMapping) return true;
+        const weight = lever.cofogMapping[category.id];
+        return typeof weight === 'number' && weight > 0;
+      });
+      setSuggestedLevers(revenueLeversForCategory);
+    }
   };
 
   const handleRevenueBackClick = () => {
@@ -1123,6 +1130,8 @@ export default function BuildPageClient() {
                       popularIntents={popularIntents}
                       onIntentClick={handleIntentClick}
                       formatCurrency={formatCurrency}
+                      formatShare={formatShare}
+                      displayMode={displayMode}
                     />
                   )
                 )

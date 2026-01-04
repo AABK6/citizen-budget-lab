@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import type { CSSProperties, ChangeEvent } from 'react';
 import type { LegoPiece, PolicyLever, PopularIntent, DslAction } from '../types';
+import { ReformDetailDrawer } from './ReformDetailDrawer';
 
 const lightenColor = (hex: string, amount = 0.25) => {
   if (!hex || hex[0] !== '#' || hex.length !== 7) return hex;
@@ -32,6 +34,8 @@ export type RevenueCategoryPanelProps = {
   popularIntents: PopularIntent[];
   onIntentClick: (intent: PopularIntent) => void;
   formatCurrency: (value: number) => string;
+  formatShare: (value: number) => string;
+  displayMode: 'amount' | 'share';
 };
 
 export function RevenueCategoryPanel({
@@ -50,7 +54,11 @@ export function RevenueCategoryPanel({
   popularIntents,
   onIntentClick,
   formatCurrency,
+  formatShare,
+  displayMode,
 }: RevenueCategoryPanelProps) {
+  const [viewingReform, setViewingReform] = useState<PolicyLever | null>(null);
+
   const percentStep = 0.5;
   const defaultRange = 10;
   const expandedRange = 25;
@@ -125,13 +133,13 @@ export function RevenueCategoryPanel({
           <div className="flex-1 min-w-0 flex items-baseline gap-2 overflow-hidden">
             <h2 className="text-base font-bold text-slate-800 truncate">{category.label}</h2>
             <div className="text-xs font-medium text-slate-500 whitespace-nowrap">
-              {formatCurrency(category.amountEur || 0)}
+              {formatCurrency(category.amountEur || 0)} <span className="text-slate-300">•</span> {formatShare(category.share || 0)}
             </div>
           </div>
         </div>
 
-        {/* Controls Section */}
-        <div className="relative p-6 space-y-6">
+        {/* Controls Section - Scrollable Area */}
+        <div className="relative flex-1 overflow-y-auto px-3 py-3 space-y-3 min-h-0 custom-scrollbar">
 
           {/* Unified Simulator Card */}
           <div className="bg-slate-50/80 rounded-xl p-3 border border-slate-200/80 shadow-sm space-y-3">
@@ -257,38 +265,30 @@ export function RevenueCategoryPanel({
           </div>
 
           {/* Reforms Section */}
-          <div className="space-y-3">
-            <div className="text-xs font-bold uppercase tracking-wider text-gray-500">Mesures disponibles</div>
-            <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
+          <div className="space-y-2">
+            <div className="text-[10px] font-black uppercase tracking-wider text-slate-400 pl-1">Réformes ({filteredLevers.length || suggestedLevers.length})</div>
+            <div className="space-y-1.5">
               {(filteredLevers.length ? filteredLevers : suggestedLevers).map((reform) => (
                 <div
                   key={reform.id}
-                  className={`group relative p-3 rounded-xl border transition-all duration-200 ${isLeverSelected(reform.id)
-                    ? 'bg-blue-50/80 border-blue-200 shadow-sm'
-                    : 'bg-white/60 border-gray-100 hover:border-gray-200 hover:bg-white/80'
+                  className={`group relative p-2 px-3 rounded-lg border transition-all duration-200 cursor-pointer ${isLeverSelected(reform.id)
+                    ? 'bg-emerald-50/50 border-emerald-200/50'
+                    : 'bg-white border-slate-100 hover:border-slate-300 hover:shadow-sm'
                     }`}
+                  onClick={() => setViewingReform(reform)}
                 >
-                  <div className="flex justify-between items-start gap-3">
-                    <div className="flex-1">
-                      <div className="font-medium text-sm text-gray-900">{reform.label}</div>
-                      <div className="text-xs text-gray-500 mt-0.5 line-clamp-2">{reform.description}</div>
+                  <div className="flex justify-between items-center gap-2">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-xs text-slate-800 truncate">{reform.label}</span>
+                        {isLeverSelected(reform.id) && <i className="material-icons text-[10px] text-emerald-600">check_circle</i>}
+                      </div>
+                      <div className="text-[10px] text-slate-400 truncate opacity-70 group-hover:opacity-100">{reform.description}</div>
                     </div>
-                    <div className={`text-xs font-mono font-bold whitespace-nowrap ${reform.fixedImpactEur && reform.fixedImpactEur > 0 ? 'text-green-600' : 'text-red-600'
-                      }`}>
+
+                    <div className={`text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-50 border border-slate-100 ${reform.fixedImpactEur && reform.fixedImpactEur > 0 ? 'text-emerald-700' : 'text-rose-700'}`}>
                       {formatCurrency(reform.fixedImpactEur || 0)}
                     </div>
-                  </div>
-
-                  <div className="mt-3 flex justify-end">
-                    <button
-                      className={`text-xs font-medium px-3 py-1.5 rounded-lg transition-colors ${isLeverSelected(reform.id)
-                        ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 group-hover:bg-white group-hover:shadow-sm'
-                        }`}
-                      onClick={() => onLeverToggle(reform)}
-                    >
-                      {isLeverSelected(reform.id) ? 'Retirer' : 'Ajouter'}
-                    </button>
                   </div>
                 </div>
               ))}
@@ -297,17 +297,17 @@ export function RevenueCategoryPanel({
 
           {/* Popular Reforms */}
           {relevantIntents.length > 0 && (
-            <div className="space-y-3">
-              <div className="text-xs font-bold uppercase tracking-wider text-gray-500">Scénarios populaires</div>
-              <div className="flex flex-wrap gap-2">
+            <div className="space-y-2 pt-1">
+              <div className="text-[10px] font-black uppercase tracking-wider text-slate-400 pl-1">Populaire</div>
+              <div className="flex flex-wrap gap-1.5">
                 {relevantIntents.map((intent) => (
                   <button
                     key={intent.id}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-transform hover:scale-105 active:scale-95"
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold transition-all hover:scale-105 active:scale-95 shadow-sm ring-1 ring-black/5"
                     style={{ backgroundColor: pillTint, color: accentColor }}
                     onClick={() => onIntentClick(intent)}
                   >
-                    <span>{intent.emoji}</span>
+                    <span className="text-xs">{intent.emoji}</span>
                     <span>{intent.label}</span>
                   </button>
                 ))}
@@ -316,6 +316,15 @@ export function RevenueCategoryPanel({
           )}
         </div>
       </div>
+
+      {/* Detail Drawer */}
+      <ReformDetailDrawer
+        reform={viewingReform}
+        onClose={() => setViewingReform(null)}
+        onToggle={onLeverToggle}
+        isSelected={viewingReform ? isLeverSelected(viewingReform.id) : false}
+        side="right" // Revenue panel is on the right
+      />
     </>
   );
 }
