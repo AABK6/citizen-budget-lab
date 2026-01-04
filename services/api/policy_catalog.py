@@ -126,6 +126,27 @@ def validate_policy_catalog_data(data: list[dict]) -> list[str]:
             if conflict not in known:
                 errors.append(f"{lever_id}.conflicts_with: unknown id '{conflict}'")
 
+        # Check impact consistency
+        fixed_impact = item.get("fixed_impact_eur")
+        multi_year = item.get("multi_year_impact")
+        if isinstance(fixed_impact, (int, float)) and isinstance(multi_year, dict):
+            # Handle key as int or string
+            impact_2026 = multi_year.get(2026)
+            if impact_2026 is None:
+                impact_2026 = multi_year.get("2026")
+            
+            if isinstance(impact_2026, (int, float)):
+                diff = abs(fixed_impact - impact_2026)
+                # Thresholds: > 100M€ difference AND > 1% relative difference
+                # Note: If fixed_impact is 0, we treat any non-zero 2026 impact as infinite relative difference
+                if fixed_impact != 0:
+                    rel_diff = diff / abs(fixed_impact)
+                else:
+                    rel_diff = float('inf') if diff > 0 else 0.0
+                
+                if diff > 100_000_000 and rel_diff > 0.01:
+                    errors.append(f"{lever_id}: Impact mismatch (fixed={fixed_impact}, 2026={impact_2026})")
+
     return errors
 
 
