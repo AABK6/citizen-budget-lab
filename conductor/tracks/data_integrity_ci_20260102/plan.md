@@ -19,6 +19,6 @@ Goal: Automate these checks on every code/data change.
     - [ ] Ensure `tools/validate_policy_catalog.py` is executed in the CI environment (e.g., in `.github/workflows/ci.yml`).
     - [ ] Verify that data errors correctly block PR merges.
 
-## Phase 3: Documentation
+## Phase 3: Documentation [checkpoint: 15be30b]
 - [x] **Task: Update Contributor Guide** [commit: 9222657]
     - [ ] Document the data integrity requirements in `docs/DEVELOPER_GUIDE.md` so contributors know why their data might be rejected.

@@ -16,7 +16,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 ## [x] Track: Admin UI Enhancement
 *Link: [./conductor/tracks/admin_ui_enhancement_20260102/](./conductor/tracks/admin_ui_enhancement_20260102/)*
 
-## [~] Track: Data Integrity & CI Hardening
+## [x] Track: Data Integrity & CI Hardening
 *Link: [./conductor/tracks/data_integrity_ci_20260102/](./conductor/tracks/data_integrity_ci_20260102/)*
 ---
 
