@@ -9,11 +9,11 @@
 - [x] Task: Refine `tools/research_policy.py` to support single-lever enrichment. [commit: 376052e]
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Data Infrastructure & Research Pipeline' (Protocol in workflow.md) [checkpoint: 82b3550]
 
-## Phase 2: Backend & API Enhancements
+## Phase 2: Backend & API Enhancements [checkpoint: 5c15883]
 - [x] Task: Verify GraphQL schema (`graphql/schema.sdl.graphql`) supports the new revenue reform metadata fields. [commit: 9d82b36]
-- [~] Task: Update FastAPI resolvers in `services/api/` to ensure revenue reforms include the linked category information and rich metadata.
-- [ ] Task: Write unit tests in `tests/` to verify the "Mesures disponibles" logic for revenues.
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: Backend & API Enhancements' (Protocol in workflow.md)
+- [x] Task: Update FastAPI resolvers in `services/api/` to ensure revenue reforms include the linked category information and rich metadata. [commit: 8442053]
+- [x] Task: Write unit tests in `tests/` to verify the "Mesures disponibles" logic for revenues. [commit: 8ea0e83]
+- [x] Task: Conductor - User Manual Verification 'Phase 2: Backend & API Enhancements' (Protocol in workflow.md) [checkpoint: 5c15883]
 
 ## Phase 3: Frontend UI/UX Alignment
 - [ ] Task: Regenerate GraphQL types in the frontend (`npm run codegen`).
