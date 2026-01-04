@@ -20,5 +20,5 @@ Goal: Automate these checks on every code/data change.
     - [ ] Verify that data errors correctly block PR merges.
 
 ## Phase 3: Documentation
-- [ ] **Task: Update Contributor Guide**
+- [x] **Task: Update Contributor Guide** [commit: 9222657]
     - [ ] Document the data integrity requirements in `docs/DEVELOPER_GUIDE.md` so contributors know why their data might be rejected.
