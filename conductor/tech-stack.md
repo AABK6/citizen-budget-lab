@@ -25,4 +25,4 @@
 *   **Containerization:** Docker, Docker Compose
 *   **Cloud Provider:** Google Cloud Platform (GCP)
 *   **Compute:** Cloud Run (Serverless)
-*   **CI/CD:** GitHub Actions
+*   **CI/CD:** GitHub Actions (Backend testing, Data integrity validation, Frontend a11y)
