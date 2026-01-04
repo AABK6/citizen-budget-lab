@@ -109,6 +109,9 @@ type PolicyLeverType {
     feasibility: JSON!
     conflictsWith: [ID!]!
     sources: [String!]!
+    vigilancePoints: [String!]
+    authoritativeSources: [String!]
+    targetRevenueCategoryId: ID
     shortLabel: String
     popularity: Float
     massMapping: JSON
