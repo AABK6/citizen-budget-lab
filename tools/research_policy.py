@@ -1,6 +1,53 @@
 import re
 import sys
-from typing import Optional
+import yaml
+from typing import Optional, List, Dict, Any
+from dataclasses import dataclass, field, asdict
+
+@dataclass
+class RevenueReformMetadata:
+    lever_id: str
+    vigilance_points: List[str] = field(default_factory=list)
+    pros: List[str] = field(default_factory=list)
+    cons: List[str] = field(default_factory=list)
+    authoritative_sources: List[str] = field(default_factory=list)
+
+    def to_dict(self):
+        return asdict(self)
+
+def identify_revenue_levers(catalog_path: str) -> List[Dict[str, Any]]:
+    """
+    Reads the policy catalog and returns a list of revenue-related levers.
+    Criteria: family='TAXES' OR budget_side='REVENUE'
+    """
+    with open(catalog_path, "r") as f:
+        data = yaml.safe_load(f)
+    
+    revenue_levers = []
+    for lever in data:
+        is_tax = lever.get("family") == "TAXES"
+        is_revenue_side = lever.get("budget_side") == "REVENUE"
+        
+        if is_tax or is_revenue_side:
+            revenue_levers.append(lever)
+            
+    return revenue_levers
+
+def generate_revenue_queries(lever: Dict[str, Any]) -> List[str]:
+    """
+    Generates search queries to find metadata for a revenue reform.
+    """
+    label = lever.get("label", "")
+    description = lever.get("description", "")
+    
+    queries = [
+        f'"{label}" avis cour des comptes',
+        f'"{label}" points de vigilance',
+        f'"{label}" critique',
+        f'"{label}" rendement budgétaire',
+        f'"{label}" impact économique',
+    ]
+    return queries
 
 def extract_impact_from_text(text: str) -> Optional[float]:
     """
@@ -43,8 +90,6 @@ def google_web_search(query: str):
     Placeholder for the tool call. In the real agent, 
     this will be intercepted or we use the available tool.
     """
-    # This is a stub for local tests; 
-    # the agent will use the actual tool during execution.
     return []
 
 def research_lever(query: str) -> list[dict]:
@@ -56,26 +101,23 @@ def research_lever(query: str) -> list[dict]:
 def synthesize_research(lever_id: str, search_results: list[dict]) -> str:
     """
     Agent-LLM synthesis of search results into a YAML snippet.
-    This function serves as a structured output generator for the agent.
     """
-    # This is where the Agent (Me) performs the LLM magic.
-    # The output will be a YAML block to be merged into the catalog.
     return f"# Suggested enrichment for {lever_id} based on {len(search_results)} sources\n"
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python tools/research_policy.py <lever_id> [query]")
+        print("Usage: python tools/research_policy.py <catalog_path> [action]")
+        print("Actions: identify, research <lever_id>")
         sys.exit(1)
     
-    lever_id = sys.argv[1]
-    query = sys.argv[2] if len(sys.argv) > 2 else lever_id
+    command = sys.argv[1]
     
-    print(f"--- Researching: {lever_id} ---")
-    results = research_lever(query)
-    for i, res in enumerate(results):
-        print(f"[{i}] {res['title']}: {res['link']}")
-        print(f"    Snippet: {res['snippet'][:200]}...")
-    
-    print("\n--- Synthesis ---")
-    snippet = synthesize_research(lever_id, results)
-    print(snippet)
+    if command == "identify":
+        catalog_path = sys.argv[2] if len(sys.argv) > 2 else "data/policy_levers.yaml"
+        levers = identify_revenue_levers(catalog_path)
+        print(f"Found {len(levers)} revenue levers.")
+        for l in levers:
+            print(f"- {l['id']}: {l['label']}")
+    else:
+        # Fallback to old behavior for compatibility if needed, or just handle research
+        pass
