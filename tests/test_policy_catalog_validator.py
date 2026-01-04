@@ -25,9 +25,6 @@ def test_validate_catalog_rejects_duplicate_keys():
     
     errors = pol.validate_policy_catalog_text(yaml_with_duplicates)
     
-    # Debug print
-    print(f"DEBUG: errors={errors}")
-    
     assert any("duplicate key" in e.lower() for e in errors), \
         f"Expected validation error for duplicate keys, but got: {errors}"
 
@@ -57,8 +54,33 @@ def test_validate_catalog_checks_impact_consistency():
     
     errors = pol.validate_policy_catalog_text(yaml_inconsistent)
     
-    print(f"DEBUG: errors={errors}")
-    
-    # We expect an error about impact mismatch.
     assert any("impact mismatch" in e.lower() for e in errors), \
         f"Expected error for impact mismatch, but got: {errors}"
+
+
+def test_validate_catalog_enforces_sources_for_large_impact():
+    """
+    Ensure that levers with impact > 1Md€ have at least one valid source URL.
+    """
+    yaml_unsourced = """
+- id: test_large_impact_no_source
+  label: Big Spending No Source
+  description: Huge impact but no proof.
+  family: SOCIAL_SECURITY
+  fixed_impact_eur: 2000000000
+  multi_year_impact:
+    2026: 2000000000
+  cofog_mapping: {}
+  mission_mapping: {}
+  feasibility:
+    law: true
+    adminLagMonths: 0
+  conflicts_with: []
+  sources: ["Just trust me"]
+  params_schema: {}
+    """
+    
+    errors = pol.validate_policy_catalog_text(yaml_unsourced)
+    
+    assert any("source" in e.lower() and "url" in e.lower() for e in errors), \
+        f"Expected error for missing source URL, but got: {errors}"

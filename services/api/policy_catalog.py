@@ -147,6 +147,22 @@ def validate_policy_catalog_data(data: list[dict]) -> list[str]:
                 if diff > 100_000_000 and rel_diff > 0.01:
                     errors.append(f"{lever_id}: Impact mismatch (fixed={fixed_impact}, 2026={impact_2026})")
 
+        # Check sources for large impact (>1Md€)
+        fixed_impact = item.get("fixed_impact_eur")
+        if isinstance(fixed_impact, (int, float)) and abs(fixed_impact) > 1_000_000_000:
+            sources = item.get("sources") or []
+            if not isinstance(sources, list):
+                continue  # Schema validation catches this
+            
+            has_valid_url = False
+            for src in sources:
+                if isinstance(src, str) and (src.startswith("http://") or src.startswith("https://")):
+                    has_valid_url = True
+                    break
+            
+            if not has_valid_url:
+                errors.append(f"{lever_id}: Large impact (>1Md€) requires at least one valid source URL")
+
     return errors
 
 
