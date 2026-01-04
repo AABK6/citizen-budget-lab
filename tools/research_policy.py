@@ -112,12 +112,73 @@ if __name__ == "__main__":
     
     command = sys.argv[1]
     
+def enrich_lever_in_catalog(catalog_path: str, lever_id: str, metadata: Optional[RevenueReformMetadata] = None) -> bool:
+    """
+    Finds a lever in the catalog and updates it with metadata.
+    If metadata is None, applies placeholders (for testing/mocking).
+    """
+    with open(catalog_path, "r") as f:
+        levers = yaml.safe_load(f)
+        
+    target_lever = next((l for l in levers if l["id"] == lever_id), None)
+    if not target_lever:
+        return False
+        
+    if metadata:
+        target_lever["vigilance_points"] = metadata.vigilance_points
+        target_lever["authoritative_sources"] = metadata.authoritative_sources
+        # Merge dictionary if needed
+    else:
+        # Default mock behavior
+        target_lever["vigilance_points"] = ["Point de vigilance générique"]
+        target_lever["authoritative_sources"] = ["Source à définir"]
+        
+    with open(catalog_path, "w") as f:
+        yaml.dump(levers, f, allow_unicode=True, sort_keys=False)
+        
+    return True
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: python tools/research_policy.py <command> [args...]")
+        print("Commands: identify, enrich <lever_id> [catalog_path]")
+        sys.exit(1)
+    
+    command = sys.argv[1]
+    
     if command == "identify":
         catalog_path = sys.argv[2] if len(sys.argv) > 2 else "data/policy_levers.yaml"
         levers = identify_revenue_levers(catalog_path)
         print(f"Found {len(levers)} revenue levers.")
         for l in levers:
             print(f"- {l['id']}: {l['label']}")
+
+    elif command == "enrich":
+        if len(sys.argv) < 3:
+            print("Usage: python tools/research_policy.py enrich <lever_id> [catalog_path]")
+            sys.exit(1)
+            
+        lever_id = sys.argv[2]
+        catalog_path = sys.argv[3] if len(sys.argv) > 3 else "data/policy_levers.yaml"
+        
+        print(f"--- Enriching {lever_id} ---")
+        
+        # In a real agent workflow, we would:
+        # 1. Load lever
+        # 2. Generate queries
+        # 3. Execute search
+        # 4. Synthesize metadata
+        # 5. Call enrich_lever_in_catalog with the result.
+        
+        # Here we just run the update function with default mock data
+        success = enrich_lever_in_catalog(catalog_path, lever_id)
+        
+        if success:
+            print(f"Successfully enriched {lever_id} in {catalog_path}")
+        else:
+            print(f"Lever {lever_id} not found.")
+            sys.exit(1)
+
     else:
         # Fallback to old behavior for compatibility if needed, or just handle research
         pass

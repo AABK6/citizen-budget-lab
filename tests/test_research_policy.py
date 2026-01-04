@@ -77,3 +77,30 @@ def test_revenue_metadata_structure():
     as_dict = meta.to_dict()
     assert "vigilance_points" in as_dict
     assert len(as_dict["vigilance_points"]) == 2
+
+def test_enrich_lever_in_catalog(tmp_path):
+    """Test enriching a single lever in the catalog."""
+    from tools.research_policy import enrich_lever_in_catalog, RevenueReformMetadata
+    
+    catalog_data = [
+        {"id": "test_lever", "label": "Test", "family": "TAXES"}
+    ]
+    catalog_file = tmp_path / "policy_levers.yaml"
+    with open(catalog_file, "w") as f:
+        yaml.dump(catalog_data, f)
+        
+    metadata = RevenueReformMetadata(
+        lever_id="test_lever",
+        vigilance_points=["Vigilance A"],
+        authoritative_sources=["Source A"]
+    )
+    
+    success = enrich_lever_in_catalog(str(catalog_file), "test_lever", metadata)
+    assert success
+    
+    with open(catalog_file, "r") as f:
+        updated_data = yaml.safe_load(f)
+        
+    lever = updated_data[0]
+    assert lever["vigilance_points"] == ["Vigilance A"]
+    assert lever["authoritative_sources"] == ["Source A"]
