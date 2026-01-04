@@ -9,7 +9,7 @@ Goal: Upgrade the catalog validator with semantic rules derived from the recent 
     - [ ] Update `tools/validate_policy_catalog.py` to use a loader that rejects duplicate keys (standard YAML loaders often silently overwrite them).
 - [x] **Task: Add Impact Consistency Rule** [commit: 7ca4daa]
     - [ ] Logic: Fail validation if `abs(fixed_impact_eur - multi_year_impact['2026'])` exceeds a threshold (e.g., 100M€ or 1%).
-- [ ] **Task: Add Sourcing Requirement Rule**
+- [x] **Task: Add Sourcing Requirement Rule** [commit: c697310]
     - [ ] Logic: Fail validation if a lever with `abs(fixed_impact_eur) > 1Md€` does not contain at least one valid URL in its `sources` list.
 
 ## Phase 2: CI Integration
