@@ -15,13 +15,13 @@
 - [x] Task: Write unit tests in `tests/` to verify the "Mesures disponibles" logic for revenues. [commit: 8ea0e83]
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Backend & API Enhancements' (Protocol in workflow.md) [checkpoint: 5c15883]
 
-## Phase 3: Frontend UI/UX Alignment
-- [ ] Task: Regenerate GraphQL types in the frontend (`npm run codegen`).
-- [ ] Task: Update the Revenue Drawer component to use the same "Card" styling as the Expenses Drawer.
-- [ ] Task: Implement the "Mesures disponibles" section in the Revenue Drawer, ensuring it correctly filters reforms based on the selected category.
-- [ ] Task: Harmonize animations and toggle behaviors (Add/Remove) between both drawers.
-- [ ] Task: Conduct a visual audit to ensure DSFR compliance and strict parity with the Expenses UI.
-- [ ] Task: Conductor - User Manual Verification 'Phase 3: Frontend UI/UX Alignment' (Protocol in workflow.md)
+## Phase 3: Frontend UI/UX Alignment [checkpoint: 58d448c]
+- [x] Task: Regenerate GraphQL types in the frontend (`npm run codegen`). [commit: 4a05653]
+- [x] Task: Update the Revenue Drawer component to use the same "Card" styling as the Expenses Drawer. [commit: 2f53783]
+- [x] Task: Implement the "Mesures disponibles" section in the Revenue Drawer, ensuring it correctly filters reforms based on the selected category. [commit: 2f53783]
+- [x] Task: Harmonize animations and toggle behaviors (Add/Remove) between both drawers. [commit: 2f53783]
+- [x] Task: Conduct a visual audit to ensure DSFR compliance and strict parity with the Expenses UI. [commit: 4b9ea81]
+- [x] Task: Conductor - User Manual Verification 'Phase 3: Frontend UI/UX Alignment' (Protocol in workflow.md) [checkpoint: 58d448c]
 
 ## Phase 4: Verification & Finalization
 - [ ] Task: Run full end-to-end check: Select a revenue category -> View reforms -> Toggle reform -> Verify impact in summary charts.
