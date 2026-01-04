@@ -93,6 +93,17 @@
           "type": "array",
           "items": { "type": "string" }
         },
+        "vigilance_points": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "authoritative_sources": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "target_revenue_category_id": {
+          "type": "string"
+        },
         "params_schema": {
           "type": "object",
           "additionalProperties": true

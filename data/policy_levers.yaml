@@ -30,7 +30,19 @@
   conflicts_with: []
   sources:
   - Assemblée nat. 2025, amendements PLF[7]
+  - https://www.publicsenat.fr/
   params_schema: {}
+  vigilance_points:
+  - Difficultés de contrôle et d'évaluation des nouveaux actifs (cryptos, art) par
+    l'administration.
+  - Risque de pénalisation de l'épargne productive et de l'intermédiation financière.
+  - Crainte d'un retour déguisé à l'ISF réduisant l'attractivité économique.
+  - Risque de ventes forcées d'actifs volatils (cryptos) pour acquitter l'impôt.
+  authoritative_sources:
+  - Assemblée Nationale (Amendement voté)
+  - Sénat
+  - Presse économique
+  target_revenue_category_id: rev_property_taxes
 - id: amend_ir_bracket_indexation_1pct
   family: TAXES
   label: Indexation limitée du barème de l'IR à +1,1%
@@ -61,7 +73,17 @@
   conflicts_with: []
   sources:
   - Assemblée nat., PLF 2026[8]
+  - https://www.publicsenat.fr/actualites/economie/budget-2026-le-senat-vote-la-reindexation-du-bareme-de-l-impot-sur-le-revenu
   params_schema: {}
+  vigilance_points:
+  - Effet de 'rabot fiscal' réduisant le pouvoir d'achat si l'inflation dépasse 1,1%.
+  - Risque d'entrée de nouveaux foyers modestes dans l'impôt (effet de seuil).
+  - Pression fiscale accrue sur les classes moyennes dont les salaires suivent l'inflation.
+  authoritative_sources:
+  - Sénat (Rapport général)
+  - Assemblée Nationale
+  - Presse économique
+  target_revenue_category_id: rev_pit
 - id: amend_alimony_tax_exemption
   family: TAXES
   label: Défiscalisation des pensions alimentaires (plafond)
@@ -76,6 +98,7 @@
   conflicts_with: []
   sources:
   - Assemblée nat., PLF 2026[9]
+  - https://www.lcp.fr/actualites/budget-2025-l-assemblee-nationale-vote-la-defiscalisation-des-pensions-alimentaires
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -88,6 +111,17 @@
     description: Complexité de mise en œuvre pour le calcul du revenu imposable des
       deux parties.
     source: LCP.fr (2025)
+  vigilance_points:
+  - Risque de désincitation au paiement pour le débiteur suite à la suppression de
+    la déductibilité.
+  - Crainte d'une baisse des montants versés ou d'une hausse des impayés.
+  - Objectif de justice sociale pour les familles monoparentales (fin de l'imposition
+    des pensions reçues).
+  authoritative_sources:
+  - Légifiscal
+  - Capital
+  - Assemblée Nationale
+  target_revenue_category_id: rev_pit
 - id: amend_home_service_credit_cap
   family: TAX_EXPENDITURES
   label: Abaissement du plafond du crédit d'impôt services à la personne
@@ -136,6 +170,7 @@
   conflicts_with: []
   sources:
   - Assemblée nat., PLF 2026[11]
+  - https://www.pour-les-personnes-agees.gouv.fr/
   params_schema: {}
   mission_mapping:
     M_SOLIDARITE: 1.0
@@ -152,6 +187,16 @@
     description: Mesure de justice sociale visant à réduire le reste à charge pour
       les résidents en EHPAD les plus modestes.
     source: Le Média Social
+  vigilance_points:
+  - Extension de l'avantage aux ménages non-imposables (crédit remboursable), renforçant
+    l'équité.
+  - Coût budgétaire significatif pour l'État dû au remboursement des foyers modestes.
+  - 'Complexité du calcul : obligation de déduire les autres aides (APA, APL, ASH).'
+  authoritative_sources:
+  - Cap Retraite
+  - Zenior.care
+  - Portail national d'information pour les personnes âgées
+  target_revenue_category_id: rev_pit
 - id: amend_extend_tips_exemption
   family: TAXES
   label: Prorogation de l'exonération fiscale des pourboires
@@ -167,6 +212,7 @@
   conflicts_with: []
   sources:
   - Assemblée nat., PLF 2026[12]
+  - https://www.lhotellerie-restauration.fr/
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -183,6 +229,18 @@
     description: Perte de recettes pour la Sécurité Sociale (cotisations non perçues
       sur les pourboires).
     source: Boursorama
+  vigilance_points:
+  - Soutien à l'attractivité des métiers en tension (hôtellerie, restauration) jusqu'en
+    2028.
+  - 'Risque de substitution : les pourboires pourraient remplacer les hausses de salaires
+    de base.'
+  - Perte de recettes pour la Sécurité Sociale due à l'absence de cotisations.
+  - Limitation aux salariés percevant moins de 1,6 SMIC.
+  authoritative_sources:
+  - L'Hôtellerie Restauration
+  - Légifiscal
+  - Presse sectorielle
+  target_revenue_category_id: rev_pit
 - id: amend_high_income_surtax_permanent
   family: TAXES
   label: Pérennisation de la contribution exceptionnelle hauts revenus
@@ -198,6 +256,7 @@
   conflicts_with: []
   sources:
   - Assemblée nat., PLF 2026[13]
+  - https://www.service-public.fr/particuliers/vosdroits/F31130
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -209,6 +268,16 @@
   - type: political
     description: Débat sur la pérennisation vs. caractère exceptionnel initial.
     source: Vie-publique.fr
+  vigilance_points:
+  - Pérennisation d'une taxe 'exceptionnelle' (CEHR) instaurée en 2011.
+  - Risque de baisse d'attractivité pour les talents et hauts revenus en France.
+  - Condition de maintien liée au retour du déficit sous les 3% (échéance 2029).
+  - Enjeu de justice fiscale versus risque de stratégies d'évitement.
+  authoritative_sources:
+  - LCP (Amendement compromis)
+  - Service-Public.fr
+  - Presse économique
+  target_revenue_category_id: rev_pit
 - id: amend_return_exit_tax
   family: TAXES
   label: Rétablissement de l'Exit Tax (version antérieure à 2019)
@@ -224,6 +293,7 @@
   conflicts_with: []
   sources:
   - Assemblée nat., amend. PLF[14]
+  - https://www.moneyvox.fr/patrimoine/actualites/99426/exit-tax-les-deputes-votent-le-retour-a-la-version-voulue-par-nicolas-sarkozy
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -235,6 +305,17 @@
   - type: economic
     description: Frein potentiel à l'attractivité pour les investisseurs internationaux.
     source: 2ndmarket.fr
+  vigilance_points:
+  - Rétablissement du délai de 15 ans pour le dégrèvement (contre 2 à 5 ans actuellement).
+  - Risque de frein à l'attractivité de la France pour les entrepreneurs et investisseurs.
+  - Obligations déclaratives annuelles complexes pour maintenir le sursis de paiement.
+  - Possibles problèmes de liquidité si l'impôt est exigé sur des plus-values non
+    réalisées.
+  authoritative_sources:
+  - LCP (Actualité parlementaire)
+  - MoneyVox
+  - Impots.gouv.fr
+  target_revenue_category_id: rev_pit
 - id: amend_one_time_donation_exemption
   family: TAXES
   label: Don familial exceptionnel exonéré jusqu'à 152 500 € en 2026
@@ -250,6 +331,7 @@
   conflicts_with: []
   sources:
   - Assemblée nat., PLF 2026[15]
+  - https://www.legifiscal.fr/actualites/6123-plf-2025-abattement-exceptionnel-donations-assurance-vie.html
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -265,6 +347,18 @@
     description: Conditions strictes d'âge (70+) et de date de versement initial (avant
       oct 2025).
     source: Légifiscal
+  vigilance_points:
+  - Mesure temporaire strictement limitée à l'année civile 2026.
+  - Conditions d'âge du donateur (70 ans+) et date de versement des fonds (avant oct
+    2025).
+  - 'Neutralité budgétaire à long terme : l''abattement est déduit des droits de succession
+    futurs.'
+  - Ciblage sur l'assurance-vie pour accélérer la transmission intergénérationnelle.
+  authoritative_sources:
+  - Légifiscal
+  - Boursorama
+  - Meilleurtaux
+  target_revenue_category_id: rev_transfer_taxes
 - id: amend_ald_sickleave_exempt_ir
   family: TAXES
   label: Maintien de l'exonération fiscale des IJ maladie (ALD)
@@ -280,6 +374,7 @@
   conflicts_with: []
   sources:
   - Assemblée nat., PLF 2026[17]
+  - https://www.publicsenat.fr/actualites/economie/ij-ald-le-senat-vote-un-compromis-sur-la-fiscalisation
   params_schema: {}
   mission_mapping:
     M_HEALTH: 1.0
@@ -295,6 +390,16 @@
   - type: political
     description: Amendement de rejet adopté par l'Assemblée Nationale.
     source: OpenWork
+  vigilance_points:
+  - Rejet de la fiscalisation totale à l'Assemblée pour protéger les patients en ALD.
+  - Amendement de compromis (Sénat) proposant une exonération à 50% seulement.
+  - 'Forte sensibilité sociale : risque de double peine (maladie + hausse d''impôt).'
+  - Mesure de rationalisation des dépenses fiscales versus protection des plus fragiles.
+  authoritative_sources:
+  - Public Sénat
+  - Le Moniteur des Pharmacies
+  - Prévissima
+  target_revenue_category_id: rev_pit
 - id: amend_school_fees_tax_reduction
   family: TAXES
   label: Maintien de la réduction d'impôt pour frais de scolarité
@@ -310,6 +415,7 @@
   conflicts_with: []
   sources:
   - Assemblée nat., PLF 2026[17]
+  - https://www.mercipourlinfo.fr/actualites/impots/impot-sur-le-revenu-la-reduction-pour-frais-de-scolarite-finalement-maintenue-en-2025-901231
   params_schema: {}
   mission_mapping:
     M_ENSEIGNEMENT_SCOLAIRE: 1.0
@@ -326,6 +432,18 @@
     description: Soutien transpartisan pour le maintien de cette aide au pouvoir d'achat
       des parents.
     source: Sénat (2025)
+  vigilance_points:
+  - Maintien voté par les députés contre l'avis du gouvernement (économie de 450M€
+    annulée).
+  - Efficacité contestée par le Conseil des prélèvements obligatoires (aide non ciblée).
+  - Soutien au pouvoir d'achat des familles des classes moyennes (collège, lycée,
+    supérieur).
+  - 'Réduction fixe : 61€ au collège, 153€ au lycée et 183€ dans le supérieur.'
+  authoritative_sources:
+  - Assemblée Nationale
+  - Conseil des prélèvements obligatoires (CPO)
+  - Presse économique (Capital, La Tribune)
+  target_revenue_category_id: rev_pit
 - id: amend_limit_holding_tax_to_luxury
   family: TAXES
   label: Limitation de la taxe sur les holdings patrimoniales aux biens somptuaires
@@ -341,6 +459,7 @@
   conflicts_with: []
   sources:
   - Assemblée nat., PLF 2026[18]
+  - https://www.vie-publique.fr/loi/295814-projet-de-loi-de-finances-pour-2025-plf-budget-2025
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -356,6 +475,19 @@
   - type: economic
     description: Risque de double imposition et de complexification du droit des sociétés.
     source: August Debouzy
+  vigilance_points:
+  - Refocalisation de la taxe sur les seuls 'biens somptuaires' (yachts, luxe) et
+    l'immobilier, excluant la trésorerie.
+  - Hausse du taux à 20% (contre 2% initialement) pour maintenir un caractère dissuasif.
+  - Incertitude sur le rendement réel, fortement revu à la baisse suite au rétrécissement
+    de l'assiette.
+  - Difficultés administratives prévisibles pour évaluer et contrôler les actifs de
+    luxe en holding.
+  authoritative_sources:
+  - Assemblée Nationale (Amendement Juvin)
+  - Sénat
+  - Vie Publique
+  target_revenue_category_id: rev_cit
 - id: amend_raise_big_corp_profit_contrib
   family: TAXES
   label: Hausse de la contribution exceptionnelle sur les bénéfices des grandes entreprises
@@ -373,6 +505,7 @@
   - 'L''Express (2025) Surtaxe 6Md€: https://www.lexpress.fr/economie/budget-2026-les-deputes-votent-une-surtaxe-sur-les-superprofits-des-grandes-entreprises-W4Z7Z7Z'
   - 'Aligné sur ''superprofits_tax'' (L''Express): 6Md€.'
   - Assemblée nat., PLF 2026[19]
+  - https://www.lcp.fr/actualites/budget-2025-l-assemblee-nationale-vote-le-durcissement-de-la-contribution-exceptionnelle-des
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -388,6 +521,19 @@
   - type: legal
     description: Risque de contentieux constitutionnel sur l'égalité devant l'impôt.
     source: Conseil d'État
+  vigilance_points:
+  - Durcissement de la surtaxe pour les très grandes entreprises (> 3 Md€ de CA) voté
+    à l'Assemblée.
+  - Risque de cumul d'impositions excessif (taux effectif jusqu'à 35%) et questions
+    de constitutionnalité.
+  - Forte opposition des organisations patronales et du Sénat sur la pérennisation
+    de la mesure.
+  - Recettes attendues réévaluées à 6 Md€ en 2026 suite aux amendements de durcissement.
+  authoritative_sources:
+  - LCP (Débats parlementaires)
+  - Vie Publique
+  - DAF Mag
+  target_revenue_category_id: rev_cit
 - id: amend_universal_tax_multinationals
   family: TAXES
   label: Instauration d'un impôt universel sur les multinationales
@@ -403,6 +549,7 @@
   conflicts_with: []
   sources:
   - Assemblée nat., PLF 2026[20]
+  - https://www.legifiscal.fr/actualites/6134-plf-2025-adoption-amendement-impot-universel-multnationales.html
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -418,6 +565,18 @@
     description: Incertitude sur le rendement réel en fonction des stratégies d'optimisation
       des groupes.
     source: Le Monde
+  vigilance_points:
+  - Incompatibilité potentielle avec 125 conventions fiscales internationales (risque
+    de double imposition).
+  - Menaces de représailles commerciales et impact négatif sur l'attractivité du site
+    France.
+  - Rendement budgétaire extrêmement incertain, objet de vifs débats d'experts.
+  - Complexité opérationnelle pour l'administration fiscale (calcul du ratio CA France/Monde).
+  authoritative_sources:
+  - Légifiscal
+  - DAF Mag
+  - Études de Gabriel Zucman
+  target_revenue_category_id: rev_cit
 - id: amend_double_gafam_tax
   family: TAXES
   label: Taxe GAFAM renforcée (de 3 % à 15 %)
@@ -433,6 +592,7 @@
   conflicts_with: []
   sources:
   - Assemblée nat., PLF 2026[21]
+  - https://siecledigital.fr/2024/10/21/budget-2025-lassemblee-nationale-vote-le-doublement-de-la-taxe-gafam/
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -448,6 +608,18 @@
     description: Incertitude sur la compatibilité avec les accords internationaux
       du Pilier 1 de l'OCDE.
     source: Les Échos
+  vigilance_points:
+  - Taux finalement doublé à 6% (contre 3% actuellement) par amendement, loin des
+    15% initialement envisagés.
+  - Risque élevé de représailles commerciales de la part des États-Unis.
+  - Forte opposition des investisseurs américains (AmCham) craignant pour l'attractivité
+    du pays.
+  - Rehaussement du seuil d'application à 2 Md€ de chiffre d'affaires mondial.
+  authoritative_sources:
+  - Siècle Digital
+  - Légifiscal
+  - AmCham France
+  target_revenue_category_id: rev_prod_taxes
 - id: amend_lower_global_min_tax_threshold
   family: TAXES
   label: Abaissement du seuil d'application du taux d'IS minimum mondial à 250 M€
@@ -464,6 +636,7 @@
   conflicts_with: []
   sources:
   - Observatoire de la Fiscalité, simulations OCDE
+  - https://www.oecd.org/tax/beps/tax-challenges-arising-from-the-digitalisation-of-the-economy-global-anti-base-erosion-model-rules-pillar-two.htm
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -479,6 +652,20 @@
     description: Risque de perte de compétitivité par rapport aux pays n'ayant pas
       abaissé le seuil standard de l'OCDE.
     source: OECD
+  vigilance_points:
+  - Risque de perte de compétitivité pour les ETI françaises face à la concurrence
+    internationale (seuil OCDE à 750M€).
+  - Charge administrative et de conformité extrêmement lourde pour les entreprises
+    de taille intermédiaire.
+  - Nécessité d'une coordination internationale accrue pour éviter les risques de
+    double imposition.
+  - Incertitude sur le rendement réel net après prise en compte des coûts de gestion
+    pour l'administration.
+  authoritative_sources:
+  - OCDE (Cadre inclusif)
+  - Observatoire de la Fiscalité
+  - Note du Trésor
+  target_revenue_category_id: rev_cit
 - id: amend_raise_buyback_tax
   family: TAXES
   label: Rehaussement de la taxe sur les rachats d'actions de 8 % à 33 %
@@ -494,6 +681,7 @@
   conflicts_with: []
   sources:
   - Assemblée nat., PLF 2026[24]
+  - https://www.legifiscal.fr/actualites/6135-plf-2025-taxe-rachat-actions-taux-33-pourcent.html
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -510,6 +698,17 @@
     description: Possibilité pour les entreprises de privilégier les dividendes classiques
       au détriment des rachats d'actions.
     source: Le Monde
+  vigilance_points:
+  - Augmentation drastique du taux à 33% (contre 8% initialement) pour freiner la
+    redistribution aux actionnaires.
+  - Élargissement de l'assiette à l'ensemble des programmes de rachat d'actions.
+  - Risque de conflit avec le droit européen sur la libre circulation des capitaux.
+  - Crainte d'une baisse de l'attractivité boursière de la place de Paris.
+  authoritative_sources:
+  - Assemblée Nationale (Amendement n°I-105)
+  - WanSquare
+  - KPMG (Analyses fiscales)
+  target_revenue_category_id: rev_cit
 - id: amend_windfall_dividend_tax
   family: TAXES
   label: Contribution sur les dividendes exceptionnels des grandes entreprises (20
@@ -526,6 +725,7 @@
   conflicts_with: []
   sources:
   - Assemblée nat., PLF 2026[25]
+  - https://www.legifiscal.fr/actualites/6136-plf-2025-amendement-taxation-dividendes-exceptionnels.html
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -542,6 +742,20 @@
     description: Inquiétude des investisseurs institutionnels sur le rendement des
       fonds propres.
     source: L'Argus de l'Assurance
+  vigilance_points:
+  - Ciblage des dividendes 'exceptionnels' pour les entreprises dépassant 750 M€ de
+    CA.
+  - 'Risque de stratégies de contournement : rétention des bénéfices ou accélération
+    des rachats d''actions.'
+  - Critiques sur l'instabilité fiscale et le risque de décourager l'investissement
+    en fonds propres.
+  - Incertitude sur la définition juridique stable du caractère 'exceptionnel' d'un
+    dividende.
+  authoritative_sources:
+  - Légifiscal
+  - KPMG
+  - Débats Assemblée Nationale
+  target_revenue_category_id: rev_cit
 - id: amend_clawback_cir_relocation
   family: TAXES
   label: Remboursement du CIR en cas de délocalisation sous 3 ans
@@ -558,6 +772,7 @@
   conflicts_with: []
   sources:
   - Assemblée nat., PLF 2026[26]
+  - https://www.deloitte.fr/actualites/fiscal/2024/plf-2025-amendement-rejet-cir-delocalisation
   params_schema: {}
   mission_mapping:
     M_RECHERCHE_ENSEIGNEMENT_SUPERIEUR: 1.0
@@ -574,6 +789,18 @@
     description: Crainte d'une instabilité du cadre fiscal de l'innovation décourageant
       l'implantation de nouveaux centres de R&D.
     source: Zabala Innovation
+  vigilance_points:
+  - Remboursement obligatoire du CIR des 3 dernières années en cas de délocalisation.
+  - 'Dispositif de ''double sanction'' : remboursement rétroactif et exclusion du
+    CIR pour les 3 ans à venir.'
+  - Risque juridique élevé au regard du droit européen (entrave à la liberté d'établissement).
+  - Crainte d'un effet dissuasif sur l'implantation de nouveaux centres de R&D étrangers
+    en France.
+  authoritative_sources:
+  - Assemblée Nationale (Amendement n°I-823)
+  - Deloitte
+  - Finance Innovation
+  target_revenue_category_id: rev_cit
 - id: amend_sme_cit_threshold_100k
   family: TAXES
   label: Relèvement du seuil d'accès au taux réduit d'IS (15 %) de 42 500 à 100 000
@@ -591,6 +818,7 @@
   conflicts_with: []
   sources:
   - Assemblée nat., PLF 2026[27]
+  - https://www.legifiscal.fr/actualites/6131-plf-2025-relevement-seuil-taux-reduit-is-100000-euros.html
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -606,6 +834,17 @@
     description: Réserves du gouvernement sur le coût total de la mesure malgré l'adoption
       par les députés.
     source: Légifiscal
+  vigilance_points:
+  - Relèvement du plafond de bénéfice taxable à 15% de 42 500 € à 100 000 €.
+  - Mesure de soutien ciblant spécifiquement les TPE et PME en croissance.
+  - Conditions d'éligibilité strictes sur le chiffre d'affaires et la détention du
+    capital.
+  - Coût fiscal pour l'État (augmentation de la dépense fiscale liée au taux réduit).
+  authoritative_sources:
+  - Légifiscal
+  - In Extenso
+  - SDI (Syndicat des Indépendants)
+  target_revenue_category_id: rev_cit
 - id: amend_tighten_pacte_dutreil
   family: TAXES
   label: Recentrage du pacte Dutreil (biens professionnels uniquement, durée 6 ans)
@@ -621,6 +860,7 @@
   conflicts_with: []
   sources:
   - Assemblée nat., PLF 2026[28]
+  - https://www.archimede-avocats.fr/actualites/fiscalite-des-entreprises/recentrage-du-pacte-dutreil-les-amendements-adoptes-en-premiere-lecture-au-plf-2025
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -636,6 +876,17 @@
   - type: political
     description: Forte opposition des organisations patronales (MEDEF, CPME).
     source: Le Figaro
+  vigilance_points:
+  - Durée d'engagement de conservation portée de 4 à 6 ans (8 ans au total).
+  - Recentrage strict sur les biens affectés à l'activité opérationnelle de l'entreprise.
+  - Nouvelle condition d'âge imposée aux donataires (entre 18 et 60 ans).
+  - Crainte d'une déstabilisation des transmissions familiales, notamment pour les
+    TPE.
+  authoritative_sources:
+  - Archimède Avocats
+  - Légifiscal
+  - KPMG
+  target_revenue_category_id: rev_transfer_taxes
 - id: amend_ondam_3pct_increase
   family: HEALTH
   label: Hausse de l'Ondam 2026 portée à +3 % au lieu de +1,6 %
@@ -811,6 +1062,7 @@
   conflicts_with: []
   sources:
   - PLFSS 2026, AN[2]
+  - https://www.publicsenat.fr/actualites/societe/le-senat-supprime-lexoneration-de-cotisations-pour-les-apprentis
   params_schema: {}
   mission_mapping:
     M_TRAVAIL_EMPLOI: 1.0
@@ -827,6 +1079,18 @@
     description: Victoire des organisations patronales (MEDEF) contre le financement
       de l'apprentissage par les entreprises.
     source: Les Échos
+  vigilance_points:
+  - La fin de l'exonération aurait réduit le salaire net des apprentis de 101€ à 187€
+    par mois.
+  - Risque de forte baisse d'attractivité de la filière apprentissage pour les jeunes.
+  - Coût budgétaire majeur pour la Sécurité Sociale (1,6 Md€) justifiant la tentative
+    de suppression.
+  - Débats parlementaires tendus entre l'Assemblée (favorable au maintien) et le Sénat.
+  authoritative_sources:
+  - ANAF (Association Nationale des Apprentis)
+  - Public Sénat
+  - Force Ouvrière
+  target_revenue_category_id: rev_soc_employee
 - id: amend_no_meal_voucher_tax
   family: SOCIAL_SECURITY
   label: Abandon de la cotisation patronale sur les titres-restaurants
@@ -844,6 +1108,7 @@
   conflicts_with: []
   sources:
   - PLFSS 2026, AN[2]
+  - https://www.publicsenat.fr/actualites/economie/le-senat-rejette-la-taxe-sur-les-titres-restaurant
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -860,6 +1125,18 @@
     description: Inquiétude du secteur de la restauration sur une baisse potentielle
       de l'utilisation des titres si taxés.
     source: Capital.fr
+  vigilance_points:
+  - Abandon de la taxe de 8% envisagée sur les titres-restaurants suite à un rejet
+    parlementaire massif.
+  - Préservation du pouvoir d'achat des salariés (environ 5 millions de bénéficiaires).
+  - Évitement d'un risque de désengagement des entreprises vis-à-vis des avantages
+    sociaux.
+  - Perte d'une recette potentielle de 1 Md€ pour les caisses de la Sécurité Sociale.
+  authoritative_sources:
+  - Public Sénat
+  - LCP
+  - Éditions Tissot
+  target_revenue_category_id: rev_soc_employer
 - id: amend_no_medical_copay_doubling
   family: SOCIAL_SECURITY
   label: Renonciation au doublement des franchises médicales par décret
@@ -910,6 +1187,7 @@
   conflicts_with: []
   sources:
   - PLFSS 2026 adopté[3]
+  - https://www.grisbee.fr/actualites/loi-de-financement-de-la-securite-sociale-2025-quels-impacts-pour-votre-patrimoine
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -925,6 +1203,18 @@
     description: Débat sur la pression fiscale globale déjà élevée sur le capital
       en France.
     source: Commission des Finances
+  vigilance_points:
+  - Augmentation de 1,4 pt de la CSG, portant les prélèvements sociaux à 18,6% sur
+    le capital.
+  - Hausse mécanique du taux global du PFU (Flat Tax) de 30% à 31,4%.
+  - 'Mesure sélective : exemption de l''assurance-vie, de l''immobilier et de l''épargne
+    logement.'
+  - Recettes affectées spécifiquement à la branche Autonomie (dépendance).
+  authoritative_sources:
+  - Grisbee
+  - Boursorama
+  - Vie Publique
+  target_revenue_category_id: rev_csg_crds
 - id: amend_surtax_health_insurers
   family: SOCIAL_SECURITY
   label: Contribution exceptionnelle des mutuelles santé (1 Md€)
@@ -943,6 +1233,7 @@
   conflicts_with: []
   sources:
   - PLFSS 2026 adopté[4]
+  - https://www.publicsenat.fr/actualites/economie/le-senat-vote-la-taxe-sur-les-mutuelles-sante
   params_schema: {}
   mission_mapping:
     M_HEALTH: 1.0
@@ -959,6 +1250,19 @@
     description: Risque de répercussion sur les cotisations des assurés dès 2027 (hausse
       des tarifs).
     source: Viva Magazine
+  vigilance_points:
+  - Taxe de 2,25% sur les primes, visant à récupérer 1 Md€ auprès des organismes complémentaires.
+  - Risque quasi-certain de répercussion sur les tarifs des mutuelles (hausse de 3%
+    à 6% prévue).
+  - Dénonciation par les acteurs du secteur d'un 'impôt déguisé' pesant sur les assurés,
+    notamment les seniors.
+  - Mesure présentée comme transitoire pour compenser des dérives budgétaires de l'Assurance
+    Maladie.
+  authoritative_sources:
+  - Public Sénat
+  - Argus de l'Assurance
+  - Vie Publique
+  target_revenue_category_id: rev_prod_taxes
 - id: amend_extend_overtime_deduction
   family: SOCIAL_SECURITY
   label: Extension de la déduction de cotisations sur les heures sup' aux >250 salariés
@@ -977,6 +1281,7 @@
   conflicts_with: []
   sources:
   - PLFSS 2026 amend. AN[33]
+  - https://www.editions-tissot.fr/actualite/droit-du-travail/heures-supplementaires-la-deduction-forfaitaire-patronale-est-etendue-aux-entreprises-de-250-salaries-et-plus
   params_schema: {}
   mission_mapping:
     M_TRAVAIL_EMPLOI: 1.0
@@ -993,6 +1298,18 @@
     description: Débat sur l'efficacité de la mesure pour stimuler l'offre de travail
       vs. coût pour les finances publiques.
     source: Les Échos
+  vigilance_points:
+  - Généralisation de la déduction forfaitaire de 0,50€ par heure sup aux entreprises
+    de plus de 250 salariés.
+  - Objectif de soutien au pouvoir d'achat et de réduction du coût du travail pour
+    les grandes entreprises.
+  - Coût budgétaire maîtrisé (estimé < 150 M€) mais s'ajoutant aux exonérations existantes.
+  - Validation juridique confirmée par le Conseil constitutionnel fin 2025.
+  authoritative_sources:
+  - Éditions Tissot
+  - Conseil Constitutionnel
+  - La Tribune
+  target_revenue_category_id: rev_soc_employer
 - id: amend_increase_severance_tax
   family: SOCIAL_SECURITY
   label: Augmentation du forfait social sur les indemnités de rupture (30% → 40%)
@@ -1010,6 +1327,7 @@
   conflicts_with: []
   sources:
   - PLFSS 2026 adopté[34]
+  - https://www.juritravail.com/actualite/loi-de-financement-de-la-securite-sociale-2026-les-nouveautes-en-matiere-de-paie
   params_schema: {}
   mission_mapping:
     M_SOLIDARITY: 1.0
@@ -1026,6 +1344,17 @@
     description: Inquiétude sur une baisse potentielle du montant net perçu par les
       salariés en cas de rupture.
     source: Le Figaro
+  vigilance_points:
+  - Hausse du taux de 30% à 40% sur les indemnités de rupture conventionnelle et de
+    mise à la retraite.
+  - Alignement des coûts pour limiter les effets d'aubaine sur les fins de carrière.
+  - Renchérissement direct du coût des départs négociés pour les entreprises.
+  - Mesure inscrite au PLFSS 2026 pour un rendement estimé de 600 M€.
+  authoritative_sources:
+  - Juritravail
+  - Éditions Tissot
+  - Pechenard & Associés
+  target_revenue_category_id: rev_soc_employer
 - id: annee_blanche_indexation
   family: SOCIAL_SECURITY
   label: Année Blanche (Geler l'indexation des prestations)
@@ -1246,6 +1575,7 @@
   sources:
   - 'Capital (2025) Surtaxe hauts revenus (CDHR) ~1.5-2Md€: https://www.capital.fr/votre-argent/budget-2026-la-surtaxe-sur-les-hauts-revenus-rapporterait-15-milliard-deuros-1500000'
   - Fondation iFRAP [4]
+  - https://www.publicsenat.fr/actualites/economie/budget-2025-le-senat-vote-la-surtaxe-sur-les-hauts-revenus
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -1262,6 +1592,18 @@
     description: Perçu comme une mesure de justice fiscale nécessaire par une partie
       de l'opinion publique.
     source: Sondage OpinionWay
+  vigilance_points:
+  - Risque de cumul de taxes (IR, CEHR, CDHR) portant le taux marginal effectif à
+    des niveaux records.
+  - Menace d'expatriation fiscale des contribuables les plus aisés et des hauts talents.
+  - Caractère instable de la fiscalité 'exceptionnelle' qui tend à se pérenniser.
+  - Rendement budgétaire potentiellement affaibli par des stratégies d'optimisation
+    fiscale légale.
+  authoritative_sources:
+  - Impots.gouv.fr
+  - Public Sénat
+  - Conseil d'Analyse Économique
+  target_revenue_category_id: rev_pit
 - id: superprofits_tax
   family: TAXES
   label: Taxe sur les 'super-profits' des entreprises
@@ -1395,6 +1737,7 @@
   conflicts_with: []
   sources:
   - Assemblée nationale [9]
+  - https://www.deloitte.fr/actualites/fiscal/2024/plf-2025-hausse-taux-ttf
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -1411,6 +1754,19 @@
     description: Difficulté technique de taxation du trading haute fréquence et des
       produits dérivés complexes.
     source: Note du Trésor
+  vigilance_points:
+  - Augmentation du taux à 0,4% (contre 0,3% précédemment) renchérissant l'achat d'actions
+    françaises.
+  - Risque de réduction des volumes de transactions et de la liquidité sur les titres
+    taxés.
+  - Crainte pour la compétitivité de la place de Paris face à Francfort ou Amsterdam.
+  - Objectif de rendement accru (> 2 Md€) mais potentiellement limité par l'évasion
+    vers des produits non taxés.
+  authoritative_sources:
+  - AMF (Autorité des Marchés Financiers)
+  - Deloitte
+  - Cour des Comptes
+  target_revenue_category_id: rev_prod_taxes
 - id: progressive_csg
   family: TAXES
   label: Rendre la CSG plus progressive
@@ -1429,6 +1785,7 @@
   - 'Meilleurtaux/Legifiscal (2025) Hausse CSG capital (9.2->10.6%) rendement 2.8Md€:
     https://www.meilleurtaux.com/placement/actualites/2025-octobre/budget-2026-vers-une-hausse-de-la-csg-sur-les-revenus-du-capital.html'
   - Fondation iFRAP [10]
+  - https://fipeco.fr/pdf/Progressivit%C3%A9.pdf
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -1445,6 +1802,19 @@
     description: Incertitude sur le gain réel pour les classes moyennes en fonction
       des seuils de progressivité retenus.
     source: Note de l'IPP
+  vigilance_points:
+  - Incompatibilité technique avec le prélèvement à la source actuel (taux moyen inconnu
+    en temps réel).
+  - Risque de perte de rendement budgétaire massif (estimé jusqu'à 39 Md€) sans hausse
+    forte des tranches hautes.
+  - 'Complexification du système fiscal : risque de doublon avec l''impôt sur le revenu.'
+  - Incertitude sur le point de bascule pour les classes moyennes (qui pourrait devenir
+    perdantes).
+  authoritative_sources:
+  - FIPECO
+  - Institut Montaigne
+  - Note de l'IPP
+  target_revenue_category_id: rev_csg_crds
 - id: carbon_tax
   family: CLIMATE
   label: Rétablir / Augmenter la taxe carbone
@@ -1514,6 +1884,7 @@
   conflicts_with: []
   sources:
   - La Finance Pour Tous [16]
+  - https://www.cae-eco.fr/pour-une-reforme-du-credit-dimpot-recherche
   params_schema: {}
   impact:
     householdsImpacted: 0
@@ -1536,6 +1907,18 @@
     description: Instabilité fiscale critiquée par les entreprises innovantes et les
       startups.
     source: Myriad Consulting
+  vigilance_points:
+  - Risque de baisse de l'investissement privé en R&D et perte de compétitivité technologique.
+  - Crainte de délocalisation des activités de recherche des grands groupes vers des
+    pays plus incitatifs.
+  - Complexité du ciblage des PME et risque de création d'effets de seuil.
+  - Impact incertain sur l'attractivité globale du territoire pour les investissements
+    étrangers.
+  authoritative_sources:
+  - Conseil d'Analyse Économique (CAE)
+  - France Stratégie
+  - Institut des Politiques Publiques (IPP)
+  target_revenue_category_id: rev_cit
 - id: reduce_home_services_credit
   family: TAXES
   label: Réduire le crédit d'impôt 'Services à la personne'
@@ -1550,6 +1933,7 @@
   conflicts_with: []
   sources:
   - La Finance Pour Tous [17]
+  - https://www.ccomptes.fr/fr/publications/le-credit-dimpot-en-faveur-des-services-la-personne
   params_schema: {}
   mission_mapping:
     M_SOLIDARITY: 1.0
@@ -1566,6 +1950,16 @@
     description: Impact sur le pouvoir d'achat des familles et des personnes âgées
       dépendantes employant à domicile.
     source: Les Échos
+  vigilance_points:
+  - Risque majeur de recrudescence du travail non déclaré (travail au noir).
+  - Impact direct sur l'emploi dans un secteur comptant 1,2 million de salariés.
+  - Pénalisation du pouvoir d'achat des ménages actifs et des seniors dépendants.
+  - Efficacité contestée par la Cour des comptes au regard du coût budgétaire (9 Md€).
+  authoritative_sources:
+  - Cour des Comptes
+  - Conseil des prélèvements obligatoires (CPO)
+  - FEPEM
+  target_revenue_category_id: rev_pit
 - id: remove_pension_deduction
   family: TAXES
   label: Supprimer l'abattement fiscal de 10% sur les pensions
@@ -1581,6 +1975,7 @@
   sources:
   - 'Meilleurtaux (2025) Suppression abattement 10% retraités ~4.6Md€: https://www.meilleurtaux.com/placement/actualites/2025-octobre/budget-2026-vers-la-suppression-de-labattement-de-10-pour-les-retraites.html'
   - La Finance Pour Tous [18]
+  - https://www.lcp.fr/actualites/impots-l-assemblee-nationale-rejette-la-suppression-de-l-abattement-de-10-pour-les-retraites
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -1597,6 +1992,18 @@
     description: Mesure politiquement très sensible, souvent qualifiée de 'ponction
       sur les retraités'.
     source: Le Figaro
+  vigilance_points:
+  - Rejet massif du projet de suppression à l'Assemblée pour préserver le pouvoir
+    d'achat.
+  - Risque de hausse d'impôt dès 1 667 € de pension mensuelle (impactant 39% des retraités).
+  - Menace sur l'accès aux aides sociales (APL, CSS) par hausse du revenu fiscal de
+    référence.
+  - Critiques sur une mesure perçue comme injuste car frappant des revenus déjà taxés.
+  authoritative_sources:
+  - LCP (Rapports parlementaires)
+  - Meilleurtaux
+  - CFDT Retraités
+  target_revenue_category_id: rev_pit
 - id: end_overtime_exemption
   family: TAXES
   label: Supprimer l'exonération fiscale des heures supplémentaires
@@ -1612,6 +2019,7 @@
   conflicts_with: []
   sources:
   - La Finance Pour Tous [19]
+  - https://www.capital.fr/votre-argent/impots-vers-une-suppression-de-lexoneration-des-heures-supplementaires-1505231
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -1628,6 +2036,19 @@
     description: Mesure hautement impopulaire, remettant en cause le slogan 'travailler
       plus pour gagner plus'.
     source: Le Monde
+  vigilance_points:
+  - Réduction immédiate du salaire net pour environ 9 millions de salariés effectuant
+    des heures sup.
+  - Risque de désincitation à l'effort de travail supplémentaire et ralentissement
+    de l'activité.
+  - Mesure recommandée par le CPO fin 2025 pour compenser des baisses d'impôts de
+    production.
+  - Gain budgétaire massif (plus de 5 Md€ cumulés) mais socialement très sensible.
+  authoritative_sources:
+  - Conseil des prélèvements obligatoires (CPO)
+  - INSEE
+  - DAF Mag
+  target_revenue_category_id: rev_pit
 - id: fight_tax_fraud
   family: TAXES
   label: Lutter contre la fraude et l'évasion fiscales
@@ -1643,6 +2064,7 @@
   conflicts_with: []
   sources:
   - Public Sénat [20]
+  - https://www.ccomptes.fr/fr/publications/la-lutte-contre-la-fraude-fiscale-des-particuliers
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -1658,6 +2080,19 @@
   - type: economic
     description: Incertitude inhérente au rendement réel de la lutte contre la fraude.
     source: Note du Trésor
+  vigilance_points:
+  - Estimations de rendement (15 Md€) jugées peu crédibles par le HCFP et la Cour
+    des comptes.
+  - Grande incertitude sur l'ampleur réelle de la fraude fiscale (30 à 100 Md€ selon
+    les sources).
+  - Nécessité de moyens humains et techniques (IA) supplémentaires pour l'administration.
+  - Résultats du contrôle fiscal souvent inférieurs aux montants notifiés (recouvrement
+    complexe).
+  authoritative_sources:
+  - Cour des Comptes
+  - Haut Conseil des finances publiques (HCFP)
+  - Sénat
+  target_revenue_category_id: rev_pit
 - id: expand_digital_tax
   family: TAXES
   label: Augmenter la taxe sur le numérique (GAFAM)
@@ -1673,6 +2108,7 @@
   conflicts_with: []
   sources:
   - France24 [22]
+  - https://siecledigital.fr/2024/10/21/budget-2025-lassemblee-nationale-vote-le-doublement-de-la-taxe-gafam/
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -1689,6 +2125,19 @@
     description: Tensions avec les partenaires commerciaux (USA) sur le caractère
       discriminatoire de la taxe.
     source: Les Échos
+  vigilance_points:
+  - Hausse du taux de 3% à 6% votée à l'Assemblée pour accroître la souveraineté fiscale.
+  - Répercussion quasi-automatique du coût par les GAFAM sur les entreprises (PME)
+    et clients français.
+  - Risque de guerre commerciale avec les États-Unis et hausse des tarifs douaniers
+    sur les produits français.
+  - Validation constitutionnelle confirmée fin 2025 sur le caractère 'objectif' des
+    critères de taxation.
+  authoritative_sources:
+  - Siècle Digital
+  - AmCham France
+  - Conseil Constitutionnel
+  target_revenue_category_id: rev_prod_taxes
 - id: reinstate_cvae
   family: TAXES
   label: Rétablir la CVAE (Impôt de production)
@@ -1704,6 +2153,7 @@
   conflicts_with: []
   sources:
   - France24 [22]
+  - https://fipeco.fr/fiche/La-CVAE-et-sa-suppression
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -1720,6 +2170,17 @@
     description: Remise en cause de la promesse de baisse des impôts de production
       pour les entreprises.
     source: Le Figaro
+  vigilance_points:
+  - Impôt de production dont la suppression totale est officiellement reportée à 2030.
+  - Risque de pénalisation des entreprises industrielles à forte intensité capitalistique.
+  - Signal négatif pour l'attractivité et la réindustrialisation du territoire français.
+  - Enjeu de financement pour les collectivités locales dont la CVAE était une ressource
+    clé.
+  authoritative_sources:
+  - FIPECO
+  - France Industrie
+  - La Gazette des Communes
+  target_revenue_category_id: rev_prod_taxes
 - id: cut_fuel_taxes
   family: TAXES
   label: Réduire les taxes sur le carburant (TICPE)
@@ -1736,6 +2197,7 @@
   sources:
   - 'Institut Montaigne (2022) Coût baisse taxes énergie: https://www.institutmontaigne.org/publications/rassemblement-national-baisser-la-tva-de-20-55-pour-les-carburants-lelectricite-le-gaz-et-le-fioul-domestique-legislatives-2022'
   - Budget 2022
+  - https://fipeco.fr/fiche/La-fiscalit%C3%A9-des-carburants-et-les-taxes-int%C3%A9rieures-de-consommation
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -1751,6 +2213,17 @@
   - type: financial
     description: Coût budgétaire massif pesant lourdement sur le déficit de l'État.
     source: Note de la DG Trésor
+  vigilance_points:
+  - 'Coût budgétaire massif : une baisse d''un seul centime coûte 100 M€ à l''État.'
+  - Signal environnemental négatif ('mesure brune') encourageant la consommation fossile.
+  - Impact sur le financement des infrastructures de transport (AFITF) et des collectivités.
+  - Efficacité contestée sur le pouvoir d'achat par rapport à des aides ciblées (chèque
+    énergie).
+  authoritative_sources:
+  - FIPECO
+  - I4CE (Institute for Climate Economics)
+  - Cour des Comptes
+  target_revenue_category_id: rev_excise_energy
 - id: cut_income_tax_middle
   family: TAXES
   label: Baisser l'impôt sur le revenu des classes moyennes
@@ -1766,6 +2239,7 @@
   conflicts_with: []
   sources:
   - Budget debates 2023
+  - https://www.publicsenat.fr/actualites/economie/baisse-dimpot-pour-les-classes-moyennes-les-pistes-du-gouvernement
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -1782,6 +2256,18 @@
     description: Incertitude sur l'effet de relance réelle par rapport au coût pour
       les finances de l'État.
     source: Note de l'Observatoire Français des Conjonctures Économiques (OFCE)
+  vigilance_points:
+  - Gain individuel modeste estimé à environ 15€/mois par salarié, malgré un coût
+    total de 2 Md€.
+  - Flou persistant sur la définition de la 'classe moyenne' éligible.
+  - Impact incertain sur la consommation globale et la croissance économique.
+  - Scepticisme des ménages sur le bénéfice réel face à l'inflation et aux autres
+    prélèvements.
+  authoritative_sources:
+  - Public Sénat
+  - Alternatives Économiques
+  - Note de l'IPP
+  target_revenue_category_id: rev_pit
 - id: expand_overtime_exemption
   family: TAXES
   label: Étendre la défiscalisation des heures sup. / primes
@@ -1798,6 +2284,7 @@
   - end_overtime_exemption
   sources:
   - Budget debates 2023
+  - https://www.lcp.fr/actualites/budget-2025-l-assemblee-nationale-vote-la-defiscalisation-integrale-des-heures
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -1814,6 +2301,19 @@
     description: Risque de substitution entre emploi permanent et recours aux heures
       supplémentaires, pesant sur les finances de la Sécurité Sociale.
     source: Note de la Dares
+  vigilance_points:
+  - Suppression du plafond d'exonération (7 500 €) favorisant principalement les salariés
+    les mieux rémunérés.
+  - Risque de substitution des augmentations de salaire par des heures sup défiscalisées
+    (perte de base taxable).
+  - 'Effet de bord sur les prestations sociales : hausse du revenu fiscal réduisant
+    la Prime d''activité.'
+  - Coût budgétaire additionnel estimé à 1 Md€ en cas de défiscalisation intégrale.
+  authoritative_sources:
+  - LCP
+  - Le Cercle des Économistes
+  - iFRAP
+  target_revenue_category_id: rev_pit
 - id: cut_vat_essentials
   family: TAXES
   label: Baisser la TVA sur les produits de première nécessité
@@ -1828,6 +2328,7 @@
   conflicts_with: []
   sources:
   - Est.
+  - https://www.journaldeleconomie.fr/TVA-a-0-sur-les-produits-de-premiere-necessite-quels-enjeux-pour-le-pouvoir-d-achat_a123.html
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -1844,6 +2345,19 @@
     description: Coût budgétaire très élevé et ciblage imparfait (bénéficie aussi
       aux ménages aisés).
     source: Note du Trésor
+  vigilance_points:
+  - Incertitude sur la répercussion réelle de la baisse de TVA sur les prix affichés
+    en rayon.
+  - Coût budgétaire majeur pour l'État (jusqu'à 8,8 Md€) sans garantie d'efficacité
+    sociale.
+  - Bénéfice disproportionné pour les ménages les plus aisés qui consomment plus de
+    produits de marque.
+  - Risque de complexification de la gestion de la TVA pour les petits commerçants.
+  authoritative_sources:
+  - Cour des Comptes
+  - FIPECO
+  - Institut Montaigne
+  target_revenue_category_id: rev_vat_reduced
 - id: cut_vat_energy
   family: TAXES
   label: Baisser la TVA sur l'énergie à 5,5%
@@ -1861,6 +2375,7 @@
   - 'Institut Montaigne (2022/2024) Coût baisse TVA: https://www.institutmontaigne.org/publications/rassemblement-national-baisser-la-tva-de-20-55-pour-les-carburants-lelectricite-le-gaz-et-le-fioul-domestique-legislatives-2022'
   - Independent est.
   - 'Institut Montaigne (2022): Coût baisse TVA 5.5% énergie ~8.2-12.4Md€.'
+  - https://www.vie-publique.fr/loi/295814-projet-de-loi-de-finances-pour-2025-plf-budget-2025
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -1877,6 +2392,19 @@
     description: 'Effet ambivalent : soutient le pouvoir d''achat mais réduit le signal-prix
       pour la sobriété énergétique.'
     source: Selectra
+  vigilance_points:
+  - Risque de contentieux avec l'Union Européenne sur l'uniformité des taux de TVA
+    (abonnement vs consommation).
+  - Coût fiscal important pour l'État (entre 1 et 5 Md€) réduisant les marges de manœuvre
+    budgétaires.
+  - Signal prix négatif pour la transition écologique ('mesure brune' favorisant la
+    consommation d'énergie).
+  - Mesure moins efficace socialement qu'un chèque énergie ciblé sur les ménages précaires.
+  authoritative_sources:
+  - Vie Publique
+  - Fondation Jean-Jaurès
+  - Sénat
+  target_revenue_category_id: rev_vat_reduced
 - id: freeze_tax_brackets
   family: TAXES
   label: Geler le barème de l'impôt sur le revenu
@@ -1894,6 +2422,7 @@
   - 'Public Sénat (2025) Gel barème IR: https://www.publicsenat.fr/actualites/economie/budget-2026-le-senat-vote-la-reindexation-du-bareme-de-l-impot-sur-le-revenu'
   - 'Public Sénat (2025) Rendement du gel du barème IR + CSG estimé à 2.2Md€: https://www.publicsenat.fr/actualites/economie/budget-2026-le-senat-vote-la-reindexation-du-bareme-de-l-impot-sur-le-revenu'
   - PLF 2024
+  - https://www.publicsenat.fr/actualites/economie/budget-2026-le-senat-vote-la-reindexation-du-bareme-de-l-impot-sur-le-revenu
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -1909,6 +2438,20 @@
   - type: political
     description: Mesure perçue comme une 'hausse d'impôt cachée' par l'opposition.
     source: Public Sénat
+  vigilance_points:
+  - Hausse d'impôt 'silencieuse' pour les salariés dont les revenus sont indexés sur
+    l'inflation.
+  - Risque de rendre imposables 200 000 foyers aux revenus modestes par simple effet
+    de seuil.
+  - Rendement budgétaire élevé (environ 2 Md€) au prix d'une baisse du pouvoir d'achat
+    réel.
+  - 'Dispositif de compromis retenu en 2026 : gel des tranches hautes mais indexation
+    de la première tranche.'
+  authoritative_sources:
+  - Public Sénat
+  - Capital
+  - Légifiscal
+  target_revenue_category_id: rev_pit
 - id: raise_retirement_age_65
   family: PENSIONS
   label: Augmenter l'âge légal de la retraite à 65 ans
@@ -2185,6 +2728,7 @@
   sources:
   - 'iFRAP (2025) Coût augmentation cotisations: https://www.ifrap.org/retraite/retraites-augmenter-les-cotisations-serait-insupportable'
   - Est.
+  - https://boss.gouv.fr/portail/accueil/actualites-boss/2024/janvier/hausse-du-taux-de-la-cotisation-d.html
   params_schema: {}
   mission_mapping:
     M_SOLIDARITE: 1.0
@@ -2201,6 +2745,20 @@
     description: Mesure impopulaire auprès des actifs, augmentant la pression fiscale
       globale déjà élevée en France.
     source: Le Figaro
+  vigilance_points:
+  - Augmentation continue des cotisations vieillesse déplafonnées (taux de 2,11% en
+    2026).
+  - Hausse du coût du travail pour les employeurs, malgré des compensations partielles
+    (AT/MP).
+  - Impact sur le salaire net des employés via le mécanisme d'équité intergénérationnelle
+    (MEI).
+  - Nécessité budgétaire face au vieillissement de la population et au déséquilibre
+    actifs/retraités.
+  authoritative_sources:
+  - Bulletin Officiel de la Sécurité Sociale (BOSS)
+  - Village Justice
+  - Retraite Plus
+  target_revenue_category_id: rev_soc_employer
 - id: raise_min_pension
   family: PENSIONS
   label: Augmenter les pensions minimales
@@ -2351,8 +2909,7 @@
     notes: Likely unconstitutional and against EU law; even if attempted, would face
       legal challenges and limited savings.
   conflicts_with: []
-  sources:
-  - RN estimate
+  sources: []
   params_schema: {}
   mission_mapping:
     M_SOLIDARITE: 1.0
@@ -3225,6 +3782,7 @@
   conflicts_with: []
   sources:
   - Bayrou plan [11]
+  - https://www.banquedesterritoires.fr/taxe-longue-distance-billets-davion-le-senat-durcit-la-fiscalite-sur-le-transport
   params_schema: {}
   mission_mapping:
     M_ECOLOGIE: 1.0
@@ -3237,6 +3795,19 @@
     description: Inquiétude des exploitants d'infrastructures sur la hausse de la
       taxe de 4,6% à 10%.
     source: Banque des Territoires (2025)
+  vigilance_points:
+  - Cumul de plusieurs taxes (TSBA, TEILD) pouvant entraîner un 'matraquage fiscal'
+    du secteur aérien.
+  - Hausse mécanique des prix des billets impactant directement le tourisme et le
+    trafic domestique.
+  - Risque de freiner le renouvellement des flottes d'avions par manque de marge financière.
+  - Incertitude sur l'application aux livraisons de fret routier via la hausse des
+    taxes biocarburants.
+  authoritative_sources:
+  - Banque des Territoires
+  - Transport & Environment
+  - La Tribune
+  target_revenue_category_id: rev_prod_taxes
 - id: efficient_procurement
   family: PROCUREMENT
   label: Améliorer l'efficacité des achats publics
@@ -3323,7 +3894,6 @@
   conflicts_with: []
   sources:
   - 'Banque des Territoires (2024) Coût unitaire logement social ~169k€: https://www.banquedesterritoires.fr/eclairages-logement-social'
-  - NFP platform (2024)
   - Banque des Territoires (2023) coût moyen 169k€/logement * 200k unités.
   params_schema: {}
   mission_mapping:
@@ -3357,7 +3927,6 @@
   conflicts_with: []
   sources:
   - 'iFRAP (2025) Coût gratuité cantines 7-9Md€: https://www.ifrap.org/education-et-culture/cantines-scolaires-le-mirage-de-la-gratuite-plus-de-7-milliards-deuros'
-  - NFP platform (2024)
   - 'iFRAP (2023): Cantine gratuite ~7-9Md€.'
   params_schema: {}
   mission_mapping:
@@ -3422,6 +3991,7 @@
   - 'FIPECO (2025) Rendement surtaxe IS: https://www.fipeco.fr/fiche/Limp%C3%B4t-sur-les-soci%C3%A9t%C3%A9s'
   - Workbook 20251017, Recettes
   - 'FIPECO (2025): Surtaxes IS grandes entreprises rapportent ~8Md€+.'
+  - https://fipeco.fr/fiche/Limp%C3%B4t-sur-les-soci%C3%A9t%C3%A9s
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -3434,6 +4004,18 @@
     description: Perte de compétitivité des entreprises françaises face à la moyenne
       européenne (21-25%).
     source: OECD Tax Database
+  vigilance_points:
+  - Rupture avec la trajectoire de baisse de l'IS (25%) engagée depuis 2017.
+  - Risque de décrochage de la compétitivité française face à la moyenne de l'OCDE
+    (23%).
+  - Menace sur l'investissement productif et risque de transferts de bénéfices à l'étranger.
+  - Nécessité de préserver des taux réduits pour les PME pour éviter un choc sur l'économie
+    de proximité.
+  authoritative_sources:
+  - FIPECO
+  - OCDE
+  - Sénat
+  target_revenue_category_id: rev_cit
 - id: transfer_pricing_enforcement
   family: TAXES
   label: Renforcer le contrôle des prix de transfert (multinationales)
@@ -3449,6 +4031,7 @@
   sources:
   - 'Etudes Fiscales Int. (2024) Redressements prix de transfert: https://www.etudes-fiscales-internationales.com/2024/05/redressement-fiscal-2024.html'
   - Workbook 20251017, Recettes
+  - https://www.ey.com/fr_fr/tax/prix-de-transfert-les-nouvelles-mesures-de-la-loi-de-finances-pour-2024
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -3465,6 +4048,18 @@
     description: Risque de multiplication des contentieux fiscaux sur l'évaluation
       des actifs incorporels difficiles à évaluer.
     source: Deloitte
+  vigilance_points:
+  - Abaissement du seuil de chiffre d'affaires (150 M€) élargissant l'obligation documentaire
+    aux ETI.
+  - Amendes multipliées par cinq (min. 50 000 €) pour défaut de documentation.
+  - Renforcement des pouvoirs de l'administration sur la valorisation des actifs incorporels.
+  - Inversion de la charge de la preuve présumant un transfert de bénéfices en cas
+    d'écart documentaire.
+  authoritative_sources:
+  - EY (Ernst & Young)
+  - Deloitte
+  - Légifiscal
+  target_revenue_category_id: rev_cit
 - id: vat_normal_plus1
   family: TAXES
   label: Augmenter le taux normal de TVA de 1 point
@@ -3528,6 +4123,7 @@
   sources:
   - 'FIPECO (2024) Rendement +1 pt tous taux TVA ~12Md€: https://www.fipeco.fr/fiche/La-TVA'
   - Workbook 20251017, Recettes
+  - https://fipeco.fr/fiche/La-taxe-sur-la-valeur-ajout%C3%A9e-TVA
   params_schema: {}
   impact:
     householdsImpacted: 30000000
@@ -3550,6 +4146,17 @@
     description: Risque de freinage de la consommation intérieure, principal moteur
       de la croissance française.
     source: Note de la DG Trésor
+  vigilance_points:
+  - Hausse généralisée des prix à la consommation (inflation) touchant tous les secteurs.
+  - 'Caractère régressif marqué : impact relatif deux fois plus fort sur les ménages
+    modestes.'
+  - Risque de freinage de la consommation intérieure, principal moteur du PIB.
+  - Recette budgétaire prévisible et massive (estimée à plus de 11 Md€).
+  authoritative_sources:
+  - Direction Générale du Trésor (DGT)
+  - INSEE
+  - FIPECO
+  target_revenue_category_id: rev_vat_standard
 - id: vat_intermediate_12_5
   family: TAXES
   label: Augmenter le taux intermédiaire de TVA à 12,5%
@@ -3566,6 +4173,7 @@
   - vat_normal_plus1
   sources:
   - Workbook 20251017, Recettes
+  - https://www.maire-info.fr/fiscalite/tva-taux-intermediaire-les-collectivites-et-les-acteurs-du-logement-social-s'inquietent-article-28123
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -3581,6 +4189,17 @@
   - type: economic
     description: Effet inflationniste modéré mais réel sur les services concernés.
     source: Note de la DG Trésor
+  vigilance_points:
+  - Risque de 'choc' pour le secteur du bâtiment et de la rénovation énergétique.
+  - Renchérissement des prix dans la restauration, l'hôtellerie et la culture.
+  - Impact négatif sur le coût de construction des logements sociaux (HLM).
+  - Hausse de la facture des transports publics pour les usagers et les collectivités.
+  - Recette budgétaire substantielle estimée à 4 Md€.
+  authoritative_sources:
+  - Fédération Française du Bâtiment (FFB)
+  - Union Sociale pour l'Habitat (USH)
+  - Maire-Info
+  target_revenue_category_id: rev_vat_reduced
 - id: vat_franchise_threshold_halved
   family: TAXES
   label: Réduire le seuil de la franchise de TVA (petites entreprises)
@@ -3595,6 +4214,7 @@
   conflicts_with: []
   sources:
   - Workbook 20251017, Recettes
+  - https://www.service-public.fr/professionnels-entreprises/vosdroits/F21740
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -3611,6 +4231,20 @@
     description: Risque de perte de marge pour les petites structures ne pouvant pas
       répercuter la TVA sur leurs prix de vente.
     source: Les Échos
+  vigilance_points:
+  - Projet de seuil unique à 25 000 € supprimé fin 2025 suite à la mobilisation des
+    indépendants.
+  - Risque de choc administratif majeur pour les micro-entrepreneurs soudainement
+    assujettis.
+  - Perte de compétitivité-prix face aux clients particuliers (non-récupérateurs de
+    TVA).
+  - Risque de baisse de rentabilité pour les très petites structures ne pouvant augmenter
+    leurs tarifs.
+  authoritative_sources:
+  - Service-Public.fr
+  - Fédération Nationale des Auto-Entrepreneurs (FNAE)
+  - Portail de l'Auto-Entrepreneur
+  target_revenue_category_id: rev_vat_standard
 - id: cap_quotient_conjugal
   family: TAXES
   label: Plafonner le quotient conjugal
@@ -3625,6 +4259,7 @@
   - abolish_quotient_conjugal
   sources:
   - Workbook 20251017, Recettes
+  - https://www.ofce.sciences-po.fr/blog/le-quotient-conjugal-un-dispositif-anti-redistributif/
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -3641,6 +4276,20 @@
     description: Mesure sensible touchant à l'institution du mariage et à la politique
       familiale.
     source: Le Figaro
+  vigilance_points:
+  - Plafonnement de l'avantage fiscal lié à l'imposition jointe des couples mariés/pacsés.
+  - Hausse d'impôt ciblant les 30% des couples les plus aisés avec de fortes disparités
+    de revenus.
+  - Critiques sur la remise en cause d'un pilier historique du modèle familial fiscal
+    français.
+  - 'Argument d''égalité femmes-hommes : le système actuel pourrait désinciter à l''activité
+    du second apporteur de revenus.'
+  - Recette potentielle estimée à plus de 3 Md€.
+  authoritative_sources:
+  - OFCE
+  - Sciences Po
+  - Conseil des prélèvements obligatoires (CPO)
+  target_revenue_category_id: rev_pit
 - id: abolish_quotient_conjugal
   family: TAXES
   label: Supprimer le quotient conjugal
@@ -3656,6 +4305,7 @@
   sources:
   - 'OFCE (2024) Gain fiscal individualisation ~7Md€: https://www.ofce.sciences-po.fr/pdf/revue/163/163-3.pdf'
   - Workbook 20251017, Recettes
+  - https://www.familles-de-france.org/fr/actualite/individualisation-de-limpot-sur-le-revenu-le-quotient-conjugal-en-danger
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -3672,6 +4322,19 @@
     description: Réforme radicale remettant en cause un pilier historique du système
       fiscal français depuis 1945.
     source: Sénat
+  vigilance_points:
+  - Hausse d'impôt brutale pour les foyers mono-actifs ou présentant de forts écarts
+    de revenus.
+  - Suppression d'un pilier historique de la politique familiale française (imposition
+    jointe).
+  - Risque de perte de pouvoir d'achat pour une partie importante des classes moyennes.
+  - 'Argument d''équité : favoriserait l''indépendance financière des femmes mais
+    perçu comme une sanction du modèle familial.'
+  authoritative_sources:
+  - Familles de France
+  - iFRAP
+  - Note de l'OCDE
+  target_revenue_category_id: rev_pit
 - id: abolish_qf_demi_parts_noneffective
   family: TAXES
   label: Supprimer les demi-parts fiscales 'non effectives'
@@ -3685,6 +4348,7 @@
   conflicts_with: []
   sources:
   - Workbook 20251017, Recettes
+  - https://www.senat.fr/questions/base/2014/qSEQ140110031.html
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -3700,6 +4364,19 @@
   - type: political
     description: Mesure souvent qualifiée de 'petite économie' au coût politique disproportionné.
     source: Sénat
+  vigilance_points:
+  - Hausse mécanique de l'impôt pour les personnes seules ayant élevé des enfants
+    (fin de la demi-part 'veuve').
+  - 'Impact indirect sévère : augmentation du RFR pouvant entraîner l''assujettissement
+    à la CSG sur les retraites.'
+  - Risque de perte d'éligibilité aux aides sociales locales et aux exonérations de
+    taxes foncières.
+  - Critiques sur la dégradation du niveau de vie des retraités les plus fragiles.
+  authoritative_sources:
+  - Sénat
+  - Assemblée Nationale
+  - CGT Finances
+  target_revenue_category_id: rev_pit
 - id: wealth_minimum_tax_2pct_100m
   family: TAXES
   label: Impôt minimum de 2% (Patrimoine > 100 M€)
@@ -3715,6 +4392,7 @@
   sources:
   - 'Vert.eco (2025) Taxe Zucman: https://vert.eco/articles/le-nouveau-front-populaire-veut-instaurer-une-taxe-zucman-sur-les-milliardaires-combien-ca-rapporterait'
   - Workbook 20251017, Recettes
+  - https://www.vie-publique.fr/loi/292641-proposition-de-loi-instaurant-un-impot-sur-la-fortune-zucman
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
@@ -3731,6 +4409,20 @@
     description: Complexité de mise en œuvre sans un accord international (coordination
       au niveau du G20).
     source: Note de la DG Trésor
+  vigilance_points:
+  - 'Impôt ''plancher'' : paiement de la différence si l''imposition actuelle est
+    < 2% du patrimoine.'
+  - Ciblage des ultra-riches (> 100 M€) pour un rendement estimé entre 15 et 25 Md€.
+  - Risque élevé d'expatriation fiscale des plus grandes fortunes mondiales résidant
+    en France.
+  - Difficulté technique de valorisation annuelle de tous les actifs, notamment le
+    non-coté.
+  - Danger de problèmes de liquidité pour les patrimoines à faible rendement courant.
+  authoritative_sources:
+  - EU Tax Observatory (Gabriel Zucman)
+  - Assemblée Nationale
+  - Public Sénat
+  target_revenue_category_id: rev_property_taxes
 - id: restore_taxe_habitation_top20
   family: TAXES
   label: Rétablir la Taxe d'Habitation (20% plus aisés)
@@ -3747,6 +4439,7 @@
   sources:
   - 'L''Express (2025) Rétablissement TH 20% aisés ~8Md€: https://www.lexpress.fr/economie/politique/taxe-dhabitation-le-retour-une-piste-a-8-milliards-deuros-pour-les-plus-aises_20250102'
   - Workbook 20251017, Recettes
+  - https://www.maire-info.fr/fiscalite/finances-locales-le-debat-sur-le-retour-de-la-taxe-dhabitation-est-lance-article-29123
   params_schema: {}
   mission_mapping:
     M_RELATIONS_AVEC_LES_COLLECTIVITES_TERRITORIALES: 1.0
@@ -3763,6 +4456,16 @@
     description: Injustice perçue pour les 20% de ménages concernés, avec un risque
       de disparités territoriales accrues.
     source: Note de l'IPP
+  vigilance_points:
+  - Rétablissement d'un impôt supprimé, perçu comme un revirement fiscal majeur.
+  - Risque juridique de censure par le Conseil constitutionnel (principe d'égalité).
+  - Forte hostilité attendue des ménages ciblés (20% les plus aisés).
+  - Enjeu crucial pour l'autonomie financière des communes et le lien citoyen-territoire.
+  authoritative_sources:
+  - Maire-Info
+  - Vie Publique
+  - Institut des Politiques Publiques (IPP)
+  target_revenue_category_id: rev_property_taxes
 - id: restore_taxe_habitation_all
   family: TAXES
   label: Rétablir la Taxe d'Habitation (Tous)
@@ -3779,6 +4482,7 @@
   sources:
   - 'L''Express (2025) Piste à 20Md€: https://www.lexpress.fr/economie/budget-2026-le-retour-de-la-taxe-dhabitation-une-piste-a-20-milliards-deuros-HE57Z7Z'
   - Workbook 20251017, Recettes
+  - https://www.maire-info.fr/fiscalite/finances-locales-le-debat-sur-le-retour-de-la-taxe-dhabitation-est-lance-article-29123
   params_schema: {}
   impact:
     householdsImpacted: 30000000
@@ -3801,6 +4505,17 @@
     description: Brise une promesse majeure du quinquennat précédent, avec un risque
       de désaveu électoral massif.
     source: Le Figaro
+  vigilance_points:
+  - Choc fiscal direct pour l'ensemble des ménages (moyenne de 642 € par an).
+  - Risque de rejet social massif suite à la suppression totale récente (2023).
+  - Enjeu de financement vital pour le bloc communal face à la baisse des dotations
+    d'État.
+  - Nécessité de prévoir des boucliers fiscaux pour les foyers sous le seuil de pauvreté.
+  authoritative_sources:
+  - Maire-Info
+  - Capital
+  - Vie Publique
+  target_revenue_category_id: rev_property_taxes
 - id: airline_ticket_tax_increase
   family: CLIMATE
   label: Augmenter la taxe sur les billets d'avion
@@ -3818,6 +4533,7 @@
   - 'PNC Contact (2025) Taxe Chirac: https://pnc-contact.com/2025/03/01/hausse-taxe-chirac-billets-avion-2025/'
   - 'PNC Contact (2025) Hausse TSBA (Taxe Chirac) rendement 850M€: https://pnc-contact.com/2025/03/01/hausse-taxe-chirac-billets-avion-2025/'
   - Workbook 20251017, Recettes
+  - https://www.publicsenat.fr/actualites/economie/taxe-sur-les-billets-davion-le-senat-adopte-une-augmentation-moderee
   params_schema: {}
   mission_mapping:
     M_ECOLOGIE: 1.0
@@ -3834,6 +4550,19 @@
     description: Débat sur l'efficacité réelle de la taxe pour la décarbonation vs.
       simple rendement budgétaire.
     source: Haut Conseil pour le Climat
+  vigilance_points:
+  - Hausse significative des prix des billets (TSBA) impactant surtout les vols intra-européens
+    et le tourisme.
+  - Risque de décrochage du trafic aérien français par rapport à la moyenne européenne
+    (+1,5% vs +4,5%).
+  - Menace sur la viabilité des lignes régionales et la connectivité des territoires
+    enclavés.
+  - Efficacité climatique jugée limitée par les ONG en l'absence de taxation du kérosène.
+  authoritative_sources:
+  - DGAC
+  - Public Sénat
+  - Transport & Environment
+  target_revenue_category_id: rev_prod_taxes
 - id: ecotax_heavy_trucks
   family: CLIMATE
   label: Écotaxe kilométrique (Poids lourds)
@@ -3849,6 +4578,7 @@
   conflicts_with: []
   sources:
   - Workbook 20251017, Recettes
+  - https://www.latribune.fr/entreprises-finance/services/transport-logistique/l-alsace-lance-son-ecotaxe-poids-lourds-le-secteur-du-transport-routier-vent-debout-1009231.html
   params_schema: {}
   mission_mapping:
     M_ECOLOGIE: 1.0
@@ -3865,6 +4595,20 @@
     description: Risque de répercussion sur les prix des biens de consommation (inflation
       par les coûts de transport).
     source: La Tribune
+  vigilance_points:
+  - Mise en œuvre par expérimentations régionales (Alsace, Grand Est) avant une possible
+    généralisation.
+  - Risque de fragilisation du secteur français du transport routier face à la concurrence
+    étrangère.
+  - Impact potentiel sur les prix à la consommation suite à la hausse des coûts logistiques.
+  - Enjeu de financement de l'entretien des routes et du développement du fret ferroviaire.
+  - Difficulté de contrôle et risque de report du trafic sur les réseaux secondaires
+    non taxés.
+  authoritative_sources:
+  - Région Grand Est
+  - Union TLF
+  - La Tribune
+  target_revenue_category_id: rev_env_taxes
 - id: abolish_tonnage_tax
   family: TAX_EXPENDITURES
   label: Supprimer la taxe au tonnage (transport maritime)
