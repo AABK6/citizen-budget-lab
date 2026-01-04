@@ -30,7 +30,7 @@ const STEPS: TutorialStep[] = [
     {
         targetId: 'left-panel-list',
         title: `Fixer vos Priorités`,
-        content: `Lorsque vous avez séléctionné une mission, vous pouvez soit ajuster son budget d'ensemble (ex: le baisser de -5%), soit activer des mesures précises. Les mesures viennent préciser la façon dont vous allez atteindre votre objectif. Vous pouvez aussi les utiliser seules. Chaque choix modifie l'équilibre global en temps réel.`,
+        content: `Lorsque vous avez séléctionné une mission, ajustez le curseur pour fixer une cible budgétaire rapide (ex: -5%), ou piochez des mesures concrètes dans la liste. Les mesures servent à 'documenter' comment vous atteignez votre objectif, mais vous restez libre de combiner les deux. Chaque choix modifie l'équilibre global en temps réel.`,
         position: 'right',
     },
     {
