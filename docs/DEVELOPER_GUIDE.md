@@ -159,6 +159,17 @@ The policy reform catalog lives in a repo-managed YAML file for readability and 
 python tools/validate_policy_catalog.py
 ```
 
+**Data Integrity & CI Enforcement:**
+
+To maintain high data quality, the project enforces strict semantic rules on the policy catalog. These checks are executed automatically on every Pull Request via GitHub Actions (`.github/workflows/ci.yml`).
+
+Rules include:
+1. **Strict YAML:** No duplicate keys allowed in the catalog.
+2. **Impact Consistency:** The `fixed_impact_eur` must match `multi_year_impact["2026"]` within a 100M€ or 1% tolerance.
+3. **Sourcing Requirement:** Any reform with an absolute impact greater than 1Md€ MUST have at least one valid URL in its `sources` list.
+
+If your changes violate these rules, the CI will fail and block the merge. Use the validation tool locally to debug errors before pushing.
+
 **Admin editor (local-only):**
 
 1. Start the API and frontend:
