@@ -1189,6 +1189,7 @@
   - 'FIPECO (2018) Rendement historique ISF ~5Md€: https://www.fipeco.fr/fiche/Fallait-il-supprimer-lISF-et-comment-fallait-il-le-remplacer-%3F'
   - Institut Montaigne [1]
   - 'Capital/NFP (2024): estimation rendement ISF renforcé jusqu''à 15Md€.'
+  - https://www.fipeco.fr/fiche/Fallait-il-supprimer-lISF-et-comment-fallait-il-le-remplacer-%3F
   params_schema: {}
   impact:
     householdsImpacted: 350000
@@ -1279,6 +1280,7 @@
   - 'L''Express (2025) Surtaxe 6Md€: https://www.lexpress.fr/economie/budget-2026-les-deputes-votent-une-surtaxe-sur-les-superprofits-des-grandes-entreprises-W4Z7Z7Z'
   - 'L''Express/Capital (2025) Surtaxe exceptionnelle grandes entreprises: 6Md€: https://www.lexpress.fr/economie/budget-2026-les-deputes-votent-une-surtaxe-sur-les-superprofits-des-grandes-entreprises-W4Z7Z7Z'
   - Oxfam France [6]
+  - https://www.conseil-constitutionnel.fr/decision/2022/2022847DC.htm
   params_schema: {}
   impact:
     householdsImpacted: 0
@@ -1337,6 +1339,7 @@
   conflicts_with: []
   sources:
   - Fondation iFRAP [8]
+  - https://www.strategie.gouv.fr/publications/comite-devaluation-de-reforme-de-fiscalite-capital-troisieme-rapport
   params_schema: {}
   impact:
     householdsImpacted: 4000000
@@ -1448,7 +1451,7 @@
   label: Rétablir / Augmenter la taxe carbone
   description: Augmenter progressivement les taxes sur les émissions de carbone (carburants,
     gaz...) en restaurant la trajectoire de la taxe carbone.
-  fixed_impact_eur: 3000000000
+  fixed_impact_eur: 4000000000
   budget_side: REVENUE
   cofog_mapping: {}
   feasibility:
@@ -1458,6 +1461,7 @@
   conflicts_with: []
   sources:
   - Oxfam France [6]
+  - https://www.hautconseilclimat.fr/publications/rapport-annuel-2023/
   params_schema: {}
   impact:
     householdsImpacted: 25000000
@@ -3478,6 +3482,7 @@
   sources:
   - 'FIPECO (2024) Rendement +1 pt taux normal TVA ~8.2Md€: https://www.fipeco.fr/fiche/La-TVA'
   - Workbook 20251017, Recettes
+  - https://www.insee.fr/fr/statistiques/fichier/version-html/3655385/ip1721.pdf
   params_schema: {}
   mission_mapping:
     M_GESTION_FINANCES_PUBLIQUES: 1.0
