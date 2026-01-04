@@ -101,8 +101,8 @@ export function ReformDetailDrawer({ reform, onClose, onToggle, isSelected, side
                         {reform.description || "Aucune description détaillée disponible pour cette mesure."}
                     </div>
 
-                    {/* Risks Section - Consolidated */}
-                    {reform.pushbacks && reform.pushbacks.length > 0 && (
+                    {/* Vigilance Points */}
+                    {((reform.pushbacks && reform.pushbacks.length > 0) || (reform.vigilancePoints && reform.vigilancePoints.length > 0)) && (
                         <div className="bg-orange-50/60 rounded-xl p-3 border border-orange-100">
                             <div className="flex items-center gap-2 mb-2">
                                 <span className="material-icons text-orange-500 text-base">warning</span>
@@ -111,10 +111,36 @@ export function ReformDetailDrawer({ reform, onClose, onToggle, isSelected, side
                                 </span>
                             </div>
                             <ul className="space-y-2">
-                                {reform.pushbacks.map((pb, idx) => (
-                                    <li key={idx} className="flex items-start gap-2 text-sm text-slate-700 leading-snug">
+                                {reform.pushbacks?.map((pb, idx) => (
+                                    <li key={`pb-${idx}`} className="flex items-start gap-2 text-sm text-slate-700 leading-snug">
                                         <span className="shrink-0 mt-1.5 w-1.5 h-1.5 rounded-full bg-orange-400" />
                                         <span>{pb.description}</span>
+                                    </li>
+                                ))}
+                                {reform.vigilancePoints?.map((vp, idx) => (
+                                    <li key={`vp-${idx}`} className="flex items-start gap-2 text-sm text-slate-700 leading-snug">
+                                        <span className="shrink-0 mt-1.5 w-1.5 h-1.5 rounded-full bg-orange-400" />
+                                        <span>{vp}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+
+                    {/* Authoritative Sources */}
+                    {reform.authoritativeSources && reform.authoritativeSources.length > 0 && (
+                        <div className="bg-blue-50/60 rounded-xl p-3 border border-blue-100">
+                            <div className="flex items-center gap-2 mb-2">
+                                <span className="material-icons text-blue-500 text-base">menu_book</span>
+                                <span className="text-xs font-black text-blue-800 uppercase tracking-wide">
+                                    Sources faisant autorité
+                                </span>
+                            </div>
+                            <ul className="space-y-1">
+                                {reform.authoritativeSources.map((source, idx) => (
+                                    <li key={idx} className="flex items-center gap-2 text-sm text-slate-700">
+                                        <span className="shrink-0 w-1 h-1 rounded-full bg-blue-400" />
+                                        <span>{source}</span>
                                     </li>
                                 ))}
                             </ul>
