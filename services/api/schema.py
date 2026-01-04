@@ -359,6 +359,9 @@ class PolicyLeverType:
     impact: ImpactStructType | None = None
     multiYearImpact: JSON | None = None
     pushbacks: list[PushbackType] | None = None
+    vigilancePoints: list[str] | None = None
+    authoritativeSources: list[str] | None = None
+    targetRevenueCategoryId: strawberry.ID | None = None
     distributionalFlags: JSON | None = None
 
 
@@ -977,6 +980,13 @@ class Query:
                         )
                         for p in (it.get("pushbacks") or [])
                     ] if it.get("pushbacks") else None,
+                    vigilancePoints=it.get("vigilance_points"),
+                    authoritativeSources=it.get("authoritative_sources"),
+                    targetRevenueCategoryId=(
+                        strawberry.ID(it["target_revenue_category_id"])
+                        if it.get("target_revenue_category_id")
+                        else None
+                    ),
                     distributionalFlags=it.get("distributional_flags"),
                 )
             )
@@ -1148,6 +1158,13 @@ class Query:
                         )
                         for p in (it.get("pushbacks") or [])
                     ] if it.get("pushbacks") else None,
+                    vigilancePoints=it.get("vigilance_points"),
+                    authoritativeSources=it.get("authoritative_sources"),
+                    targetRevenueCategoryId=(
+                        strawberry.ID(it["target_revenue_category_id"])
+                        if it.get("target_revenue_category_id")
+                        else None
+                    ),
                     distributionalFlags=it.get("distributional_flags"),
                 )
             )
