@@ -36,7 +36,7 @@ Goal: Wire it all together and prove it answers political questions.
     - [ ] Sub-task: Allow `VOTES_STORE=file` to read `data/cache/votes.json` with `data/cache/scenarios_dsl.json`.
 - [x] **Task: Conductor - User Manual Verification 'Phase 3: Automation & Proof of Concept' (Protocol in workflow.md)** (c1d4dfa)
 
-## Phase 4: Production Data Sync
+## Phase 4: Production Data Sync [checkpoint: 3e92ba4]
 Goal: Sync real vote data into DuckDB and run analysis for actual usage.
 
 - [x] **Task: Configure Real Vote Store Access** (3ba6c10)
@@ -45,4 +45,4 @@ Goal: Sync real vote data into DuckDB and run analysis for actual usage.
 - [x] **Task: Full Sync + Analysis** (75d6e1a)
     - [ ] Sub-task: Run `make sync-votes` against the real store.
     - [ ] Sub-task: Run `tools/analyze_political_clusters.py` against populated DuckDB.
-- [ ] **Task: Conductor - User Manual Verification 'Phase 4: Production Data Sync' (Protocol in workflow.md)**
+- [x] **Task: Conductor - User Manual Verification 'Phase 4: Production Data Sync' (Protocol in workflow.md)** (3e92ba4)
