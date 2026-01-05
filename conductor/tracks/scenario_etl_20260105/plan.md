@@ -8,7 +8,7 @@ Goal: Build the logic to parse raw Scenario DSL JSON into a flat dictionary of m
 - [x] **Task: Create Parsing Logic** (49410ff)
     - [ ] Sub-task: Create `tools/etl/scenario_parser.py` with a function `flatten_scenario(dsl_json, meta)`.
     - [ ] Sub-task: Write unit tests verifying it correctly extracts reform amounts, mass targets, and macro stats from sample JSONs.
-- [ ] **Task: Dynamic Schema Generator**
+- [x] **Task: Dynamic Schema Generator** (7881993)
     - [ ] Sub-task: Implement logic to read `data/policy_levers.yaml` and generate the list of expected columns (e.g., `reform_<id>`).
     - [ ] Sub-task: Verify it adapts when a dummy reform is added to the catalog.
 - [ ] **Task: Conductor - User Manual Verification 'Phase 1: ETL Foundation' (Protocol in workflow.md)**
