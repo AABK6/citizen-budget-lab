@@ -33,7 +33,7 @@ Goal: Ensure the database handles real-world stress and edge cases.
 - [x] **Task: Concurrency Testing for Votes** (c87e76c)
     - [ ] Sub-task: Write a test using `threading` or `asyncio.gather` to simulate 50+ concurrent votes for the same scenario.
     - [ ] Sub-task: Verify `vote_count` in `vote_stats` is exactly correct (atomic increments).
-- [ ] **Task: Data Integrity & Constraints**
+- [x] **Task: Data Integrity & Constraints** (929aa17)
     - [ ] Sub-task: Write tests to verify foreign key constraints (cannot vote for non-existent scenario).
     - [ ] Sub-task: Write tests for "On Conflict" behavior in `save_scenario`.
 - [ ] **Task: Conductor - User Manual Verification 'Phase 3: Concurrency & Resilience' (Protocol in workflow.md)**
