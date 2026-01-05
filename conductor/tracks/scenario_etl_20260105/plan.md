@@ -27,7 +27,7 @@ Goal: Write the flattened data into DuckDB efficiently.
 ## Phase 3: Automation & Proof of Concept
 Goal: Wire it all together and prove it answers political questions.
 
-- [ ] **Task: Make Integration**
+- [x] **Task: Make Integration** (64743ed)
     - [ ] Sub-task: Add `sync-votes` target to `Makefile`.
 - [ ] **Task: Analytical Proof**
     - [ ] Sub-task: Create a query script `tools/analyze_political_clusters.py` that asks a complex question (e.g., "Average pension cut for users who increased education spending").
