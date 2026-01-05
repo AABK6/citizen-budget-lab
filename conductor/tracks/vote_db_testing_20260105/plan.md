@@ -41,7 +41,7 @@ Goal: Ensure the database handles real-world stress and edge cases.
 ## Phase 4: Migrations & Analytics
 Goal: Verify data survives upgrades and supports reporting.
 
-- [ ] **Task: Migration Integrity Test**
+- [x] **Task: Migration Integrity Test** (8e8cddd)
     - [ ] Sub-task: Create a test that: 1. Insets data, 2. Executes `apply_migrations`, 3. Verifies data is still there.
 - [ ] **Task: Analytics Verification**
     - [ ] Sub-task: Write tests for complex `summary` scenarios (multiple scenarios, different vote counts).
