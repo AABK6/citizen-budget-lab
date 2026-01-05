@@ -19,7 +19,7 @@ Goal: Ensure the test environment is ready and validate the base SQLite implemen
 ## Phase 2: PostgreSQL Integration
 Goal: Verify the production-target PostgreSQL implementation.
 
-- [ ] **Task: PostgreSQL Scenario Integration**
+- [x] **Task: PostgreSQL Scenario Integration** (17cbff0)
     - [ ] Sub-task: Write failing tests for `PostgresVoteStore.save_scenario` and `get_scenario`.
     - [ ] Sub-task: Implement/Verify fixes to ensure tests pass against a real PG instance.
 - [ ] **Task: PostgreSQL Vote Integration**
