@@ -70,11 +70,13 @@ export function TutorialOverlay({
     const [targetRect, setTargetRect] = useState<DOMRect | null>(null);
     const [popoverStyle, setPopoverStyle] = useState<React.CSSProperties>({});
     const popoverRef = useRef<HTMLDivElement>(null);
+    const lastEmittedStep = useRef<number | null>(null);
 
     const currentStep = STEPS[currentStepIndex];
 
     useEffect(() => {
-        if (isVisible && onStepChange) {
+        if (isVisible && onStepChange && currentStepIndex !== lastEmittedStep.current) {
+            lastEmittedStep.current = currentStepIndex;
             onStepChange(currentStepIndex);
         }
     }, [currentStepIndex, isVisible, onStepChange]);
@@ -94,6 +96,7 @@ export function TutorialOverlay({
         if (startSignal === null || startSignal === undefined) return;
         setCurrentStepIndex(0);
         setIsVisible(true);
+        lastEmittedStep.current = null;
     }, [startSignal]);
 
     // Update Layout Logic
