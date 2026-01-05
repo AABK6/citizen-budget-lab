@@ -137,6 +137,23 @@ class SqliteVoteStore(VoteStore):
                 (vote_id, scenario_id, ts, normalized.get("userEmail"), payload),
             )
 
+    def save_scenario(self, sid: str, dsl_json: str, meta_json: str | None = None) -> None:
+        with self._connect() as conn:
+            conn.execute(
+                """
+                INSERT INTO scenarios (id, dsl_json, meta_json) VALUES (?, ?, ?)
+                ON CONFLICT(id) DO UPDATE SET
+                    dsl_json = excluded.dsl_json,
+                    meta_json = COALESCE(excluded.meta_json, scenarios.meta_json)
+                """,
+                (sid, dsl_json, meta_json),
+            )
+
+    def get_scenario(self, sid: str) -> Optional[str]:
+        with self._connect() as conn:
+            row = conn.execute("SELECT dsl_json FROM scenarios WHERE id = ?", (sid,)).fetchone()
+            return row[0] if row else None
+
     def summary(self, limit: int = 25) -> List[VoteSummary]:
         with self._connect() as conn:
             rows = conn.execute(

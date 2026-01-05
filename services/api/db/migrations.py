@@ -76,8 +76,20 @@ def _record_applied(conn, table_name: str, name: str) -> None:
 
 
 def _execute_sql(conn, sql: str) -> None:
+    if _is_sqlite(conn):
+        # Dialect translation for SQLite
+        sql = sql.replace("JSONB", "TEXT")
+        sql = sql.replace("TIMESTAMPTZ", "TEXT")
+        sql = sql.replace("NOW()", "CURRENT_TIMESTAMP")
+        sql = sql.replace("DOUBLE PRECISION", "REAL")
+        
     with closing(conn.cursor()) as cur:
-        cur.execute(sql)
+        # SQLite doesn't support executing multiple statements in one call usually,
+        # but executescript does.
+        if _is_sqlite(conn):
+            cur.executescript(sql)
+        else:
+            cur.execute(sql)
     conn.commit()
 
 
