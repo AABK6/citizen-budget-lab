@@ -5,7 +5,7 @@ This plan follows the Conductor methodology: TDD (Red/Green/Refactor), 80% test 
 ## Phase 1: ETL Foundation (The Extractor)
 Goal: Build the logic to parse raw Scenario DSL JSON into a flat dictionary of metrics.
 
-- [~] **Task: Create Parsing Logic**
+- [x] **Task: Create Parsing Logic** (49410ff)
     - [ ] Sub-task: Create `tools/etl/scenario_parser.py` with a function `flatten_scenario(dsl_json, meta)`.
     - [ ] Sub-task: Write unit tests verifying it correctly extracts reform amounts, mass targets, and macro stats from sample JSONs.
 - [ ] **Task: Dynamic Schema Generator**
