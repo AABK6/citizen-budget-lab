@@ -27,7 +27,7 @@ Goal: Verify the production-target PostgreSQL implementation.
     - [ ] Sub-task: Implement/Verify fixes to ensure tests pass.
 - [ ] **Task: Conductor - User Manual Verification 'Phase 2: PostgreSQL Integration' (Protocol in workflow.md)**
 
-## Phase 3: Concurrency & Resilience
+## Phase 3: Concurrency & Resilience [checkpoint: 492471c]
 Goal: Ensure the database handles real-world stress and edge cases.
 
 - [x] **Task: Concurrency Testing for Votes** (c87e76c)
