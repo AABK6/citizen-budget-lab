@@ -250,6 +250,7 @@ Macro baselines
 | `SENTRY_DSN` | Sentry DSN for error reporting. | No |
 | `VOTES_STORE` | Vote storage backend (`file`, `sqlite`, `postgres`). Default: `file`. | No |
 | `VOTES_FILE_PATH` | Path to JSON file for vote storage (file backend). Default: `data/cache/votes.json`. | No |
+| `SCENARIOS_DSL_PATH` | Path to JSON mapping scenario IDs to DSL payloads (file backend). Default: `data/cache/scenarios_dsl.json`. | No |
 | `VOTES_SQLITE_PATH` | Path to SQLite file for vote storage (sqlite backend). Default: `data/cache/votes.sqlite3`. | No |
 | `VOTES_DB_DSN` | Postgres DSN for vote storage when `VOTES_STORE=postgres`. | No |
 | `VOTES_DB_POOL_MIN` | Minimum vote storage pool size. Default: `1`. | No |

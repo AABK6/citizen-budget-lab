@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import base64
+import binascii
+import hashlib
 import json
 import os
 import sqlite3
@@ -10,12 +13,17 @@ from typing import Any, Dict, List, Optional
 
 import duckdb
 import psycopg
+import yaml
 
 from tools.etl.schema_generator import policy_lever_columns
 from tools.etl.scenario_parser import flatten_scenario
 
 DEFAULT_DUCKDB_PATH = os.path.join("data", "warehouse.duckdb")
 DEFAULT_TABLE_NAME = "user_preferences_wide"
+DEFAULT_VOTES_FILE_PATH = os.path.join("data", "cache", "votes.json")
+DEFAULT_SCENARIOS_DSL_PATH = os.path.join(
+    "data", "cache", "scenarios_dsl.json"
+)
 
 BASE_COLUMNS: Dict[str, str] = {
     "vote_id": "VARCHAR",
@@ -242,6 +250,48 @@ def fetch_votes_postgres(
     return rows
 
 
+def fetch_votes_file(
+    votes_path: str,
+    scenarios_path: str,
+) -> List[Dict[str, Any]]:
+    """Fetch votes and their DSL from file-based storage.
+
+    Args:
+        votes_path: Path to the file-backed votes JSON.
+        scenarios_path: Path to the scenario DSL JSON mapping.
+
+    Returns:
+        List of vote rows with DSL payloads.
+    """
+    votes = _load_votes_file(votes_path)
+    scenarios = _load_scenarios_dsl(scenarios_path)
+    rows: List[Dict[str, Any]] = []
+
+    for vote in votes:
+        scenario_id = vote.get("scenarioId") or vote.get("scenario_id")
+        if not scenario_id:
+            continue
+        scenario_id = str(scenario_id)
+        dsl_payload = scenarios.get(scenario_id)
+        if dsl_payload is None:
+            continue
+        vote_id = (
+            vote.get("id")
+            or vote.get("vote_id")
+            or _hash_vote_record(vote)
+        )
+        rows.append(
+            {
+                "vote_id": str(vote_id),
+                "scenario_id": scenario_id,
+                "timestamp": vote.get("timestamp"),
+                "meta_json": vote.get("meta") or vote.get("meta_json"),
+                "dsl_json": dsl_payload,
+            }
+        )
+    return rows
+
+
 def sync_votes(
     con: duckdb.DuckDBPyConnection,
     votes_store: str,
@@ -249,6 +299,8 @@ def sync_votes(
     table_name: str = DEFAULT_TABLE_NAME,
     sqlite_path: Optional[str] = None,
     pg_dsn: Optional[str] = None,
+    votes_file_path: Optional[str] = None,
+    scenarios_dsl_path: Optional[str] = None,
 ) -> int:
     """Sync votes from the configured store into DuckDB.
 
@@ -258,6 +310,8 @@ def sync_votes(
         table_name: DuckDB table name.
         sqlite_path: Optional SQLite path override.
         pg_dsn: Optional Postgres DSN override.
+        votes_file_path: Optional JSON file path for file-backed votes.
+        scenarios_dsl_path: Optional JSON path for scenario DSL mappings.
 
     Returns:
         Number of inserted rows.
@@ -270,6 +324,21 @@ def sync_votes(
             "VOTES_SQLITE_PATH", os.path.join("data", "cache", "votes.sqlite3")
         )
         rows = fetch_votes_sqlite(store_path, last_vote_id)
+    elif votes_store == "file":
+        store_path = votes_file_path or os.getenv(
+            "VOTES_FILE_PATH", DEFAULT_VOTES_FILE_PATH
+        )
+        scenarios_path = scenarios_dsl_path or os.getenv(
+            "SCENARIOS_DSL_PATH", DEFAULT_SCENARIOS_DSL_PATH
+        )
+        rows = fetch_votes_file(store_path, scenarios_path)
+        existing_ids = _existing_vote_ids(con, table_name)
+        if existing_ids:
+            rows = [
+                row
+                for row in rows
+                if str(row.get("vote_id")) not in existing_ids
+            ]
     elif votes_store == "postgres":
         dsn = pg_dsn or os.getenv("VOTES_DB_DSN")
         if not dsn:
@@ -320,6 +389,23 @@ def _existing_columns(
     return {row[0].lower() for row in rows}
 
 
+def _existing_vote_ids(
+    con: duckdb.DuckDBPyConnection,
+    table_name: str,
+) -> set[str]:
+    schema, table = _split_table_name(table_name)
+    existing = _existing_columns(con, schema, table)
+    if "vote_id" not in existing:
+        return set()
+    try:
+        rows = con.execute(
+            f"select vote_id from {_quote_table_name(table_name)}"
+        ).fetchall()
+    except Exception:
+        return set()
+    return {str(row[0]) for row in rows if row and row[0] is not None}
+
+
 def _split_table_name(table_name: str) -> tuple[Optional[str], str]:
     parts = table_name.split(".")
     if len(parts) == 2:
@@ -363,6 +449,91 @@ def _parse_json_payload(payload: Any) -> Any:
         except json.JSONDecodeError:
             return payload
     return payload
+
+
+def _load_votes_file(path: str) -> List[Dict[str, Any]]:
+    data = _load_json_file(path, "votes")
+    if data is None:
+        return []
+    if not isinstance(data, list):
+        raise ValueError("Votes file must contain a JSON list")
+    return [item for item in data if isinstance(item, dict)]
+
+
+def _load_scenarios_dsl(path: str) -> Dict[str, Dict[str, Any]]:
+    data = _load_json_file(path, "scenarios")
+    if data is None:
+        return {}
+    if not isinstance(data, dict):
+        raise ValueError("Scenarios DSL file must contain a JSON object")
+
+    parsed: Dict[str, Dict[str, Any]] = {}
+    for scenario_id, payload in data.items():
+        if not isinstance(scenario_id, str):
+            continue
+        parsed_payload = _decode_scenario_payload(payload)
+        if isinstance(parsed_payload, dict):
+            parsed[scenario_id] = parsed_payload
+    return parsed
+
+
+def _load_json_file(path: str, label: str) -> Any:
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"{label} file not found: {path}")
+    with open(path, "r", encoding="utf-8") as handle:
+        return json.load(handle)
+
+
+def _decode_scenario_payload(payload: Any) -> Any:
+    if isinstance(payload, dict):
+        return payload
+    if not isinstance(payload, str):
+        return None
+
+    text = payload.strip()
+    if not text:
+        return None
+    decoded = _maybe_decode_base64(text)
+    if decoded is not None:
+        text = decoded
+
+    parsed = _parse_json_or_yaml(text)
+    if isinstance(parsed, dict):
+        return parsed
+    return None
+
+
+def _maybe_decode_base64(payload: str) -> Optional[str]:
+    try:
+        decoded = base64.b64decode(payload, validate=True)
+    except (binascii.Error, ValueError):
+        return None
+    try:
+        return decoded.decode("utf-8")
+    except UnicodeDecodeError:
+        return None
+
+
+def _parse_json_or_yaml(text: str) -> Any:
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        try:
+            return yaml.safe_load(text)
+        except yaml.YAMLError:
+            return None
+
+
+def _hash_vote_record(vote: Dict[str, Any]) -> str:
+    payload = {
+        "scenario_id": vote.get("scenarioId") or vote.get("scenario_id"),
+        "timestamp": vote.get("timestamp"),
+        "meta": vote.get("meta"),
+    }
+    encoded = json.dumps(payload, sort_keys=True, default=str).encode(
+        "utf-8"
+    )
+    return hashlib.sha256(encoded).hexdigest()
 
 
 def _infer_extra_columns(
@@ -440,8 +611,8 @@ def main() -> None:
     con = connect_duckdb()
     try:
         votes_store = os.getenv("VOTES_STORE", "file")
-        if votes_store == "file":
-            raise ValueError("VOTES_STORE must be sqlite or postgres")
+        if votes_store not in {"file", "sqlite", "postgres"}:
+            raise ValueError("VOTES_STORE must be file, sqlite, or postgres")
         sync_votes(con, votes_store)
     finally:
         con.close()

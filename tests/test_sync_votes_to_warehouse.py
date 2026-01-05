@@ -1,8 +1,11 @@
+import base64
 import json
 import os
 import sqlite3
 
 import duckdb
+import pytest
+import yaml
 
 from tools import sync_votes_to_warehouse as wh
 from tools.sync_votes_to_warehouse import create_or_alter_table
@@ -292,3 +295,120 @@ def test_sync_votes_adds_dynamic_columns(tmp_path, monkeypatch):
     ).fetchone()
 
     assert row[0] == 5.0
+
+
+def test_sync_votes_from_file_store(tmp_path, monkeypatch):
+    votes_path = tmp_path / "votes.json"
+    scenarios_path = tmp_path / "scenarios_dsl.json"
+    duckdb_path = tmp_path / "warehouse.duckdb"
+    monkeypatch.setattr(wh, "policy_lever_columns", lambda: [])
+
+    dsl = {"version": 0.1, "baseline_year": 2026, "actions": []}
+    encoded = base64.b64encode(yaml.safe_dump(dsl).encode("utf-8")).decode(
+        "ascii"
+    )
+    scenarios_path.write_text(json.dumps({"s1": encoded}))
+    votes_path.write_text(
+        json.dumps(
+            [
+                {
+                    "id": "vote-1",
+                    "scenarioId": "s1",
+                    "timestamp": 111.0,
+                    "meta": {"timestamp": 111.0},
+                }
+            ]
+        )
+    )
+
+    wh_con = duckdb.connect(str(duckdb_path))
+    inserted = wh.sync_votes(
+        wh_con,
+        "file",
+        votes_file_path=str(votes_path),
+        scenarios_dsl_path=str(scenarios_path),
+    )
+
+    row = wh_con.execute(
+        "select vote_id, baseline_year from user_preferences_wide"
+    ).fetchone()
+
+    assert inserted == 1
+    assert row == ("vote-1", 2026)
+
+
+def test_sync_votes_from_file_store_idempotent_without_id(
+    tmp_path, monkeypatch
+):
+    votes_path = tmp_path / "votes.json"
+    scenarios_path = tmp_path / "scenarios_dsl.json"
+    duckdb_path = tmp_path / "warehouse.duckdb"
+    monkeypatch.setattr(wh, "policy_lever_columns", lambda: [])
+
+    dsl = {"version": 0.1, "baseline_year": 2026, "actions": []}
+    encoded = base64.b64encode(json.dumps(dsl).encode("utf-8")).decode(
+        "ascii"
+    )
+    scenarios_path.write_text(json.dumps({"s1": encoded}))
+    votes_path.write_text(
+        json.dumps(
+            [
+                {
+                    "scenarioId": "s1",
+                    "timestamp": 111.0,
+                    "meta": {"timestamp": 111.0},
+                }
+            ]
+        )
+    )
+
+    wh_con = duckdb.connect(str(duckdb_path))
+    inserted = wh.sync_votes(
+        wh_con,
+        "file",
+        votes_file_path=str(votes_path),
+        scenarios_dsl_path=str(scenarios_path),
+    )
+    inserted_again = wh.sync_votes(
+        wh_con,
+        "file",
+        votes_file_path=str(votes_path),
+        scenarios_dsl_path=str(scenarios_path),
+    )
+    count = wh_con.execute(
+        "select count(*) from user_preferences_wide"
+    ).fetchone()[0]
+
+    assert inserted == 1
+    assert inserted_again == 0
+    assert count == 1
+
+
+def test_sync_votes_from_file_store_requires_scenarios(
+    tmp_path, monkeypatch
+):
+    votes_path = tmp_path / "votes.json"
+    monkeypatch.setattr(wh, "policy_lever_columns", lambda: [])
+
+    votes_path.write_text(
+        json.dumps(
+            [
+                {
+                    "id": "vote-1",
+                    "scenarioId": "s1",
+                    "timestamp": 111.0,
+                    "meta": {"timestamp": 111.0},
+                }
+            ]
+        )
+    )
+
+    wh_con = duckdb.connect(str(tmp_path / "warehouse.duckdb"))
+
+    with pytest.raises(FileNotFoundError):
+        wh.sync_votes(
+            wh_con,
+            "file",
+            votes_file_path=str(votes_path),
+            scenarios_dsl_path=str(tmp_path / "missing.json"),
+        )
