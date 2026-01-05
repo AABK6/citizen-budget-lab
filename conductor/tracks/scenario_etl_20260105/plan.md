@@ -46,3 +46,11 @@ Goal: Sync real vote data into DuckDB and run analysis for actual usage.
     - [ ] Sub-task: Run `make sync-votes` against the real store.
     - [ ] Sub-task: Run `tools/analyze_political_clusters.py` against populated DuckDB.
 - [x] **Task: Conductor - User Manual Verification 'Phase 4: Production Data Sync' (Protocol in workflow.md)** (3e92ba4)
+
+## Phase 5: Production Vote Count Validation
+Goal: Confirm production vote counts and data source alignment.
+
+- [x] **Task: Validate Production Vote Counts** (1f70518)
+    - [ ] Sub-task: Query counts in the production `votes` and `scenarios` tables.
+    - [ ] Sub-task: Confirm which instance/database is being queried.
+- [ ] **Task: Conductor - User Manual Verification 'Phase 5: Production Vote Count Validation' (Protocol in workflow.md)**
