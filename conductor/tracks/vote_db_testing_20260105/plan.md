@@ -38,7 +38,7 @@ Goal: Ensure the database handles real-world stress and edge cases.
     - [ ] Sub-task: Write tests for "On Conflict" behavior in `save_scenario`.
 - [ ] **Task: Conductor - User Manual Verification 'Phase 3: Concurrency & Resilience' (Protocol in workflow.md)**
 
-## Phase 4: Migrations & Analytics
+## Phase 4: Migrations & Analytics [checkpoint: 5f8b240]
 Goal: Verify data survives upgrades and supports reporting.
 
 - [x] **Task: Migration Integrity Test** (8e8cddd)
