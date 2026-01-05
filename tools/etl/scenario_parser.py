@@ -5,6 +5,8 @@ from __future__ import annotations
 import json
 from typing import Any, Dict, Iterable, Optional
 
+from tools.etl.strings import slugify
+
 _NUMERIC_ACTION_KEYS = ("amount_eur", "delta_pct", "delta_bps")
 _DECREASE_OPS = {"decrease", "reduce", "lower"}
 _INCREASE_OPS = {"increase", "raise"}
@@ -78,19 +80,19 @@ def _flatten_actions(actions: Iterable[dict], flat: Dict[str, Any]) -> None:
 
         if target.startswith("lever."):
             lever_id = target.split(".", 1)[1]
-            key = f"reform_{_slugify(lever_id)}"
+            key = f"reform_{slugify(lever_id)}"
             value = _action_value(action, op)
             if value is not None:
                 flat[key] = value
             continue
 
         if target.startswith(("mission.", "cofog.")):
-            slug = _slugify(target)
+            slug = slugify(target)
             _flatten_mass_action(action, op, slug, flat)
             continue
 
         if target.startswith("tax."):
-            slug = _slugify(target)
+            slug = slugify(target)
             value = _signed_number(action.get("delta_bps"), op)
             if value is not None:
                 flat[f"tax_{slug}_delta_bps"] = value
@@ -178,16 +180,3 @@ def _first_number(data: Dict[str, Any], keys: Iterable[str]) -> Optional[float]:
                 return value
     return None
 
-
-def _slugify(value: str) -> str:
-    cleaned = []
-    pending_underscore = False
-    for char in value:
-        if char.isalnum():
-            if pending_underscore and cleaned:
-                cleaned.append("_")
-            cleaned.append(char.lower())
-            pending_underscore = False
-        else:
-            pending_underscore = True
-    return "".join(cleaned).strip("_")
