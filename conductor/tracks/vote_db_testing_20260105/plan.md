@@ -30,7 +30,7 @@ Goal: Verify the production-target PostgreSQL implementation.
 ## Phase 3: Concurrency & Resilience
 Goal: Ensure the database handles real-world stress and edge cases.
 
-- [ ] **Task: Concurrency Testing for Votes**
+- [x] **Task: Concurrency Testing for Votes** (c87e76c)
     - [ ] Sub-task: Write a test using `threading` or `asyncio.gather` to simulate 50+ concurrent votes for the same scenario.
     - [ ] Sub-task: Verify `vote_count` in `vote_stats` is exactly correct (atomic increments).
 - [ ] **Task: Data Integrity & Constraints**
