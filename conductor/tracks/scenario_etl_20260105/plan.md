@@ -42,7 +42,7 @@ Goal: Sync real vote data into DuckDB and run analysis for actual usage.
 - [x] **Task: Configure Real Vote Store Access** (3ba6c10)
     - [ ] Sub-task: Identify the production vote store (Postgres or SQLite) and ensure credentials/paths are available.
     - [ ] Sub-task: Validate connectivity and permissions for the chosen store.
-- [ ] **Task: Full Sync + Analysis**
+- [x] **Task: Full Sync + Analysis** (75d6e1a)
     - [ ] Sub-task: Run `make sync-votes` against the real store.
     - [ ] Sub-task: Run `tools/analyze_political_clusters.py` against populated DuckDB.
 - [ ] **Task: Conductor - User Manual Verification 'Phase 4: Production Data Sync' (Protocol in workflow.md)**
