@@ -29,7 +29,7 @@ Goal: Wire it all together and prove it answers political questions.
 
 - [x] **Task: Make Integration** (64743ed)
     - [ ] Sub-task: Add `sync-votes` target to `Makefile`.
-- [ ] **Task: Analytical Proof**
+- [x] **Task: Analytical Proof** (7d11a48)
     - [ ] Sub-task: Create a query script `tools/analyze_political_clusters.py` that asks a complex question (e.g., "Average pension cut for users who increased education spending").
     - [ ] Sub-task: Verify it runs against the populated DuckDB.
 - [ ] **Task: Conductor - User Manual Verification 'Phase 3: Automation & Proof of Concept' (Protocol in workflow.md)**
