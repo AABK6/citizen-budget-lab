@@ -11,7 +11,7 @@ Goal: Build the logic to parse raw Scenario DSL JSON into a flat dictionary of m
 - [x] **Task: Dynamic Schema Generator** (7881993)
     - [ ] Sub-task: Implement logic to read `data/policy_levers.yaml` and generate the list of expected columns (e.g., `reform_<id>`).
     - [ ] Sub-task: Verify it adapts when a dummy reform is added to the catalog.
-- [ ] **Task: Conductor - User Manual Verification 'Phase 1: ETL Foundation' (Protocol in workflow.md)**
+- [~] **Task: Conductor - User Manual Verification 'Phase 1: ETL Foundation' (Protocol in workflow.md)**
 
 ## Phase 2: Warehouse Integration (The Loader)
 Goal: Write the flattened data into DuckDB efficiently.
