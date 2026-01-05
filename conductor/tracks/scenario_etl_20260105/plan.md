@@ -19,7 +19,7 @@ Goal: Write the flattened data into DuckDB efficiently.
 - [x] **Task: DuckDB Table Management** (0576677)
     - [ ] Sub-task: Create `tools/sync_votes_to_warehouse.py` initialization logic.
     - [ ] Sub-task: Implement `create_or_alter_table` logic that checks existing columns and adds missing ones (schema evolution).
-- [ ] **Task: Batch Sync Logic**
+- [x] **Task: Batch Sync Logic** (6522f14)
     - [ ] Sub-task: Implement the "Incremental Load" pattern (fetch max `vote_id` from DuckDB, query Postgres/SQLite for newer votes).
     - [ ] Sub-task: Write integration tests ensuring idempotency (running twice doesn't duplicate rows).
 - [ ] **Task: Conductor - User Manual Verification 'Phase 2: Warehouse Integration' (Protocol in workflow.md)**
