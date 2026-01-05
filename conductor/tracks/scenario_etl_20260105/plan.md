@@ -22,7 +22,7 @@ Goal: Write the flattened data into DuckDB efficiently.
 - [x] **Task: Batch Sync Logic** (6522f14)
     - [ ] Sub-task: Implement the "Incremental Load" pattern (fetch max `vote_id` from DuckDB, query Postgres/SQLite for newer votes).
     - [ ] Sub-task: Write integration tests ensuring idempotency (running twice doesn't duplicate rows).
-- [~] **Task: Conductor - User Manual Verification 'Phase 2: Warehouse Integration' (Protocol in workflow.md)**
+- [x] **Task: Conductor - User Manual Verification 'Phase 2: Warehouse Integration' (Protocol in workflow.md)** (a5921a8)
 
 ## Phase 3: Automation & Proof of Concept
 Goal: Wire it all together and prove it answers political questions.
