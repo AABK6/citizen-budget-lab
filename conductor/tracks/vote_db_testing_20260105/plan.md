@@ -11,7 +11,7 @@ Goal: Ensure the test environment is ready and validate the base SQLite implemen
 - [x] **Task: SQLite Scenario CRUD Tests** (c999bb3)
     - [ ] Sub-task: Write failing tests in `services/api/tests/test_votes_store.py` for `save_scenario` and `get_scenario` using SQLite.
     - [ ] Sub-task: Implement/Verify fixes to ensure tests pass.
-- [ ] **Task: SQLite Vote CRUD & Summary Tests**
+- [x] **Task: SQLite Vote CRUD & Summary Tests** (4091740)
     - [ ] Sub-task: Write failing tests for `add_vote` and `summary` using SQLite.
     - [ ] Sub-task: Implement/Verify fixes to ensure tests pass.
 - [ ] **Task: Conductor - User Manual Verification 'Phase 1: Environment & SQLite Validation' (Protocol in workflow.md)**
