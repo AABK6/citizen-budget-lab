@@ -39,8 +39,8 @@ Goal: Systematically update the existing catalog using the research tool.
 Goal: Display the new rich metadata to the user in the Builder interface.
 
 - [x] **Task: Update Frontend GraphQL Queries** (f67933b)
-    - [ ] Sub-task: Update `frontend/graphql/` queries to fetch the new fields (`pushbacks`, `multiYearImpact`).
-    - [ ] Sub-task: Run `npm run codegen` in `frontend/` to regenerate types.
+    - [x] Sub-task: Update `frontend/graphql/` queries to fetch the new fields (`pushbacks`, `multiYearImpact`).
+    - [x] Sub-task: Run `npm run codegen` in `frontend/` to regenerate types.
 - [x] **Task: Enhance Reform Detail Component** (efef865)
     - [x] Sub-task: Update the UI components to display implementation risks and multi-year impact notes.
     - [x] Sub-task: Write a simple smoke test (or use Storybook) to verify the new fields are visible.

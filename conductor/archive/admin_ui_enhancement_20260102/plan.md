@@ -18,10 +18,10 @@ Goal: Define the layout and interaction model.
 ## Phase 2: The Auditor (List View)
 Goal: Help users find *what* to fix.
 
-- [ ] **Task: Enhanced Data Grid**
-    -   [ ] Implement sortable columns (ID, Label, Impact, Family).
-    -   [ ] Add "Health Indicators" (Missing Source, Impact Discrepancy).
-    -   [ ] Add Faceted Filters.
+- [x] **Task: Enhanced Data Grid**
+    -   [x] Implement sortable columns (ID, Label, Impact, Family).
+    -   [x] Add "Health Indicators" (Missing Source, Impact Discrepancy).
+    -   [x] Add Faceted Filters.
 
 ## Phase 3: The Editor (Detail View)
 

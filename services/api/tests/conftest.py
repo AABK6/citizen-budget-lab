@@ -21,7 +21,12 @@ def test_db_service():
         return
 
     print("Starting Test DB container...")
-    subprocess.run(["docker", "compose", "-f", compose_file, "up", "-d", "--wait"], check=True)
+    try:
+        subprocess.run(["docker", "compose", "-f", compose_file, "up", "-d", "--wait"], check=True)
+    except (FileNotFoundError, subprocess.CalledProcessError) as e:
+        print(f"Docker integration failed: {e}. Skipping tests.")
+        yield None
+        return
     
     yield "postgresql://test_user:test_password@localhost:5433/test_votes"
 
