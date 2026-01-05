@@ -908,6 +908,22 @@ export default function BuildPageClient() {
   const gdpForRatio = scenarioResult?.accounting?.gdpPath?.[0] ?? baselineGdp ?? 2800e9;
   const calculatedDeficitRatio = calculatedDeficit / gdpForRatio;
 
+  const handleTutorialStep = useCallback((index: number) => {
+    // Step 3: "Fixer vos Priorités" -> Open Health panel to show slider/reforms
+    if (index === 3) {
+      const health = masses.find(m => m.id === 'M_HEALTH');
+      if (health) {
+        handleCategoryClick(health);
+      }
+    }
+    // Step 4: "L'Équation Fiscale" -> Close left panel to focus on right
+    if (index === 4) {
+      if (isPanelExpanded) {
+        handleBackClick();
+      }
+    }
+  }, [masses, handleCategoryClick, isPanelExpanded, handleBackClick]);
+
   if (initialLoading) {
     return <BuildPageSkeleton />;
   }
@@ -1147,7 +1163,7 @@ export default function BuildPageClient() {
           </div>
         )}
 
-        <TutorialOverlay onComplete={() => { }} startSignal={tutorialRunId} />
+        <TutorialOverlay onComplete={() => { }} startSignal={tutorialRunId} onStepChange={handleTutorialStep} />
 
         <DebriefModal
           isOpen={isDebriefOpen}

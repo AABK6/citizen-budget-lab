@@ -59,9 +59,11 @@ const STORAGE_KEY = `has_seen_tutorial_${TUTORIAL_VERSION}`;
 export function TutorialOverlay({
     onComplete,
     startSignal,
+    onStepChange,
 }: {
     onComplete: () => void;
     startSignal?: number | null;
+    onStepChange?: (index: number) => void;
 }) {
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
     const [isVisible, setIsVisible] = useState(false);
@@ -70,6 +72,12 @@ export function TutorialOverlay({
     const popoverRef = useRef<HTMLDivElement>(null);
 
     const currentStep = STEPS[currentStepIndex];
+
+    useEffect(() => {
+        if (isVisible && onStepChange) {
+            onStepChange(currentStepIndex);
+        }
+    }, [currentStepIndex, isVisible, onStepChange]);
 
     useEffect(() => {
         const hasSeen = localStorage.getItem(STORAGE_KEY);
