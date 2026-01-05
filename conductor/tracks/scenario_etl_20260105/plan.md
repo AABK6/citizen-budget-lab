@@ -24,7 +24,7 @@ Goal: Write the flattened data into DuckDB efficiently.
     - [ ] Sub-task: Write integration tests ensuring idempotency (running twice doesn't duplicate rows).
 - [x] **Task: Conductor - User Manual Verification 'Phase 2: Warehouse Integration' (Protocol in workflow.md)** (a5921a8)
 
-## Phase 3: Automation & Proof of Concept
+## Phase 3: Automation & Proof of Concept [checkpoint: c1d4dfa]
 Goal: Wire it all together and prove it answers political questions.
 
 - [x] **Task: Make Integration** (64743ed)
@@ -34,4 +34,4 @@ Goal: Wire it all together and prove it answers political questions.
     - [ ] Sub-task: Verify it runs against the populated DuckDB.
 - [x] **Task: File Store Sync Support** (d3a9140)
     - [ ] Sub-task: Allow `VOTES_STORE=file` to read `data/cache/votes.json` with `data/cache/scenarios_dsl.json`.
-- [~] **Task: Conductor - User Manual Verification 'Phase 3: Automation & Proof of Concept' (Protocol in workflow.md)**
+- [x] **Task: Conductor - User Manual Verification 'Phase 3: Automation & Proof of Concept' (Protocol in workflow.md)** (c1d4dfa)
