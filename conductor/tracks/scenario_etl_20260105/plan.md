@@ -13,7 +13,7 @@ Goal: Build the logic to parse raw Scenario DSL JSON into a flat dictionary of m
     - [ ] Sub-task: Verify it adapts when a dummy reform is added to the catalog.
 - [x] **Task: Conductor - User Manual Verification 'Phase 1: ETL Foundation' (Protocol in workflow.md)** (416ee9d)
 
-## Phase 2: Warehouse Integration (The Loader)
+## Phase 2: Warehouse Integration (The Loader) [checkpoint: a5921a8]
 Goal: Write the flattened data into DuckDB efficiently.
 
 - [x] **Task: DuckDB Table Management** (0576677)
