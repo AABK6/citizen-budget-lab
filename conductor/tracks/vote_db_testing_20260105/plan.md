@@ -16,7 +16,7 @@ Goal: Ensure the test environment is ready and validate the base SQLite implemen
     - [ ] Sub-task: Implement/Verify fixes to ensure tests pass.
 - [ ] **Task: Conductor - User Manual Verification 'Phase 1: Environment & SQLite Validation' (Protocol in workflow.md)**
 
-## Phase 2: PostgreSQL Integration
+## Phase 2: PostgreSQL Integration [checkpoint: e736a54]
 Goal: Verify the production-target PostgreSQL implementation.
 
 - [x] **Task: PostgreSQL Scenario Integration** (17cbff0)
