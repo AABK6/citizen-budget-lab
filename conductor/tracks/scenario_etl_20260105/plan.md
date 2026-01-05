@@ -51,6 +51,6 @@ Goal: Sync real vote data into DuckDB and run analysis for actual usage.
 Goal: Confirm production vote counts and data source alignment.
 
 - [x] **Task: Validate Production Vote Counts** (1f70518)
-    - [ ] Sub-task: Query counts in the production `votes` and `scenarios` tables.
-    - [ ] Sub-task: Confirm which instance/database is being queried.
-- [ ] **Task: Conductor - User Manual Verification 'Phase 5: Production Vote Count Validation' (Protocol in workflow.md)**
+    - [x] Sub-task: Query counts in the production `votes` and `scenarios` tables. (Found 4 votes, 3 scenarios in Cloud SQL)
+    - [x] Sub-task: Confirm which instance/database is being queried. (reviewflow-nrciu:europe-west1:citizen-budget-db)
+- [~] **Task: Conductor - User Manual Verification 'Phase 5: Production Vote Count Validation' (Protocol in workflow.md)**
