@@ -22,7 +22,7 @@ Goal: Verify the production-target PostgreSQL implementation.
 - [x] **Task: PostgreSQL Scenario Integration** (17cbff0)
     - [ ] Sub-task: Write failing tests for `PostgresVoteStore.save_scenario` and `get_scenario`.
     - [ ] Sub-task: Implement/Verify fixes to ensure tests pass against a real PG instance.
-- [ ] **Task: PostgreSQL Vote Integration**
+- [x] **Task: PostgreSQL Vote Integration** (a4e64b8)
     - [ ] Sub-task: Write failing tests for `PostgresVoteStore.add_vote` and `summary`.
     - [ ] Sub-task: Implement/Verify fixes to ensure tests pass.
 - [ ] **Task: Conductor - User Manual Verification 'Phase 2: PostgreSQL Integration' (Protocol in workflow.md)**
