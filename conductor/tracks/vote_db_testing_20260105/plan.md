@@ -43,7 +43,7 @@ Goal: Verify data survives upgrades and supports reporting.
 
 - [x] **Task: Migration Integrity Test** (8e8cddd)
     - [ ] Sub-task: Create a test that: 1. Insets data, 2. Executes `apply_migrations`, 3. Verifies data is still there.
-- [ ] **Task: Analytics Verification**
+- [x] **Task: Analytics Verification** (352a17f)
     - [ ] Sub-task: Write tests for complex `summary` scenarios (multiple scenarios, different vote counts).
     - [ ] Sub-task: Verify that `vote_stats` remains in sync with the `votes` table.
 - [ ] **Task: Conductor - User Manual Verification 'Phase 4: Migrations & Analytics' (Protocol in workflow.md)**
