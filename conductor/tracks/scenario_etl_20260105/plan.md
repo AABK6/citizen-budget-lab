@@ -16,7 +16,7 @@ Goal: Build the logic to parse raw Scenario DSL JSON into a flat dictionary of m
 ## Phase 2: Warehouse Integration (The Loader)
 Goal: Write the flattened data into DuckDB efficiently.
 
-- [ ] **Task: DuckDB Table Management**
+- [x] **Task: DuckDB Table Management** (0576677)
     - [ ] Sub-task: Create `tools/sync_votes_to_warehouse.py` initialization logic.
     - [ ] Sub-task: Implement `create_or_alter_table` logic that checks existing columns and adds missing ones (schema evolution).
 - [ ] **Task: Batch Sync Logic**
