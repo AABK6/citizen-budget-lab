@@ -8,7 +8,7 @@ Goal: Ensure the test environment is ready and validate the base SQLite implemen
 - [x] **Task: Setup PostgreSQL Test Container** (d7df850)
     - [ ] Sub-task: Add a `test-db` service to `docker-compose.yml` or create a standalone `docker-compose.test.yml`.
     - [ ] Sub-task: Update `pytest.ini` or create a `conftest.py` to handle test database lifecycle.
-- [ ] **Task: SQLite Scenario CRUD Tests**
+- [x] **Task: SQLite Scenario CRUD Tests** (c999bb3)
     - [ ] Sub-task: Write failing tests in `services/api/tests/test_votes_store.py` for `save_scenario` and `get_scenario` using SQLite.
     - [ ] Sub-task: Implement/Verify fixes to ensure tests pass.
 - [ ] **Task: SQLite Vote CRUD & Summary Tests**
