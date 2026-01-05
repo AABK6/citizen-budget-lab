@@ -2,7 +2,7 @@
 
 This plan follows the Conductor methodology: TDD (Red/Green/Refactor), 80% test coverage, and per-task commits.
 
-## Phase 1: ETL Foundation (The Extractor)
+## Phase 1: ETL Foundation (The Extractor) [checkpoint: 416ee9d]
 Goal: Build the logic to parse raw Scenario DSL JSON into a flat dictionary of metrics.
 
 - [x] **Task: Create Parsing Logic** (49410ff)
