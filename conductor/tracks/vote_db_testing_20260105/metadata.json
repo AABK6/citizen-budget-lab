@@ -1,0 +1,8 @@
+{
+  "track_id": "vote_db_testing_20260105",
+  "type": "bug_fix",
+  "status": "new",
+  "created_at": "2026-01-05T12:00:00Z",
+  "updated_at": "2026-01-05T12:00:00Z",
+  "description": "Test that the voters' preference database (Scenarios & Votes) works well, focusing on Postgres/SQLite and concurrency."
+}
