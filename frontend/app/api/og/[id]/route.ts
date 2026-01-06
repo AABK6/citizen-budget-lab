@@ -81,10 +81,10 @@ const toNumberSeries = (series?: number[] | null) => {
 const formatSigned = (value: number) => {
   const abs = Math.abs(value) / 1e9;
   const sign = value >= 0 ? '+' : '-';
-  return `${sign}${abs.toFixed(1)} MdEUR`;
+  return `${sign}${abs.toFixed(1)} Md€`;
 };
 
-const formatTotal = (value: number) => `${(Math.abs(value) / 1e9).toFixed(1)} MdEUR`;
+const formatTotal = (value: number) => `${(Math.abs(value) / 1e9).toFixed(1)} Md€`;
 
 const formatPercent = (value: number) => `${(value * 100).toFixed(1)}%`;
 
@@ -189,6 +189,7 @@ const computeSpendingDelta = (resolution: ScenarioPayload['resolution']) => {
 
 const buildOgSvg = (payload: {
   scenarioId: string;
+  year: number;
   deficit: number;
   deficitRatio: number | null;
   deficitDelta: number;
@@ -202,38 +203,67 @@ const buildOgSvg = (payload: {
   const deficitColor = payload.deficit < 0 ? '#dc2626' : '#16a34a';
   const trendLabel =
     payload.deficitDelta === 0
-      ? 'deficit stable'
+      ? 'déficit stable'
       : payload.deficitDelta > 0
-        ? `deficit reduit de ${formatTotal(Math.abs(payload.deficitDelta))}`
-        : `deficit augmente de ${formatTotal(Math.abs(payload.deficitDelta))}`;
+        ? `déficit réduit de ${formatTotal(Math.abs(payload.deficitDelta))}`
+        : `déficit augmenté de ${formatTotal(Math.abs(payload.deficitDelta))}`;
   const trendColor = payload.deficitDelta >= 0 ? '#16a34a' : '#dc2626';
   const ratioText = payload.deficitRatio === null ? 'ratio N/A' : `${formatPercent(payload.deficitRatio)} du PIB`;
-  const spendingDeltaText =
-    Math.abs(payload.spendingDelta) > 1e-3 ? ` (${formatSigned(payload.spendingDelta)})` : '';
-  const revenueDeltaText =
-    Math.abs(payload.revenueDelta) > 1e-3 ? ` (${formatSigned(payload.revenueDelta)})` : '';
 
   const leverLines =
     payload.levers.length > 0
       ? payload.levers.slice(0, 3).map((lever, index) => ({
-          label: `${index + 1}. ${truncate(lever.label)}`,
+          label: truncate(lever.label, 34),
           impact: formatSigned(lever.impact),
+          tone: lever.impact >= 0 ? '#16a34a' : '#dc2626',
         }))
-      : [{ label: 'Aucune mesure active', impact: '' }];
+      : [{ label: 'Aucune mesure active', impact: '', tone: '#94a3b8' }];
 
   const leverText = leverLines
     .map((line, index) => {
-      const y = 360 + index * 46;
+      const y = 236 + index * 28;
+      const impactText = line.impact ? ` ${line.impact}` : '';
       return `
-        <text x="640" y="${y}" fill="#0f172a" font-size="22" font-family="Outfit, Arial, sans-serif">${escapeXml(
+        <circle cx="600" cy="${y - 6}" r="4" fill="${line.tone}"/>
+        <text x="612" y="${y}" fill="#0f172a" font-size="14" font-family="Outfit, Arial, sans-serif">${escapeXml(
           line.label,
         )}</text>
-        <text x="640" y="${y + 22}" fill="#64748b" font-size="16" font-family="Outfit, Arial, sans-serif">${escapeXml(
-          line.impact,
+        <text x="1010" y="${y}" fill="#64748b" font-size="13" font-family="Outfit, Arial, sans-serif">${escapeXml(
+          impactText,
         )}</text>
       `;
     })
     .join('');
+
+  const spendingTone = payload.spendingDelta > 0 ? '#dc2626' : payload.spendingDelta < 0 ? '#16a34a' : '#64748b';
+  const revenueTone = payload.revenueDelta > 0 ? '#16a34a' : payload.revenueDelta < 0 ? '#dc2626' : '#64748b';
+  const spendingDeltaText =
+    Math.abs(payload.spendingDelta) > 1e-3 ? formatSigned(payload.spendingDelta) : '';
+  const revenueDeltaText =
+    Math.abs(payload.revenueDelta) > 1e-3 ? formatSigned(payload.revenueDelta) : '';
+
+  const spendingPill = spendingDeltaText
+    ? `
+      <rect x="600" y="196" width="${Math.max(66, spendingDeltaText.length * 7 + 18)}" height="20" rx="10" fill="${spendingTone}" opacity="0.12"/>
+      <text x="609" y="210" fill="${spendingTone}" font-size="12" font-weight="600" font-family="Outfit, Arial, sans-serif">${escapeXml(
+        spendingDeltaText,
+      )}</text>
+    `
+    : '';
+
+  const revenuePill = revenueDeltaText
+    ? `
+      <rect x="820" y="196" width="${Math.max(66, revenueDeltaText.length * 7 + 18)}" height="20" rx="10" fill="${revenueTone}" opacity="0.12"/>
+      <text x="829" y="210" fill="${revenueTone}" font-size="12" font-weight="600" font-family="Outfit, Arial, sans-serif">${escapeXml(
+        revenueDeltaText,
+      )}</text>
+    `
+    : '';
+
+  const trendTriangle =
+    payload.deficitDelta >= 0
+      ? '<polygon points="610,124 618,124 614,116" fill="' + trendColor + '" />'
+      : '<polygon points="610,118 618,118 614,126" fill="' + trendColor + '" />';
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
@@ -249,41 +279,51 @@ const buildOgSvg = (payload: {
     </linearGradient>
   </defs>
   <rect width="1200" height="630" fill="url(#bg)"/>
-  <rect x="0" y="0" width="1200" height="10" fill="url(#bar)"/>
+  <rect x="32" y="36" width="1136" height="300" rx="28" fill="#ffffff" stroke="#e2e8f0"/>
+  <rect x="32" y="36" width="1136" height="8" rx="4" fill="url(#bar)"/>
 
-  <text x="64" y="78" fill="#0f172a" font-size="30" font-weight="700" font-family="Outfit, Arial, sans-serif">Votre budget citoyen</text>
-  <text x="64" y="110" fill="#64748b" font-size="18" font-family="Outfit, Arial, sans-serif">Scenario ${escapeXml(
-    shortId,
-  )}</text>
+  <text x="70" y="92" fill="#94a3b8" font-size="11" font-weight="700" letter-spacing="2" font-family="Outfit, Arial, sans-serif">BUDGET</text>
+  <text x="70" y="136" fill="#0f172a" font-size="36" font-weight="800" font-family="Outfit, Arial, sans-serif">${payload.year}</text>
 
-  <text x="64" y="170" fill="#94a3b8" font-size="18" font-family="Outfit, Arial, sans-serif">Solde public</text>
-  <text x="64" y="225" fill="${deficitColor}" font-size="54" font-weight="800" font-family="Outfit, Arial, sans-serif">${escapeXml(
+  <line x1="210" y1="70" x2="210" y2="310" stroke="#e2e8f0"/>
+
+  <text x="240" y="92" fill="#94a3b8" font-size="11" font-weight="700" letter-spacing="2" font-family="Outfit, Arial, sans-serif">SOLDE PUBLIC</text>
+  <text x="240" y="142" fill="${deficitColor}" font-size="42" font-weight="800" font-family="Outfit, Arial, sans-serif">${escapeXml(
     formatSigned(payload.deficit),
   )}</text>
-  <text x="64" y="255" fill="#64748b" font-size="18" font-family="Outfit, Arial, sans-serif">${escapeXml(
+  <text x="240" y="172" fill="#64748b" font-size="16" font-family="Outfit, Arial, sans-serif">${escapeXml(
     ratioText,
   )}</text>
 
-  <rect x="64" y="275" width="440" height="36" rx="18" fill="${trendColor}" opacity="0.12"/>
-  <text x="82" y="299" fill="${trendColor}" font-size="16" font-weight="600" font-family="Outfit, Arial, sans-serif">${escapeXml(
+  <line x1="560" y1="70" x2="560" y2="310" stroke="#e2e8f0"/>
+
+  <circle cx="600" cy="86" r="10" fill="#e2e8f0"/>
+  <path d="M596 86 L599 89 L606 80" stroke="#334155" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="616" y="92" fill="#0f172a" font-size="12" font-weight="800" letter-spacing="1.4" font-family="Outfit, Arial, sans-serif">VOTRE BUDGET</text>
+
+  <rect x="600" y="108" width="260" height="24" rx="12" fill="${trendColor}" opacity="0.12"/>
+  ${trendTriangle}
+  <text x="626" y="125" fill="${trendColor}" font-size="12" font-weight="700" font-family="Outfit, Arial, sans-serif">${escapeXml(
     trendLabel,
   )}</text>
 
-  <rect x="64" y="330" width="520" height="86" rx="18" fill="#ffffff" stroke="#e2e8f0"/>
-  <text x="88" y="362" fill="#94a3b8" font-size="14" font-family="Outfit, Arial, sans-serif">Depenses</text>
-  <text x="88" y="392" fill="#0f172a" font-size="20" font-weight="700" font-family="Outfit, Arial, sans-serif">${escapeXml(
-    `${formatTotal(payload.spendingTotal)}${spendingDeltaText}`,
+  <text x="600" y="162" fill="#94a3b8" font-size="12" font-weight="600" font-family="Outfit, Arial, sans-serif">Dépenses</text>
+  <text x="600" y="190" fill="#0f172a" font-size="20" font-weight="700" font-family="Outfit, Arial, sans-serif">${escapeXml(
+    formatTotal(payload.spendingTotal),
   )}</text>
-  <text x="330" y="362" fill="#94a3b8" font-size="14" font-family="Outfit, Arial, sans-serif">Recettes</text>
-  <text x="330" y="392" fill="#0f172a" font-size="20" font-weight="700" font-family="Outfit, Arial, sans-serif">${escapeXml(
-    `${formatTotal(payload.revenueTotal)}${revenueDeltaText}`,
-  )}</text>
+  ${spendingPill}
 
-  <text x="640" y="320" fill="#94a3b8" font-size="18" font-family="Outfit, Arial, sans-serif">Mesures principales</text>
+  <text x="820" y="162" fill="#94a3b8" font-size="12" font-weight="600" font-family="Outfit, Arial, sans-serif">Recettes</text>
+  <text x="820" y="190" fill="#0f172a" font-size="20" font-weight="700" font-family="Outfit, Arial, sans-serif">${escapeXml(
+    formatTotal(payload.revenueTotal),
+  )}</text>
+  ${revenuePill}
+
+  <text x="600" y="220" fill="#94a3b8" font-size="12" font-weight="600" font-family="Outfit, Arial, sans-serif">Mesures principales</text>
   ${leverText}
 
-  <text x="64" y="560" fill="#0f172a" font-size="20" font-weight="600" font-family="Outfit, Arial, sans-serif">Session citoyenne</text>
-  <text x="64" y="590" fill="#64748b" font-size="16" font-family="Outfit, Arial, sans-serif">Partagez votre budget pour lui donner plus de poids.</text>
+  <text x="70" y="560" fill="#0f172a" font-size="20" font-weight="700" font-family="Outfit, Arial, sans-serif">Session extraordinaire citoyenne</text>
+  <text x="70" y="590" fill="#64748b" font-size="16" font-family="Outfit, Arial, sans-serif">Partagez votre budget pour donner du poids à cette consultation.</text>
 </svg>`;
 };
 
@@ -513,6 +553,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
   const svg = buildOgSvg({
     scenarioId,
+    year: baselineYear,
     deficit,
     deficitRatio,
     deficitDelta: Number.isFinite(deficitDelta) ? deficitDelta : 0,

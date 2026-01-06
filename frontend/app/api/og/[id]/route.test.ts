@@ -74,6 +74,7 @@ actions:
     const body = await response.text();
     expect(body).toContain('Lever One');
     expect(body).toContain('Solde public');
-    expect(body).toContain('Depenses');
+    expect(body).toContain('Dépenses');
+    expect(body).toContain('VOTRE BUDGET');
   });
 });
