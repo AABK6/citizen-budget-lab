@@ -12,6 +12,7 @@ export function ShareButtons({ shareUrl, message, onCopy, className }: ShareButt
   const payload = shareUrl ? `${message} ${shareUrl}` : message;
   const encodedPayload = encodeURIComponent(payload);
   const encodedUrl = shareUrl ? encodeURIComponent(shareUrl) : '';
+  const encodedMessage = encodeURIComponent(message);
 
   const shareClasses = `px-3 py-2 rounded-lg text-xs font-bold transition-all border ${
     shareDisabled
@@ -38,7 +39,11 @@ export function ShareButtons({ shareUrl, message, onCopy, className }: ShareButt
           Partager sur X
         </a>
         <a
-          href={shareUrl ? `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}` : '#'}
+          href={
+            shareUrl
+              ? `https://www.linkedin.com/shareArticle?mini=true&url=${encodedUrl}&title=${encodedMessage}&summary=${encodedMessage}`
+              : '#'
+          }
           target="_blank"
           rel="noreferrer"
           className={shareClasses}
