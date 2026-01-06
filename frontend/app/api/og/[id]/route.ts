@@ -158,8 +158,9 @@ const buildOgSvg = (payload: {
 </svg>`;
 };
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
-  const scenarioId = params?.id || 'demo';
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = await params;
+  const scenarioId = resolvedParams?.id || 'demo';
   const origin = new URL(req.url).origin;
   const endpoint = new URL('/api/graphql', origin).toString();
   const gql = `

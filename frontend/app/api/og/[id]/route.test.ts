@@ -49,7 +49,7 @@ actions:
     });
 
     const response = await GET(new Request('http://localhost/api/og/abc123'), {
-      params: { id: 'abc123' },
+      params: Promise.resolve({ id: 'abc123' }),
     });
 
     expect(response.headers.get('content-type')).toContain('image/svg+xml');
