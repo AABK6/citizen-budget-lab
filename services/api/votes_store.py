@@ -51,6 +51,7 @@ class FileVoteStore(VoteStore):
     def __init__(self, path: str) -> None:
         self.path = path
         self._votes: List[Dict[str, Any]] = []
+        self._scenarios: Dict[str, str] = {}
         self._load()
 
     def _ensure_dir(self) -> None:
@@ -60,22 +61,36 @@ class FileVoteStore(VoteStore):
         self._ensure_dir()
         if not os.path.exists(self.path):
             self._votes = []
+            self._scenarios = {}
             return
         try:
             with open(self.path, "r", encoding="utf-8") as f:
                 obj = json.load(f)
                 if isinstance(obj, list):
                     self._votes = obj
+                    self._scenarios = {}
+                elif isinstance(obj, dict):
+                    votes = obj.get("votes")
+                    scenarios = obj.get("scenarios")
+                    self._votes = votes if isinstance(votes, list) else []
+                    self._scenarios = scenarios if isinstance(scenarios, dict) else {}
                 else:
                     self._votes = []
+                    self._scenarios = {}
         except Exception:
             self._votes = []
+            self._scenarios = {}
 
     def _save(self) -> None:
         self._ensure_dir()
         try:
             with open(self.path, "w", encoding="utf-8") as f:
-                json.dump(self._votes, f, ensure_ascii=False, indent=2)
+                json.dump(
+                    {"votes": self._votes, "scenarios": self._scenarios},
+                    f,
+                    ensure_ascii=False,
+                    indent=2,
+                )
         except Exception:
             pass
 
@@ -109,6 +124,13 @@ class FileVoteStore(VoteStore):
         ]
         summaries.sort(key=lambda s: s.votes, reverse=True)
         return summaries[: max(limit, 0)]
+
+    def save_scenario(self, sid: str, dsl_json: str, meta_json: str | None = None) -> None:
+        self._scenarios[sid] = dsl_json
+        self._save()
+
+    def get_scenario(self, sid: str) -> Optional[str]:
+        return self._scenarios.get(sid)
 
 
 class SqliteVoteStore(VoteStore):

@@ -293,6 +293,21 @@ def test_graphql_queries_without_network(monkeypatch):
         {"id": sid},
     )
     assert card["shareCard"]["title"].startswith("Scenario ") or card["shareCard"]["title"]
+    scenario = gql(
+        """
+      query($id:ID!){
+        scenario(id:$id){
+          id
+          scenarioId
+          accounting { deficitPath }
+        }
+      }
+    """,
+        {"id": sid},
+    )
+    assert scenario["scenario"]["id"] == sid
+    assert scenario["scenario"]["scenarioId"] == sid
+    assert len(scenario["scenario"]["accounting"]["deficitPath"]) > 0
 
     # Stub network clients to avoid external calls
     class _Resp:
