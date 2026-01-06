@@ -22,12 +22,12 @@ Goal: Surface the post-vote summary in-context on the build page.
 ## Phase 2: Dynamic OpenGraph Image Generation
 Goal: Generate high-quality visual cards on-the-fly for social media sharing.
 
-- [ ] **Task: Setup Image Generation Endpoint**
-    - [ ] Sub-task: Create `frontend/app/api/og/[id]/route.tsx` using `ImageResponse`.
-    - [ ] Sub-task: Design a visual layout that pulls the scenario's deficit delta, growth impact, and top 2 reforms.
-    - [ ] Sub-task: Add branding (Citizen Budget Lab logo/colors).
-- [ ] **Task: Integration Test for OG Images**
-    - [ ] Sub-task: Write a test to ensure the API returns a valid image/png response for a known scenario ID.
+- [x] **Task: Setup Image Generation Endpoint**
+    - [x] Sub-task: Create `frontend/app/api/og/[id]/route.ts` using a server-rendered SVG response.
+    - [x] Sub-task: Design a visual layout that pulls the scenario's deficit delta, growth impact, and top 2 reforms.
+    - [x] Sub-task: Add branding (Citizen Budget Lab logo/colors).
+- [x] **Task: Integration Test for OG Images**
+    - [x] Sub-task: Write a test to ensure the API returns a valid image/svg response for a known scenario ID.
 - [ ] **Task: Conductor - User Manual Verification 'Phase 2: Dynamic OpenGraph Image Generation' (Protocol in workflow.md)**
 
 ## Phase 3: Sharing UI & Viral Messaging
