@@ -2,16 +2,22 @@
 
 This plan follows the Conductor methodology: TDD, high test coverage, and phase-level verification.
 
-## Phase 1: Share Page Infrastructure & Routing
-Goal: Create the destination page for shared scenarios and fetch the necessary data.
+## Direction Update (2026-01-06)
+Per product direction, replace the dedicated `/share` page with a floating summary card on `/build`. Scenario permalinks should route to `/build?scenarioId=...`.
 
-- [x] **Task: Create Share Page Route** (1048b84)
-    - [x] Sub-task: Create `frontend/app/share/[id]/page.tsx` as a dynamic route.
-    - [x] Sub-task: Implement a layout using `@codegouvfr/react-dsfr` components.
-    - [x] Sub-task: Fetch scenario data using the existing `scenario` GraphQL query.
-- [x] **Task: Unit Test Share Page Logic** (1048b84)
-    - [x] Sub-task: Write Vitest tests in `frontend/app/share/[id]/page.test.tsx` to verify fetching and data display.
-- [ ] **Task: Conductor - User Manual Verification 'Phase 1: Share Page Infrastructure & Routing' (Protocol in workflow.md)**
+## Phase 1: Floating Post-Vote Summary on /build
+Goal: Surface the post-vote summary in-context on the build page.
+
+- [x] **Task: Floating Summary Card**
+    - [x] Sub-task: Create a floating summary card that reuses the build scoreboard pipeline (deficit + ratio, spending/revenue totals, top levers).
+    - [x] Sub-task: Include the full deficit value (not just deltas).
+- [x] **Task: Vote Trigger & Dismiss**
+    - [x] Sub-task: Show the card after a successful vote submission.
+    - [x] Sub-task: Allow the user to dismiss the card.
+- [x] **Task: Permalink Redirect**
+    - [x] Sub-task: Redirect `/share/[scenario_id]` to `/build?scenarioId=...`.
+    - [x] Sub-task: Remove obsolete share page tests.
+- [ ] **Task: Conductor - User Manual Verification 'Phase 1: Floating Post-Vote Summary on /build' (Protocol in workflow.md)**
 
 ## Phase 2: Dynamic OpenGraph Image Generation
 Goal: Generate high-quality visual cards on-the-fly for social media sharing.

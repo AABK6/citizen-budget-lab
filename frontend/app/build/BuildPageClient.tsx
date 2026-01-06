@@ -34,6 +34,7 @@ import { ReformSidebarList } from './components/ReformSidebarList';
 import { TutorialOverlay } from './components/TutorialOverlay';
 import { DebriefModal } from './components/DebriefModal';
 import { NewsTicker } from './components/NewsTicker';
+import { FloatingShareCard } from './components/FloatingShareCard';
 
 const cloneCategories = (categories: MassCategory[]) =>
   categories.map((category) => ({ ...category }));
@@ -58,6 +59,7 @@ export default function BuildPageClient() {
   const [ghostMode, setGhostMode] = useState(false);
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
   const [isDebriefOpen, setIsDebriefOpen] = useState(false);
+  const [isShareCardOpen, setIsShareCardOpen] = useState(false);
   const [previewReformId, setPreviewReformId] = useState<string | null>(null);
   const {
     year,
@@ -890,6 +892,23 @@ export default function BuildPageClient() {
     const sum = (masses || []).reduce((acc, m) => acc + Math.max(m.amount, 0), 0);
     return sum > 0 ? sum : baselineTotals.spending;
   }, [masses, baselineTotals.spending]);
+  const baselineDeficitForShare = useMemo(() => {
+    const basePath = scenarioResult?.accounting?.baselineDeficitPath;
+    if (Array.isArray(basePath) && basePath.length > 0) {
+      const val = Number(basePath[0]);
+      if (Number.isFinite(val)) {
+        return val;
+      }
+    }
+    return baselineTotals.revenue - baselineTotals.spending;
+  }, [baselineTotals.revenue, baselineTotals.spending, scenarioResult]);
+  const shareDeficitDelta = useMemo(() => {
+    if (latestDeficit === null) {
+      return 0;
+    }
+    const delta = latestDeficit - baselineDeficitForShare;
+    return Number.isFinite(delta) ? delta : 0;
+  }, [baselineDeficitForShare, latestDeficit]);
   const baselineBalance = useMemo(
     () => baselineTotals.revenue - baselineTotals.spending,
     [baselineTotals.revenue, baselineTotals.spending],
@@ -1172,7 +1191,7 @@ export default function BuildPageClient() {
             try {
               if (scenarioResult?.id) {
                 await gqlRequest(submitVoteMutation, { scenarioId: scenarioResult.id });
-                alert("🗳️ A voté !\n\nVotre budget a été enregistré au greffe de la session citoyenne.\nVous pouvez maintenant partager votre mandat.");
+                setIsShareCardOpen(true);
               }
             } catch (e) {
               console.error(e);
@@ -1182,6 +1201,20 @@ export default function BuildPageClient() {
           }}
           scenarioResult={scenarioResult}
           deficit={latestDeficit}
+        />
+        <FloatingShareCard
+          isOpen={isShareCardOpen}
+          onClose={() => setIsShareCardOpen(false)}
+          deficit={latestDeficit}
+          deficitRatio={latestDeficitRatio}
+          deficitDelta={shareDeficitDelta}
+          baselineTotals={baselineTotals}
+          currentTotals={{ spending: totalSpending, revenue: totalRevenue }}
+          baselineMasses={baselineMasses}
+          piecesById={piecesById}
+          actions={dslObject.actions}
+          policyLevers={policyLevers}
+          year={year}
         />
       </div>
     </div>

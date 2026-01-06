@@ -1,10 +1,6 @@
-import SharePageClient from './SharePageClient'
+import { redirect } from 'next/navigation';
 
-export default async function SharePage({
-  params,
-}: {
-  params: Promise<{ id: string }>
-}) {
-  const { id } = await params
-  return <SharePageClient scenarioId={id} />
+export default function SharePage({ params }: { params: { id: string } }) {
+  const scenarioId = encodeURIComponent(params.id);
+  redirect(`/build?scenarioId=${scenarioId}`);
 }
