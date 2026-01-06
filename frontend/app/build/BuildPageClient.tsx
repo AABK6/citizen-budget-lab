@@ -60,6 +60,7 @@ export default function BuildPageClient() {
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
   const [isDebriefOpen, setIsDebriefOpen] = useState(false);
   const [isShareCardOpen, setIsShareCardOpen] = useState(false);
+  const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [previewReformId, setPreviewReformId] = useState<string | null>(null);
   const {
     year,
@@ -238,6 +239,15 @@ export default function BuildPageClient() {
     scenarioIdRef.current = scenarioId;
   }, [scenarioId]);
 
+  useEffect(() => {
+    if (!scenarioId || typeof window === 'undefined') {
+      setShareUrl(null);
+      return;
+    }
+    const params = new URLSearchParams();
+    params.set('scenarioId', scenarioId);
+    setShareUrl(`${window.location.origin}/build?${params.toString()}`);
+  }, [scenarioId]);
 
 
   useEffect(() => {
@@ -1205,6 +1215,7 @@ export default function BuildPageClient() {
         <FloatingShareCard
           isOpen={isShareCardOpen}
           onClose={() => setIsShareCardOpen(false)}
+          onCopyLink={handleShare}
           deficit={latestDeficit}
           deficitRatio={latestDeficitRatio}
           deficitDelta={shareDeficitDelta}
@@ -1215,6 +1226,7 @@ export default function BuildPageClient() {
           actions={dslObject.actions}
           policyLevers={policyLevers}
           year={year}
+          shareUrl={shareUrl}
         />
       </div>
     </div>
