@@ -21,6 +21,11 @@
 *   **Data Format:** CSV, JSON, SDMX (Eurostat)
 *   **Orchestration:** Makefile-based "warming" scripts
 
+## Political Analytics
+*   **Pipeline:** Incremental ETL from Postgres/SQLite to DuckDB
+*   **Schema Architecture:** Dynamic "Wide Table" for flattened scenario analysis
+*   **Analysis:** Correlation and clustering of citizen budget compromises
+
 ## Infrastructure & DevOps
 *   **Containerization:** Docker, Docker Compose
 *   **Cloud Provider:** Google Cloud Platform (GCP)

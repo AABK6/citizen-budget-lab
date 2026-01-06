@@ -13,23 +13,44 @@ Goal: Build the logic to parse raw Scenario DSL JSON into a flat dictionary of m
     - [ ] Sub-task: Verify it adapts when a dummy reform is added to the catalog.
 - [x] **Task: Conductor - User Manual Verification 'Phase 1: ETL Foundation' (Protocol in workflow.md)** (416ee9d)
 
-## Phase 2: Warehouse Integration (The Loader)
+## Phase 2: Warehouse Integration (The Loader) [checkpoint: a5921a8]
 Goal: Write the flattened data into DuckDB efficiently.
 
 - [x] **Task: DuckDB Table Management** (0576677)
     - [ ] Sub-task: Create `tools/sync_votes_to_warehouse.py` initialization logic.
     - [ ] Sub-task: Implement `create_or_alter_table` logic that checks existing columns and adds missing ones (schema evolution).
-- [ ] **Task: Batch Sync Logic**
+- [x] **Task: Batch Sync Logic** (6522f14)
     - [ ] Sub-task: Implement the "Incremental Load" pattern (fetch max `vote_id` from DuckDB, query Postgres/SQLite for newer votes).
     - [ ] Sub-task: Write integration tests ensuring idempotency (running twice doesn't duplicate rows).
-- [ ] **Task: Conductor - User Manual Verification 'Phase 2: Warehouse Integration' (Protocol in workflow.md)**
+- [x] **Task: Conductor - User Manual Verification 'Phase 2: Warehouse Integration' (Protocol in workflow.md)** (a5921a8)
 
-## Phase 3: Automation & Proof of Concept
+## Phase 3: Automation & Proof of Concept [checkpoint: c1d4dfa]
 Goal: Wire it all together and prove it answers political questions.
 
-- [ ] **Task: Make Integration**
+- [x] **Task: Make Integration** (64743ed)
     - [ ] Sub-task: Add `sync-votes` target to `Makefile`.
-- [ ] **Task: Analytical Proof**
+- [x] **Task: Analytical Proof** (7d11a48)
     - [ ] Sub-task: Create a query script `tools/analyze_political_clusters.py` that asks a complex question (e.g., "Average pension cut for users who increased education spending").
     - [ ] Sub-task: Verify it runs against the populated DuckDB.
-- [ ] **Task: Conductor - User Manual Verification 'Phase 3: Automation & Proof of Concept' (Protocol in workflow.md)**
+- [x] **Task: File Store Sync Support** (d3a9140)
+    - [ ] Sub-task: Allow `VOTES_STORE=file` to read `data/cache/votes.json` with `data/cache/scenarios_dsl.json`.
+- [x] **Task: Conductor - User Manual Verification 'Phase 3: Automation & Proof of Concept' (Protocol in workflow.md)** (c1d4dfa)
+
+## Phase 4: Production Data Sync [checkpoint: 3e92ba4]
+Goal: Sync real vote data into DuckDB and run analysis for actual usage.
+
+- [x] **Task: Configure Real Vote Store Access** (3ba6c10)
+    - [ ] Sub-task: Identify the production vote store (Postgres or SQLite) and ensure credentials/paths are available.
+    - [ ] Sub-task: Validate connectivity and permissions for the chosen store.
+- [x] **Task: Full Sync + Analysis** (75d6e1a)
+    - [ ] Sub-task: Run `make sync-votes` against the real store.
+    - [ ] Sub-task: Run `tools/analyze_political_clusters.py` against populated DuckDB.
+- [x] **Task: Conductor - User Manual Verification 'Phase 4: Production Data Sync' (Protocol in workflow.md)** (3e92ba4)
+
+## Phase 5: Production Vote Count Validation [checkpoint: a441e8a]
+Goal: Confirm production vote counts and data source alignment.
+
+- [x] **Task: Validate Production Vote Counts** (1f70518)
+    - [x] Sub-task: Query counts in the production `votes` and `scenarios` tables. (Found 4 votes, 3 scenarios in Cloud SQL)
+    - [x] Sub-task: Confirm which instance/database is being queried. (reviewflow-nrciu:europe-west1:citizen-budget-db)
+- [x] Task: Conductor - User Manual Verification 'Phase 5: Production Vote Count Validation' (Protocol in workflow.md)

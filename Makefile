@@ -4,7 +4,7 @@ SHELL := /bin/bash
 YEAR ?= 2026
 COUNTRIES ?= FR,DE,IT
 
-.PHONY: help warm-all warm-eurostat warm-eurostat-sub warm-plf warm-macro warm-decp summary
+.PHONY: help warm-all warm-eurostat warm-eurostat-sub warm-plf warm-macro warm-decp summary sync-votes
 
 	help:
 		@echo "Targets:"
@@ -14,6 +14,7 @@ COUNTRIES ?= FR,DE,IT
 		@echo "  make warm-plf YEAR=2025 DATASET=plf25-depenses-2025-selon-destination  # Optional ODS snapshot"
 		@echo "  make warm-macro CFG=data/macro_config.json  # Warm INSEE BDM macro series cache"
 		@echo "  make warm-decp YEAR=2024 DATASET=decp-v3-marches-valides ENRICH=1 SIRENE_MAX=100 SIRENE_QPS=5  # DECP ingest"
+		@echo "  make sync-votes VOTES_STORE=sqlite VOTES_SQLITE_PATH=data/cache/votes.sqlite3  # Sync votes into DuckDB"
 		@echo "Env (optional): EUROSTAT_SDMX_BASE, EUROSTAT_COOKIE, EUROSTAT_BASE, INSEE_CLIENT_ID, INSEE_CLIENT_SECRET"
 
 warm-eurostat:
@@ -62,6 +63,19 @@ warm-all: verify-warmers warm-eurostat warm-macro summary
 warm-eurostat-sub:
 	@echo "==> Warming EU COFOG subfunction shares for $(YEAR) in $(COUNTRIES)"
 	python3 -m services.api.cache_warm eurostat-cofog-sub --year $(YEAR) --countries $(COUNTRIES)
+
+sync-votes:
+	@if [ -z "$(VOTES_STORE)" ]; then \
+		echo "ERROR: Set VOTES_STORE=sqlite|postgres"; \
+		exit 2; \
+	fi; \
+	if [ "$(VOTES_STORE)" = "postgres" ] && [ -z "$(VOTES_DB_DSN)" ]; then \
+		echo "ERROR: Set VOTES_DB_DSN for postgres store"; \
+		exit 2; \
+	fi; \
+	echo "==> Syncing votes to warehouse (store=$(VOTES_STORE))"; \
+	if [ -f .venv/bin/activate ]; then source .venv/bin/activate; fi; \
+	PYTHONPATH=. python tools/sync_votes_to_warehouse.py
 
 .PHONY: verify-warmers
 verify-warmers:
