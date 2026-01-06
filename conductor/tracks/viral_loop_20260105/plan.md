@@ -33,14 +33,14 @@ Goal: Generate high-quality visual cards on-the-fly for social media sharing.
 ## Phase 3: Sharing UI & Viral Messaging
 Goal: Encourage users to share their results and explain the collective impact.
 
-- [ ] **Task: Implement Sharing Buttons**
-    - [ ] Sub-task: Create `frontend/components/ShareButtons.tsx` with X, LinkedIn, and WhatsApp integration.
-    - [ ] Sub-task: Add a "Copy Link" utility with visual feedback (Confetti/Toast).
-- [ ] **Task: Add Viral Messaging & Milestone Tease**
-    - [ ] Sub-task: Implement the "Political Weight" callout emphasizing collective power.
-    - [ ] Sub-task: Add a locked "Consensus comparison" card with the "Unlocks at 10,000 votes" message.
-- [ ] **Task: UI/Snapshot Testing**
-    - [ ] Sub-task: Verify the buttons generate correct sharing URLs.
+- [x] **Task: Implement Sharing Buttons**
+    - [x] Sub-task: Create `frontend/components/ShareButtons.tsx` with X, LinkedIn, and WhatsApp integration.
+    - [x] Sub-task: Add a "Copy Link" utility with visual feedback (Confetti/Toast).
+- [x] **Task: Add Viral Messaging & Milestone Tease**
+    - [x] Sub-task: Implement the "Political Weight" callout emphasizing collective power.
+    - [x] Sub-task: Add a locked "Consensus comparison" card with the "Unlocks at 10,000 votes" message.
+- [x] **Task: UI/Snapshot Testing**
+    - [x] Sub-task: Verify the buttons generate correct sharing URLs.
 - [ ] **Task: Conductor - User Manual Verification 'Phase 3: Sharing UI & Viral Messaging' (Protocol in workflow.md)**
 
 ## Phase 4: SEO & SEO Integration

@@ -803,6 +803,15 @@ export default function BuildPageClient() {
       const url = `${window.location.origin}${pathname}${params.toString() ? `?${params.toString()}` : ''}`;
       await navigator.clipboard.writeText(url);
       setShareFeedback('Lien du scénario copié dans le presse-papiers.');
+      import('canvas-confetti')
+        .then((confetti) => {
+          confetti.default({
+            particleCount: 60,
+            spread: 70,
+            origin: { y: 0.8 },
+          });
+        })
+        .catch(() => {});
     } catch (err) {
       setShareFeedback('Impossible de copier le lien.');
     }

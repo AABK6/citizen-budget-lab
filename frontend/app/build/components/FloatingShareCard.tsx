@@ -1,5 +1,6 @@
 import { ScenarioDashboard } from './ScenarioDashboard';
 import type { DslAction, PolicyLever } from '../types';
+import { ShareButtons } from '@/components/ShareButtons';
 
 interface FloatingShareCardProps {
   isOpen: boolean;
@@ -47,16 +48,8 @@ export function FloatingShareCard({
   const safeDeficit = hasDeficit ? (deficit as number) : 0;
   const ratio = Number.isFinite(deficitRatio) ? (deficitRatio as number) : null;
   const deficitTone = safeDeficit < 0 ? 'text-rose-600' : 'text-emerald-600';
-  const shareDisabled = !shareUrl;
-  const shareText = "J'ai voté mon budget citoyen. Plus nous serons nombreux, plus cette consultation pèsera.";
-  const sharePayload = shareUrl ? `${shareText} ${shareUrl}` : shareText;
-  const encodedPayload = encodeURIComponent(sharePayload);
-  const encodedUrl = shareUrl ? encodeURIComponent(shareUrl) : '';
-  const shareClasses = `px-3 py-2 rounded-lg text-xs font-bold transition-all border ${
-    shareDisabled
-      ? 'border-slate-200 text-slate-400 bg-slate-100 pointer-events-none'
-      : 'border-slate-200 text-slate-600 bg-white hover:bg-slate-50'
-  }`;
+  const shareText =
+    "J'ai voté mon budget citoyen. Plus nous serons nombreux, plus cette consultation pèsera.";
 
   return (
     <div className="fixed inset-x-4 bottom-4 z-[120] pointer-events-none sm:inset-auto sm:bottom-6 sm:right-6 sm:left-auto sm:w-[460px]">
@@ -114,54 +107,27 @@ export function FloatingShareCard({
         </div>
 
         <div className="mt-4 space-y-3">
-          <p className="text-sm text-slate-600">
-            Plus nous serons nombreux à voter, plus cette consultation pèsera dans le débat public.
-            Invitez 2-3 personnes à tester la simulation.
-          </p>
-          <div className="flex flex-wrap items-center gap-2">
-            <a
-              href={shareUrl ? `https://x.com/intent/tweet?text=${encodedPayload}` : '#'}
-              target="_blank"
-              rel="noreferrer"
-              className={shareClasses}
-              aria-disabled={shareDisabled}
-            >
-              Partager sur X
-            </a>
-            <a
-              href={shareUrl ? `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}` : '#'}
-              target="_blank"
-              rel="noreferrer"
-              className={shareClasses}
-              aria-disabled={shareDisabled}
-            >
-              LinkedIn
-            </a>
-            <a
-              href={shareUrl ? `https://wa.me/?text=${encodedPayload}` : '#'}
-              target="_blank"
-              rel="noreferrer"
-              className={shareClasses}
-              aria-disabled={shareDisabled}
-            >
-              WhatsApp
-            </a>
-            <button
-              type="button"
-              onClick={onCopyLink}
-              className={`px-3 py-2 rounded-lg text-xs font-bold transition-all border ${
-                shareDisabled
-                  ? 'border-slate-200 text-slate-400 bg-slate-100'
-                  : 'border-blue-200 text-blue-600 bg-blue-50 hover:bg-blue-100'
-              }`}
-              disabled={shareDisabled}
-            >
-              Copier le lien
-            </button>
+          <div className="rounded-2xl border border-blue-100 bg-blue-50/70 p-3 text-sm text-blue-900">
+            <div className="flex items-start gap-2">
+              <span className="material-icons text-base text-blue-500">public</span>
+              <div>
+                <p className="font-semibold">Votre voix compte</p>
+                <p className="text-blue-800/90">
+                  Plus nous serons nombreux à voter, plus cette consultation pèsera dans le débat public.
+                  Invitez 2-3 personnes à tester la simulation.
+                </p>
+              </div>
+            </div>
           </div>
-          <div className="flex items-center gap-2 text-[11px] font-semibold text-slate-400">
-            <span className="material-icons text-xs">lock</span>
-            Comparaison collective débloquée à 10&nbsp;000 votes.
+
+          <ShareButtons shareUrl={shareUrl} message={shareText} onCopy={onCopyLink} />
+
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-[11px] font-semibold text-slate-500 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="material-icons text-xs">lock</span>
+              Comparaison collective débloquée à 10&nbsp;000 votes.
+            </div>
+            <span className="text-[10px] uppercase tracking-widest text-slate-400">Bientôt</span>
           </div>
         </div>
       </div>
