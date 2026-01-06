@@ -5,12 +5,12 @@ This plan follows the Conductor methodology: TDD, high test coverage, and phase-
 ## Phase 1: Share Page Infrastructure & Routing
 Goal: Create the destination page for shared scenarios and fetch the necessary data.
 
-- [~] **Task: Create Share Page Route**
-    - [ ] Sub-task: Create `frontend/app/share/[id]/page.tsx` as a dynamic route.
-    - [ ] Sub-task: Implement a layout using `@codegouvfr/react-dsfr` components.
-    - [ ] Sub-task: Fetch scenario data using the existing `scenario` GraphQL query.
-- [ ] **Task: Unit Test Share Page Logic**
-    - [ ] Sub-task: Write Vitest tests in `frontend/app/share/[id]/page.test.tsx` to verify fetching and data display.
+- [x] **Task: Create Share Page Route** (1048b84)
+    - [x] Sub-task: Create `frontend/app/share/[id]/page.tsx` as a dynamic route.
+    - [x] Sub-task: Implement a layout using `@codegouvfr/react-dsfr` components.
+    - [x] Sub-task: Fetch scenario data using the existing `scenario` GraphQL query.
+- [x] **Task: Unit Test Share Page Logic** (1048b84)
+    - [x] Sub-task: Write Vitest tests in `frontend/app/share/[id]/page.test.tsx` to verify fetching and data display.
 - [ ] **Task: Conductor - User Manual Verification 'Phase 1: Share Page Infrastructure & Routing' (Protocol in workflow.md)**
 
 ## Phase 2: Dynamic OpenGraph Image Generation
