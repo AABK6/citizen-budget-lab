@@ -5,7 +5,7 @@ This plan follows the Conductor methodology: TDD, high test coverage, and phase-
 ## Phase 1: Share Page Infrastructure & Routing
 Goal: Create the destination page for shared scenarios and fetch the necessary data.
 
-- [ ] **Task: Create Share Page Route**
+- [~] **Task: Create Share Page Route**
     - [ ] Sub-task: Create `frontend/app/share/[id]/page.tsx` as a dynamic route.
     - [ ] Sub-task: Implement a layout using `@codegouvfr/react-dsfr` components.
     - [ ] Sub-task: Fetch scenario data using the existing `scenario` GraphQL query.

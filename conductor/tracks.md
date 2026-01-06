@@ -6,18 +6,18 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ## Active Tracks
 
-## [ ] Track: Scenario ETL & Political Analytics Pipeline
+## [x] Track: Scenario ETL & Political Analytics Pipeline
 *Link: [./conductor/tracks/scenario_etl_20260105/](./conductor/tracks/scenario_etl_20260105/)*
 
 ## [ ] Track: Post-Vote Viral Loop & Engagement Overhaul
 *Link: [./conductor/tracks/viral_loop_20260105/](./conductor/tracks/viral_loop_20260105/)*
 
-## [x] Track: Voters' Preference Database Testing
-*Link: [./conductor/tracks/vote_db_testing_20260105/](./conductor/tracks/vote_db_testing_20260105/)*
-
 ---
 
 ## Archived Tracks
+
+### [x] Track: Voters' Preference Database Testing
+*Link: [./conductor/archive/vote_db_testing_20260105/](./conductor/archive/vote_db_testing_20260105/)*
 
 ### [x] Track: Harmonize Policy Catalog with Administrative Missions
 *Link: [./conductor/archive/policy_mission_harmony_20260102/](./conductor/archive/policy_mission_harmony_20260102/)*
@@ -30,3 +30,8 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ### [x] Track: Admin UI Enhancement
 *Link: [./conductor/archive/admin_ui_enhancement_20260102/](./conductor/archive/admin_ui_enhancement_20260102/)*
+
+---
+
+## [ ] Track: Mobile Compatibility Overhaul
+*Link: [./conductor/tracks/mobile_compatibility_20260106/](./conductor/tracks/mobile_compatibility_20260106/)*
