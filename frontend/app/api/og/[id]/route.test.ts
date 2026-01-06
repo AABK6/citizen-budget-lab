@@ -73,7 +73,7 @@ actions:
     expect(response.headers.get('content-type')).toContain('image/svg+xml');
     const body = await response.text();
     expect(body).toContain('Lever One');
-    expect(body).toContain('Solde public');
+    expect(body).toContain('SOLDE PUBLIC');
     expect(body).toContain('Dépenses');
     expect(body).toContain('VOTRE BUDGET');
   });
