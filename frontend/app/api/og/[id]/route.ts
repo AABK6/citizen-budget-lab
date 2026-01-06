@@ -1,6 +1,4 @@
 import yaml from 'js-yaml';
-import { resolveGraphqlUrl } from '@/lib/backend';
-
 type PolicyLever = {
   id: string;
   label: string;
@@ -160,9 +158,10 @@ const buildOgSvg = (payload: {
 </svg>`;
 };
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: { params: { id: string } }) {
   const scenarioId = params?.id || 'demo';
-  const endpoint = resolveGraphqlUrl();
+  const origin = new URL(req.url).origin;
+  const endpoint = new URL('/api/graphql', origin).toString();
   const gql = `
     query OgScenario($id: ID!) {
       scenario(id: $id) {
@@ -196,10 +195,14 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query: gql, variables: { id: scenarioId } }),
+      cache: 'no-store',
     });
     const js = await res.json();
     scenario = js?.data?.scenario ?? null;
     policyLevers = js?.data?.policyLevers ?? [];
+    if (!scenario && Array.isArray(js?.errors) && js.errors.length > 0) {
+      throw new Error('GraphQL error');
+    }
   } catch {
     scenario = null;
     policyLevers = [];
