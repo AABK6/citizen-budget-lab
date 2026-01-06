@@ -21,9 +21,7 @@ describe('ShareButtons', () => {
     );
     expect(linkedinLink).toHaveAttribute(
       'href',
-      `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(shareUrl)}&title=${encodeURIComponent(
-        message,
-      )}&summary=${encodeURIComponent(message)}`,
+      `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,
     );
     expect(whatsappLink).toHaveAttribute(
       'href',

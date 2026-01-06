@@ -246,7 +246,8 @@ export default function BuildPageClient() {
     }
     const params = new URLSearchParams();
     params.set('scenarioId', scenarioId);
-    setShareUrl(`${window.location.origin}/build?${params.toString()}`);
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+    setShareUrl(`${baseUrl.replace(/\\/$/, '')}/build?${params.toString()}`);
   }, [scenarioId]);
 
 

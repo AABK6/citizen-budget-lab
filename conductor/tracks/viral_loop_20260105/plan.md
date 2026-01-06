@@ -46,9 +46,9 @@ Goal: Encourage users to share their results and explain the collective impact.
 ## Phase 4: SEO & SEO Integration
 Goal: Ensure the shared links look great on social media platforms.
 
-- [ ] **Task: Metadata Integration**
-    - [ ] Sub-task: Implement `generateMetadata` on the share page to point to the `/api/og/[id]` endpoint.
-    - [ ] Sub-task: Set appropriate social titles and descriptions.
+- [x] **Task: Metadata Integration**
+    - [x] Sub-task: Implement `generateMetadata` on the build page to point to the `/api/og/[id]` endpoint.
+    - [x] Sub-task: Set appropriate social titles and descriptions.
 - [ ] **Task: Final Polish & Accessibility**
     - [ ] Sub-task: Run `axe` tests on the new page.
     - [ ] Sub-task: Verify responsive behavior on mobile.
