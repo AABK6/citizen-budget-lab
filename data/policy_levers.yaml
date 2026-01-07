@@ -7,8 +7,6 @@
   fixed_impact_eur: 100000000
   major_amendment: true
   cofog_mapping: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 100000000
     '2027': 150000000
@@ -51,8 +49,6 @@
   fixed_impact_eur: 2500000000
   major_amendment: true
   cofog_mapping: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 2500000000
     '2027': 2600000000
@@ -100,8 +96,6 @@
   - Assemblée nat., PLF 2026[9]
   - https://www.lcp.fr/actualites/budget-2025-l-assemblee-nationale-vote-la-defiscalisation-des-pensions-alimentaires
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': -470000000
     '2027': -480000000
@@ -172,8 +166,6 @@
   - Assemblée nat., PLF 2026[11]
   - https://www.pour-les-personnes-agees.gouv.fr/
   params_schema: {}
-  mission_mapping:
-    M_SOLIDARITE: 1.0
   multi_year_impact:
     '2026': -272000000
     '2027': -280000000
@@ -214,8 +206,6 @@
   - Assemblée nat., PLF 2026[12]
   - https://www.lhotellerie-restauration.fr/
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': -30000000
     '2027': -31000000
@@ -258,8 +248,6 @@
   - Assemblée nat., PLF 2026[13]
   - https://www.service-public.fr/particuliers/vosdroits/F31130
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 2000000000
     '2027': 2100000000
@@ -295,8 +283,6 @@
   - Assemblée nat., amend. PLF[14]
   - https://www.moneyvox.fr/patrimoine/actualites/99426/exit-tax-les-deputes-votent-le-retour-a-la-version-voulue-par-nicolas-sarkozy
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 700000000
     '2027': 750000000
@@ -333,8 +319,6 @@
   - Assemblée nat., PLF 2026[15]
   - https://www.legifiscal.fr/actualites/6123-plf-2025-abattement-exceptionnel-donations-assurance-vie.html
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 0
     '2027': 0
@@ -376,8 +360,6 @@
   - Assemblée nat., PLF 2026[17]
   - https://www.publicsenat.fr/actualites/economie/ij-ald-le-senat-vote-un-compromis-sur-la-fiscalisation
   params_schema: {}
-  mission_mapping:
-    M_HEALTH: 1.0
   multi_year_impact:
     '2026': -150000000
     '2027': -150000000
@@ -417,8 +399,6 @@
   - Assemblée nat., PLF 2026[17]
   - https://www.mercipourlinfo.fr/actualites/impots/impot-sur-le-revenu-la-reduction-pour-frais-de-scolarite-finalement-maintenue-en-2025-901231
   params_schema: {}
-  mission_mapping:
-    M_ENSEIGNEMENT_SCOLAIRE: 1.0
   multi_year_impact:
     '2026': 450000000
     '2027': 460000000
@@ -461,8 +441,6 @@
   - Assemblée nat., PLF 2026[18]
   - https://www.vie-publique.fr/loi/295814-projet-de-loi-de-finances-pour-2025-plf-budget-2025
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 150000000
     '2027': 160000000
@@ -507,8 +485,6 @@
   - Assemblée nat., PLF 2026[19]
   - https://www.lcp.fr/actualites/budget-2025-l-assemblee-nationale-vote-le-durcissement-de-la-contribution-exceptionnelle-des
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 6000000000
     '2027': 6000000000
@@ -551,8 +527,6 @@
   - Assemblée nat., PLF 2026[20]
   - https://www.legifiscal.fr/actualites/6134-plf-2025-adoption-amendement-impot-universel-multnationales.html
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 1500000000
     '2027': 1600000000
@@ -594,8 +568,6 @@
   - Assemblée nat., PLF 2026[21]
   - https://siecledigital.fr/2024/10/21/budget-2025-lassemblee-nationale-vote-le-doublement-de-la-taxe-gafam/
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 2400000000
     '2027': 2400000000
@@ -638,8 +610,6 @@
   - Observatoire de la Fiscalité, simulations OCDE
   - https://www.oecd.org/tax/beps/tax-challenges-arising-from-the-digitalisation-of-the-economy-global-anti-base-erosion-model-rules-pillar-two.htm
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 400000000
     '2027': 420000000
@@ -683,8 +653,6 @@
   - Assemblée nat., PLF 2026[24]
   - https://www.legifiscal.fr/actualites/6135-plf-2025-taxe-rachat-actions-taux-33-pourcent.html
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 2000000000
     '2027': 2000000000
@@ -727,8 +695,6 @@
   - Assemblée nat., PLF 2026[25]
   - https://www.legifiscal.fr/actualites/6136-plf-2025-amendement-taxation-dividendes-exceptionnels.html
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 2000000000
     '2027': 2000000000
@@ -774,8 +740,6 @@
   - Assemblée nat., PLF 2026[26]
   - https://www.deloitte.fr/actualites/fiscal/2024/plf-2025-amendement-rejet-cir-delocalisation
   params_schema: {}
-  mission_mapping:
-    M_RECHERCHE_ENSEIGNEMENT_SUPERIEUR: 1.0
   multi_year_impact:
     '2026': 100000000
     '2027': 110000000
@@ -820,8 +784,6 @@
   - Assemblée nat., PLF 2026[27]
   - https://www.legifiscal.fr/actualites/6131-plf-2025-relevement-seuil-taux-reduit-is-100000-euros.html
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': -200000000
     '2027': -200000000
@@ -862,8 +824,6 @@
   - Assemblée nat., PLF 2026[28]
   - https://www.archimede-avocats.fr/actualites/fiscalite-des-entreprises/recentrage-du-pacte-dutreil-les-amendements-adoptes-en-premiere-lecture-au-plf-2025
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 2000000000
     '2027': 2000000000
@@ -1066,8 +1026,6 @@
   - PLFSS 2026, AN[2]
   - https://www.publicsenat.fr/actualites/societe/le-senat-supprime-lexoneration-de-cotisations-pour-les-apprentis
   params_schema: {}
-  mission_mapping:
-    M_TRAVAIL_EMPLOI: 1.0
   multi_year_impact:
     '2026': -1100000000
     '2027': -1150000000
@@ -1112,8 +1070,6 @@
   - PLFSS 2026, AN[2]
   - https://www.publicsenat.fr/actualites/economie/le-senat-rejette-la-taxe-sur-les-titres-restaurant
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': -950000000
     '2027': -1000000000
@@ -1191,8 +1147,6 @@
   - PLFSS 2026 adopté[3]
   - https://www.grisbee.fr/actualites/loi-de-financement-de-la-securite-sociale-2025-quels-impacts-pour-votre-patrimoine
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 1500000000
     '2027': 1550000000
@@ -1237,8 +1191,6 @@
   - PLFSS 2026 adopté[4]
   - https://www.publicsenat.fr/actualites/economie/le-senat-vote-la-taxe-sur-les-mutuelles-sante
   params_schema: {}
-  mission_mapping:
-    M_HEALTH: 1.0
   multi_year_impact:
     '2026': 1100000000
     '2027': 0
@@ -1285,8 +1237,6 @@
   - PLFSS 2026 amend. AN[33]
   - https://www.editions-tissot.fr/actualite/droit-du-travail/heures-supplementaires-la-deduction-forfaitaire-patronale-est-etendue-aux-entreprises-de-250-salaries-et-plus
   params_schema: {}
-  mission_mapping:
-    M_TRAVAIL_EMPLOI: 1.0
   multi_year_impact:
     '2026': -500000000
     '2027': -520000000
@@ -1331,8 +1281,6 @@
   - PLFSS 2026 adopté[34]
   - https://www.juritravail.com/actualite/loi-de-financement-de-la-securite-sociale-2026-les-nouveautes-en-matiere-de-paie
   params_schema: {}
-  mission_mapping:
-    M_SOLIDARITY: 1.0
   multi_year_impact:
     '2026': 600000000
     '2027': 620000000
@@ -1528,8 +1476,6 @@
     decile10ImpactEur: -12000
     gdpImpactPct: -0.02
     jobsImpactCount: -500
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 6300000000
     '2027': 6300000000
@@ -1580,8 +1526,6 @@
   - Fondation iFRAP [4]
   - https://www.publicsenat.fr/actualites/economie/budget-2025-le-senat-vote-la-surtaxe-sur-les-hauts-revenus
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 2000000000
     '2027': 2000000000
@@ -1632,8 +1576,6 @@
     decile10ImpactEur: -200
     gdpImpactPct: -0.05
     jobsImpactCount: -2000
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 6000000000
     '2027': 6000000000
@@ -1691,8 +1633,6 @@
     decile10ImpactEur: -850
     gdpImpactPct: -0.03
     jobsImpactCount: -1000
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 3500000000
     '2027': 3500000000
@@ -1742,8 +1682,6 @@
   - Assemblée nationale [9]
   - https://www.deloitte.fr/actualites/fiscal/2024/plf-2025-hausse-taux-ttf
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 1200000000
     '2027': 1250000000
@@ -1790,8 +1728,6 @@
   - Fondation iFRAP [10]
   - https://fipeco.fr/pdf/Progressivit%C3%A9.pdf
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 2800000000
     '2027': 2800000000
@@ -1841,8 +1777,6 @@
     decile10ImpactEur: -250
     gdpImpactPct: -0.1
     jobsImpactCount: -5000
-  mission_mapping:
-    M_ECOLOGIE: 1.0
   multi_year_impact:
     '2026': 4000000000
     '2027': 4200000000
@@ -1895,8 +1829,6 @@
     decile10ImpactEur: 0
     gdpImpactPct: -0.08
     jobsImpactCount: -15000
-  mission_mapping:
-    M_RECHERCHE_ENSEIGNEMENT_SUPERIEUR: 1.0
   multi_year_impact:
     '2026': 2000000000
     '2027': 2000000000
@@ -1938,8 +1870,6 @@
   - La Finance Pour Tous [17]
   - https://www.ccomptes.fr/fr/publications/le-credit-dimpot-en-faveur-des-services-la-personne
   params_schema: {}
-  mission_mapping:
-    M_SOLIDARITY: 1.0
   multi_year_impact:
     '2026': 1000000000
     '2027': 1050000000
@@ -1980,8 +1910,6 @@
   - La Finance Pour Tous [18]
   - https://www.lcp.fr/actualites/impots-l-assemblee-nationale-rejette-la-suppression-de-l-abattement-de-10-pour-les-retraites
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 4600000000
     '2027': 4600000000
@@ -2024,8 +1952,6 @@
   - La Finance Pour Tous [19]
   - https://www.capital.fr/votre-argent/impots-vers-une-suppression-de-lexoneration-des-heures-supplementaires-1505231
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 1700000000
     '2027': 1700000000
@@ -2069,8 +1995,6 @@
   - Public Sénat [20]
   - https://www.ccomptes.fr/fr/publications/la-lutte-contre-la-fraude-fiscale-des-particuliers
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 1500000000
     '2027': 1600000000
@@ -2113,8 +2037,6 @@
   - France24 [22]
   - https://siecledigital.fr/2024/10/21/budget-2025-lassemblee-nationale-vote-le-doublement-de-la-taxe-gafam/
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 800000000
     '2027': 850000000
@@ -2158,8 +2080,6 @@
   - France24 [22]
   - https://fipeco.fr/fiche/La-CVAE-et-sa-suppression
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 4000000000
     '2027': 4200000000
@@ -2202,8 +2122,6 @@
   - Budget 2022
   - https://fipeco.fr/fiche/La-fiscalit%C3%A9-des-carburants-et-les-taxes-int%C3%A9rieures-de-consommation
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': -5000000000
     '2027': -5000000000
@@ -2244,8 +2162,6 @@
   - Budget debates 2023
   - https://www.publicsenat.fr/actualites/economie/baisse-dimpot-pour-les-classes-moyennes-les-pistes-du-gouvernement
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': -2000000000
     '2027': -2050000000
@@ -2289,8 +2205,6 @@
   - Budget debates 2023
   - https://www.lcp.fr/actualites/budget-2025-l-assemblee-nationale-vote-la-defiscalisation-integrale-des-heures
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': -500000000
     '2027': -520000000
@@ -2333,8 +2247,6 @@
   - Est.
   - https://www.journaldeleconomie.fr/TVA-a-0-sur-les-produits-de-premiere-necessite-quels-enjeux-pour-le-pouvoir-d-achat_a123.html
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': -1500000000
     '2027': -1500000000
@@ -2380,8 +2292,6 @@
   - 'Institut Montaigne (2022): Coût baisse TVA 5.5% énergie ~8.2-12.4Md€.'
   - https://www.vie-publique.fr/loi/295814-projet-de-loi-de-finances-pour-2025-plf-budget-2025
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': -11300000000
     '2027': -11300000000
@@ -2427,8 +2337,6 @@
   - PLF 2024
   - https://www.publicsenat.fr/actualites/economie/budget-2026-le-senat-vote-la-reindexation-du-bareme-de-l-impot-sur-le-revenu
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 2200000000
     '2027': 2200000000
@@ -2738,8 +2646,6 @@
   - Est.
   - https://boss.gouv.fr/portail/accueil/actualites-boss/2024/janvier/hausse-du-taux-de-la-cotisation-d.html
   params_schema: {}
-  mission_mapping:
-    M_SOLIDARITE: 1.0
   multi_year_impact:
     '2026': 10000000000
     '2027': 10000000000
@@ -3813,8 +3719,6 @@
   - Bayrou plan [11]
   - https://www.banquedesterritoires.fr/taxe-longue-distance-billets-davion-le-senat-durcit-la-fiscalite-sur-le-transport
   params_schema: {}
-  mission_mapping:
-    M_ECOLOGIE: 1.0
   multi_year_impact:
     '2026': 580000000
     '2027': 600000000
@@ -4025,8 +3929,6 @@
   - 'FIPECO (2025): Surtaxes IS grandes entreprises rapportent ~8Md€+.'
   - https://fipeco.fr/fiche/Limp%C3%B4t-sur-les-soci%C3%A9t%C3%A9s
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 8000000000
     '2027': 8000000000
@@ -4065,8 +3967,6 @@
   - Workbook 20251017, Recettes
   - https://www.ey.com/fr_fr/tax/prix-de-transfert-les-nouvelles-mesures-de-la-loi-de-finances-pour-2024
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 4600000000
     '2027': 4600000000
@@ -4110,8 +4010,6 @@
   - Workbook 20251017, Recettes
   - https://www.insee.fr/fr/statistiques/fichier/version-html/3655385/ip1721.pdf
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 8200000000
     '2027': 8200000000
@@ -4163,8 +4061,6 @@
     decile10ImpactEur: -600
     gdpImpactPct: -0.2
     jobsImpactCount: -10000
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 12000000000
     '2027': 12000000000
@@ -4207,8 +4103,6 @@
   - Workbook 20251017, Recettes
   - https://www.maire-info.fr/fiscalite/tva-taux-intermediaire-les-collectivites-et-les-acteurs-du-logement-social-s'inquietent-article-28123
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 3000000000
     '2027': 3100000000
@@ -4248,8 +4142,6 @@
   - Workbook 20251017, Recettes
   - https://www.service-public.fr/professionnels-entreprises/vosdroits/F21740
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 2200000000
     '2027': 2200000000
@@ -4293,8 +4185,6 @@
   - Workbook 20251017, Recettes
   - https://www.ofce.sciences-po.fr/blog/le-quotient-conjugal-un-dispositif-anti-redistributif/
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 1100000000
     '2027': 1100000000
@@ -4339,8 +4229,6 @@
   - Workbook 20251017, Recettes
   - https://www.familles-de-france.org/fr/actualite/individualisation-de-limpot-sur-le-revenu-le-quotient-conjugal-en-danger
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 7000000000
     '2027': 7000000000
@@ -4382,8 +4270,6 @@
   - Workbook 20251017, Recettes
   - https://www.senat.fr/questions/base/2014/qSEQ140110031.html
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 2890000000
     '2027': 2890000000
@@ -4426,8 +4312,6 @@
   - Workbook 20251017, Recettes
   - https://www.vie-publique.fr/loi/292641-proposition-de-loi-instaurant-un-impot-sur-la-fortune-zucman
   params_schema: {}
-  mission_mapping:
-    M_GESTION_FINANCES_PUBLIQUES: 1.0
   multi_year_impact:
     '2026': 4800000000
     '2027': 4800000000
@@ -4473,8 +4357,6 @@
   - Workbook 20251017, Recettes
   - https://www.maire-info.fr/fiscalite/finances-locales-le-debat-sur-le-retour-de-la-taxe-dhabitation-est-lance-article-29123
   params_schema: {}
-  mission_mapping:
-    M_RELATIONS_AVEC_LES_COLLECTIVITES_TERRITORIALES: 1.0
   multi_year_impact:
     '2026': 8000000000
     '2027': 8000000000
@@ -4522,8 +4404,6 @@
     decile10ImpactEur: -1500
     gdpImpactPct: -0.3
     jobsImpactCount: -15000
-  mission_mapping:
-    M_RELATIONS_AVEC_LES_COLLECTIVITES_TERRITORIALES: 1.0
   multi_year_impact:
     '2026': 21800000000
     '2027': 21800000000
@@ -4567,8 +4447,6 @@
   - Workbook 20251017, Recettes
   - https://www.publicsenat.fr/actualites/economie/taxe-sur-les-billets-davion-le-senat-adopte-une-augmentation-moderee
   params_schema: {}
-  mission_mapping:
-    M_ECOLOGIE: 1.0
   multi_year_impact:
     '2026': 850000000
     '2027': 850000000
@@ -4612,8 +4490,6 @@
   - Workbook 20251017, Recettes
   - https://www.latribune.fr/entreprises-finance/services/transport-logistique/l-alsace-lance-son-ecotaxe-poids-lourds-le-secteur-du-transport-routier-vent-debout-1009231.html
   params_schema: {}
-  mission_mapping:
-    M_ECOLOGIE: 1.0
   multi_year_impact:
     '2026': 600000000
     '2027': 800000000
