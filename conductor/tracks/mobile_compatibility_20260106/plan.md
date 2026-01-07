@@ -1,7 +1,7 @@
 # Plan: Mobile Compatibility Overhaul
 
 ## Phase 1: Foundation & Layout Optimization
-- [ ] Task: Audit existing layout components for mobile responsiveness issues.
+- [~] Task: Audit existing layout components for mobile responsiveness issues.
 - [ ] Task: Refactor the Global Header and Summary Bar for compact mobile viewports.
 - [ ] Task: Implement mobile-specific visibility controls (e.g., `hidden md:block`) for landing page components.
 - [ ] Task: Conductor - User Manual Verification 'Foundation & Layout Optimization' (Protocol in workflow.md)
