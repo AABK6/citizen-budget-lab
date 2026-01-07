@@ -123,34 +123,36 @@ export function Scoreboard({
                 <div className="hidden sm:block h-8 w-px bg-slate-200 mx-2"></div>
 
                 {/* Primary Metric: BALANCE / DEFICIT */}
-                <div className="flex flex-col">
-                    <span className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">Solde Public</span>
+                <div className="flex flex-wrap items-end gap-2 sm:gap-3">
                     <div className="flex flex-col">
-                        <div className="flex items-baseline gap-3">
-                            {/* Current Value */}
-                            <span id="scoreboard-deficit" className={`text-xl sm:text-3xl font-extrabold tracking-tight transition-all duration-300 ${showPreview ? 'opacity-40 blur-[1px]' : ''} ${stats.deficit < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
-                                {stats.deficit > 0 ? '+' : ''}{formatCurrencyShort(stats.deficit)}
-                            </span>
+                        <span className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">Solde Public</span>
+                        <div className="flex flex-col">
+                            <div className="flex items-baseline gap-3">
+                                {/* Current Value */}
+                                <span id="scoreboard-deficit" className={`text-xl sm:text-3xl font-extrabold tracking-tight transition-all duration-300 ${showPreview ? 'opacity-40 blur-[1px]' : ''} ${stats.deficit < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
+                                    {stats.deficit > 0 ? '+' : ''}{formatCurrencyShort(stats.deficit)}
+                                </span>
 
-                            {/* Ghost / Preview Value */}
-                            {showPreview && (
-                                <span className={`text-xl sm:text-3xl font-extrabold tracking-tight animate-in fade-in slide-in-from-bottom-2 duration-200 ${previewDeficit! < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
-                                    {previewDeficit! > 0 ? '+' : ''}{formatCurrencyShort(previewDeficit!)}
-                                </span>
-                            )}
-                        </div>
-                        <div className="min-h-4 sm:min-h-5">
-                            {showPreview ? (
-                                <span className={`text-[11px] sm:text-xs font-bold leading-tight ${previewDiff > 0 ? 'text-emerald-500' : 'text-red-500'}`}>
-                                    {previewDiff > 0 ? '▲' : '▼'} Impact: {previewDiff > 0 ? '+' : ''}{formatCurrencyShort(previewDiff)}
-                                </span>
-                            ) : stats.deficitRatio !== null ? (
-                                <span className={`text-xs sm:text-sm font-medium leading-tight ${stats.deficitRatio < -0.03 ? 'text-red-500' : 'text-slate-500'}`}>
-                                    {formatPercent(stats.deficitRatio)} du PIB
-                                </span>
-                            ) : (
-                                <span className="text-sm text-transparent">.</span>
-                            )}
+                                {/* Ghost / Preview Value */}
+                                {showPreview && (
+                                    <span className={`text-xl sm:text-3xl font-extrabold tracking-tight animate-in fade-in slide-in-from-bottom-2 duration-200 ${previewDeficit! < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
+                                        {previewDeficit! > 0 ? '+' : ''}{formatCurrencyShort(previewDeficit!)}
+                                    </span>
+                                )}
+                            </div>
+                            <div className="min-h-4 sm:min-h-5">
+                                {showPreview ? (
+                                    <span className={`text-[11px] sm:text-xs font-bold leading-tight ${previewDiff > 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+                                        {previewDiff > 0 ? '▲' : '▼'} Impact: {previewDiff > 0 ? '+' : ''}{formatCurrencyShort(previewDiff)}
+                                    </span>
+                                ) : stats.deficitRatio !== null ? (
+                                    <span className={`text-xs sm:text-sm font-medium leading-tight ${stats.deficitRatio < -0.03 ? 'text-red-500' : 'text-slate-500'}`}>
+                                        {formatPercent(stats.deficitRatio)} du PIB
+                                    </span>
+                                ) : (
+                                    <span className="text-sm text-transparent">.</span>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -180,6 +182,7 @@ export function Scoreboard({
                     onClick={() => setIsDetailsOpen((prev) => !prev)}
                     aria-expanded={isDetailsOpen}
                     aria-controls="scoreboard-resolution"
+                    id="scoreboard-details-toggle"
                     className="md:hidden flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-200 text-slate-600 text-[11px] font-bold hover:bg-slate-50 transition-colors"
                 >
                     <span className="material-icons text-sm">insights</span>
@@ -236,6 +239,7 @@ export function Scoreboard({
                         <button
                             type="button"
                             onClick={onOpenSpendingPanel}
+                            id="tutorial-open-spending"
                             className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 text-xs font-bold shadow-sm"
                         >
                             <span className="material-icons text-sm">account_balance</span>
@@ -246,6 +250,7 @@ export function Scoreboard({
                         <button
                             type="button"
                             onClick={onOpenRevenuePanel}
+                            id="tutorial-open-revenue"
                             className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-xl border border-slate-200 bg-slate-900 text-white text-xs font-bold shadow-sm"
                         >
                             <span className="material-icons text-sm">payments</span>

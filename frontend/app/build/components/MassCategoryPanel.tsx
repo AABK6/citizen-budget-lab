@@ -198,7 +198,7 @@ export function MassCategoryPanel({
                 </div>
 
                 {/* Row 2: Slider + Quick Actions */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2" id="mission-target-slider">
                   <button
                     type="button"
                     className="w-8 h-8 sm:w-6 sm:h-6 flex items-center justify-center rounded-md bg-white border border-slate-200 text-slate-400 hover:text-blue-600 hover:border-blue-400 disabled:opacity-30"

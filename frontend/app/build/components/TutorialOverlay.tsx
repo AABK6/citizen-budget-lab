@@ -3,53 +3,72 @@ import { createPortal } from 'react-dom';
 
 export type TutorialStep = {
     targetId: string; // DOM ID to highlight
+    mobileTargetId?: string;
     title: string;
     content: string;
     position?: 'top' | 'bottom' | 'left' | 'right';
+    mobilePosition?: 'top' | 'bottom' | 'left' | 'right';
+    mobilePopover?: 'top' | 'bottom' | 'center';
 };
 
 const STEPS: TutorialStep[] = [
     {
         targetId: 'scoreboard-deficit',
+        mobileTargetId: 'scoreboard-deficit',
         title: `Point de Départ : 5%`,
         content: `Le déficit démarre à 5% du PIB (148,9 Md€). Ce chiffre correspond au budget initial proposé par le gouvernement, avant que le débat parlementaire ne s'arrête.`,
         position: 'bottom',
+        mobilePosition: 'bottom',
     },
     {
         targetId: 'treemap-container',
+        mobileTargetId: 'treemap-container',
         title: `1 324 Milliards d'Euros`,
         content: `Voici la totalité des dépenses publiques (État, Sécu, Collectivités). La taille des blocs reflète le poids réel de chaque politique publique. Cliquez sur un bloc pour modifier son budget selon vos préférences.`,
         position: 'right',
+        mobilePosition: 'bottom',
     },
     {
         targetId: 'left-panel-tabs',
+        mobileTargetId: 'tutorial-open-spending',
         title: `Deux Leviers d'Action`,
         content: `Ici, l'onglet 'Orientations' vous permet de fixer des objectifs politiques globaux (ex: -5% sur les mobilités ou +10% sur l'agriculture), et l'onglet 'Mesures' permet d'activer des réformes précises chiffrées (ex: geler le point d'indice) pour y parvenir.`,
         position: 'right',
+        mobilePosition: 'top',
     },
     {
-        targetId: 'left-panel-list',
+        targetId: 'mission-target-slider',
+        mobileTargetId: 'mission-target-slider',
         title: `Fixer vos Priorités`,
         content: `Lorsque vous avez séléctionné une mission, ajustez le curseur pour fixer une cible budgétaire rapide (ex: -5%), ou piochez des mesures concrètes dans la liste. Les mesures servent à 'documenter' comment vous atteignez votre objectif, mais vous restez libre de combiner les deux. Chaque choix modifie l'équilibre global en temps réel.`,
         position: 'right',
+        mobilePosition: 'bottom',
+        mobilePopover: 'top',
     },
     {
         targetId: 'right-panel-revenue',
+        mobileTargetId: 'mobile-revenue-panel',
         title: `L'Équation Fiscale`,
         content: `L'autre levier : l'impôt. Pour équilibrer les comptes, vous pouvez aussi agir sur les recettes. TVA, ISF, impôt sur les sociétés ou sur le revenu : qui doit contribuer à l'effort ?`,
         position: 'left',
+        mobilePosition: 'top',
     },
     {
         targetId: 'scoreboard-resolution',
+        mobileTargetId: 'scoreboard-details-toggle',
         title: `Vos choix en action`,
         content: `Ici, suivez l'évolution de VOTRE scénario budgétaire. La liste de droite se remplit automatiquement avec vos choix (hausses, baisses, réformes) pour vous montrer d'un coup d'œil comment vous transformez le pays.`,
         position: 'bottom',
+        mobilePosition: 'bottom',
     },
     {
         targetId: 'scoreboard-vote-btn',
+        mobileTargetId: 'scoreboard-vote-btn',
         title: `Le Verdict`,
         content: `Une fois vos arbitrages terminés, cliquez sur "Voter". Votre choix permettra de faire émerger les préférences réelles des citoyens. Si nous sommes nombreux, ces résultats agrégés pèseront concrètement sur le débat public.`,
         position: 'left',
+        mobilePosition: 'bottom',
+        mobilePopover: 'top',
     }
 ];
 
@@ -103,7 +122,9 @@ export function TutorialOverlay({
     const updateLayout = useCallback(() => {
         if (!isVisible || !currentStep) return;
 
-        const targetEl = document.getElementById(currentStep.targetId);
+        const isMobile = window.innerWidth < 1024;
+        const targetId = isMobile ? (currentStep.mobileTargetId || currentStep.targetId) : currentStep.targetId;
+        const targetEl = document.getElementById(targetId);
         if (!targetEl) {
             // Fallback center if target lost
             setTargetRect(null);
@@ -122,11 +143,12 @@ export function TutorialOverlay({
         const rect = targetEl.getBoundingClientRect();
         setTargetRect(rect);
 
-        const gap = 24;
-        const popoverWidth = 360;
-        const popoverHeight = 200; // Approx estimation for placement
+        const gap = isMobile ? 16 : 24;
+        const popoverWidth = isMobile ? Math.min(320, window.innerWidth - 32) : 360;
+        const measuredHeight = popoverRef.current?.getBoundingClientRect().height;
+        const popoverHeight = measuredHeight || (isMobile ? 220 : 200);
 
-        let prefPos = currentStep.position || 'bottom';
+        let prefPos = (isMobile ? currentStep.mobilePosition : currentStep.position) || 'bottom';
         let top = 0;
         let left = 0;
 
@@ -159,20 +181,85 @@ export function TutorialOverlay({
 
         let coords = checkPos(prefPos);
 
-        // Simple boundary checks (flip if needed)
         const pad = 20;
-        if (prefPos === 'bottom' && coords.top + popoverHeight > window.innerHeight - pad) {
-            coords = checkPos('top');
-        } else if (prefPos === 'top' && coords.top < pad) {
-            coords = checkPos('bottom');
-        } else if (prefPos === 'right' && coords.left + popoverWidth > window.innerWidth - pad) {
-            coords = checkPos('left');
-        } else if (prefPos === 'left' && coords.left < pad) {
-            coords = checkPos('right');
+        const mobilePopover = isMobile ? currentStep.mobilePopover : undefined;
+        if (isMobile && mobilePopover) {
+            const centeredLeft = (window.innerWidth - popoverWidth) / 2;
+            if (mobilePopover === 'top') {
+                coords = { top: pad, left: centeredLeft };
+            } else if (mobilePopover === 'bottom') {
+                coords = { top: window.innerHeight - popoverHeight - pad, left: centeredLeft };
+            } else {
+                coords = { top: (window.innerHeight - popoverHeight) / 2, left: centeredLeft };
+            }
+        }
+
+        // Simple boundary checks (flip if needed)
+        if (!isMobile) {
+            if (prefPos === 'bottom' && coords.top + popoverHeight > window.innerHeight - pad) {
+                coords = checkPos('top');
+            } else if (prefPos === 'top' && coords.top < pad) {
+                coords = checkPos('bottom');
+            } else if (prefPos === 'right' && coords.left + popoverWidth > window.innerWidth - pad) {
+                coords = checkPos('left');
+            } else if (prefPos === 'left' && coords.left < pad) {
+                coords = checkPos('right');
+            }
+        } else if (!mobilePopover) {
+            const spaceAbove = rect.top - gap - pad;
+            const spaceBelow = window.innerHeight - rect.bottom - gap - pad;
+            const fitsTop = spaceAbove >= popoverHeight;
+            const fitsBottom = spaceBelow >= popoverHeight;
+
+            if (prefPos === 'top' && !fitsTop && fitsBottom) {
+                prefPos = 'bottom';
+            } else if (prefPos === 'bottom' && !fitsBottom && fitsTop) {
+                prefPos = 'top';
+            } else if (!fitsTop && !fitsBottom) {
+                prefPos = spaceAbove >= spaceBelow ? 'top' : 'bottom';
+            }
+
+            coords = checkPos(prefPos);
+
+            if (prefPos === 'right' && coords.left + popoverWidth > window.innerWidth - pad) {
+                coords = checkPos('left');
+            } else if (prefPos === 'left' && coords.left < pad) {
+                coords = checkPos('right');
+            }
         }
 
         // Hard Clamps
-        coords.top = Math.max(pad, Math.min(window.innerHeight - pad - 100, coords.top));
+        const maxTop = Math.max(pad, window.innerHeight - popoverHeight - pad);
+        coords.top = Math.max(pad, Math.min(maxTop, coords.top));
+        coords.left = Math.max(pad, Math.min(window.innerWidth - popoverWidth - pad, coords.left));
+
+        const targetArea = rect.width * rect.height;
+        const overlapSafe = targetArea < window.innerWidth * window.innerHeight * 0.6;
+        if (isMobile && overlapSafe && !mobilePopover) {
+            const popoverBottom = coords.top + popoverHeight;
+            const popoverRight = coords.left + popoverWidth;
+            const overlaps =
+                popoverRight > rect.left &&
+                coords.left < rect.right &&
+                popoverBottom > rect.top &&
+                coords.top < rect.bottom;
+
+            if (overlaps) {
+                const spaceAbove = rect.top - gap;
+                const spaceBelow = window.innerHeight - rect.bottom - gap;
+                if (spaceBelow >= popoverHeight) {
+                    coords = checkPos('bottom');
+                } else if (spaceAbove >= popoverHeight) {
+                    coords = checkPos('top');
+                } else {
+                    coords.top = rect.top > window.innerHeight / 2
+                        ? Math.max(pad, spaceAbove - popoverHeight)
+                        : Math.min(maxTop, rect.bottom + gap);
+                }
+            }
+        }
+
+        coords.top = Math.max(pad, Math.min(maxTop, coords.top));
         coords.left = Math.max(pad, Math.min(window.innerWidth - popoverWidth - pad, coords.left));
 
         setPopoverStyle({
@@ -274,7 +361,7 @@ export function TutorialOverlay({
             {/* Content Popover */}
             <div
                 ref={popoverRef}
-                className="absolute bg-white/90 backdrop-blur-xl border border-white/50 shadow-[0_20px_60px_-10px_rgba(0,0,0,0.3)] rounded-2xl p-6 transition-all duration-500 ease-in-out flex flex-col gap-4"
+                className="absolute bg-white/90 backdrop-blur-xl border border-white/50 shadow-[0_20px_60px_-10px_rgba(0,0,0,0.3)] rounded-2xl p-4 sm:p-6 transition-all duration-500 ease-in-out flex flex-col gap-3 sm:gap-4"
                 style={popoverStyle}
             >
                 {/* Header / Step Indicator */}
@@ -297,10 +384,10 @@ export function TutorialOverlay({
 
                 {/* Content */}
                 <div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-2 leading-tight">
+                    <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-2 leading-tight">
                         {currentStep.title}
                     </h3>
-                    <p className="text-slate-600 text-[15px] leading-relaxed">
+                    <p className="text-slate-600 text-sm sm:text-[15px] leading-relaxed">
                         {currentStep.content}
                     </p>
                 </div>

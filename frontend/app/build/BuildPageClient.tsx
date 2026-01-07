@@ -976,6 +976,31 @@ export default function BuildPageClient() {
   const calculatedDeficitRatio = calculatedDeficit / gdpForRatio;
 
   const handleTutorialStep = useCallback((index: number) => {
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
+
+    if (isMobile) {
+      if (index === 2) {
+        closeMobileSpendingPanel();
+        closeMobileRevenuePanel();
+      }
+      if (index === 3) {
+        const health = masses.find(m => m.id === 'M_HEALTH');
+        if (health) {
+          handleCategoryClick(health);
+        } else {
+          openMobileSpendingPanel();
+        }
+      }
+      if (index === 4) {
+        openMobileRevenuePanel();
+      }
+      if (index >= 5) {
+        closeMobileSpendingPanel();
+        closeMobileRevenuePanel();
+      }
+      return;
+    }
+
     // Step 3: "Fixer vos Priorités" -> Open Health panel to show slider/reforms
     if (index === 3) {
       const health = masses.find(m => m.id === 'M_HEALTH');
@@ -989,12 +1014,21 @@ export default function BuildPageClient() {
         handleBackClick();
       }
     }
-  }, [masses, handleCategoryClick, isPanelExpanded, handleBackClick]);
+  }, [
+    closeMobileRevenuePanel,
+    closeMobileSpendingPanel,
+    handleBackClick,
+    handleCategoryClick,
+    isPanelExpanded,
+    masses,
+    openMobileRevenuePanel,
+    openMobileSpendingPanel,
+  ]);
 
-  const leftPanelContent = (
+  const renderLeftPanelContent = (variant: 'desktop' | 'mobile') => (
     <>
       <div className="p-3 border-b border-slate-100 bg-white z-10">
-        <div className="flex bg-slate-100/80 p-1 rounded-xl">
+        <div className="flex bg-slate-100/80 p-1 rounded-xl" id={variant === 'desktop' ? 'left-panel-tabs' : undefined}>
           <button
             onClick={() => { setActiveTab('missions'); setIsCatalogOpen(false); }}
             className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'missions'
@@ -1018,7 +1052,7 @@ export default function BuildPageClient() {
         </div>
       </div>
 
-      <div className="flex-1 min-h-0 overflow-y-auto bg-slate-50/30">
+      <div className="flex-1 min-h-0 overflow-y-auto bg-slate-50/30" id={variant === 'desktop' ? 'left-panel-list' : undefined}>
         {activeTab === 'reforms' ? (
           <ReformSidebarList
             title={t('build.piece_dials')}
@@ -1075,7 +1109,7 @@ export default function BuildPageClient() {
     </>
   );
 
-  const rightPanelContent = (
+  const renderRightPanelContent = (variant: 'desktop' | 'mobile') => (
     <>
       <div className="p-3 border-b border-slate-100 bg-white z-10">
         <div className="flex bg-slate-100/80 p-1 rounded-xl">
@@ -1203,7 +1237,7 @@ export default function BuildPageClient() {
 
           {/* LEFT PANEL: SPENDING */}
           <div className="hidden lg:flex flex-col min-h-0 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative">
-            {leftPanelContent}
+            {renderLeftPanelContent('desktop')}
           </div>
 
           {/* CENTER PANEL: TREEMAP */}
@@ -1231,7 +1265,7 @@ export default function BuildPageClient() {
 
           {/* RIGHT PANEL: REVENUE */}
           <div id="right-panel-revenue" className="hidden lg:flex flex-col min-h-0 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            {rightPanelContent}
+            {renderRightPanelContent('desktop')}
           </div>
         </div>
 
@@ -1256,9 +1290,9 @@ export default function BuildPageClient() {
                   Fermer
                 </button>
               </div>
-              <div className="flex-1 min-h-0 p-3">
+              <div className="flex-1 min-h-0 p-3" id="mobile-spending-panel">
                 <div className="flex flex-col h-full min-h-0 bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
-                  {leftPanelContent}
+                  {renderLeftPanelContent('mobile')}
                 </div>
               </div>
             </div>
@@ -1286,9 +1320,9 @@ export default function BuildPageClient() {
                   Fermer
                 </button>
               </div>
-              <div className="flex-1 min-h-0 p-3">
+              <div className="flex-1 min-h-0 p-3" id="mobile-revenue-panel">
                 <div className="flex flex-col h-full min-h-0 bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
-                  {rightPanelContent}
+                  {renderRightPanelContent('mobile')}
                 </div>
               </div>
             </div>
