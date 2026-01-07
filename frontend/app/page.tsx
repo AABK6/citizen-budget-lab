@@ -109,7 +109,10 @@ export default function LandingPage() {
         </div>
 
         {/* Right Column: The Crisis Visualization */}
-        <div className="relative bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-8 shadow-2xl">
+        <div
+          data-testid="landing-hero-visual"
+          className="hidden md:block relative bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-8 shadow-2xl"
+        >
           <div className="flex justify-between items-end mb-8">
             <div>
               <h3 className="text-white font-bold text-xl mb-1">L'Inertie Budgétaire</h3>
