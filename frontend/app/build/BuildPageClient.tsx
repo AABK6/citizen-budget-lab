@@ -765,7 +765,8 @@ export default function BuildPageClient() {
       console.error('[Build] Failed to fetch revenue suggestions', err);
       // Fallback to local filter if query fails
       const revenueLeversForCategory = revenueLevers.filter(lever => {
-        if (!lever.cofogMapping) return true;
+        if (lever.targetRevenueCategoryId === category.id) return true;
+        if (!lever.cofogMapping || Object.keys(lever.cofogMapping).length === 0) return true;
         const weight = lever.cofogMapping[category.id];
         return typeof weight === 'number' && weight > 0;
       });

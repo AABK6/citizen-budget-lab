@@ -15,7 +15,6 @@
         "description",
         "fixed_impact_eur",
         "cofog_mapping",
-        "mission_mapping",
         "feasibility",
         "conflicts_with",
         "sources",

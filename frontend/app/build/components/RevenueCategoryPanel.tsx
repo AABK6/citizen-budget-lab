@@ -94,7 +94,13 @@ export function RevenueCategoryPanel({
   const pillTint = lightenColor(accentColor, 0.82);
   const accentStyle = { '--panel-accent': accentColor } as CSSProperties;
   const filteredLevers = suggestedLevers.filter((lever) => {
-    if (!lever.cofogMapping) return true;
+    // If specifically targeting this revenue category, include it
+    if (lever.targetRevenueCategoryId === category.id) return true;
+    
+    // If no specific mapping exists (empty object or undefined), and it was suggested, include it
+    if (!lever.cofogMapping || Object.keys(lever.cofogMapping).length === 0) return true;
+
+    // Otherwise check for explicit COFOG mapping overlap
     const share = lever.cofogMapping[category.id];
     return typeof share === 'number' && share > 0;
   });

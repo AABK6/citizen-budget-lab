@@ -79,6 +79,8 @@ export const suggestLeversQuery = `
       label
       description
       fixedImpactEur
+      targetRevenueCategoryId
+      cofogMapping
       multiYearImpact
       pushbacks {
         type
