@@ -491,5 +491,79 @@
       "color": "#6b7280",
       "icon": "❓"
     }
+  ],
+  "revenue_families": [
+    {
+      "id": "REV_HOUSEHOLDS",
+      "displayLabel": "Impôts sur les ménages",
+      "description": "Impôt sur le revenu, CSG, taxes foncières...",
+      "icon": "🏠",
+      "color": "#3b82f6",
+      "vigilance_points": [
+        "Risque de baisse du pouvoir d'achat des ménages modestes et moyens.",
+        "Risque de désincitation au travail (trappe à inactivité) si la fiscalité est trop lourde.",
+        "Attention à l'acceptabilité sociale (ras-le-bol fiscal)."
+      ]
+    },
+    {
+      "id": "REV_CONSUMPTION",
+      "displayLabel": "Impôts sur la consommation",
+      "description": "TVA, taxes tabac & alcool",
+      "icon": "🛒",
+      "color": "#ec4899",
+      "vigilance_points": [
+        "Impôts régressifs : pèsent proportionnellement plus sur les ménages modestes.",
+        "Risque d'inflation (hausse des prix) et de baisse de la consommation.",
+        "Risque de marché noir ou d'achats transfrontaliers (tabac, alcool)."
+      ]
+    },
+    {
+      "id": "REV_COMPANIES",
+      "displayLabel": "Impôts sur les entreprises",
+      "description": "IS, charges patronales, impôts de production",
+      "icon": "🏭",
+      "color": "#6366f1",
+      "vigilance_points": [
+        "Risque de perte de compétitivité des entreprises françaises.",
+        "Risque de délocalisations ou de baisse des investissements.",
+        "Impact potentiel sur l'emploi (coût du travail)."
+      ]
+    },
+    {
+      "id": "REV_LABOR",
+      "displayLabel": "Prélèvements sur le travail",
+      "description": "Cotisations salariés et indépendants",
+      "icon": "👷",
+      "color": "#f97316",
+      "vigilance_points": [
+        "Baisse du salaire net perçu par les travailleurs.",
+        "Risque de désincitation à l'emploi déclarée (travail au noir).",
+        "Lien direct avec le financement de la protection sociale (retraites, chômage)."
+      ]
+    },
+    {
+      "id": "REV_ECO",
+      "displayLabel": "Impôts écologiques",
+      "description": "Carburants, écotaxes",
+      "icon": "🌿",
+      "color": "#22c55e",
+      "vigilance_points": [
+        "Risque de rejet social fort (type Gilets Jaunes) si perçu comme injuste.",
+        "Impact sur la compétitivité industrielle.",
+        "Nécessité d'alternatives pour changer les comportements."
+      ]
+    },
+    {
+      "id": "REV_OTHER",
+      "displayLabel": "Autres recettes",
+      "description": "Services, amendes, fonds UE",
+      "icon": "📦",
+      "color": "#64748b",
+      "vigilance_points": [
+        "Recettes souvent non pérennes ou fluctuantes.",
+        "Dépendance aux fonds européens.",
+        "Acceptabilité des amendes et redevances."
+      ]
+    }
   ]
 }

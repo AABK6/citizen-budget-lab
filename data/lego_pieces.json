@@ -1374,7 +1374,8 @@
       "elasticity": {
         "method": "rate_delta_to_yield_pct",
         "value": 1.0
-      }
+      },
+      "family_id": "REV_CONSUMPTION"
     },
     {
       "id": "rev_vat_reduced",
@@ -1402,7 +1403,8 @@
       "elasticity": {
         "method": "rate_delta_to_yield_pct",
         "value": 1.0
-      }
+      },
+      "family_id": "REV_CONSUMPTION"
     },
     {
       "id": "rev_excise_energy",
@@ -1428,7 +1430,8 @@
       "elasticity": {
         "method": "rate_delta_to_yield_pct",
         "value": 0.9
-      }
+      },
+      "family_id": "REV_ECO"
     },
     {
       "id": "rev_excise_tob_alc",
@@ -1459,7 +1462,8 @@
       "elasticity": {
         "method": "rate_delta_to_yield_pct",
         "value": 0.8
-      }
+      },
+      "family_id": "REV_CONSUMPTION"
     },
     {
       "id": "rev_pit",
@@ -1485,7 +1489,8 @@
       "elasticity": {
         "method": "rate_delta_to_yield_pct",
         "value": 0.9
-      }
+      },
+      "family_id": "REV_HOUSEHOLDS"
     },
     {
       "id": "rev_cit",
@@ -1511,7 +1516,8 @@
       "elasticity": {
         "method": "rate_delta_to_yield_pct",
         "value": 0.8
-      }
+      },
+      "family_id": "REV_COMPANIES"
     },
     {
       "id": "rev_csg_crds",
@@ -1538,7 +1544,8 @@
       "elasticity": {
         "method": "rate_delta_to_yield_pct",
         "value": 0.9
-      }
+      },
+      "family_id": "REV_HOUSEHOLDS"
     },
     {
       "id": "rev_soc_employee",
@@ -1565,7 +1572,8 @@
       "elasticity": {
         "method": "rate_delta_to_yield_pct",
         "value": 0.9
-      }
+      },
+      "family_id": "REV_LABOR"
     },
     {
       "id": "rev_soc_employer",
@@ -1591,7 +1599,8 @@
       "elasticity": {
         "method": "rate_delta_to_yield_pct",
         "value": 0.85
-      }
+      },
+      "family_id": "REV_COMPANIES"
     },
     {
       "id": "rev_soc_self",
@@ -1617,7 +1626,8 @@
       "elasticity": {
         "method": "rate_delta_to_yield_pct",
         "value": 0.85
-      }
+      },
+      "family_id": "REV_LABOR"
     },
     {
       "id": "rev_prod_taxes",
@@ -1643,7 +1653,8 @@
       "elasticity": {
         "method": "rate_delta_to_yield_pct",
         "value": 0.8
-      }
+      },
+      "family_id": "REV_COMPANIES"
     },
     {
       "id": "rev_wage_tax",
@@ -1669,7 +1680,8 @@
       "elasticity": {
         "method": "rate_delta_to_yield_pct",
         "value": 0.8
-      }
+      },
+      "family_id": "REV_COMPANIES"
     },
     {
       "id": "rev_property_taxes",
@@ -1695,7 +1707,8 @@
       "elasticity": {
         "method": "rate_delta_to_yield_pct",
         "value": 0.7
-      }
+      },
+      "family_id": "REV_HOUSEHOLDS"
     },
     {
       "id": "rev_transfer_taxes",
@@ -1721,7 +1734,8 @@
       "elasticity": {
         "method": "rate_delta_to_yield_pct",
         "value": 0.6
-      }
+      },
+      "family_id": "REV_HOUSEHOLDS"
     },
     {
       "id": "rev_env_taxes",
@@ -1748,7 +1762,8 @@
       "elasticity": {
         "method": "rate_delta_to_yield_pct",
         "value": 0.7
-      }
+      },
+      "family_id": "REV_ECO"
     },
     {
       "id": "rev_public_income",
@@ -1774,7 +1789,8 @@
       },
       "elasticity": {
         "method": "none"
-      }
+      },
+      "family_id": "REV_OTHER"
     },
     {
       "id": "rev_sales_fees",
@@ -1804,7 +1820,8 @@
       },
       "elasticity": {
         "method": "none"
-      }
+      },
+      "family_id": "REV_OTHER"
     },
     {
       "id": "rev_fines",
@@ -1829,7 +1846,8 @@
       },
       "elasticity": {
         "method": "none"
-      }
+      },
+      "family_id": "REV_OTHER"
     },
     {
       "id": "rev_transfers_in",
@@ -1854,7 +1872,8 @@
       },
       "elasticity": {
         "method": "none"
-      }
+      },
+      "family_id": "REV_OTHER"
     },
     {
       "id": "test_piece_no_cofog",

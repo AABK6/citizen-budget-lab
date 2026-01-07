@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { CSSProperties, ChangeEvent } from 'react';
-import type { LegoPiece, PolicyLever, PopularIntent, DslAction } from '../types';
+import type { LegoPiece, PolicyLever, PopularIntent, DslAction, RevenueFamily } from '../types';
 import { ReformDetailDrawer } from './ReformDetailDrawer';
 
 const lightenColor = (hex: string, amount = 0.25) => {
@@ -20,6 +20,7 @@ export type RevenuePanelVisual = {
 
 export type RevenueCategoryPanelProps = {
   category: LegoPiece;
+  family?: RevenueFamily;
   visual?: RevenuePanelVisual;
   targetPercent: number;
   targetRangeMax: number;
@@ -40,6 +41,7 @@ export type RevenueCategoryPanelProps = {
 
 export function RevenueCategoryPanel({
   category,
+  family,
   visual,
   targetPercent,
   targetRangeMax,
@@ -122,26 +124,42 @@ export function RevenueCategoryPanel({
         <div className="absolute inset-0 bg-gradient-to-b from-white/80 to-transparent pointer-events-none" />
 
         {/* Header Section - Compact */}
-        <div className="relative px-4 py-3 border-b border-slate-100 shrink-0 bg-white/50 flex items-center gap-3">
-          <button
-            className="p-1.5 -ml-1 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-full transition-colors flex-shrink-0"
-            onClick={onBack}
-          >
-            <i className="material-icons text-xl">arrow_back</i>
-          </button>
-          <span
-            className="flex items-center justify-center w-8 h-8 rounded-lg text-lg shadow-sm ring-1 ring-black/5 flex-shrink-0"
-            aria-hidden="true"
-            style={{ backgroundColor: iconTint, color: accentColor }}
-          >
-            {visual?.icon || '💶'}
-          </span>
-          <div className="flex-1 min-w-0 flex items-baseline gap-2 overflow-hidden">
-            <h2 className="text-base font-bold text-slate-800 truncate">{category.label}</h2>
-            <div className="text-xs font-medium text-slate-500 whitespace-nowrap">
-              {formatCurrency(category.amountEur || 0)} <span className="text-slate-300">•</span> {formatShare(category.share || 0)}
+        <div className="relative px-4 py-3 border-b border-slate-100 shrink-0 bg-white/50 flex flex-col gap-2">
+          <div className="flex items-center gap-3">
+            <button
+              className="p-1.5 -ml-1 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-full transition-colors flex-shrink-0"
+              onClick={onBack}
+            >
+              <i className="material-icons text-xl">arrow_back</i>
+            </button>
+            <span
+              className="flex items-center justify-center w-8 h-8 rounded-lg text-lg shadow-sm ring-1 ring-black/5 flex-shrink-0"
+              aria-hidden="true"
+              style={{ backgroundColor: iconTint, color: accentColor }}
+            >
+              {visual?.icon || '💶'}
+            </span>
+            <div className="flex-1 min-w-0 flex items-baseline gap-2 overflow-hidden">
+              <h2 className="text-base font-bold text-slate-800 truncate">{category.label}</h2>
+              <div className="text-xs font-medium text-slate-500 whitespace-nowrap">
+                {formatCurrency(category.amountEur || 0)} <span className="text-slate-300">•</span> {formatShare(category.share || 0)}
+              </div>
             </div>
           </div>
+          
+          {/* Vigilance Points (from Family) */}
+          {family?.vigilancePoints && family.vigilancePoints.length > 0 && (
+            <div className="mt-1 bg-amber-50/80 border border-amber-100 rounded-lg p-2 text-[10px] text-amber-800 animate-in fade-in slide-in-from-top-1">
+              <div className="flex items-center gap-1.5 font-bold mb-1 uppercase tracking-wide opacity-80">
+                <i className="material-icons text-xs">warning</i> Points de vigilance
+              </div>
+              <ul className="list-disc list-outside ml-3 space-y-0.5 opacity-90">
+                {family.vigilancePoints.slice(0, 2).map((pt, i) => (
+                  <li key={i}>{pt}</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
 
         {/* Controls Section - Scrollable Area */}

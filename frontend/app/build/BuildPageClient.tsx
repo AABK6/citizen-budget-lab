@@ -88,6 +88,7 @@ export default function BuildPageClient() {
     scenarioId,
     massLabels,
     missionLabels,
+    revenueFamilies,
   } = state;
   const [displayMode, setDisplayMode] = useState<'amount' | 'share'>('amount');
   const [isMobileSpendingOpen, setIsMobileSpendingOpen] = useState(false);
@@ -537,6 +538,7 @@ export default function BuildPageClient() {
         revenuePieces: revenue,
         policyLevers: data.policyLevers,
         popularIntents: data.popularIntents,
+        revenueFamilies: data.revenueFamilies,
       });
 
       const spendingTotal = Number(data.legoBaseline?.depensesTotal ?? 0);
@@ -1168,11 +1170,13 @@ export default function BuildPageClient() {
               onSelect={handleRevenueCategoryClick}
               formatCurrency={formatCurrency}
               visuals={revenueVisuals}
+              families={revenueFamilies}
             />
           ) : (
             selectedRevenueCategory && (
               <RevenueCategoryPanel
                 category={selectedRevenueCategory}
+                family={revenueFamilies.find(f => f.id === selectedRevenueCategory.familyId)}
                 visual={revenueVisuals.get(selectedRevenueCategory.id)}
                 targetPercent={revenueTargetPercent}
                 targetRangeMax={revenueTargetRangeMax}

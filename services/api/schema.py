@@ -216,6 +216,7 @@ class LegoPieceType:
     examples: list[str]
     sources: list[str]
     locked: bool
+    familyId: str | None
 
 
 @strawberry.type
@@ -402,6 +403,16 @@ class MissionLabelType:
     synonyms: list[str]
     color: str | None = None
     icon: str | None = None
+
+
+@strawberry.type
+class RevenueFamilyType:
+    id: str
+    displayLabel: str
+    description: str | None
+    color: str | None = None
+    icon: str | None = None
+    vigilancePoints: list[str]
 
 
 @strawberry.type
@@ -707,6 +718,7 @@ class Query:
                 examples=list(i.get("examples") or []),
                 sources=list(i.get("sources") or []),
                 locked=bool(i.get("locked", False)),
+                familyId=i.get("family_id"),
             )
             for i in items
         ]
@@ -847,6 +859,7 @@ class Query:
                                 examples=[],
                                 sources=[],
                                 locked=False,
+                                familyId=None,
                             )
                         )
                     return LegoBaselineType(
@@ -891,6 +904,7 @@ class Query:
                     examples=[],
                     sources=[],
                     locked=False,
+                    familyId=None,
                 )
             )
         return LegoBaselineType(
@@ -1038,6 +1052,30 @@ class Query:
                         synonyms=[str(x) for x in (ent.get("synonyms") or [])],
                         color=(str(ent.get("color")) if ent.get("color") else None),
                         icon=(str(ent.get("icon")) if ent.get("icon") else None),
+                    )
+                )
+            return out
+        except Exception:
+            return []
+
+    @strawberry.field
+    def revenueFamilies(self) -> list[RevenueFamilyType]:
+        import json, os
+        from .data_loader import DATA_DIR  # type: ignore
+        path = os.path.join(DATA_DIR, "ux_labels.json")
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                js = json.load(f)
+            out: list[RevenueFamilyType] = []
+            for ent in js.get("revenue_families", []):
+                out.append(
+                    RevenueFamilyType(
+                        id=str(ent.get("id")),
+                        displayLabel=str(ent.get("displayLabel") or ent.get("id")),
+                        description=str(ent.get("description") or ""),
+                        color=(str(ent.get("color")) if ent.get("color") else None),
+                        icon=(str(ent.get("icon")) if ent.get("icon") else None),
+                        vigilancePoints=[str(x) for x in (ent.get("vigilance_points") or [])],
                     )
                 )
             return out

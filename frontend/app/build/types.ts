@@ -9,6 +9,7 @@ export type LegoPiece = {
   share?: number;
   sources?: string[];
   locked?: boolean;
+  familyId?: string;
 };
 
 export type MissionWeight = {
@@ -21,6 +22,15 @@ export type MassLabel = {
   displayLabel: string;
   color?: string;
   icon?: string;
+};
+
+export type RevenueFamily = {
+  id: string;
+  displayLabel: string;
+  description?: string;
+  color?: string;
+  icon?: string;
+  vigilancePoints?: string[];
 };
 
 export type MissionLabel = {

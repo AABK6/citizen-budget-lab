@@ -38,6 +38,7 @@ export type BuildState = {
   aggregationLens: AggregationLens;
   massLabels: Record<string, MassLabel>;
   missionLabels: Record<string, MissionLabel>;
+  revenueFamilies: RevenueFamily[];
 };
 
 type BuildAction =
@@ -129,6 +130,7 @@ function createInitialState(initialYear: number): BuildState {
     aggregationLens: 'MISSION',
     massLabels: {},
     missionLabels: {},
+    revenueFamilies: [],
   };
 }
 
@@ -150,7 +152,7 @@ export function useBuildState(initialYear: number) {
         dispatch({ type: 'SET_SCENARIO_RESULT', result, scenarioId }),
       setScenarioId: (id: string | null) =>
         dispatch({ type: 'PATCH', payload: { scenarioId: id } }),
-      setData: (payload: Partial<Pick<BuildState, 'spendingPieces' | 'revenuePieces' | 'masses' | 'policyLevers' | 'popularIntents' | 'massLabels' | 'missionLabels'>>) =>
+      setData: (payload: Partial<Pick<BuildState, 'spendingPieces' | 'revenuePieces' | 'masses' | 'policyLevers' | 'popularIntents' | 'massLabels' | 'missionLabels' | 'revenueFamilies'>>) =>
         dispatch({
           type: 'PATCH',
           payload: {

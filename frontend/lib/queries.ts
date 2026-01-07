@@ -18,6 +18,7 @@ export const buildPageQuery = `
       type
       cofogMajors
       missions { code weight }
+      familyId
     }
     builderMassesAdmin: builderMasses(year: $year, lens: ADMIN) {
       massId
@@ -37,6 +38,14 @@ export const buildPageQuery = `
       description
       color
       icon
+    }
+    revenueFamilies {
+      id
+      displayLabel
+      description
+      color
+      icon
+      vigilancePoints
     }
     policyLevers {
       id
