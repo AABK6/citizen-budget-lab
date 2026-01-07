@@ -78,18 +78,7 @@ export default function LandingPage() {
             </span>
           </h1>
 
-          <div className="md:hidden grid grid-cols-2 gap-3 order-3">
-            <div className="rounded-2xl border border-slate-800/60 bg-slate-900/60 px-4 py-3 shadow-lg">
-              <div className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Déficit 2025</div>
-              <div className="text-2xl font-extrabold text-white mt-1">{latest.deficit.toFixed(1)}%</div>
-              <div className="text-[11px] text-slate-400">du PIB</div>
-            </div>
-            <div className="rounded-2xl border border-slate-800/60 bg-slate-900/60 px-4 py-3 shadow-lg">
-              <div className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Intérêts</div>
-              <div className="text-2xl font-extrabold text-red-400 mt-1">{latest.interest} Md€</div>
-              <div className="text-[11px] text-slate-400">charge annuelle</div>
-            </div>
-          </div>
+
 
           <div className="space-y-6 text-base sm:text-lg text-slate-400 leading-relaxed font-light max-w-xl order-5 md:order-4">
             <p>
