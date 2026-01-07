@@ -55,6 +55,7 @@ export const buildPageQuery = `
       label
       description
       fixedImpactEur
+      targetRevenueCategoryId
       cofogMapping
       missionMapping
       impact {

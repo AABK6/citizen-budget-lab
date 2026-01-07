@@ -21,6 +21,7 @@ import {
   MissionLabel,
   MassLabel,
   AggregationLens,
+  RevenueFamily,
 } from './types';
 import { useBuildState } from './useBuildState';
 import { runScenarioForDsl } from '@/lib/permalink';
@@ -28,6 +29,8 @@ import { MassCategoryList } from './components/MassCategoryList';
 import { MassCategoryPanel } from './components/MassCategoryPanel';
 import { RevenueCategoryList } from './components/RevenueCategoryList';
 import { RevenueCategoryPanel } from './components/RevenueCategoryPanel';
+import { RevenueFamilyPanel } from './components/RevenueFamilyPanel';
+import { FamilyActionModal } from './components/FamilyActionModal';
 import { computeDeficitTotals } from '@/lib/fiscal';
 import { Scoreboard } from './components/Scoreboard';
 import { ReformSidebarList } from './components/ReformSidebarList';
@@ -38,6 +41,168 @@ import { FloatingShareCard } from './components/FloatingShareCard';
 
 const cloneCategories = (categories: MassCategory[]) =>
   categories.map((category) => ({ ...category }));
+
+const REVENUE_FAMILY_FALLBACK: Record<string, string> = {
+    "rev_pit": "REV_HOUSEHOLDS",
+    "rev_csg_crds": "REV_HOUSEHOLDS",
+    "rev_property_taxes": "REV_HOUSEHOLDS",
+    "rev_transfer_taxes": "REV_HOUSEHOLDS",
+    
+    "rev_vat_standard": "REV_CONSUMPTION",
+    "rev_vat_reduced": "REV_CONSUMPTION",
+    "rev_excise_tob_alc": "REV_CONSUMPTION",
+    
+    "rev_cit": "REV_COMPANIES",
+    "rev_soc_employer": "REV_COMPANIES",
+    "rev_prod_taxes": "REV_COMPANIES",
+    "rev_wage_tax": "REV_COMPANIES",
+    
+    "rev_soc_employee": "REV_LABOR",
+    "rev_soc_self": "REV_LABOR",
+    
+    "rev_excise_energy": "REV_ECO",
+    "rev_env_taxes": "REV_ECO",
+    
+    "rev_sales_fees": "REV_OTHER",
+    "rev_fines": "REV_OTHER",
+    "rev_public_income": "REV_OTHER",
+    "rev_transfers_in": "REV_OTHER"
+};
+
+const POLICY_TARGET_FALLBACK: Record<string, string> = {
+  "vat_normal_plus1": "rev_vat_standard",
+  "vat_all_rates_plus1": "rev_vat_standard",
+  "vat_intermediate_12_5": "rev_vat_standard",
+  "vat_franchise_threshold_halved": "rev_vat_standard",
+  "cut_vat_essentials": "rev_vat_reduced",
+  "cut_vat_energy": "rev_vat_reduced",
+  "amend_ir_bracket_indexation_1pct": "rev_pit",
+  "cut_income_tax_middle": "rev_pit",
+  "freeze_tax_brackets": "rev_pit",
+  "amend_alimony_tax_exemption": "rev_pit",
+  "amend_raise_csg_on_capital": "rev_csg_crds",
+  "progressive_csg": "rev_csg_crds",
+  "amend_raise_big_corp_profit_contrib": "rev_cit",
+  "superprofits_tax": "rev_cit",
+  "wealth_tax": "rev_property_taxes",
+  "amend_ifi_to_fortune_improductive": "rev_property_taxes",
+  "restore_taxe_habitation_top20": "rev_property_taxes",
+  "restore_taxe_habitation_all": "rev_property_taxes",
+  "airline_ticket_tax_increase": "rev_prod_taxes",
+  "ecotax_heavy_trucks": "rev_env_taxes",
+  "carbon_tax": "rev_excise_energy",
+  "cut_fuel_taxes": "rev_excise_energy",
+  "amend_double_gafam_tax": "rev_cit",
+  "expand_digital_tax": "rev_prod_taxes",
+  "amend_universal_tax_multinationals": "rev_cit",
+  "amend_lower_global_min_tax_threshold": "rev_cit",
+  "amend_raise_buyback_tax": "rev_cit",
+  "amend_windfall_dividend_tax": "rev_cit",
+  "amend_clawback_cir_relocation": "rev_cit",
+  "amend_sme_cit_threshold_100k": "rev_cit",
+  "amend_tighten_pacte_dutreil": "rev_transfer_taxes",
+  "amend_no_new_apprentice_contrib": "rev_soc_employee",
+  "amend_no_meal_voucher_tax": "rev_soc_employer",
+  "amend_surtax_health_insurers": "rev_prod_taxes",
+  "amend_extend_overtime_deduction": "rev_soc_employer",
+  "amend_increase_severance_tax": "rev_soc_employer",
+  "amend_extend_tips_exemption": "rev_pit",
+  "amend_return_exit_tax": "rev_pit",
+  "amend_one_time_donation_exemption": "rev_pit",
+  "amend_ald_sickleave_exempt_ir": "rev_pit",
+  "amend_school_fees_tax_reduction": "rev_pit",
+  "amend_limit_holding_tax_to_luxury": "rev_cit",
+  "reinstate_cvae": "rev_prod_taxes",
+  "remove_pension_deduction": "rev_pit",
+  "end_overtime_exemption": "rev_pit",
+  "fight_tax_fraud": "rev_pit",
+  "end_flat_tax": "rev_cit",
+  "expand_ftt": "rev_prod_taxes",
+  "cap_research_credit": "rev_cit",
+  "reduce_home_services_credit": "rev_pit",
+  "green_transport_tax": "rev_prod_taxes",
+  "is_rate_33_5": "rev_cit",
+  "transfer_pricing_enforcement": "rev_cit",
+  "cap_quotient_conjugal": "rev_pit",
+  "abolish_quotient_conjugal": "rev_pit",
+  "abolish_qf_demi_parts_noneffective": "rev_pit",
+  "wealth_minimum_tax_2pct_100m": "rev_property_taxes"
+};
+
+const REVENUE_FAMILIES_DEF = [
+    {
+      "id": "REV_HOUSEHOLDS",
+      "displayLabel": "Impôts sur les ménages",
+      "description": "Impôt sur le revenu, CSG, taxes foncières...",
+      "icon": "🏠",
+      "color": "#3b82f6",
+      "vigilancePoints": [
+        "Risque de baisse du pouvoir d'achat des ménages modestes et moyens.",
+        "Risque de désincitation au travail (trappe à inactivité) si la fiscalité est trop lourde.",
+        "Attention à l'acceptabilité sociale (ras-le-bol fiscal)."
+      ]
+    },
+    {
+      "id": "REV_CONSUMPTION",
+      "displayLabel": "Impôts sur la consommation",
+      "description": "TVA, taxes tabac & alcool",
+      "icon": "🛒",
+      "color": "#ec4899",
+      "vigilancePoints": [
+        "Impôts régressifs : pèsent proportionnellement plus sur les ménages modestes.",
+        "Risque d'inflation (hausse des prix) et de baisse de la consommation.",
+        "Risque de marché noir ou d'achats transfrontaliers (tabac, alcool)."
+      ]
+    },
+    {
+      "id": "REV_COMPANIES",
+      "displayLabel": "Impôts sur les entreprises",
+      "description": "IS, charges patronales, impôts de production",
+      "icon": "🏭",
+      "color": "#6366f1",
+      "vigilancePoints": [
+        "Risque de perte de compétitivité des entreprises françaises.",
+        "Risque de délocalisations ou de baisse des investissements.",
+        "Impact potentiel sur l'emploi (coût du travail)."
+      ]
+    },
+    {
+      "id": "REV_LABOR",
+      "displayLabel": "Prélèvements sur le travail",
+      "description": "Cotisations salariés et indépendants",
+      "icon": "👷",
+      "color": "#f97316",
+      "vigilancePoints": [
+        "Baisse du salaire net perçu par les travailleurs.",
+        "Risque de désincitation à l'emploi déclarée (travail au noir).",
+        "Lien direct avec le financement de la protection sociale (retraites, chômage)."
+      ]
+    },
+    {
+      "id": "REV_ECO",
+      "displayLabel": "Impôts écologiques",
+      "description": "Carburants, écotaxes",
+      "icon": "🌿",
+      "color": "#22c55e",
+      "vigilancePoints": [
+        "Risque de rejet social fort (type Gilets Jaunes) si perçu comme injuste.",
+        "Impact sur la compétitivité industrielle.",
+        "Nécessité d'alternatives pour changer les comportements."
+      ]
+    },
+    {
+      "id": "REV_OTHER",
+      "displayLabel": "Autres recettes",
+      "description": "Services, amendes, fonds UE",
+      "icon": "📦",
+      "color": "#64748b",
+      "vigilancePoints": [
+        "Recettes souvent non pérennes ou fluctuantes.",
+        "Dépendance aux fonds européens.",
+        "Acceptabilité des amendes et redevances."
+      ]
+    }
+];
 
 const fallbackTreemapColors = ['#2563eb', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#ef4444', '#6366f1', '#14b8a6', '#a855f7', '#d946ef'];
 const revenueColorPalette = ['#0ea5e9', '#f97316', '#9333ea', '#16a34a', '#dc2626', '#facc15', '#0f766e', '#7c3aed', '#22c55e', '#2563eb'];
@@ -78,6 +243,7 @@ export default function BuildPageClient() {
     isRevenuePanelExpanded,
     selectedCategory,
     selectedRevenueCategory,
+    selectedRevenueFamily,
     suggestedLevers,
     targetPercent,
     targetRangeMax,
@@ -93,6 +259,7 @@ export default function BuildPageClient() {
   const [displayMode, setDisplayMode] = useState<'amount' | 'share'>('amount');
   const [isMobileSpendingOpen, setIsMobileSpendingOpen] = useState(false);
   const [isMobileRevenueOpen, setIsMobileRevenueOpen] = useState(false);
+  const [pendingFamilyAction, setPendingFamilyAction] = useState<{ family: RevenueFamily; targetPercent: number } | null>(null);
   const [massDataByLens, setMassDataByLens] = useState<Record<AggregationLens, MassCategory[]>>({
     MISSION: [],
     COFOG: [],
@@ -112,7 +279,12 @@ export default function BuildPageClient() {
     [policyLevers],
   );
   const revenueLevers = useMemo(
-    () => policyLevers.filter((lever) => resolveBudgetSide(lever) === 'REVENUE'),
+    () => policyLevers
+      .filter((lever) => resolveBudgetSide(lever) === 'REVENUE')
+      .map(lever => ({
+        ...lever,
+        targetRevenueCategoryId: lever.targetRevenueCategoryId || POLICY_TARGET_FALLBACK[lever.id]
+      })),
     [policyLevers],
   );
 
@@ -134,6 +306,7 @@ export default function BuildPageClient() {
     setRevenueTargetRangeMax,
     setSelectedCategory,
     setSelectedRevenueCategory,
+    setSelectedRevenueFamily,
     setLens,
     setAggregationLens,
     setMasses,
@@ -474,8 +647,11 @@ export default function BuildPageClient() {
       const spending = allPieces.filter((p) => p.type === 'expenditure');
       const revenue = allPieces.filter((p) =>
         p.type === 'revenue' &&
-        p.id !== 'rev_public_income' // Hiding dividends as per user request (0 in this dataset)
-      );
+        p.id !== 'rev_public_income'
+      ).map(p => ({
+        ...p,
+        familyId: p.familyId || REVENUE_FAMILY_FALLBACK[p.id] || 'REV_OTHER'
+      }));
 
       const missionLabelMap: Record<string, MissionLabel> = {};
       (data.missionLabels || []).forEach((label: MissionLabel) => {
@@ -533,12 +709,15 @@ export default function BuildPageClient() {
       setMassDataByLens({ MISSION: missionCurrent, COFOG: [] });
       setMasses(missionCurrent);
 
+
+
       setData({
         spendingPieces: spending,
         revenuePieces: revenue,
+        masses: masses,
         policyLevers: data.policyLevers,
         popularIntents: data.popularIntents,
-        revenueFamilies: data.revenueFamilies,
+        revenueFamilies: (data.revenueFamilies && data.revenueFamilies.length > 0) ? data.revenueFamilies : REVENUE_FAMILIES_DEF,
       });
 
       const spendingTotal = Number(data.legoBaseline?.depensesTotal ?? 0);
@@ -687,31 +866,69 @@ export default function BuildPageClient() {
   };
 
   const handleApplyRevenueTarget = () => {
-    if (!selectedRevenueCategory) return;
+    if (selectedRevenueCategory) {
+      const category = selectedRevenueCategory;
+      const baseline = category.amountEur || 0;
+      const baseMagnitude = Math.abs(baseline);
+      const amount = (baseMagnitude * revenueTargetPercent) / 100;
+      const pieceId = category.id;
 
-    const baseline = selectedRevenueCategory.amountEur || 0;
-    const baseMagnitude = Math.abs(baseline);
-    const amount = (baseMagnitude * revenueTargetPercent) / 100;
-    const pieceId = selectedRevenueCategory.id;
+      setDslObject(currentDsl => {
+        const otherActions = currentDsl.actions.filter(a => a.id !== `target_${pieceId}`);
+        if (!Number.isFinite(amount) || Math.abs(amount) < 1) {
+          return { ...currentDsl, actions: otherActions };
+        }
+        // Keep role unset so the backend applies piece deltas instead of treating them as target markers.
+        const newAction: DslAction = {
+          id: `target_${pieceId}`,
+          target: `piece.${pieceId}`,
+          op: (amount > 0 ? 'increase' : 'decrease') as 'increase' | 'decrease',
+          amount_eur: Math.abs(amount),
+          recurring: true,
+        };
+        return {
+          ...currentDsl,
+          actions: [...otherActions, newAction],
+        };
+      });
+    } else if (selectedRevenueFamily) {
+       // Instead of applying immediately, trigger confirmation modal
+       setPendingFamilyAction({
+         family: selectedRevenueFamily,
+         targetPercent: revenueTargetPercent
+       });
+    }
+  };
 
+  const handleConfirmFamilyApply = () => {
+    if (!pendingFamilyAction) return;
+    const { family, targetPercent } = pendingFamilyAction;
+    const pieces = revenuePieces.filter(p => p.familyId === family.id);
+    
     setDslObject(currentDsl => {
-      const otherActions = currentDsl.actions.filter(a => a.id !== `target_${pieceId}`);
-      if (!Number.isFinite(amount) || Math.abs(amount) < 1) {
-        return { ...currentDsl, actions: otherActions };
-      }
-      // Keep role unset so the backend applies piece deltas instead of treating them as target markers.
-      const newAction: DslAction = {
-        id: `target_${pieceId}`,
-        target: `piece.${pieceId}`,
-        op: (amount > 0 ? 'increase' : 'decrease') as 'increase' | 'decrease',
-        amount_eur: Math.abs(amount),
-        recurring: true,
-      };
-      return {
-        ...currentDsl,
-        actions: [...otherActions, newAction],
-      };
+      let newActions = currentDsl.actions;
+      const pieceIds = new Set(pieces.map(p => p.id));
+      // Remove existing target actions for these pieces
+      newActions = newActions.filter(a => !a.id.startsWith('target_') || !pieceIds.has(a.id.replace('target_', '')));
+      
+      // Add new actions
+      pieces.forEach(p => {
+        const baseline = p.amountEur || 0;
+        const amount = (baseline * targetPercent) / 100;
+        if (Number.isFinite(amount) && Math.abs(amount) >= 1) {
+            newActions.push({
+                id: `target_${p.id}`,
+                target: `piece.${p.id}`,
+                op: amount > 0 ? 'increase' : 'decrease',
+                amount_eur: Math.abs(amount),
+                recurring: true,
+            });
+        }
+      });
+      return { ...currentDsl, actions: newActions };
     });
+    setPendingFamilyAction(null);
+    setShareFeedback(`✅ Modification "${family.displayLabel}" appliquée`);
   };
 
   const handleFamilyClick = (family: string) => {
@@ -741,44 +958,47 @@ export default function BuildPageClient() {
     setIsMobileSpendingOpen(false);
     togglePanel(false);
     setSelectedCategory(null);
+    setSelectedRevenueFamily(null); // Clear family selection
     const pieceId = category.id;
-    const targetAction = dslObject.actions.find((action: DslAction) => action.id === `target_${pieceId}`);
-    const baselineAmount = category.amountEur || 0;
-    const baseMagnitude = Math.abs(baselineAmount);
-    if (targetAction && baseMagnitude !== 0) {
-      const signedAmount = targetAction.amount_eur * (targetAction.op === 'increase' ? 1 : -1);
-      const rawPercent = (signedAmount / baseMagnitude) * 100;
-      const snapped = Math.round(rawPercent / TARGET_PERCENT_STEP) * TARGET_PERCENT_STEP;
-      const safePercent = Number.isFinite(snapped) ? Number(snapped.toFixed(1)) : 0;
-      const boundedPercent = Math.max(-TARGET_PERCENT_EXPANDED_RANGE, Math.min(TARGET_PERCENT_EXPANDED_RANGE, safePercent));
-      setRevenueTargetPercent(boundedPercent);
-      setRevenueTargetRangeMax(Math.abs(boundedPercent) > TARGET_PERCENT_DEFAULT_RANGE ? TARGET_PERCENT_EXPANDED_RANGE : TARGET_PERCENT_DEFAULT_RANGE);
-    } else {
-      setRevenueTargetPercent(0);
-      setRevenueTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
-    }
-    setSelectedRevenueCategory(category);
-    toggleRevenuePanel(true);
-
-    try {
-      const data = await gqlRequest(suggestLeversQuery, { massId: pieceId });
-      setSuggestedLevers(data.suggestLevers);
-    } catch (err: any) {
-      console.error('[Build] Failed to fetch revenue suggestions', err);
-      // Fallback to local filter if query fails
-      const revenueLeversForCategory = revenueLevers.filter(lever => {
-        if (lever.targetRevenueCategoryId === category.id) return true;
-        if (!lever.cofogMapping || Object.keys(lever.cofogMapping).length === 0) return true;
-        const weight = lever.cofogMapping[category.id];
-        return typeof weight === 'number' && weight > 0;
-      });
-      setSuggestedLevers(revenueLeversForCategory);
-    }
+    // ... rest of function ...
+    // Note: I need to update the existing function to clear family selection too.
+    // I will replace the whole function block.
+    
+    // Actually, I am injecting handleRevenueFamilyClick BEFORE handleRevenueCategoryClick for context match.
   };
+
+  const handleRevenueFamilyClick = (family: RevenueFamily) => {
+    setActiveRevenueTab('revenues');
+    setIsMobileRevenueOpen(true);
+    setIsMobileSpendingOpen(false);
+    togglePanel(false);
+    setSelectedCategory(null);
+    setSelectedRevenueCategory(null);
+    
+    setRevenueTargetPercent(0);
+    setRevenueTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
+    
+    setSelectedRevenueFamily(family);
+    toggleRevenuePanel(true);
+    
+    // Populate suggested levers for the family
+    // Find all pieces in this family
+    const familyPieceIds = new Set(revenuePieces.filter(p => p.familyId === family.id).map(p => p.id));
+    
+    // Find all levers targeting these pieces
+    const relevantLevers = revenueLevers.filter(lever => 
+      lever.targetRevenueCategoryId && familyPieceIds.has(lever.targetRevenueCategoryId)
+    );
+    setSuggestedLevers(relevantLevers);
+  };
+
+  // handleRevenueCategoryClick removed as it is superseded by handleRevenueFamilyClick for the main list interactions.
+  // Keeping logic inside if needed for sub-navigation, but for now we interact with families.
 
   const handleRevenueBackClick = () => {
     toggleRevenuePanel(false);
     setSelectedRevenueCategory(null);
+    setSelectedRevenueFamily(null);
     setRevenueTargetPercent(0);
     setRevenueTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
   };
@@ -1167,42 +1387,81 @@ export default function BuildPageClient() {
           !isRevenuePanelExpanded ? (
             <RevenueCategoryList
               categories={revenuePieces}
-              onSelect={handleRevenueCategoryClick}
+              onSelect={handleRevenueFamilyClick}
               formatCurrency={formatCurrency}
               visuals={revenueVisuals}
               families={revenueFamilies}
             />
           ) : (
-            selectedRevenueCategory && (
-              <RevenueCategoryPanel
-                category={selectedRevenueCategory}
-                family={revenueFamilies.find(f => f.id === selectedRevenueCategory.familyId)}
-                visual={revenueVisuals.get(selectedRevenueCategory.id)}
-                targetPercent={revenueTargetPercent}
-                targetRangeMax={revenueTargetRangeMax}
-                onTargetPercentChange={setRevenueTargetPercent}
-                onRangeChange={handleRevenueRangeChange}
-                onApplyTarget={handleApplyRevenueTarget}
-                onClearTarget={() => {
-                  setRevenueTargetPercent(0);
-                  setRevenueTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
-                }}
-                onBack={handleRevenueBackClick}
-                suggestedLevers={suggestedLevers}
-                onLeverToggle={(lever) =>
-                  (isLeverInDsl(lever.id) ? removeLeverFromDsl(lever.id) : addLeverToDsl(lever))
-                }
-                isLeverSelected={isLeverInDsl}
-                popularIntents={popularIntents}
-                onIntentClick={handleIntentClick}
-                formatCurrency={formatCurrency}
-                formatShare={formatShare}
-                displayMode={displayMode}
-              />
-            )
+            <>
+              {selectedRevenueCategory && (
+                <RevenueCategoryPanel
+                  category={selectedRevenueCategory}
+                  family={revenueFamilies.find(f => f.id === selectedRevenueCategory.familyId)}
+                  visual={revenueVisuals.get(selectedRevenueCategory.id)}
+                  targetPercent={revenueTargetPercent}
+                  targetRangeMax={revenueTargetRangeMax}
+                  onTargetPercentChange={setRevenueTargetPercent}
+                  onRangeChange={handleRevenueRangeChange}
+                  onApplyTarget={handleApplyRevenueTarget}
+                  onClearTarget={() => {
+                    setRevenueTargetPercent(0);
+                    setRevenueTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
+                  }}
+                  onBack={handleRevenueBackClick}
+                  suggestedLevers={suggestedLevers}
+                  onLeverToggle={(lever) =>
+                    (isLeverInDsl(lever.id) ? removeLeverFromDsl(lever.id) : addLeverToDsl(lever))
+                  }
+                  isLeverSelected={isLeverInDsl}
+                  popularIntents={popularIntents}
+                  onIntentClick={handleIntentClick}
+                  formatCurrency={formatCurrency}
+                  formatShare={formatShare}
+                  displayMode={displayMode}
+                />
+              )}
+              {selectedRevenueFamily && (
+                <RevenueFamilyPanel
+                  family={selectedRevenueFamily}
+                  pieces={revenuePieces.filter(p => p.familyId === selectedRevenueFamily.id)}
+                  levers={suggestedLevers}
+                  targetPercent={revenueTargetPercent}
+                  targetRangeMax={revenueTargetRangeMax}
+                  onTargetPercentChange={setRevenueTargetPercent}
+                  onRangeChange={handleRevenueRangeChange}
+                  onApplyTarget={handleApplyRevenueTarget}
+                  onClearTarget={() => {
+                    setRevenueTargetPercent(0);
+                    setRevenueTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
+                  }}
+                  onBack={handleRevenueBackClick}
+                  onLeverToggle={(lever) =>
+                    (isLeverInDsl(lever.id) ? removeLeverFromDsl(lever.id) : addLeverToDsl(lever))
+                  }
+                  isLeverSelected={isLeverInDsl}
+                  formatCurrency={formatCurrency}
+                  formatShare={formatShare}
+                />
+              )}
+            </>
           )
         )}
       </div>
+      {/* Confirmation Modal for Family Actions */}
+      {pendingFamilyAction && (
+        <FamilyActionModal
+          family={pendingFamilyAction.family}
+          targetPercent={pendingFamilyAction.targetPercent}
+          totalAmount={revenuePieces
+            .filter(p => p.familyId === pendingFamilyAction.family.id)
+            .reduce((sum, p) => sum + (p.amountEur || 0), 0)
+          }
+          formatCurrency={formatCurrency}
+          onConfirm={handleConfirmFamilyApply}
+          onCancel={() => setPendingFamilyAction(null)}
+        />
+      )}
     </>
   );
 

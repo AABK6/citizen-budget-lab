@@ -28,6 +28,7 @@ export type BuildState = {
   isRevenuePanelExpanded: boolean;
   selectedCategory: MassCategory | null;
   selectedRevenueCategory: LegoPiece | null;
+  selectedRevenueFamily: RevenueFamily | null;
   suggestedLevers: PolicyLever[];
   targetPercent: number;
   targetRangeMax: number;
@@ -47,6 +48,7 @@ type BuildAction =
   | { type: 'SET_SCENARIO_RESULT'; result: ScenarioResult | null; scenarioId?: string }
   | { type: 'SET_SELECTED_CATEGORY'; category: MassCategory | null }
   | { type: 'SET_SELECTED_REVENUE_CATEGORY'; category: LegoPiece | null }
+  | { type: 'SET_SELECTED_REVENUE_FAMILY'; family: RevenueFamily | null }
   | { type: 'TOGGLE_PANEL'; expanded?: boolean }
   | { type: 'TOGGLE_REVENUE_PANEL'; expanded?: boolean }
   | { type: 'SET_LENS'; lens: BuildLens }
@@ -74,6 +76,8 @@ function reducer(state: BuildState, action: BuildAction): BuildState {
       return { ...state, selectedCategory: action.category };
     case 'SET_SELECTED_REVENUE_CATEGORY':
       return { ...state, selectedRevenueCategory: action.category };
+    case 'SET_SELECTED_REVENUE_FAMILY':
+      return { ...state, selectedRevenueFamily: action.family };
     case 'TOGGLE_PANEL':
       return { ...state, isPanelExpanded: action.expanded ?? !state.isPanelExpanded };
     case 'TOGGLE_REVENUE_PANEL':
@@ -120,6 +124,7 @@ function createInitialState(initialYear: number): BuildState {
     isRevenuePanelExpanded: false,
     selectedCategory: null,
     selectedRevenueCategory: null,
+    selectedRevenueFamily: null,
     suggestedLevers: [],
     targetPercent: 0,
     targetRangeMax: 10,
@@ -175,6 +180,8 @@ export function useBuildState(initialYear: number) {
         dispatch({ type: 'SET_SELECTED_CATEGORY', category }),
       setSelectedRevenueCategory: (category: LegoPiece | null) =>
         dispatch({ type: 'SET_SELECTED_REVENUE_CATEGORY', category }),
+      setSelectedRevenueFamily: (family: RevenueFamily | null) =>
+        dispatch({ type: 'SET_SELECTED_REVENUE_FAMILY', family }),
       setLens: (lens: BuildLens) => dispatch({ type: 'SET_LENS', lens }),
       setAggregationLens: (lens: AggregationLens) => dispatch({ type: 'SET_AGGREGATION_LENS', lens }),
       setMasses: (masses: MassCategory[]) => dispatch({ type: 'SET_MASSES', masses }),
