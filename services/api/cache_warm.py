@@ -1103,7 +1103,7 @@ def warm_lego_baseline(year: int, country: str = "FR", scope: str = "S13") -> st
         "D214A", "D214B", "D214C",  # excises
         "D29",  # other taxes on production (for splits)
         "D59A",  # recurrent property taxes
-        "D51",   # taxes on income etc. (split PIT/CIT)
+        "D51", "D51A", "D51B",   # taxes on income etc. (split PIT/CIT)
         "D611", "D612", "D613",  # social contributions
     ]
     taxag_vals: Dict[str, float] = {}
@@ -1149,11 +1149,13 @@ def warm_lego_baseline(year: int, country: str = "FR", scope: str = "S13") -> st
                     elif pid == "rev_vat_reduced":
                         ratio = 1.0 - VAT_STANDARD_SPLIT
                 elif code.startswith("D51_"):
-                    base = "D51"
-                    if code.endswith("PIT"):
-                        ratio = PIT_SPLIT
-                    elif code.endswith("CIT"):
-                        ratio = 1.0 - PIT_SPLIT
+                    if code.endswith("CIT"):
+                        base = "D51B"
+                        ratio = 1.0
+                    elif code.endswith("PIT"):
+                        base = "D51A"
+                        # Approx split of D51A (Households) into IRPP (40%) and CSG (60%)
+                        ratio = 0.40
                 elif code.startswith("D29_"):
                     base = "D29"
                     if code.endswith("WAGE_TAX"):
@@ -1174,9 +1176,9 @@ def warm_lego_baseline(year: int, country: str = "FR", scope: str = "S13") -> st
                     base = "D29"
                     ratio = D29_TRANSFERS
                 elif code == "D611_CSG":
-                    # CSG/CRDS are not isolated in gov_10a_taxag; skip to avoid double count
-                    base = "__NONE__"
-                    ratio = 0.0
+                    # CSG is technically D51A (taxes on income) in National Accounts
+                    base = "D51A"
+                    ratio = 0.60
                 # Pull value from the right cache
                 if base == "__NONE__":
                     val_mio = 0.0

@@ -1,8 +1,8 @@
 {
   "legoBaseline": {
-    "pib": 3000000000000.0,
+    "pib": 3027000000000.0,
     "depensesTotal": 1324088100000.0,
-    "recettesTotal": 1310056800000.0,
+    "recettesTotal": 1309912800000.0,
     "pieces": [
       {
         "id": "ed_schools_staff_ops",
@@ -382,19 +382,19 @@
       },
       {
         "id": "rev_pit",
-        "amountEur": 215415600000.0,
+        "amountEur": 110048800000.0,
         "share": null,
         "missions": []
       },
       {
         "id": "rev_cit",
-        "amountEur": 143610400000.0,
+        "amountEur": 83760000000.0,
         "share": null,
         "missions": []
       },
       {
         "id": "rev_csg_crds",
-        "amountEur": 0.0,
+        "amountEur": 165073199999.99997,
         "share": null,
         "missions": []
       },
@@ -907,7 +907,7 @@
     {
       "id": "admin_services",
       "label": "Services publics au quotidien",
-      "description": "Préfectures, impôts, numérique, bâtiments.",
+      "description": "Gestion des finances publiques (DGFiP, Douanes), préfectures, support interministériel et immobilier de l'État.",
       "type": "expenditure",
       "cofogMajors": [
         "01"
@@ -1434,9 +1434,7 @@
       "fixedImpactEur": 100000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
         "2026": 100000000,
         "2027": 150000000,
@@ -1466,9 +1464,7 @@
       "fixedImpactEur": 2500000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
         "2026": 2500000000,
         "2027": 2600000000,
@@ -1495,12 +1491,10 @@
       "majorAmendment": true,
       "label": "Défiscalisation des pensions alimentaires (plafond)",
       "description": "Exonérer d'impôt sur le revenu les pensions alimentaires perçues, dans la limite de 4 000 € par enfant (et 12 000 € par an au total)[8].",
-      "fixedImpactEur": 470000000,
+      "fixedImpactEur": -470000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
         "2026": -470000000,
         "2027": -480000000,
@@ -1526,7 +1520,7 @@
       "massMapping": {},
       "cofogMapping": {},
       "missionMapping": {
-        "M_SOLIDARITE": 1.0
+        "M_SOLIDARITY": 1.0
       },
       "multiYearImpact": {
         "2026": 110000000,
@@ -1557,9 +1551,7 @@
       "fixedImpactEur": -272000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_SOLIDARITE": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
         "2026": -272000000,
         "2027": -280000000,
@@ -1589,9 +1581,7 @@
       "fixedImpactEur": -30000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
         "2026": -30000000,
         "2027": -31000000,
@@ -1621,9 +1611,7 @@
       "fixedImpactEur": 2000000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
         "2026": 2000000000,
         "2027": 2100000000,
@@ -1645,12 +1633,10 @@
       "majorAmendment": true,
       "label": "Rétablissement de l'Exit Tax (version antérieure à 2019)",
       "description": "Réintroduire l'« Exit Tax » sur les plus-values latentes en cas d'expatriation, avec le régime antérieur à 2019 (imposition annulée seulement après 15 ans de résidence fiscale à l'étranger, contre 2 ans aujourd'hui)[14].",
-      "fixedImpactEur": 70000000,
+      "fixedImpactEur": 700000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
         "2026": 700000000,
         "2027": 750000000,
@@ -1672,12 +1658,10 @@
       "majorAmendment": true,
       "label": "Don familial exceptionnel exonéré jusqu'à 152 500 € en 2026",
       "description": "Instaurer une exonération unique de droits de donation à hauteur de 152 500 € pour les dons effectués en 2026 au profit d'un descendant (enfant, petit-enfant) ou conjoint[15].",
-      "fixedImpactEur": -300000000,
+      "fixedImpactEur": 0,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
         "2026": 0,
         "2027": 0,
@@ -1707,13 +1691,11 @@
       "fixedImpactEur": -150000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_SANTE": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
-        "2026": 883000000,
-        "2027": 900000000,
-        "2028": 920000000
+        "2026": -150000000,
+        "2027": -150000000,
+        "2028": -150000000
       },
       "pushbacks": [
         {
@@ -1736,12 +1718,10 @@
       "majorAmendment": true,
       "label": "Maintien de la réduction d'impôt pour frais de scolarité",
       "description": "Préserver l'avantage fiscal accordé aux familles au titre des frais de scolarité des enfants (collège, lycée, supérieur), alors que sa suppression était initialement prévue[17].",
-      "fixedImpactEur": -250000000,
+      "fixedImpactEur": 450000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_ENSEIGNEMENT_SCOLAIRE": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
         "2026": 450000000,
         "2027": 460000000,
@@ -1768,12 +1748,10 @@
       "majorAmendment": true,
       "label": "Limitation de la taxe sur les holdings patrimoniales aux biens somptuaires",
       "description": "Restreindre l'assiette de la nouvelle taxe sur les holdings patrimoniales (sociétés non opérationnelles détenant du patrimoine) aux seuls actifs « somptuaires » (de luxe), excluant ainsi les autres biens de cette taxation[18].",
-      "fixedImpactEur": 100000000,
+      "fixedImpactEur": 150000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
         "2026": 150000000,
         "2027": 160000000,
@@ -1803,13 +1781,11 @@
       "fixedImpactEur": 6000000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
-        "2026": 8000000000,
-        "2027": 4000000000,
-        "2028": 0
+        "2026": 6000000000,
+        "2027": 6000000000,
+        "2028": 6000000000
       },
       "pushbacks": [
         {
@@ -1835,9 +1811,7 @@
       "fixedImpactEur": 1500000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
         "2026": 1500000000,
         "2027": 1600000000,
@@ -1867,13 +1841,11 @@
       "fixedImpactEur": 2400000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
-        "2026": 800000000,
-        "2027": 850000000,
-        "2028": 900000000
+        "2026": 2400000000,
+        "2027": 2400000000,
+        "2028": 2400000000
       },
       "pushbacks": [
         {
@@ -1896,12 +1868,10 @@
       "majorAmendment": true,
       "label": "Abaissement du seuil d'application du taux d'IS minimum mondial à 250 M€ de CA",
       "description": "Abaisser de 750 millions à 250 millions d'euros de chiffre d'affaires le seuil à partir duquel s'applique le taux minimum mondial de 15 % sur les bénéfices, élargissant ainsi le champ des entreprises concernées (notamment les ETI).",
-      "fixedImpactEur": 1200000000,
+      "fixedImpactEur": 400000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
         "2026": 400000000,
         "2027": 420000000,
@@ -1931,13 +1901,11 @@
       "fixedImpactEur": 2000000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
-        "2026": 200000000,
-        "2027": 210000000,
-        "2028": 220000000
+        "2026": 2000000000,
+        "2027": 2000000000,
+        "2028": 2000000000
       },
       "pushbacks": [
         {
@@ -1963,13 +1931,11 @@
       "fixedImpactEur": 2000000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
-        "2026": 750000000,
-        "2027": 800000000,
-        "2028": 850000000
+        "2026": 2000000000,
+        "2027": 2000000000,
+        "2028": 2000000000
       },
       "pushbacks": [
         {
@@ -1995,9 +1961,7 @@
       "fixedImpactEur": 100000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_RECHERCHE_ENSEIGNEMENT_SUPERIEUR": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
         "2026": 100000000,
         "2027": 110000000,
@@ -2027,13 +1991,11 @@
       "fixedImpactEur": -200000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
-        "2026": -1500000000,
-        "2027": -1550000000,
-        "2028": -1600000000
+        "2026": -200000000,
+        "2027": -200000000,
+        "2028": -200000000
       },
       "pushbacks": [
         {
@@ -2059,13 +2021,11 @@
       "fixedImpactEur": 2000000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
-        "2026": 200000000,
-        "2027": 210000000,
-        "2028": 220000000
+        "2026": 2000000000,
+        "2027": 2000000000,
+        "2028": 2000000000
       },
       "pushbacks": [
         {
@@ -2096,7 +2056,7 @@
         "07": 1
       },
       "missionMapping": {
-        "M_SANTE": 1.0
+        "M_HEALTH": 1.0
       },
       "multiYearImpact": {
         "2026": -3000000000,
@@ -2132,7 +2092,7 @@
         "10.2": 1
       },
       "missionMapping": {
-        "M_SOLIDARITE": 1.0
+        "M_PENSIONS": 1.0
       },
       "multiYearImpact": {
         "2026": -100000000,
@@ -2160,7 +2120,7 @@
       "majorAmendment": true,
       "label": "Création d'un congé de naissance supplémentaire (1 à 2 mois)",
       "description": "Instaurer un nouveau congé de naissance, s'ajoutant aux congés maternité et paternité existants, d'une durée au choix du salarié de un mois (à 70 % du salaire) ou deux mois (à 60 %). Ce congé pourra être pris en deux fois et vise à renforcer le soutien à la parentalité[30].",
-      "fixedImpactEur": -300000000,
+      "fixedImpactEur": -800000000,
       "massMapping": {
         "10": 1
       },
@@ -2168,7 +2128,7 @@
         "10": 1
       },
       "missionMapping": {
-        "M_SOLIDARITE": 1.0
+        "M_SOLIDARITY": 1.0
       },
       "multiYearImpact": {
         "2026": -800000000,
@@ -2199,7 +2159,7 @@
         "07": 1
       },
       "missionMapping": {
-        "M_SANTE": 1.0
+        "M_HEALTH": 1.0
       },
       "multiYearImpact": {
         "2026": 900000000,
@@ -2222,7 +2182,7 @@
       "majorAmendment": true,
       "label": "Annulation du gel 2024-2025 des pensions et minima sociaux",
       "description": "Supprimer l'article prévoyant une « année blanche » sans revalorisation des pensions de retraite et prestations sociales en avril 2026. Les retraites et minima sociaux seront finalement indexés sur l'inflation comme d'habitude, évitant ~3 Mds€ d'économies initialement envisagées[2].",
-      "fixedImpactEur": -5000000000,
+      "fixedImpactEur": -4000000000,
       "massMapping": {
         "10": 1
       },
@@ -2230,12 +2190,12 @@
         "10": 1
       },
       "missionMapping": {
-        "M_SOLIDARITE": 1.0
+        "M_PENSIONS": 1.0
       },
       "multiYearImpact": {
-        "2026": -1200000000,
-        "2027": -1250000000,
-        "2028": -1300000000
+        "2026": -4000000000,
+        "2027": -4000000000,
+        "2028": -4000000000
       },
       "pushbacks": [
         {
@@ -2258,12 +2218,10 @@
       "majorAmendment": true,
       "label": "Abandon de la fin d'exonération de cotisations pour les apprentis",
       "description": "Annuler la mesure envisagée de suppression de l'exonération de cotisations sociales pour les nouveaux contrats d'apprentissage. Autrement dit, les employeurs d'apprentis continueront à bénéficier de l'allègement actuel, aucune cotisation nouvelle ne sera créée[2].",
-      "fixedImpactEur": -1000000000,
+      "fixedImpactEur": -1100000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_TRAVAIL_EMPLOI": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
         "2026": -1100000000,
         "2027": -1150000000,
@@ -2290,12 +2248,10 @@
       "majorAmendment": true,
       "label": "Abandon de la cotisation patronale sur les titres-restaurants",
       "description": "Retirer la disposition qui visait à instaurer une nouvelle cotisation patronale sur la part patronale des titres-restaurant. En conséquence, les entreprises ne seront pas soumises en 2026 à une charge supplémentaire sur les tickets-resto distribués à leurs salariés[2].",
-      "fixedImpactEur": -900000000,
+      "fixedImpactEur": -950000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
         "2026": -950000000,
         "2027": -1000000000,
@@ -2330,12 +2286,12 @@
         "07": 1
       },
       "missionMapping": {
-        "M_SANTE": 1.0
+        "M_HEALTH": 1.0
       },
       "multiYearImpact": {
-        "2026": -2300000000,
-        "2027": -2400000000,
-        "2028": -2500000000
+        "2026": -800000000,
+        "2027": -800000000,
+        "2028": -800000000
       },
       "pushbacks": [
         {
@@ -2361,9 +2317,7 @@
       "fixedImpactEur": 1500000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
         "2026": 1500000000,
         "2027": 1550000000,
@@ -2390,12 +2344,10 @@
       "majorAmendment": true,
       "label": "Contribution exceptionnelle des mutuelles santé (1 Md€)",
       "description": "Instaurer une taxe exceptionnelle sur les organismes complémentaires santé (mutuelles et assureurs) d'environ 1 Md€ en 2026. Objectif affiché : compenser le coût des mesures et répondre aux hausses de tarifs jugées excessives des mutuelles, sans répercussion sur les assurés (plafond d'augmentation des cotisations en 2026)[4].",
-      "fixedImpactEur": 1000000000,
+      "fixedImpactEur": 1100000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_SANTE": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
         "2026": 1100000000,
         "2027": 0,
@@ -2422,12 +2374,10 @@
       "majorAmendment": true,
       "label": "Extension de la déduction de cotisations sur les heures sup' aux >250 salariés",
       "description": "Étendre aux entreprises de plus de 250 salariés la déduction forfaitaire de cotisations patronales aujourd'hui applicable aux heures supplémentaires dans les plus petites entreprises. Cette mesure, portée par des députés de l'opposition, vise à soutenir le pouvoir d'achat des salariés des grands groupes (coût < 150 M€)[33].",
-      "fixedImpactEur": -150000000,
+      "fixedImpactEur": -500000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_TRAVAIL_EMPLOI": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
         "2026": -500000000,
         "2027": -520000000,
@@ -2454,12 +2404,10 @@
       "majorAmendment": true,
       "label": "Augmentation du forfait social sur les indemnités de rupture (30% → 40%)",
       "description": "Rehausser de 30 % à 40 % le taux du forfait social (contribution patronale) appliqué aux indemnités de rupture conventionnelle et de mise à la retraite. Cette mesure accroît le coût des départs négociés pour l'employeur, générant des recettes supplémentaires pour la Sécurité sociale[34].",
-      "fixedImpactEur": 260000000,
+      "fixedImpactEur": 600000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_SOLIDARITE": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
         "2026": 600000000,
         "2027": 620000000,
@@ -2486,7 +2434,7 @@
       "majorAmendment": false,
       "label": "Année Blanche (Geler l'indexation des prestations)",
       "description": "Suspendre la revalorisation annuelle (indexation sur l'inflation) des prestations sociales et des retraites pendant un an.",
-      "fixedImpactEur": 6500000000,
+      "fixedImpactEur": 4000000000,
       "massMapping": {
         "10": 1
       },
@@ -2494,12 +2442,12 @@
         "10": 1
       },
       "missionMapping": {
-        "M_SOLIDARITE": 1.0
+        "M_PENSIONS": 1.0
       },
       "multiYearImpact": {
         "2026": 4000000000,
-        "2027": 4200000000,
-        "2028": 4400000000
+        "2027": 4000000000,
+        "2028": 4000000000
       },
       "pushbacks": [
         {
@@ -2528,7 +2476,7 @@
       "majorAmendment": false,
       "label": "Économies d'efficacité (Mission Justice)",
       "description": "Mettre en œuvre des mesures d'efficacité (numérisation, services partagés) au sein du ministère de la Justice.",
-      "fixedImpactEur": 750000000,
+      "fixedImpactEur": 250000000,
       "massMapping": {
         "03": 1
       },
@@ -2564,7 +2512,7 @@
       "majorAmendment": false,
       "label": "Efficacité opérationnelle (Mission Éducation)",
       "description": "Rationaliser les services support et les achats au sein de l'Éducation nationale, en préservant les dépenses pour les classes.",
-      "fixedImpactEur": 1200000000,
+      "fixedImpactEur": 400000000,
       "massMapping": {
         "9": 1
       },
@@ -2572,7 +2520,7 @@
         "9": 1
       },
       "missionMapping": {
-        "M_ENSEIGNEMENT_SCOLAIRE": 1.0
+        "M_EDU": 1.0
       },
       "multiYearImpact": {
         "2026": 400000000,
@@ -2600,7 +2548,7 @@
       "majorAmendment": false,
       "label": "Rationalisation (Mission Affaires étrangères)",
       "description": "Rationaliser les postes diplomatiques et les services partagés à l'étranger pour réaliser des économies.",
-      "fixedImpactEur": 350000000,
+      "fixedImpactEur": 150000000,
       "massMapping": {
         "01": 1
       },
@@ -2608,7 +2556,7 @@
         "01": 1
       },
       "missionMapping": {
-        "M_ACTION_EXTERIEURE_ETAT": 1.0
+        "M_DIPLO": 1.0
       },
       "multiYearImpact": {
         "2026": 150000000,
@@ -2636,22 +2584,35 @@
       "majorAmendment": false,
       "label": "Rétablir l'Impôt de Solidarité sur la Fortune (ISF)",
       "description": "Restaurer un impôt général sur le patrimoine des ménages les plus aisés (en remplacement de l'IFI, qui ne concerne que l'immobilier).",
-      "fixedImpactEur": 5000000000,
+      "fixedImpactEur": 6300000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
-        "2026": 15000000000,
-        "2027": 15500000000,
-        "2028": 16000000000
+        "2026": 6300000000,
+        "2027": 6300000000,
+        "2028": 6300000000
       },
       "pushbacks": [
         {
           "type": "economic",
           "description": "Risque de fuite des capitaux et d'évasion fiscale des contribuables les plus aisés.",
           "source": "Conseil d'Analyse Économique"
+        },
+        {
+          "type": "vigilance",
+          "description": "Risque de fuite des capitaux et d'expatriation fiscale des contribuables les plus aisés.",
+          "source": "Gemini Research"
+        },
+        {
+          "type": "vigilance",
+          "description": "Impact potentiel sur le financement des entreprises (Business Angels, investissement PME).",
+          "source": "Gemini Research"
+        },
+        {
+          "type": "vigilance",
+          "description": "Complexité d'évaluation des actifs non cotés (œuvres d'art, parts de sociétés fermées).",
+          "source": "Gemini Research"
         }
       ],
       "impact": {
@@ -2669,16 +2630,14 @@
       "majorAmendment": false,
       "label": "Surtaxe sur les très hauts revenus",
       "description": "Introduire de nouvelles tranches supérieures ou une surtaxe sur l'impôt sur le revenu pour les plus hauts revenus.",
-      "fixedImpactEur": 8000000000,
+      "fixedImpactEur": 2000000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
-        "2026": 8000000000,
-        "2027": 8200000000,
-        "2028": 8400000000
+        "2026": 2000000000,
+        "2027": 2000000000,
+        "2028": 2000000000
       },
       "pushbacks": [
         {
@@ -2701,16 +2660,14 @@
       "majorAmendment": false,
       "label": "Taxe sur les 'super-profits' des entreprises",
       "description": "Prélever une taxe exceptionnelle sur les 'super-profits' (bénéfices exceptionnels) des grandes entreprises.",
-      "fixedImpactEur": 4000000000,
+      "fixedImpactEur": 6000000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
-        "2026": 1500000000,
-        "2027": 1600000000,
-        "2028": 1700000000
+        "2026": 6000000000,
+        "2027": 6000000000,
+        "2028": 6000000000
       },
       "pushbacks": [
         {
@@ -2722,6 +2679,21 @@
           "type": "legal",
           "description": "Instabilité fiscale dénoncée par les organisations patronales (MEDEF).",
           "source": "Le Figaro"
+        },
+        {
+          "type": "vigilance",
+          "description": "Risque constitutionnel lié à la rupture d'égalité devant les charges publiques.",
+          "source": "Gemini Research"
+        },
+        {
+          "type": "vigilance",
+          "description": "Impact négatif sur la capacité d'investissement futur des secteurs ciblés (énergie, etc.).",
+          "source": "Gemini Research"
+        },
+        {
+          "type": "vigilance",
+          "description": "Difficulté technique à définir la notion de 'super-profit' par rapport au cycle économique.",
+          "source": "Gemini Research"
         }
       ],
       "impact": {
@@ -2742,13 +2714,11 @@
       "fixedImpactEur": 3500000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
-        "2026": 1500000000,
-        "2027": 1550000000,
-        "2028": 1600000000
+        "2026": 3500000000,
+        "2027": 3500000000,
+        "2028": 3500000000
       },
       "pushbacks": [
         {
@@ -2760,6 +2730,21 @@
           "type": "social",
           "description": "Mesure de justice fiscale visant à aligner la taxation du capital sur celle du travail.",
           "source": "Alternatives Économiques"
+        },
+        {
+          "type": "vigilance",
+          "description": "Risque de fuite des capitaux et moindre attractivité pour les investisseurs étrangers.",
+          "source": "Gemini Research"
+        },
+        {
+          "type": "vigilance",
+          "description": "Instabilité fiscale décourageant l'épargne longue et l'actionnariat.",
+          "source": "Gemini Research"
+        },
+        {
+          "type": "vigilance",
+          "description": "Risque de baisse de l'assiette taxable (optimisation ou baisse des distributions) réduisant le rendement attendu.",
+          "source": "Gemini Research"
         }
       ],
       "impact": {
@@ -2777,12 +2762,10 @@
       "majorAmendment": false,
       "label": "Étendre la Taxe sur les Transactions Financières (TTF)",
       "description": "Élargir l'assiette ou augmenter le taux de la taxe sur les transactions financières (achats d'actions, etc.).",
-      "fixedImpactEur": 2000000000,
+      "fixedImpactEur": 1200000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
         "2026": 1200000000,
         "2027": 1250000000,
@@ -2809,16 +2792,14 @@
       "majorAmendment": false,
       "label": "Rendre la CSG plus progressive",
       "description": "Augmenter la CSG sur les revenus du capital ou les hautes retraites, tout en la réduisant pour les bas revenus.",
-      "fixedImpactEur": 4500000000,
+      "fixedImpactEur": 2800000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
-        "2026": 2000000000,
-        "2027": 2100000000,
-        "2028": 2200000000
+        "2026": 2800000000,
+        "2027": 2800000000,
+        "2028": 2800000000
       },
       "pushbacks": [
         {
@@ -2841,12 +2822,10 @@
       "majorAmendment": false,
       "label": "Rétablir / Augmenter la taxe carbone",
       "description": "Augmenter progressivement les taxes sur les émissions de carbone (carburants, gaz...) en restaurant la trajectoire de la taxe carbone.",
-      "fixedImpactEur": 3000000000,
+      "fixedImpactEur": 4000000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_ECOLOGIE": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
         "2026": 4000000000,
         "2027": 4200000000,
@@ -2857,6 +2836,21 @@
           "type": "social",
           "description": "Risque de contestation sociale type 'Gilets Jaunes' en cas de hausse brutale sans compensation.",
           "source": "Note de la CAE"
+        },
+        {
+          "type": "vigilance",
+          "description": "Acceptabilité sociale faible et risque de contestation (type Gilets Jaunes).",
+          "source": "Gemini Research"
+        },
+        {
+          "type": "vigilance",
+          "description": "Caractère régressif impactant davantage les ménages modestes et ruraux.",
+          "source": "Gemini Research"
+        },
+        {
+          "type": "vigilance",
+          "description": "Nécessité impérative de mécanismes de redistribution (chèque vert) pour compenser la perte de pouvoir d'achat.",
+          "source": "Gemini Research"
         }
       ],
       "impact": {
@@ -2877,13 +2871,11 @@
       "fixedImpactEur": 2000000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_RECHERCHE_ENSEIGNEMENT_SUPERIEUR": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
-        "2026": 500000000,
-        "2027": 550000000,
-        "2028": 600000000
+        "2026": 2000000000,
+        "2027": 2000000000,
+        "2028": 2000000000
       },
       "pushbacks": [
         {
@@ -2915,9 +2907,7 @@
       "fixedImpactEur": 1000000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_SOLIDARITE": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
         "2026": 1000000000,
         "2027": 1050000000,
@@ -2944,16 +2934,14 @@
       "majorAmendment": false,
       "label": "Supprimer l'abattement fiscal de 10% sur les pensions",
       "description": "Supprimer l'abattement forfaitaire de 10% appliqué aux pensions de retraite, alignant leur fiscalité sur celle des salaires.",
-      "fixedImpactEur": 5000000000,
+      "fixedImpactEur": 4600000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
-        "2026": 4200000000,
-        "2027": 4350000000,
-        "2028": 4500000000
+        "2026": 4600000000,
+        "2027": 4600000000,
+        "2028": 4600000000
       },
       "pushbacks": [
         {
@@ -2979,13 +2967,11 @@
       "fixedImpactEur": 1700000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
-        "2026": 3500000000,
-        "2027": 3650000000,
-        "2028": 3800000000
+        "2026": 1700000000,
+        "2027": 1700000000,
+        "2028": 1700000000
       },
       "pushbacks": [
         {
@@ -3008,12 +2994,10 @@
       "majorAmendment": false,
       "label": "Lutter contre la fraude et l'évasion fiscales",
       "description": "Renforcer les contrôles, le partage de données et les sanctions pour récupérer davantage d'impôts impayés.",
-      "fixedImpactEur": 2300000000,
+      "fixedImpactEur": 1500000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
         "2026": 1500000000,
         "2027": 1600000000,
@@ -3043,9 +3027,7 @@
       "fixedImpactEur": 800000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
         "2026": 800000000,
         "2027": 850000000,
@@ -3075,9 +3057,7 @@
       "fixedImpactEur": 4000000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
         "2026": 4000000000,
         "2027": 4200000000,
@@ -3107,13 +3087,11 @@
       "fixedImpactEur": -5000000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
-        "2026": -2500000000,
-        "2027": -2550000000,
-        "2028": -2600000000
+        "2026": -5000000000,
+        "2027": -5000000000,
+        "2028": -5000000000
       },
       "pushbacks": [
         {
@@ -3136,12 +3114,10 @@
       "majorAmendment": false,
       "label": "Baisser l'impôt sur le revenu des classes moyennes",
       "description": "Alléger l'impôt pour les contribuables de la classe moyenne (ex: en ajustant les tranches du barème).",
-      "fixedImpactEur": -3000000000,
+      "fixedImpactEur": -2000000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
         "2026": -2000000000,
         "2027": -2050000000,
@@ -3171,9 +3147,7 @@
       "fixedImpactEur": -500000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
         "2026": -500000000,
         "2027": -520000000,
@@ -3203,13 +3177,11 @@
       "fixedImpactEur": -1500000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
-        "2026": -3500000000,
-        "2027": -3600000000,
-        "2028": -3700000000
+        "2026": -1500000000,
+        "2027": -1500000000,
+        "2028": -1500000000
       },
       "pushbacks": [
         {
@@ -3232,16 +3204,14 @@
       "majorAmendment": false,
       "label": "Baisser la TVA sur l'énergie à 5,5%",
       "description": "Réduire la TVA sur l'électricité, le gaz et les carburants de 20% à 5,5%.",
-      "fixedImpactEur": -11000000000,
+      "fixedImpactEur": -11300000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
-        "2026": -1500000000,
-        "2027": -1550000000,
-        "2028": -1600000000
+        "2026": -11300000000,
+        "2027": -11300000000,
+        "2028": -11300000000
       },
       "pushbacks": [
         {
@@ -3264,15 +3234,13 @@
       "majorAmendment": false,
       "label": "Geler le barème de l'impôt sur le revenu",
       "description": "Ne pas revaloriser les tranches du barème de l'impôt sur l'inflation (ce qui augmente mécaniquement l'impôt).",
-      "fixedImpactEur": 6100000000,
+      "fixedImpactEur": 2200000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
-        "2026": 2000000000,
-        "2027": 2100000000,
+        "2026": 2200000000,
+        "2027": 2200000000,
         "2028": 2200000000
       },
       "pushbacks": [
@@ -3304,12 +3272,12 @@
         "10": 1
       },
       "missionMapping": {
-        "M_SOLIDARITE": 1.0
+        "M_PENSIONS": 1.0
       },
       "multiYearImpact": {
-        "2026": 1500000000,
-        "2027": 3000000000,
-        "2028": 4500000000
+        "2026": 8000000000,
+        "2027": 8000000000,
+        "2028": 8000000000
       },
       "pushbacks": [
         {
@@ -3324,7 +3292,7 @@
         }
       ],
       "impact": {
-        "householdsImpacted": 1600000,
+        "householdsImpacted": 16000000,
         "decile1ImpactEur": -800,
         "decile10ImpactEur": -200,
         "gdpImpactPct": 0.1,
@@ -3338,7 +3306,7 @@
       "majorAmendment": false,
       "label": "Revenir à l'âge légal de la retraite à 62 ans",
       "description": "Annuler la réforme de 2023 et rétablir l'âge légal de départ à la retraite à 62 ans.",
-      "fixedImpactEur": -34000000000,
+      "fixedImpactEur": -14000000000,
       "massMapping": {
         "10": 1
       },
@@ -3346,12 +3314,12 @@
         "10": 1
       },
       "missionMapping": {
-        "M_SOLIDARITE": 1.0
+        "M_PENSIONS": 1.0
       },
       "multiYearImpact": {
-        "2026": -3500000000,
-        "2027": -7000000000,
-        "2028": -10500000000
+        "2026": -14000000000,
+        "2027": -14000000000,
+        "2028": -14000000000
       },
       "pushbacks": [
         {
@@ -3380,7 +3348,7 @@
       "majorAmendment": false,
       "label": "Abaisser l'âge légal de la retraite à 60 ans",
       "description": "Réduire l'âge légal de départ à la retraite à 60 ans (pour ceux ayant les annuités requises).",
-      "fixedImpactEur": -50000000000,
+      "fixedImpactEur": -33000000000,
       "massMapping": {
         "10": 1
       },
@@ -3388,12 +3356,12 @@
         "10": 1
       },
       "missionMapping": {
-        "M_SOLIDARITE": 1.0
+        "M_PENSIONS": 1.0
       },
       "multiYearImpact": {
-        "2026": -6000000000,
-        "2027": -12000000000,
-        "2028": -18000000000
+        "2026": -33000000000,
+        "2027": -33000000000,
+        "2028": -33000000000
       },
       "pushbacks": [
         {
@@ -3424,12 +3392,12 @@
         "10": 1
       },
       "missionMapping": {
-        "M_SOLIDARITE": 1.0
+        "M_PENSIONS": 1.0
       },
       "multiYearImpact": {
-        "2026": 500000000,
-        "2027": 1000000000,
-        "2028": 1500000000
+        "2026": 5000000000,
+        "2027": 5000000000,
+        "2028": 5000000000
       },
       "pushbacks": [
         {
@@ -3452,7 +3420,7 @@
       "majorAmendment": false,
       "label": "Supprimer les régimes spéciaux de retraite restants",
       "description": "Mettre fin aux régimes spéciaux de retraite encore existants et restreindre les départs anticipés.",
-      "fixedImpactEur": 500000000,
+      "fixedImpactEur": 300000000,
       "massMapping": {
         "10": 1
       },
@@ -3460,7 +3428,7 @@
         "10": 1
       },
       "missionMapping": {
-        "M_SOLIDARITE": 1.0
+        "M_PENSIONS": 1.0
       },
       "multiYearImpact": {
         "2026": 300000000,
@@ -3494,7 +3462,7 @@
       "majorAmendment": false,
       "label": "Geler ou sous-indexer les pensions de retraite",
       "description": "Limiter ou retarder temporairement la revalorisation des pensions par rapport à l'inflation.",
-      "fixedImpactEur": 6200000000,
+      "fixedImpactEur": 4000000000,
       "massMapping": {
         "10": 1
       },
@@ -3502,12 +3470,12 @@
         "10": 1
       },
       "missionMapping": {
-        "M_SOLIDARITE": 1.0
+        "M_SOLIDARITY": 1.0
       },
       "multiYearImpact": {
-        "2026": 6200000000,
-        "2027": 6400000000,
-        "2028": 6600000000
+        "2026": 4000000000,
+        "2027": 4000000000,
+        "2028": 4000000000
       },
       "pushbacks": [
         {
@@ -3536,7 +3504,7 @@
       "majorAmendment": false,
       "label": "Aligner le calcul des retraites public/privé",
       "description": "Calculer les pensions des fonctionnaires sur une période plus longue (ex: 25 ans) au lieu des 6 derniers mois, pour aligner sur le privé.",
-      "fixedImpactEur": 1500000000,
+      "fixedImpactEur": 500000000,
       "massMapping": {
         "10": 1
       },
@@ -3544,7 +3512,7 @@
         "10": 1
       },
       "missionMapping": {
-        "M_SOLIDARITE": 1.0
+        "M_SOLIDARITY": 1.0
       },
       "multiYearImpact": {
         "2026": 500000000,
@@ -3575,13 +3543,11 @@
       "fixedImpactEur": 10000000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_SOLIDARITE": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
-        "2026": 8000000000,
-        "2027": 8200000000,
-        "2028": 8400000000
+        "2026": 10000000000,
+        "2027": 10000000000,
+        "2028": 10000000000
       },
       "pushbacks": [
         {
@@ -3604,7 +3570,7 @@
       "majorAmendment": false,
       "label": "Augmenter les pensions minimales",
       "description": "Augmenter le montant de la pension minimum (ex: pour les carrières complètes) pour les retraités modestes.",
-      "fixedImpactEur": -1500000000,
+      "fixedImpactEur": -2000000000,
       "massMapping": {
         "10": 1
       },
@@ -3612,7 +3578,7 @@
         "10": 1
       },
       "missionMapping": {
-        "M_SOLIDARITE": 1.0
+        "M_SOLIDARITY": 1.0
       },
       "multiYearImpact": {
         "2026": -2000000000,
@@ -3648,12 +3614,12 @@
         "10": 1
       },
       "missionMapping": {
-        "M_TRAVAIL_EMPLOI": 1.0
+        "M_EMPLOYMENT": 1.0
       },
       "multiYearImpact": {
-        "2026": 1300000000,
-        "2027": 1800000000,
-        "2028": 2000000000
+        "2026": 2500000000,
+        "2027": 2500000000,
+        "2028": 2500000000
       },
       "pushbacks": [
         {
@@ -3682,7 +3648,7 @@
       "majorAmendment": false,
       "label": "Annuler les coupes dans l'assurance chômage",
       "description": "Rendre l'assurance chômage plus généreuse (ex: rétablir des durées d'indemnisation plus longues).",
-      "fixedImpactEur": -2500000000,
+      "fixedImpactEur": -1500000000,
       "massMapping": {
         "10": 1
       },
@@ -3690,7 +3656,7 @@
         "10": 1
       },
       "missionMapping": {
-        "M_TRAVAIL_EMPLOI": 1.0
+        "M_EMPLOYMENT": 1.0
       },
       "multiYearImpact": {
         "2026": -1500000000,
@@ -3718,7 +3684,7 @@
       "majorAmendment": false,
       "label": "Conditionner le versement du RSA",
       "description": "Exiger des bénéficiaires du RSA (Revenu de Solidarité Active) des activités (travail, formation) en contrepartie de l'allocation.",
-      "fixedImpactEur": 800000000,
+      "fixedImpactEur": 500000000,
       "massMapping": {
         "10": 1
       },
@@ -3726,7 +3692,7 @@
         "10": 1
       },
       "missionMapping": {
-        "M_SOLIDARITE": 1.0
+        "M_SOLIDARITY": 1.0
       },
       "multiYearImpact": {
         "2026": 500000000,
@@ -3762,12 +3728,12 @@
         "10": 1
       },
       "missionMapping": {
-        "M_SOLIDARITE": 1.0
+        "M_SOLIDARITY": 1.0
       },
       "multiYearImpact": {
-        "2026": 500000000,
-        "2027": 520000000,
-        "2028": 540000000
+        "2026": 2000000000,
+        "2027": 2000000000,
+        "2028": 2000000000
       },
       "pushbacks": [
         {
@@ -3798,12 +3764,12 @@
         "10": 1
       },
       "missionMapping": {
-        "M_SOLIDARITE": 1.0
+        "M_SOLIDARITY": 1.0
       },
       "multiYearImpact": {
-        "2026": 1200000000,
-        "2027": 1250000000,
-        "2028": 1300000000
+        "2026": 2300000000,
+        "2027": 2300000000,
+        "2028": 2300000000
       },
       "pushbacks": [
         {
@@ -3826,7 +3792,7 @@
       "majorAmendment": false,
       "label": "Réduire les Aides au Logement (APL)",
       "description": "Réduire les dépenses d'APL (Aide Personnalisée au Logement), par exemple en durcissant les conditions d'éligibilité.",
-      "fixedImpactEur": 1300000000,
+      "fixedImpactEur": 1500000000,
       "massMapping": {
         "10": 1
       },
@@ -3834,7 +3800,7 @@
         "10": 1
       },
       "missionMapping": {
-        "M_COHESION_DES_TERRITOIRES": 1.0
+        "M_HOUSING": 1.0
       },
       "multiYearImpact": {
         "2026": 1500000000,
@@ -3868,7 +3834,7 @@
       "majorAmendment": false,
       "label": "Réduire les allocations familiales (hauts revenus)",
       "description": "Diminuer les allocations familiales versées aux ménages les plus aisés.",
-      "fixedImpactEur": 600000000,
+      "fixedImpactEur": 1500000000,
       "massMapping": {
         "10": 1
       },
@@ -3876,7 +3842,7 @@
         "10": 1
       },
       "missionMapping": {
-        "M_SOLIDARITE": 1.0
+        "M_SOLIDARITY": 1.0
       },
       "multiYearImpact": {
         "2026": 1500000000,
@@ -3904,7 +3870,7 @@
       "majorAmendment": false,
       "label": "Lutter contre la fraude aux prestations sociales",
       "description": "Renforcer les contrôles pour détecter et prévenir la fraude aux prestations sociales (famille, chômage, santé...).",
-      "fixedImpactEur": 1000000000,
+      "fixedImpactEur": 500000000,
       "massMapping": {
         "10": 1
       },
@@ -3912,7 +3878,7 @@
         "10": 1
       },
       "missionMapping": {
-        "M_SOLIDARITE": 1.0
+        "M_SOLIDARITY": 1.0
       },
       "multiYearImpact": {
         "2026": 500000000,
@@ -3940,7 +3906,7 @@
       "majorAmendment": false,
       "label": "Supprimer l'Aide Médicale d'État (AME)",
       "description": "Supprimer l'AME (Aide Médicale d'État), le programme de santé pour les immigrés sans papiers.",
-      "fixedImpactEur": 500000000,
+      "fixedImpactEur": 800000000,
       "massMapping": {
         "07": 1
       },
@@ -3948,7 +3914,7 @@
         "07": 1
       },
       "missionMapping": {
-        "M_SANTE": 1.0
+        "M_HEALTH": 1.0
       },
       "multiYearImpact": {
         "2026": 800000000,
@@ -3976,7 +3942,7 @@
       "majorAmendment": false,
       "label": "Plafonner la croissance des dépenses de santé (ONDAM)",
       "description": "Imposer un plafond plus strict (ONDAM) à la croissance annuelle des dépenses de santé.",
-      "fixedImpactEur": 5000000000,
+      "fixedImpactEur": 2500000000,
       "massMapping": {
         "07": 1
       },
@@ -3984,12 +3950,12 @@
         "07": 1
       },
       "missionMapping": {
-        "M_SANTE": 1.0
+        "M_HEALTH": 1.0
       },
       "multiYearImpact": {
-        "2026": 2800000000,
-        "2027": 3000000000,
-        "2028": 3200000000
+        "2026": 2500000000,
+        "2027": 2500000000,
+        "2028": 2500000000
       },
       "pushbacks": [
         {
@@ -4012,7 +3978,7 @@
       "majorAmendment": false,
       "label": "Réduire les dépenses de santé 'inutiles'",
       "description": "Réduire les dépenses de santé jugées inefficaces (ex: moins rembourser certains médicaments, promouvoir les génériques).",
-      "fixedImpactEur": 2000000000,
+      "fixedImpactEur": 1200000000,
       "massMapping": {
         "07": 1
       },
@@ -4020,7 +3986,7 @@
         "07": 1
       },
       "missionMapping": {
-        "M_SANTE": 1.0
+        "M_HEALTH": 1.0
       },
       "multiYearImpact": {
         "2026": 1200000000,
@@ -4048,7 +4014,7 @@
       "majorAmendment": false,
       "label": "Augmenter le reste à charge (franchises médicales)",
       "description": "Mettre en place ou augmenter les franchises médicales (participation forfaitaire) sur les visites ou les médicaments.",
-      "fixedImpactEur": 200000000,
+      "fixedImpactEur": 1100000000,
       "massMapping": {
         "07": 1
       },
@@ -4056,7 +4022,7 @@
         "07": 1
       },
       "missionMapping": {
-        "M_SANTE": 1.0
+        "M_HEALTH": 1.0
       },
       "multiYearImpact": {
         "2026": 1100000000,
@@ -4092,12 +4058,12 @@
         "07": 1
       },
       "missionMapping": {
-        "M_SANTE": 1.0
+        "M_HEALTH": 1.0
       },
       "multiYearImpact": {
-        "2026": -1500000000,
-        "2027": -1600000000,
-        "2028": -1700000000
+        "2026": -2800000000,
+        "2027": -2800000000,
+        "2028": -2800000000
       },
       "pushbacks": [
         {
@@ -4120,7 +4086,7 @@
       "majorAmendment": false,
       "label": "Augmenter les salaires des soignants à l'hôpital",
       "description": "Augmenter les grilles de salaires des infirmiers et autres soignants à l'hôpital public.",
-      "fixedImpactEur": -700000000,
+      "fixedImpactEur": -4500000000,
       "massMapping": {
         "07": 1
       },
@@ -4128,12 +4094,12 @@
         "07": 1
       },
       "missionMapping": {
-        "M_SANTE": 1.0
+        "M_HEALTH": 1.0
       },
       "multiYearImpact": {
         "2026": -4500000000,
-        "2027": -4600000000,
-        "2028": -4700000000
+        "2027": -4500000000,
+        "2028": -4500000000
       },
       "pushbacks": [
         {
@@ -4164,7 +4130,7 @@
         "01": 1
       },
       "missionMapping": {
-        "M_DIRECTION_DE_L_ACTION_DU_GOUVERNEMENT": 1.0
+        "M_ADMIN": 1.0
       },
       "multiYearImpact": {
         "2026": 100000000,
@@ -4208,12 +4174,12 @@
         "01": 0.3
       },
       "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
+        "M_ADMIN": 1.0
       },
       "multiYearImpact": {
-        "2026": 2000000000,
-        "2027": 2100000000,
-        "2028": 2200000000
+        "2026": 3600000000,
+        "2027": 3600000000,
+        "2028": 3600000000
       },
       "pushbacks": [
         {
@@ -4258,12 +4224,12 @@
         "01": 0.3
       },
       "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
+        "M_ADMIN": 1.0
       },
       "multiYearImpact": {
-        "2026": 800000000,
-        "2027": 850000000,
-        "2028": 900000000
+        "2026": 2700000000,
+        "2027": 2700000000,
+        "2028": 2700000000
       },
       "pushbacks": [
         {
@@ -4286,7 +4252,7 @@
       "majorAmendment": false,
       "label": "Augmenter le point d'indice de 10% (Fonction Publique)",
       "description": "Augmenter la valeur du point d'indice (salaire de base des fonctionnaires) de 10%.",
-      "fixedImpactEur": -20000000000,
+      "fixedImpactEur": -21700000000,
       "massMapping": {
         "9": 0.3,
         "07": 0.2,
@@ -4302,12 +4268,12 @@
         "01": 0.3
       },
       "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
+        "M_ADMIN": 1.0
       },
       "multiYearImpact": {
-        "2026": -2000000000,
-        "2027": -2050000000,
-        "2028": -2100000000
+        "2026": -21700000000,
+        "2027": -21700000000,
+        "2028": -21700000000
       },
       "pushbacks": [
         {
@@ -4352,12 +4318,12 @@
         "01": 0.3
       },
       "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
+        "M_ADMIN": 1.0
       },
       "multiYearImpact": {
-        "2026": 150000000,
-        "2027": 160000000,
-        "2028": 170000000
+        "2026": 2500000000,
+        "2027": 2500000000,
+        "2028": 2500000000
       },
       "pushbacks": [
         {
@@ -4386,7 +4352,7 @@
       "majorAmendment": false,
       "label": "Supprimer ou fusionner des agences publiques",
       "description": "Éliminer ou regrouper certaines agences ou comités publics jugés redondants.",
-      "fixedImpactEur": 1000000000,
+      "fixedImpactEur": 500000000,
       "massMapping": {
         "01": 1
       },
@@ -4394,7 +4360,7 @@
         "01": 1
       },
       "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
+        "M_ADMIN": 1.0
       },
       "multiYearImpact": {
         "2026": 500000000,
@@ -4422,7 +4388,7 @@
       "majorAmendment": false,
       "label": "Réduire l'absentéisme dans la fonction publique",
       "description": "Mettre en place des mesures pour réduire l'absentéisme (ex: réintroduire un jour de carence, contrôles renforcés).",
-      "fixedImpactEur": 1300000000,
+      "fixedImpactEur": 900000000,
       "massMapping": {
         "9": 0.3,
         "07": 0.2,
@@ -4438,7 +4404,7 @@
         "01": 0.3
       },
       "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
+        "M_ADMIN": 1.0
       },
       "multiYearImpact": {
         "2026": 900000000,
@@ -4477,9 +4443,9 @@
         "M_DEFENSE": 1.0
       },
       "multiYearImpact": {
-        "2026": 3300000000,
-        "2027": 3500000000,
-        "2028": 3700000000
+        "2026": 6000000000,
+        "2027": 6000000000,
+        "2028": 6000000000
       },
       "pushbacks": [
         {
@@ -4505,12 +4471,12 @@
         "04": 1
       },
       "missionMapping": {
-        "M_TRAVAIL_EMPLOI": 1.0
+        "M_EMPLOYMENT": 1.0
       },
       "multiYearImpact": {
-        "2026": 3500000000,
-        "2027": 3800000000,
-        "2028": 4000000000
+        "2026": 5000000000,
+        "2027": 5000000000,
+        "2028": 5000000000
       },
       "pushbacks": [
         {
@@ -4533,7 +4499,7 @@
       "majorAmendment": false,
       "label": "Supprimer les niches fiscales 'brunes' (fossiles)",
       "description": "Supprimer les subventions et exonérations fiscales qui favorisent les énergies fossiles (ex: gazole non routier).",
-      "fixedImpactEur": 1500000000,
+      "fixedImpactEur": 2000000000,
       "massMapping": {
         "05": 1
       },
@@ -4541,7 +4507,8 @@
         "05": 1
       },
       "missionMapping": {
-        "M_ECOLOGIE": 1.0
+        "M_ENVIRONMENT": 0.7692682926829268,
+        "M_TRANSPORT": 0.23121951219512196
       },
       "multiYearImpact": {
         "2026": 2000000000,
@@ -4569,7 +4536,7 @@
       "majorAmendment": false,
       "label": "Réduire l'aide publique au développement",
       "description": "Réduire le budget de la France consacré à l'aide internationale et au développement.",
-      "fixedImpactEur": 1500000000,
+      "fixedImpactEur": 700000000,
       "massMapping": {
         "01": 1
       },
@@ -4577,7 +4544,7 @@
         "01": 1
       },
       "missionMapping": {
-        "M_AIDE_PUBLIQUE_AU_DEVELOPPEMENT": 1.0
+        "M_DIPLO": 1.0
       },
       "multiYearImpact": {
         "2026": 700000000,
@@ -4613,12 +4580,12 @@
         "8": 1
       },
       "missionMapping": {
-        "M_SPORT_JEUNESSE_ET_VIE_ASSOCIATIVE": 1.0
+        "M_CULTURE": 1.0
       },
       "multiYearImpact": {
-        "2026": 300000000,
-        "2027": 310000000,
-        "2028": 320000000
+        "2026": 1600000000,
+        "2027": 1600000000,
+        "2028": 1600000000
       },
       "pushbacks": [
         {
@@ -4649,12 +4616,12 @@
         "04": 1
       },
       "missionMapping": {
-        "M_ECONOMIE": 1.0
+        "M_ECONOMIC": 1.0
       },
       "multiYearImpact": {
-        "2026": 2000000000,
-        "2027": 2100000000,
-        "2028": 2200000000
+        "2026": 800000000,
+        "2027": 800000000,
+        "2028": 800000000
       },
       "pushbacks": [
         {
@@ -4677,7 +4644,7 @@
       "majorAmendment": false,
       "label": "Embaucher des enseignants supplémentaires",
       "description": "Recruter davantage d'enseignants pour réduire la taille des classes (ex: 10 000 postes).",
-      "fixedImpactEur": -500000000,
+      "fixedImpactEur": -80000000,
       "massMapping": {
         "9": 1
       },
@@ -4685,7 +4652,7 @@
         "9": 1
       },
       "missionMapping": {
-        "M_ENSEIGNEMENT_SCOLAIRE": 1.0
+        "M_EDU": 1.0
       },
       "multiYearImpact": {
         "2026": -80000000,
@@ -4716,7 +4683,7 @@
         "01": 1
       },
       "missionMapping": {
-        "M_RELATIONS_AVEC_LES_COLLECTIVITES_TERRITORIALES": 1.0
+        "M_TERRITORIES": 1.0
       },
       "multiYearImpact": {
         "2026": 1500000000,
@@ -4744,12 +4711,10 @@
       "majorAmendment": false,
       "label": "Taxe verte sur les transports (Avion, Livraisons)",
       "description": "Prélever de nouvelles taxes écologiques (ex: sur les billets d'avion, le kérosène, ou les livraisons e-commerce).",
-      "fixedImpactEur": 600000000,
+      "fixedImpactEur": 580000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_ECOLOGIE": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
         "2026": 580000000,
         "2027": 600000000,
@@ -4771,7 +4736,7 @@
       "majorAmendment": false,
       "label": "Améliorer l'efficacité des achats publics",
       "description": "Rationaliser les achats de l'État (achats groupés, meilleurs appels d'offres) pour réduire les coûts.",
-      "fixedImpactEur": 500000000,
+      "fixedImpactEur": 1000000000,
       "massMapping": {
         "02": 0.5,
         "07": 0.5
@@ -4781,7 +4746,7 @@
         "07": 0.5
       },
       "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
+        "M_ADMIN": 1.0
       },
       "multiYearImpact": {
         "2026": 1000000000,
@@ -4825,12 +4790,12 @@
         "01": 0.1
       },
       "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
+        "M_ADMIN": 1.0
       },
       "multiYearImpact": {
-        "2026": 10000000000,
-        "2027": 10500000000,
-        "2028": 11000000000
+        "2026": 7000000000,
+        "2027": 7000000000,
+        "2028": 7000000000
       },
       "pushbacks": [
         {
@@ -4853,7 +4818,7 @@
       "majorAmendment": false,
       "label": "Construction massive de logements sociaux",
       "description": "Lancer un grand programme public de construction de logements sociaux (ex: 200 000 par an).",
-      "fixedImpactEur": -30000000000,
+      "fixedImpactEur": -33800000000,
       "massMapping": {
         "06": 1
       },
@@ -4861,12 +4826,12 @@
         "06": 1
       },
       "missionMapping": {
-        "M_COHESION_DES_TERRITOIRES": 1.0
+        "M_HOUSING": 1.0
       },
       "multiYearImpact": {
-        "2026": -2000000000,
-        "2027": -2100000000,
-        "2028": -2200000000
+        "2026": -33800000000,
+        "2027": -33800000000,
+        "2028": -33800000000
       },
       "pushbacks": [
         {
@@ -4889,7 +4854,7 @@
       "majorAmendment": false,
       "label": "Gratuité de la cantine et des fournitures scolaires",
       "description": "Rendre gratuites les dépenses liées à l'école (cantine, fournitures, activités périscolaires) pour les familles.",
-      "fixedImpactEur": -15000000000,
+      "fixedImpactEur": -9000000000,
       "massMapping": {
         "9": 1
       },
@@ -4897,12 +4862,12 @@
         "9": 1
       },
       "missionMapping": {
-        "M_ENSEIGNEMENT_SCOLAIRE": 1.0
+        "M_EDU": 1.0
       },
       "multiYearImpact": {
-        "2026": -3000000000,
-        "2027": -3100000000,
-        "2028": -3200000000
+        "2026": -9000000000,
+        "2027": -9000000000,
+        "2028": -9000000000
       },
       "pushbacks": [
         {
@@ -4925,7 +4890,7 @@
       "majorAmendment": false,
       "label": "Retraite : maintien du rythme de la réforme (+3 mois par an)",
       "description": "Poursuivre l'augmentation progressive de l'âge légal de la retraite de 3 mois par an pour atteindre 64 ans, comme prévu par la réforme de 2023.",
-      "fixedImpactEur": 500000000,
+      "fixedImpactEur": 300000000,
       "massMapping": {
         "10": 1
       },
@@ -4933,7 +4898,7 @@
         "10": 1
       },
       "missionMapping": {
-        "M_SOLIDARITE": 1.0
+        "M_SOLIDARITY": 1.0
       },
       "multiYearImpact": {
         "2026": 300000000,
@@ -4961,16 +4926,14 @@
       "majorAmendment": false,
       "label": "Augmenter l'Impôt sur les Sociétés (IS) à 33,5%",
       "description": "Augmenter le taux de l'Impôt sur les Sociétés (IS) de 25% à 33,5%.",
-      "fixedImpactEur": 4400000000,
+      "fixedImpactEur": 8000000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
-        "2026": 11000000000,
-        "2027": 11500000000,
-        "2028": 12000000000
+        "2026": 8000000000,
+        "2027": 8000000000,
+        "2028": 8000000000
       },
       "pushbacks": [
         {
@@ -4991,13 +4954,11 @@
       "fixedImpactEur": 4600000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
-        "2026": 500000000,
-        "2027": 520000000,
-        "2028": 540000000
+        "2026": 4600000000,
+        "2027": 4600000000,
+        "2028": 4600000000
       },
       "pushbacks": [
         {
@@ -5020,22 +4981,35 @@
       "majorAmendment": false,
       "label": "Augmenter le taux normal de TVA de 1 point",
       "description": "Augmenter le taux normal de TVA (de 20% à 21%).",
-      "fixedImpactEur": 6000000000,
+      "fixedImpactEur": 8200000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
-        "2026": 7000000000,
-        "2027": 7200000000,
-        "2028": 7400000000
+        "2026": 8200000000,
+        "2027": 8200000000,
+        "2028": 8200000000
       },
       "pushbacks": [
         {
           "type": "social",
           "description": "Effet régressif sur le pouvoir d'achat des ménages les plus modestes.",
           "source": "INSEE"
+        },
+        {
+          "type": "vigilance",
+          "description": "Impact inflationniste direct pesant sur le pouvoir d'achat des ménages.",
+          "source": "Gemini Research"
+        },
+        {
+          "type": "vigilance",
+          "description": "Impôt régressif touchant proportionnellement plus les ménages modestes.",
+          "source": "Gemini Research"
+        },
+        {
+          "type": "vigilance",
+          "description": "Risque de ralentissement de la consommation, moteur de la croissance.",
+          "source": "Gemini Research"
         }
       ],
       "impact": null
@@ -5047,16 +5021,14 @@
       "majorAmendment": false,
       "label": "Augmenter tous les taux de TVA de 1 point",
       "description": "Augmenter tous les taux de TVA (normal, intermédiaire, réduit) de 1 point.",
-      "fixedImpactEur": 8200000000,
+      "fixedImpactEur": 12000000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
-        "2026": 10000000000,
-        "2027": 10200000000,
-        "2028": 10400000000
+        "2026": 12000000000,
+        "2027": 12000000000,
+        "2028": 12000000000
       },
       "pushbacks": [
         {
@@ -5085,12 +5057,10 @@
       "majorAmendment": false,
       "label": "Augmenter le taux intermédiaire de TVA à 12,5%",
       "description": "Augmenter le taux intermédiaire de TVA de 10% à 12,5% (concerne restauration, transports...)",
-      "fixedImpactEur": 2905982906,
+      "fixedImpactEur": 3000000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
         "2026": 3000000000,
         "2027": 3100000000,
@@ -5120,13 +5090,11 @@
       "fixedImpactEur": 2200000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
-        "2026": 400000000,
-        "2027": 420000000,
-        "2028": 440000000
+        "2026": 2200000000,
+        "2027": 2200000000,
+        "2028": 2200000000
       },
       "pushbacks": [
         {
@@ -5152,13 +5120,11 @@
       "fixedImpactEur": 1100000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
-        "2026": 3200000000,
-        "2027": 3300000000,
-        "2028": 3400000000
+        "2026": 1100000000,
+        "2027": 1100000000,
+        "2028": 1100000000
       },
       "pushbacks": [
         {
@@ -5181,16 +5147,14 @@
       "majorAmendment": false,
       "label": "Supprimer le quotient conjugal",
       "description": "Supprimer le quotient conjugal.",
-      "fixedImpactEur": 10600000000,
+      "fixedImpactEur": 7000000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
-        "2026": 10000000000,
-        "2027": 10500000000,
-        "2028": 11000000000
+        "2026": 7000000000,
+        "2027": 7000000000,
+        "2028": 7000000000
       },
       "pushbacks": [
         {
@@ -5216,13 +5180,11 @@
       "fixedImpactEur": 2890000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
-        "2026": 1500000000,
-        "2027": 1550000000,
-        "2028": 1600000000
+        "2026": 2890000000,
+        "2027": 2890000000,
+        "2028": 2890000000
       },
       "pushbacks": [
         {
@@ -5248,13 +5210,11 @@
       "fixedImpactEur": 4800000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
-        "2026": 6000000000,
-        "2027": 6200000000,
-        "2028": 6400000000
+        "2026": 4800000000,
+        "2027": 4800000000,
+        "2028": 4800000000
       },
       "pushbacks": [
         {
@@ -5277,16 +5237,14 @@
       "majorAmendment": false,
       "label": "Rétablir la Taxe d'Habitation (20% plus aisés)",
       "description": "Réinstaurer la Taxe d'Habitation pour les 20% des ménages les plus aisés.",
-      "fixedImpactEur": 9300000000,
+      "fixedImpactEur": 8000000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_RELATIONS_AVEC_LES_COLLECTIVITES_TERRITORIALES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
-        "2026": 10000000000,
-        "2027": 10200000000,
-        "2028": 10400000000
+        "2026": 8000000000,
+        "2027": 8000000000,
+        "2028": 8000000000
       },
       "pushbacks": [
         {
@@ -5312,13 +5270,11 @@
       "fixedImpactEur": 21800000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_RELATIONS_AVEC_LES_COLLECTIVITES_TERRITORIALES": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
-        "2026": 23000000000,
-        "2027": 23500000000,
-        "2028": 24000000000
+        "2026": 21800000000,
+        "2027": 21800000000,
+        "2028": 21800000000
       },
       "pushbacks": [
         {
@@ -5347,16 +5303,14 @@
       "majorAmendment": false,
       "label": "Augmenter la taxe sur les billets d'avion",
       "description": "Augmenter le barème de la taxe de solidarité ('taxe Chirac') sur les billets d'avion.",
-      "fixedImpactEur": 3700000000,
+      "fixedImpactEur": 850000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_ECOLOGIE": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
-        "2026": 1000000000,
-        "2027": 1050000000,
-        "2028": 1100000000
+        "2026": 850000000,
+        "2027": 850000000,
+        "2028": 850000000
       },
       "pushbacks": [
         {
@@ -5379,12 +5333,10 @@
       "majorAmendment": false,
       "label": "Écotaxe kilométrique (Poids lourds)",
       "description": "Instaurer un péage kilométrique (hors autoroutes) pour les poids lourds (transport de marchandises).",
-      "fixedImpactEur": 1000000000,
+      "fixedImpactEur": 600000000,
       "massMapping": {},
       "cofogMapping": {},
-      "missionMapping": {
-        "M_ECOLOGIE": 1.0
-      },
+      "missionMapping": {},
       "multiYearImpact": {
         "2026": 600000000,
         "2027": 800000000,
@@ -5415,12 +5367,12 @@
       "massMapping": {},
       "cofogMapping": {},
       "missionMapping": {
-        "M_GESTION_FINANCES_PUBLIQUES": 1.0
+        "M_ADMIN": 1.0
       },
       "multiYearImpact": {
-        "2026": 300000000,
-        "2027": 350000000,
-        "2028": 400000000
+        "2026": 1375000000,
+        "2027": 1375000000,
+        "2028": 1375000000
       },
       "pushbacks": [
         {
@@ -5443,11 +5395,11 @@
       "majorAmendment": false,
       "label": "CIR : Réduire de 50% (Grandes Entreprises)",
       "description": "Réduire de moitié le Crédit d'Impôt Recherche (CIR) pour les grandes entreprises.",
-      "fixedImpactEur": 1500000000,
+      "fixedImpactEur": 2500000000,
       "massMapping": {},
       "cofogMapping": {},
       "missionMapping": {
-        "M_RECHERCHE_ENSEIGNEMENT_SUPERIEUR": 1.0
+        "M_HIGHER_EDU": 1.0
       },
       "multiYearImpact": {
         "2026": 2500000000,
@@ -5475,11 +5427,11 @@
       "majorAmendment": false,
       "label": "CIR : Supprimer le taux à 5% (> 100 M€)",
       "description": "Supprimer le taux réduit de 5% du CIR pour les dépenses de recherche dépassant 100 M€.",
-      "fixedImpactEur": 400000000,
+      "fixedImpactEur": 250000000,
       "massMapping": {},
       "cofogMapping": {},
       "missionMapping": {
-        "M_RECHERCHE_ENSEIGNEMENT_SUPERIEUR": 1.0
+        "M_HIGHER_EDU": 1.0
       },
       "multiYearImpact": {
         "2026": 250000000,
@@ -5507,16 +5459,17 @@
       "majorAmendment": false,
       "label": "Supprimer l'exonération de TICPE (Kérosène)",
       "description": "Supprimer l'exonération de taxe (TICPE) sur le kérosène utilisé par le transport aérien.",
-      "fixedImpactEur": 3500000000,
+      "fixedImpactEur": 660000000,
       "massMapping": {},
       "cofogMapping": {},
       "missionMapping": {
-        "M_ECOLOGIE": 1.0
+        "M_ENVIRONMENT": 0.7692682926829268,
+        "M_TRANSPORT": 0.23121951219512196
       },
       "multiYearImpact": {
-        "2026": 500000000,
-        "2027": 550000000,
-        "2028": 600000000
+        "2026": 660000000,
+        "2027": 660000000,
+        "2028": 660000000
       },
       "pushbacks": [
         {
@@ -5539,7 +5492,7 @@
       "majorAmendment": false,
       "label": "APL : Baisse forfaitaire de 5€",
       "description": "Baisse forfaitaire des APL de 5€.",
-      "fixedImpactEur": 60000000,
+      "fixedImpactEur": 400000000,
       "massMapping": {
         "10": 1
       },
@@ -5547,7 +5500,7 @@
         "10": 1
       },
       "missionMapping": {
-        "M_COHESION_DES_TERRITOIRES": 1.0
+        "M_HOUSING": 1.0
       },
       "multiYearImpact": {
         "2026": 400000000,
@@ -5575,7 +5528,7 @@
       "majorAmendment": false,
       "label": "APL : Durcir le seuil d'accès (Revenu 18 920€)",
       "description": "Conditionner l'accès aux APL à un seuil de revenu net global de 18 920€.",
-      "fixedImpactEur": 550000000,
+      "fixedImpactEur": 108000000,
       "massMapping": {
         "10": 1
       },
@@ -5583,7 +5536,7 @@
         "10": 1
       },
       "missionMapping": {
-        "M_COHESION_DES_TERRITOIRES": 1.0
+        "M_HOUSING": 1.0
       },
       "multiYearImpact": {
         "2026": 108000000,
@@ -5611,7 +5564,7 @@
       "majorAmendment": false,
       "label": "APL : Durcir le seuil d'accès (Revenu 39 020€)",
       "description": "Conditionner l'accès aux APL à un seuil de revenu net global de 39 020€.",
-      "fixedImpactEur": 820000000,
+      "fixedImpactEur": 50000000,
       "massMapping": {
         "10": 1
       },
@@ -5619,7 +5572,7 @@
         "10": 1
       },
       "missionMapping": {
-        "M_COHESION_DES_TERRITOIRES": 1.0
+        "M_HOUSING": 1.0
       },
       "multiYearImpact": {
         "2026": 50000000,
@@ -5655,12 +5608,12 @@
         "9": 1
       },
       "missionMapping": {
-        "M_ENSEIGNEMENT_SCOLAIRE": 1.0
+        "M_EDU": 1.0
       },
       "multiYearImpact": {
-        "2026": 500000000,
-        "2027": 550000000,
-        "2028": 600000000
+        "2026": 3500000000,
+        "2027": 3500000000,
+        "2028": 3500000000
       },
       "pushbacks": [
         {
@@ -5683,7 +5636,7 @@
       "majorAmendment": false,
       "label": "Augmenter les frais d'inscription à l'université",
       "description": "Augmenter les frais d'inscription (ex: Licence 730€, Master 887€, Doctorat 1 380€).",
-      "fixedImpactEur": 463000000,
+      "fixedImpactEur": 400000000,
       "massMapping": {
         "9": 1
       },
@@ -5691,7 +5644,7 @@
         "9": 1
       },
       "missionMapping": {
-        "M_RECHERCHE_ENSEIGNEMENT_SUPERIEUR": 1.0
+        "M_HIGHER_EDU": 1.0
       },
       "multiYearImpact": {
         "2026": 400000000,
@@ -5719,7 +5672,7 @@
       "majorAmendment": false,
       "label": "Ajuster les dépenses d'éducation à la démographie",
       "description": "Aligner les dépenses d'éducation sur la baisse du nombre d'élèves (baisse démographique).",
-      "fixedImpactEur": 400000000,
+      "fixedImpactEur": 450000000,
       "massMapping": {
         "9": 1
       },
@@ -5727,7 +5680,7 @@
         "9": 1
       },
       "missionMapping": {
-        "M_ENSEIGNEMENT_SCOLAIRE": 1.0
+        "M_EDU": 1.0
       },
       "multiYearImpact": {
         "2026": 450000000,
@@ -5763,12 +5716,12 @@
         "01": 1
       },
       "missionMapping": {
-        "M_RELATIONS_AVEC_LES_COLLECTIVITES_TERRITORIALES": 1.0
+        "M_TERRITORIES": 1.0
       },
       "multiYearImpact": {
-        "2026": 800000000,
-        "2027": 1600000000,
-        "2028": 2400000000
+        "2026": 3408000000,
+        "2027": 3408000000,
+        "2028": 3408000000
       },
       "pushbacks": [
         {
@@ -5791,7 +5744,7 @@
       "majorAmendment": false,
       "label": "Geler les budgets des collectivités locales (hors dette)",
       "description": "Geler en valeur le budget des collectivités locales (hors charges de dette).",
-      "fixedImpactEur": 6720000000,
+      "fixedImpactEur": 5000000000,
       "massMapping": {
         "01": 1
       },
@@ -5799,12 +5752,12 @@
         "01": 1
       },
       "missionMapping": {
-        "M_RELATIONS_AVEC_LES_COLLECTIVITES_TERRITORIALES": 1.0
+        "M_TERRITORIES": 1.0
       },
       "multiYearImpact": {
-        "2026": 3000000000,
-        "2027": 3100000000,
-        "2028": 3200000000
+        "2026": 5000000000,
+        "2027": 5000000000,
+        "2028": 5000000000
       },
       "pushbacks": [
         {
@@ -5827,7 +5780,7 @@
       "majorAmendment": false,
       "label": "Appliquer les 35h (collectivités locales)",
       "description": "Harmoniser la durée légale du travail (1607h/an) dans les collectivités locales.",
-      "fixedImpactEur": 1300000000,
+      "fixedImpactEur": 1200000000,
       "massMapping": {
         "01": 1
       },
@@ -5835,7 +5788,7 @@
         "01": 1
       },
       "missionMapping": {
-        "M_RELATIONS_AVEC_LES_COLLECTIVITES_TERRITORIALES": 1.0
+        "M_TERRITORIES": 1.0
       },
       "multiYearImpact": {
         "2026": 1200000000,
@@ -5863,7 +5816,7 @@
       "majorAmendment": false,
       "label": "Geler les retraites (base + compl.) en 2026",
       "description": "Gel ponctuel des retraites de base et complémentaires en 2026.",
-      "fixedImpactEur": 3900000000,
+      "fixedImpactEur": 3600000000,
       "massMapping": {
         "10": 1
       },
@@ -5871,7 +5824,7 @@
         "10": 1
       },
       "missionMapping": {
-        "M_SOLIDARITE": 1.0
+        "M_SOLIDARITY": 1.0
       },
       "multiYearImpact": {
         "2026": 3600000000,
@@ -5902,12 +5855,12 @@
         "10": 1
       },
       "missionMapping": {
-        "M_SOLIDARITE": 1.0
+        "M_SOLIDARITY": 1.0
       },
       "multiYearImpact": {
-        "2026": 1200000000,
-        "2027": 1300000000,
-        "2028": 1400000000
+        "2026": 2500000000,
+        "2027": 2500000000,
+        "2028": 2500000000
       },
       "pushbacks": [
         {
@@ -5925,7 +5878,7 @@
       "majorAmendment": false,
       "label": "'MaPrimeRénov' : Cibler les rénovations d'ampleur",
       "description": "Recentrer l'aide MaPrimeRénov' sur les rénovations globales ('d'ampleur') et la sortie des 'passoires thermiques'.",
-      "fixedImpactEur": 904000000,
+      "fixedImpactEur": 1000000000,
       "massMapping": {
         "06": 1
       },
@@ -5933,7 +5886,8 @@
         "06": 1
       },
       "missionMapping": {
-        "M_ECOLOGIE": 1.0
+        "M_ENVIRONMENT": 0.7692682926829268,
+        "M_TRANSPORT": 0.23121951219512196
       },
       "multiYearImpact": {
         "2026": 1000000000,

@@ -4,7 +4,7 @@
   "country": "FR",
   "pib_eur": 3027000000000.0,
   "depenses_total_eur": 1324088100000.0,
-  "recettes_total_eur": 1310056800000.0,
+  "recettes_total_eur": 1309912800000.0,
   "pieces": [
     {
       "id": "ed_schools_staff_ops",
@@ -225,19 +225,19 @@
     {
       "id": "rev_pit",
       "type": "revenue",
-      "amount_eur": 215415600000.0,
+      "amount_eur": 110048800000.0,
       "share": null
     },
     {
       "id": "rev_cit",
       "type": "revenue",
-      "amount_eur": 143610400000.0,
+      "amount_eur": 83760000000.0,
       "share": null
     },
     {
       "id": "rev_csg_crds",
       "type": "revenue",
-      "amount_eur": 0.0,
+      "amount_eur": 165073199999.99997,
       "share": null
     },
     {
