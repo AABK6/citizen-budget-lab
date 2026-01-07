@@ -822,6 +822,7 @@ def lego_pieces_with_baseline(year: int, scope: str = "S13") -> List[dict]:
                 "examples": p.get("examples") or [],
                 "sources": p.get("sources") or [],
                 "locked": bool(pol.get("locked_default", False)),
+                "family_id": p.get("family_id"),
             }
         )
     return out
