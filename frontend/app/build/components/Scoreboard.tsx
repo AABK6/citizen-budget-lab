@@ -1,4 +1,4 @@
-import { useMemo, useRef, useEffect } from 'react';
+import { useMemo, useRef, useEffect, useState } from 'react';
 import type { ScenarioResult } from '@/lib/types';
 import type { DslAction, PolicyLever } from '../types';
 import { ScenarioDashboard } from './ScenarioDashboard';
@@ -43,6 +43,7 @@ export function Scoreboard({
     displayMode,
     setDisplayMode,
 }: ScoreboardProps) {
+    const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
     // Extract critical metrics from the scenario result (or fallback to baseline)
     const stats = useMemo(() => {
@@ -106,16 +107,16 @@ export function Scoreboard({
         return Number.isFinite(val) ? val : 0;
     }, [baselineDeficit, stats.deficit]);
     return (
-        <div className="w-full bg-white/80 backdrop-blur-md border-b border-white/50 shadow-sm sticky top-0 z-50 px-6 py-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4 font-['Outfit']">
+        <div className="w-full bg-white/80 backdrop-blur-md border-b border-white/50 shadow-sm sticky top-0 z-50 px-4 py-3 sm:px-6 sm:py-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4 font-['Outfit']">
 
             {/* LEFT: Context & Year */}
-            <div className="flex items-center gap-4">
+            <div className="flex flex-wrap items-center gap-4">
                 <div className="flex flex-col">
                     <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Budget</span>
-                    <span className="text-2xl font-bold text-slate-800">{year}</span>
+                    <span className="text-xl sm:text-2xl font-bold text-slate-800">{year}</span>
                 </div>
 
-                <div className="h-8 w-px bg-slate-200 mx-2"></div>
+                <div className="hidden sm:block h-8 w-px bg-slate-200 mx-2"></div>
 
                 {/* Primary Metric: BALANCE / DEFICIT */}
                 <div className="flex flex-col">
@@ -123,18 +124,18 @@ export function Scoreboard({
                     <div className="flex flex-col">
                         <div className="flex items-baseline gap-3">
                             {/* Current Value */}
-                            <span id="scoreboard-deficit" className={`text-3xl font-extrabold tracking-tight transition-all duration-300 ${showPreview ? 'opacity-40 blur-[1px]' : ''} ${stats.deficit < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
+                            <span id="scoreboard-deficit" className={`text-2xl sm:text-3xl font-extrabold tracking-tight transition-all duration-300 ${showPreview ? 'opacity-40 blur-[1px]' : ''} ${stats.deficit < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
                                 {stats.deficit > 0 ? '+' : ''}{formatCurrencyShort(stats.deficit)}
                             </span>
 
                             {/* Ghost / Preview Value */}
                             {showPreview && (
-                                <span className={`text-3xl font-extrabold tracking-tight animate-in fade-in slide-in-from-bottom-2 duration-200 ${previewDeficit! < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
+                                <span className={`text-2xl sm:text-3xl font-extrabold tracking-tight animate-in fade-in slide-in-from-bottom-2 duration-200 ${previewDeficit! < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
                                     {previewDeficit! > 0 ? '+' : ''}{formatCurrencyShort(previewDeficit!)}
                                 </span>
                             )}
                         </div>
-                        <div className="min-h-5">
+                        <div className="min-h-4 sm:min-h-5">
                             {showPreview ? (
                                 <span className={`text-xs font-bold leading-tight ${previewDiff > 0 ? 'text-emerald-500' : 'text-red-500'}`}>
                                     {previewDiff > 0 ? '▲' : '▼'} Impact: {previewDiff > 0 ? '+' : ''}{formatCurrencyShort(previewDiff)}
@@ -152,7 +153,11 @@ export function Scoreboard({
             </div>
 
             {/* CENTER: Scenario Dashboard */}
-            <div id="scoreboard-resolution" className="w-full lg:flex-1 lg:max-w-2xl lg:mx-6">
+            <div
+                id="scoreboard-resolution"
+                data-testid="scoreboard-details"
+                className={`w-full lg:flex-1 lg:max-w-2xl lg:mx-6 ${isDetailsOpen ? 'block' : 'hidden'} md:block`}
+            >
                 <ScenarioDashboard
                     baselineTotals={baselineTotals}
                     currentTotals={currentTotals}
@@ -165,7 +170,17 @@ export function Scoreboard({
             </div>
 
             {/* RIGHT: Actions */}
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
+                <button
+                    type="button"
+                    onClick={() => setIsDetailsOpen((prev) => !prev)}
+                    aria-expanded={isDetailsOpen}
+                    aria-controls="scoreboard-resolution"
+                    className="md:hidden flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-200 text-slate-600 text-xs font-bold hover:bg-slate-50 transition-colors"
+                >
+                    <span className="material-icons text-sm">insights</span>
+                    Details
+                </button>
                 {/* View Mode Toggle */}
                 <div className="flex bg-slate-100 p-1 rounded-lg mr-2 border border-slate-200">
                     <button

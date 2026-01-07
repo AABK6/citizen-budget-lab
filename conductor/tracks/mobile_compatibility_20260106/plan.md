@@ -2,7 +2,7 @@
 
 ## Phase 1: Foundation & Layout Optimization
 - [x] Task: Audit existing layout components for mobile responsiveness issues. (270f20d)
-- [ ] Task: Refactor the Global Header and Summary Bar for compact mobile viewports.
+- [~] Task: Refactor the Global Header and Summary Bar for compact mobile viewports.
 - [ ] Task: Implement mobile-specific visibility controls (e.g., `hidden md:block`) for landing page components.
 - [ ] Task: Conductor - User Manual Verification 'Foundation & Layout Optimization' (Protocol in workflow.md)
 
