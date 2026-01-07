@@ -5,9 +5,10 @@ import BuildPageClient from './BuildPageClient';
 export async function generateMetadata({
   searchParams,
 }: {
-  searchParams?: { scenarioId?: string };
+  searchParams?: { scenarioId?: string } | Promise<{ scenarioId?: string }>;
 }): Promise<Metadata> {
-  const scenarioId = searchParams?.scenarioId;
+  const resolvedSearchParams = await searchParams;
+  const scenarioId = resolvedSearchParams?.scenarioId;
   const shortId = scenarioId ? scenarioId.slice(0, 8) : null;
   const title = shortId ? `Votre budget citoyen - ${shortId}` : 'Votre budget citoyen';
   const description =
