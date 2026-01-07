@@ -53,21 +53,21 @@ export function ReformDetailDrawer({ reform, onClose, onToggle, isSelected, side
 
     // Calculate position classes based on side
     const positionClass = side === 'left'
-        ? 'left-[412px] rounded-2xl'
-        : 'right-[382px] rounded-2xl';
+        ? 'lg:left-[412px] lg:right-auto'
+        : 'lg:right-[382px] lg:left-auto';
 
     return (
-        <div className="fixed inset-0 z-[40] font-['Outfit'] isolate pointer-events-none">
+        <div className="fixed inset-0 z-[80] font-['Outfit'] isolate pointer-events-none">
             {/* Minimal Backdrop */}
             <div
-                className="absolute inset-0 pointer-events-auto"
+                className="absolute inset-0 pointer-events-auto bg-slate-900/30 backdrop-blur-sm lg:bg-transparent lg:backdrop-blur-0"
                 onClick={onClose}
             />
 
             {/* Drawer Panel */}
             <div
                 ref={drawerRef}
-                className={`fixed top-32 h-fit max-h-[calc(100vh-140px)] w-[340px] bg-white shadow-2xl pointer-events-auto flex flex-col rounded-2xl animate-in slide-in-from-bottom-2 fade-in duration-300 ease-out ring-1 ring-black/5 ${positionClass}`}
+                className={`fixed top-20 left-1/2 -translate-x-1/2 w-[min(92vw,420px)] max-h-[80vh] bg-white shadow-2xl pointer-events-auto flex flex-col rounded-2xl animate-in slide-in-from-bottom-2 fade-in duration-300 ease-out ring-1 ring-black/5 lg:top-32 lg:translate-x-0 lg:w-[340px] lg:max-h-[calc(100vh-140px)] ${positionClass}`}
             >
                 {/* Header */}
                 <div className="pt-6 px-5 pb-0 shrink-0 relative">

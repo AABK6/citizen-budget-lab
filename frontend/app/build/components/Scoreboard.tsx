@@ -14,6 +14,8 @@ interface ScoreboardProps {
     onReset: () => void;
     onShare: () => void;
     onRunTutorial?: () => void;
+    onOpenSpendingPanel?: () => void;
+    onOpenRevenuePanel?: () => void;
     year: number;
     previewDeficit?: number | null;
     displayMode: 'amount' | 'share';
@@ -38,6 +40,8 @@ export function Scoreboard({
     onReset,
     onShare,
     onRunTutorial,
+    onOpenSpendingPanel,
+    onOpenRevenuePanel,
     year,
     previewDeficit,
     displayMode,
@@ -107,41 +111,41 @@ export function Scoreboard({
         return Number.isFinite(val) ? val : 0;
     }, [baselineDeficit, stats.deficit]);
     return (
-        <div className="w-full bg-white/80 backdrop-blur-md border-b border-white/50 shadow-sm sticky top-0 z-50 px-4 py-3 sm:px-6 sm:py-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4 font-['Outfit']">
+        <div className="w-full bg-white/80 backdrop-blur-md border-b border-white/50 shadow-sm sticky top-0 z-50 px-3 py-2 sm:px-6 sm:py-4 flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4 font-['Outfit']">
 
             {/* LEFT: Context & Year */}
-            <div className="flex flex-wrap items-center gap-4">
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4">
                 <div className="flex flex-col">
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Budget</span>
-                    <span className="text-xl sm:text-2xl font-bold text-slate-800">{year}</span>
+                    <span className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">Budget</span>
+                    <span className="text-lg sm:text-2xl font-bold text-slate-800">{year}</span>
                 </div>
 
                 <div className="hidden sm:block h-8 w-px bg-slate-200 mx-2"></div>
 
                 {/* Primary Metric: BALANCE / DEFICIT */}
                 <div className="flex flex-col">
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Solde Public</span>
+                    <span className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">Solde Public</span>
                     <div className="flex flex-col">
                         <div className="flex items-baseline gap-3">
                             {/* Current Value */}
-                            <span id="scoreboard-deficit" className={`text-2xl sm:text-3xl font-extrabold tracking-tight transition-all duration-300 ${showPreview ? 'opacity-40 blur-[1px]' : ''} ${stats.deficit < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
+                            <span id="scoreboard-deficit" className={`text-xl sm:text-3xl font-extrabold tracking-tight transition-all duration-300 ${showPreview ? 'opacity-40 blur-[1px]' : ''} ${stats.deficit < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
                                 {stats.deficit > 0 ? '+' : ''}{formatCurrencyShort(stats.deficit)}
                             </span>
 
                             {/* Ghost / Preview Value */}
                             {showPreview && (
-                                <span className={`text-2xl sm:text-3xl font-extrabold tracking-tight animate-in fade-in slide-in-from-bottom-2 duration-200 ${previewDeficit! < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
+                                <span className={`text-xl sm:text-3xl font-extrabold tracking-tight animate-in fade-in slide-in-from-bottom-2 duration-200 ${previewDeficit! < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
                                     {previewDeficit! > 0 ? '+' : ''}{formatCurrencyShort(previewDeficit!)}
                                 </span>
                             )}
                         </div>
                         <div className="min-h-4 sm:min-h-5">
                             {showPreview ? (
-                                <span className={`text-xs font-bold leading-tight ${previewDiff > 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+                                <span className={`text-[11px] sm:text-xs font-bold leading-tight ${previewDiff > 0 ? 'text-emerald-500' : 'text-red-500'}`}>
                                     {previewDiff > 0 ? '▲' : '▼'} Impact: {previewDiff > 0 ? '+' : ''}{formatCurrencyShort(previewDiff)}
                                 </span>
                             ) : stats.deficitRatio !== null ? (
-                                <span className={`text-sm font-medium leading-tight ${stats.deficitRatio < -0.03 ? 'text-red-500' : 'text-slate-500'}`}>
+                                <span className={`text-xs sm:text-sm font-medium leading-tight ${stats.deficitRatio < -0.03 ? 'text-red-500' : 'text-slate-500'}`}>
                                     {formatPercent(stats.deficitRatio)} du PIB
                                 </span>
                             ) : (
@@ -176,7 +180,7 @@ export function Scoreboard({
                     onClick={() => setIsDetailsOpen((prev) => !prev)}
                     aria-expanded={isDetailsOpen}
                     aria-controls="scoreboard-resolution"
-                    className="md:hidden flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-200 text-slate-600 text-xs font-bold hover:bg-slate-50 transition-colors"
+                    className="md:hidden flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-200 text-slate-600 text-[11px] font-bold hover:bg-slate-50 transition-colors"
                 >
                     <span className="material-icons text-sm">insights</span>
                     Details
@@ -219,12 +223,37 @@ export function Scoreboard({
                 <button
                     id="scoreboard-vote-btn"
                     onClick={onShare}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-sm transition-all shadow-md hover:shadow-lg hover:scale-105"
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-sm transition-all shadow-md hover:shadow-lg hover:scale-105 w-full sm:w-auto"
                 >
                     <span className="material-icons text-sm">how_to_vote</span>
                     Voter
                 </button>
             </div>
+
+            {(onOpenSpendingPanel || onOpenRevenuePanel) && (
+                <div className="w-full lg:hidden flex items-center gap-2">
+                    {onOpenSpendingPanel && (
+                        <button
+                            type="button"
+                            onClick={onOpenSpendingPanel}
+                            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 text-xs font-bold shadow-sm"
+                        >
+                            <span className="material-icons text-sm">account_balance</span>
+                            Budget
+                        </button>
+                    )}
+                    {onOpenRevenuePanel && (
+                        <button
+                            type="button"
+                            onClick={onOpenRevenuePanel}
+                            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-xl border border-slate-200 bg-slate-900 text-white text-xs font-bold shadow-sm"
+                        >
+                            <span className="material-icons text-sm">payments</span>
+                            Recettes
+                        </button>
+                    )}
+                </div>
+            )}
         </div>
     );
 }

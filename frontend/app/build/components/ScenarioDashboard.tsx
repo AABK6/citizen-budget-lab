@@ -198,10 +198,10 @@ export function ScenarioDashboard({
 
   return (
     <div className="w-full font-['Outfit']">
-      <div className="flex flex-col lg:flex-row items-center bg-white border border-slate-200 rounded-xl shadow-sm px-4 py-0.5 gap-3 lg:h-[64px] transition-all hover:shadow-md">
+      <div className="flex flex-col lg:flex-row items-start lg:items-center bg-white border border-slate-200 rounded-xl shadow-sm px-3 sm:px-4 py-2 sm:py-0.5 gap-3 lg:h-[64px] transition-all hover:shadow-md">
 
         {/* SECTION 1: TITLE & TREND */}
-        <div className="flex flex-col items-start min-w-fit border-r border-slate-100 pr-3 flex-shrink-0">
+        <div className="flex flex-col items-start w-full lg:w-auto min-w-fit border-b border-slate-100 pb-2 lg:pb-0 lg:border-b-0 lg:border-r lg:pr-3 flex-shrink-0">
           <div className="flex items-center gap-2 mb-0.5">
             <span className="material-icons text-[16px] text-slate-400">checklist</span>
             <span className="text-[11px] font-black uppercase tracking-widest text-slate-800">
@@ -232,7 +232,7 @@ export function ScenarioDashboard({
           </div>
 
           {/* Vertical Separator */}
-          <div className="w-px h-8 bg-slate-100"></div>
+          <div className="w-px h-8 bg-slate-100 hidden lg:block"></div>
 
           {/* Revenue */}
           <div className="flex flex-col">
@@ -251,7 +251,7 @@ export function ScenarioDashboard({
         </div>
 
         {/* SECTION 3: PRINCIPAL CHANGES (VERTICAL LIST) */}
-        <div className="flex-1 min-w-0 flex flex-col justify-center border-l border-slate-100 pl-3 h-full overflow-hidden">
+        <div className="flex-1 w-full min-w-0 flex flex-col justify-center border-t border-slate-100 pt-2 lg:border-t-0 lg:border-l lg:pl-3 lg:pt-0 h-full overflow-hidden">
           {topLevers.length > 0 ? (
             <div className="flex flex-col justify-center w-full">
               {/* No header, direct list */}

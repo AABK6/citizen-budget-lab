@@ -15,6 +15,7 @@ const data = [
   { year: '2024', deficit: 6.1, interest: 55 },
   { year: '2025', deficit: 6.2, interest: 62 },
 ];
+const latest = data[data.length - 1];
 
 export default function LandingPage() {
   const router = useRouter()
@@ -45,7 +46,7 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-slate-950 font-['Outfit']">
+    <div className="relative min-h-screen w-full flex items-start sm:items-center justify-center overflow-hidden bg-slate-950 font-['Outfit'] py-10 sm:py-0">
 
       {/* Background Ambience */}
       <div className={`absolute inset-0 z-0 transition-opacity duration-1000 ${isExiting ? 'opacity-0' : 'opacity-100'}`}>
@@ -53,36 +54,49 @@ export default function LandingPage() {
         <div className="absolute inset-0 bg-gradient-to-b from-slate-950/95 via-slate-900/90 to-slate-950"></div>
       </div>
 
-      <div className={`relative z-10 max-w-6xl px-8 w-full grid lg:grid-cols-2 gap-16 items-center transition-all duration-700 ${isExiting ? 'scale-105 opacity-0' : 'scale-100 opacity-100'}`}>
+      <div className={`relative z-10 max-w-6xl px-6 sm:px-8 w-full grid lg:grid-cols-2 gap-10 lg:gap-16 items-center transition-all duration-700 ${isExiting ? 'scale-105 opacity-0' : 'scale-100 opacity-100'}`}>
 
         {/* Left Column: The Narrative */}
-        <div className="text-left space-y-10">
-          <div className="flex flex-col gap-4">
-            <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-slate-800/50 border border-slate-700/50 text-slate-300 text-xs font-bold tracking-widest backdrop-blur-md w-fit">
+        <div className="text-left flex flex-col gap-8 sm:gap-10">
+          <div className="flex flex-col gap-4 order-1">
+            <div className="inline-flex items-center gap-3 px-3 sm:px-4 py-1.5 rounded-full bg-slate-800/50 border border-slate-700/50 text-slate-300 text-[10px] sm:text-xs font-bold tracking-widest backdrop-blur-md w-fit">
               <span className="relative flex h-2 w-2">
                 <span className="animate-pulse absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-50"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
               </span>
               SESSION EXTRAORDINAIRE CITOYENNE
             </div>
-            <div className="text-slate-500 text-sm font-medium tracking-tight">
+            <div className="text-slate-500 text-xs sm:text-sm font-medium tracking-tight">
               Déjà <span className="text-slate-300 font-bold">{voteCount !== null ? voteCount.toLocaleString() : '...'}</span> citoyens ont exprimé leurs préférences pour éclairer le débat.
             </div>
           </div>
 
-          <h1 className="text-5xl lg:text-7xl font-extrabold tracking-tight leading-[1.1] text-white">
+          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight leading-[1.1] text-white order-2">
             L'État est bloqué. <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">
               Prenez les clés.
             </span>
           </h1>
 
-          <div className="space-y-6 text-lg text-slate-400 leading-relaxed font-light max-w-xl">
+          <div className="md:hidden grid grid-cols-2 gap-3 order-3">
+            <div className="rounded-2xl border border-slate-800/60 bg-slate-900/60 px-4 py-3 shadow-lg">
+              <div className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Déficit 2025</div>
+              <div className="text-2xl font-extrabold text-white mt-1">{latest.deficit.toFixed(1)}%</div>
+              <div className="text-[11px] text-slate-400">du PIB</div>
+            </div>
+            <div className="rounded-2xl border border-slate-800/60 bg-slate-900/60 px-4 py-3 shadow-lg">
+              <div className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Intérêts</div>
+              <div className="text-2xl font-extrabold text-red-400 mt-1">{latest.interest} Md€</div>
+              <div className="text-[11px] text-slate-400">charge annuelle</div>
+            </div>
+          </div>
+
+          <div className="space-y-6 text-base sm:text-lg text-slate-400 leading-relaxed font-light max-w-xl order-5 md:order-4">
             <p>
               1er Janvier 2026. La procédure parlementaire s'est enrayée. Le budget n'a pas été voté. Une 'Loi Spéciale' assure le fonctionnement provisoire de l'État, mais aucun arbitrage d'avenir n'est tranché.
             </p>
             <div className="pt-4 border-l-2 border-indigo-500/50 pl-6">
-              <p className="italic text-slate-300 font-serif text-xl">
+              <p className="italic text-slate-300 font-serif text-lg sm:text-xl">
                 "Face à l'impasse, nous ouvrons une session citoyenne. Votre mandat : explorer les comptes, confronter les réalités et dessiner une issue."
               </p>
             </div>
@@ -90,7 +104,7 @@ export default function LandingPage() {
 
           <button
             onClick={handleEnter}
-            className="group relative px-8 py-5 bg-white text-slate-900 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105 shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)] w-full md:w-auto overflow-hidden"
+            className="group relative px-6 sm:px-8 py-4 sm:py-5 bg-white text-slate-900 rounded-xl font-bold text-base sm:text-lg transition-all duration-300 hover:scale-105 shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)] w-full md:w-auto overflow-hidden order-4 md:order-5"
           >
             <span className="relative z-10 flex items-center gap-3 justify-center">
               Entrez dans l'Hémicycle
@@ -100,7 +114,7 @@ export default function LandingPage() {
             </span>
           </button>
           {/* Disclaimer */}
-          <div className="mt-8 flex items-start gap-3 opacity-70 hover:opacity-100 transition-opacity max-w-lg">
+          <div className="mt-2 flex items-start gap-3 opacity-70 hover:opacity-100 transition-opacity max-w-lg order-6">
             <div className="text-[10px] text-amber-500 font-bold uppercase tracking-wider shrink-0 mt-0.5 border border-amber-500/20 bg-amber-500/10 px-1.5 py-px rounded">BÊTA</div>
             <p className="text-xs text-slate-500 leading-snug">
               Version expérimentale. Nous faisons tout pour agréger les données avec la plus grande rigueur, mais l'erreur reste humaine. Une incohérence ? Une suggestion ? Contactez <a href="mailto:contact@budget-citoyen.fr" className="text-slate-400 hover:text-white underline decoration-slate-700 underline-offset-2 transition-colors">contact@budget-citoyen.fr</a>

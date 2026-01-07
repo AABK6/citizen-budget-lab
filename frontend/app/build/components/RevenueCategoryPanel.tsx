@@ -179,14 +179,14 @@ export function RevenueCategoryPanel({
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                className="w-6 h-6 flex items-center justify-center rounded-md bg-white border border-slate-200 text-slate-400 hover:text-blue-600 hover:border-blue-400 disabled:opacity-30"
+                className="w-8 h-8 sm:w-6 sm:h-6 flex items-center justify-center rounded-md bg-white border border-slate-200 text-slate-400 hover:text-blue-600 hover:border-blue-400 disabled:opacity-30"
                 onClick={() => handleNudge(-1)}
                 disabled={atMin}
               >
                 <i className="material-icons text-xs">remove</i>
               </button>
-              <div className="flex-1 relative h-6 flex items-center">
-                <div className="absolute left-0 right-0 h-1 bg-slate-200 rounded-full overflow-hidden">
+              <div className="flex-1 relative h-7 sm:h-6 flex items-center">
+                <div className="absolute left-0 right-0 h-1.5 sm:h-1 bg-slate-200 rounded-full overflow-hidden">
                   {/* Center mark */}
                   <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-slate-300 -translate-x-1/2" />
                   {/* Fill - Inverted colors for Revenue: Positive % is Green (more revenue), Negative is Red */}
@@ -200,7 +200,7 @@ export function RevenueCategoryPanel({
                 </div>
                 <input
                   type="range"
-                  className="relative w-full h-6 bg-transparent appearance-none cursor-pointer focus:outline-none z-10 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-blue-600 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-md"
+                  className="relative w-full h-7 sm:h-6 bg-transparent appearance-none cursor-pointer focus:outline-none z-10 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 sm:[&::-webkit-slider-thumb]:w-3 sm:[&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-blue-600 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-md"
                   min={-targetRangeMax}
                   max={targetRangeMax}
                   step={percentStep}
@@ -210,7 +210,7 @@ export function RevenueCategoryPanel({
               </div>
               <button
                 type="button"
-                className="w-6 h-6 flex items-center justify-center rounded-md bg-white border border-slate-200 text-slate-400 hover:text-blue-600 hover:border-blue-400 disabled:opacity-30"
+                className="w-8 h-8 sm:w-6 sm:h-6 flex items-center justify-center rounded-md bg-white border border-slate-200 text-slate-400 hover:text-blue-600 hover:border-blue-400 disabled:opacity-30"
                 onClick={() => handleNudge(1)}
                 disabled={atMax}
               >
@@ -250,13 +250,13 @@ export function RevenueCategoryPanel({
             {/* Row 4: Actions */}
             <div className="flex gap-2 pt-1">
               <button
-                className="flex-1 h-8 flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg shadow-sm transition-all"
+                className="flex-1 h-10 sm:h-8 flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg shadow-sm transition-all"
                 onClick={onApplyTarget}
               >
                 Appliquer
               </button>
               <button
-                className="h-8 px-3 text-slate-500 hover:text-slate-800 text-xs font-semibold hover:bg-slate-100 rounded-lg transition-colors border border-transparent"
+                className="h-10 sm:h-8 px-3 text-slate-500 hover:text-slate-800 text-xs font-semibold hover:bg-slate-100 rounded-lg transition-colors border border-transparent"
                 onClick={handleClear}
               >
                 Reset

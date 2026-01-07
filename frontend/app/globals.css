@@ -329,6 +329,17 @@ html[data-fr-theme='dark'] .brand-logo-dark {
     overflow: hidden;
 }
 
+@media (max-width: 1024px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+
+    .left-panel,
+    .right-panel {
+        display: none;
+    }
+}
+
 .left-panel,
 .right-panel {
     display: flex;

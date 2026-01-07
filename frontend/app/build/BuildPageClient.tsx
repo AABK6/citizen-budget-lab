@@ -90,6 +90,8 @@ export default function BuildPageClient() {
     missionLabels,
   } = state;
   const [displayMode, setDisplayMode] = useState<'amount' | 'share'>('amount');
+  const [isMobileSpendingOpen, setIsMobileSpendingOpen] = useState(false);
+  const [isMobileRevenueOpen, setIsMobileRevenueOpen] = useState(false);
   const [massDataByLens, setMassDataByLens] = useState<Record<AggregationLens, MassCategory[]>>({
     MISSION: [],
     COFOG: [],
@@ -566,6 +568,8 @@ export default function BuildPageClient() {
 
   const handleCategoryClick = async (category: MassCategory) => {
     setActiveTab('missions');
+    setIsMobileSpendingOpen(true);
+    setIsMobileRevenueOpen(false);
     toggleRevenuePanel(false);
     setSelectedRevenueCategory(null);
     setSelectedCategory(category);
@@ -731,6 +735,8 @@ export default function BuildPageClient() {
 
   const handleRevenueCategoryClick = async (category: LegoPiece) => {
     setActiveRevenueTab('revenues');
+    setIsMobileRevenueOpen(true);
+    setIsMobileSpendingOpen(false);
     togglePanel(false);
     setSelectedCategory(null);
     const pieceId = category.id;
@@ -773,6 +779,28 @@ export default function BuildPageClient() {
     setRevenueTargetPercent(0);
     setRevenueTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
   };
+
+  const openMobileSpendingPanel = useCallback(() => {
+    setActiveTab('missions');
+    setIsMobileRevenueOpen(false);
+    setIsMobileSpendingOpen(true);
+  }, [setActiveTab, setIsMobileRevenueOpen, setIsMobileSpendingOpen]);
+
+  const openMobileRevenuePanel = useCallback(() => {
+    setActiveRevenueTab('revenues');
+    setIsMobileSpendingOpen(false);
+    setIsMobileRevenueOpen(true);
+  }, [setActiveRevenueTab, setIsMobileRevenueOpen, setIsMobileSpendingOpen]);
+
+  const closeMobileSpendingPanel = useCallback(() => {
+    setIsMobileSpendingOpen(false);
+    handleBackClick();
+  }, [handleBackClick]);
+
+  const closeMobileRevenuePanel = useCallback(() => {
+    setIsMobileRevenueOpen(false);
+    handleRevenueBackClick();
+  }, [handleRevenueBackClick]);
 
   const formatCurrency = (amount: number) => {
     const sign = amount < 0 ? '-' : '';
@@ -963,6 +991,182 @@ export default function BuildPageClient() {
     }
   }, [masses, handleCategoryClick, isPanelExpanded, handleBackClick]);
 
+  const leftPanelContent = (
+    <>
+      <div className="p-3 border-b border-slate-100 bg-white z-10">
+        <div className="flex bg-slate-100/80 p-1 rounded-xl">
+          <button
+            onClick={() => { setActiveTab('missions'); setIsCatalogOpen(false); }}
+            className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'missions'
+              ? 'bg-white text-slate-800 shadow-sm'
+              : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'
+              }`}
+          >
+            <span className="material-icons text-base">account_balance</span>
+            {t('build.mass_dials')}
+          </button>
+          <button
+            onClick={() => { setActiveTab('reforms'); setIsCatalogOpen(true); }}
+            className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'reforms'
+              ? 'bg-white text-violet-700 shadow-sm'
+              : 'text-slate-500 hover:text-violet-600 hover:bg-white/50'
+              }`}
+          >
+            <span className="material-icons text-base">auto_fix_high</span>
+            {t('build.piece_dials')}
+          </button>
+        </div>
+      </div>
+
+      <div className="flex-1 min-h-0 overflow-y-auto bg-slate-50/30">
+        {activeTab === 'reforms' ? (
+          <ReformSidebarList
+            title={t('build.piece_dials')}
+            subtitle="Ajustements structurels et réformes"
+            levers={spendingLevers}
+            onSelectReform={(lever) => {
+              if (!isLeverInDsl(lever.id)) {
+                addLeverToDsl(lever);
+              } else {
+                removeLeverFromDsl(lever.id);
+              }
+            }}
+            onHoverReform={setPreviewReformId}
+            isLeverSelected={isLeverInDsl}
+          />
+        ) : (
+          !isPanelExpanded ? (
+            <MassCategoryList
+              categories={masses}
+              onSelect={handleCategoryClick}
+              formatCurrency={formatCurrency}
+              formatShare={formatShare}
+              displayMode={displayMode}
+            />
+          ) : (
+            selectedCategory && (
+              <MassCategoryPanel
+                category={selectedCategory}
+                targetPercent={targetPercent}
+                targetRangeMax={targetRangeMax}
+                onTargetPercentChange={setTargetPercent}
+                onRangeChange={handleTargetRangeChange}
+                onApplyTarget={handleApplyTarget}
+                onClearTarget={() => {
+                  setTargetPercent(0);
+                  setTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
+                }}
+                onClose={handleBackClick}
+                suggestedLevers={suggestedLevers}
+                onLeverToggle={(lever) =>
+                  (isLeverInDsl(lever.id) ? removeLeverFromDsl(lever.id) : addLeverToDsl(lever))
+                }
+                isLeverSelected={isLeverInDsl}
+                popularIntents={popularIntents}
+                onIntentClick={handleIntentClick}
+                formatCurrency={formatCurrency}
+                formatShare={formatShare}
+                displayMode={displayMode}
+              />
+            )
+          )
+        )}
+      </div>
+    </>
+  );
+
+  const rightPanelContent = (
+    <>
+      <div className="p-3 border-b border-slate-100 bg-white z-10">
+        <div className="flex bg-slate-100/80 p-1 rounded-xl">
+          <button
+            onClick={() => {
+              setActiveRevenueTab('revenues');
+              toggleRevenuePanel(false);
+              setSelectedRevenueCategory(null);
+            }}
+            className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold transition-all ${activeRevenueTab === 'revenues'
+              ? 'bg-white text-slate-800 shadow-sm'
+              : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'
+              }`}
+          >
+            <span className="material-icons text-base">payments</span>
+            {t('build.revenues')}
+          </button>
+          <button
+            onClick={() => {
+              setActiveRevenueTab('reforms');
+              toggleRevenuePanel(false);
+              setSelectedRevenueCategory(null);
+            }}
+            className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold transition-all ${activeRevenueTab === 'reforms'
+              ? 'bg-white text-blue-700 shadow-sm'
+              : 'text-slate-500 hover:text-blue-600 hover:bg-white/50'
+              }`}
+          >
+            <span className="material-icons text-base">receipt_long</span>
+            {t('build.piece_dials')}
+          </button>
+        </div>
+      </div>
+      <div className="flex-1 min-h-0 overflow-y-auto">
+        {activeRevenueTab === 'reforms' ? (
+          <ReformSidebarList
+            title={t('build.piece_dials')}
+            subtitle="Fiscalité et ressources collectives"
+            levers={revenueLevers}
+            onSelectReform={(lever) => {
+              if (!isLeverInDsl(lever.id)) {
+                addLeverToDsl(lever);
+              } else {
+                removeLeverFromDsl(lever.id);
+              }
+            }}
+            onHoverReform={setPreviewReformId}
+            isLeverSelected={isLeverInDsl}
+            side="right"
+          />
+        ) : (
+          !isRevenuePanelExpanded ? (
+            <RevenueCategoryList
+              categories={revenuePieces}
+              onSelect={handleRevenueCategoryClick}
+              formatCurrency={formatCurrency}
+              visuals={revenueVisuals}
+            />
+          ) : (
+            selectedRevenueCategory && (
+              <RevenueCategoryPanel
+                category={selectedRevenueCategory}
+                visual={revenueVisuals.get(selectedRevenueCategory.id)}
+                targetPercent={revenueTargetPercent}
+                targetRangeMax={revenueTargetRangeMax}
+                onTargetPercentChange={setRevenueTargetPercent}
+                onRangeChange={handleRevenueRangeChange}
+                onApplyTarget={handleApplyRevenueTarget}
+                onClearTarget={() => {
+                  setRevenueTargetPercent(0);
+                  setRevenueTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
+                }}
+                onBack={handleRevenueBackClick}
+                suggestedLevers={suggestedLevers}
+                onLeverToggle={(lever) =>
+                  (isLeverInDsl(lever.id) ? removeLeverFromDsl(lever.id) : addLeverToDsl(lever))
+                }
+                isLeverSelected={isLeverInDsl}
+                popularIntents={popularIntents}
+                onIntentClick={handleIntentClick}
+                formatCurrency={formatCurrency}
+                formatShare={formatShare}
+                displayMode={displayMode}
+              />
+            )
+          )
+        )}
+      </div>
+    </>
+  );
+
   if (initialLoading) {
     return <BuildPageSkeleton />;
   }
@@ -988,100 +1192,22 @@ export default function BuildPageClient() {
         previewDeficit={previewDeficit}
         displayMode={displayMode}
         setDisplayMode={setDisplayMode}
+        onOpenSpendingPanel={openMobileSpendingPanel}
+        onOpenRevenuePanel={openMobileRevenuePanel}
       />
 
       <div className="w-full flex-1 min-h-0 flex flex-col overflow-hidden relative">
-        <div className="flex-1 grid grid-cols-[380px_1fr_350px] gap-4 p-4 min-h-0">
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-[380px_1fr_350px] gap-3 sm:gap-4 p-3 sm:p-4 min-h-0">
 
 
 
           {/* LEFT PANEL: SPENDING */}
-          <div className="flex flex-col min-h-0 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative">
-
-            {/* Unified Header with Tabs */}
-            <div className="p-3 border-b border-slate-100 bg-white z-10">
-              <div className="flex bg-slate-100/80 p-1 rounded-xl" id="left-panel-tabs">
-                <button
-                  onClick={() => { setActiveTab('missions'); setIsCatalogOpen(false); }}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'missions'
-                    ? 'bg-white text-slate-800 shadow-sm'
-                    : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'
-                    }`}
-                >
-                  <span className="material-icons text-base">account_balance</span>
-                  {t('build.mass_dials')}
-                </button>
-                <button
-                  onClick={() => { setActiveTab('reforms'); setIsCatalogOpen(true); }}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'reforms'
-                    ? 'bg-white text-violet-700 shadow-sm'
-                    : 'text-slate-500 hover:text-violet-600 hover:bg-white/50'
-                    }`}
-                >
-                  <span className="material-icons text-base">auto_fix_high</span>
-                  {t('build.piece_dials')}
-                </button>
-              </div>
-            </div>
-
-            <div className="flex-1 min-h-0 overflow-y-auto bg-slate-50/30" id="left-panel-list">
-              {activeTab === 'reforms' ? (
-                <ReformSidebarList
-                  title={t('build.piece_dials')}
-                  subtitle="Ajustements structurels et réformes"
-                  levers={spendingLevers}
-                  onSelectReform={(lever) => {
-                    if (!isLeverInDsl(lever.id)) {
-                      addLeverToDsl(lever);
-                    } else {
-                      removeLeverFromDsl(lever.id);
-                    }
-                  }}
-                  onHoverReform={setPreviewReformId}
-                  isLeverSelected={isLeverInDsl}
-                />
-              ) : (
-                !isPanelExpanded ? (
-                  <MassCategoryList
-                    categories={masses}
-                    onSelect={handleCategoryClick}
-                    formatCurrency={formatCurrency}
-                    formatShare={formatShare}
-                    displayMode={displayMode}
-                  />
-                ) : (
-                  selectedCategory && (
-                    <MassCategoryPanel
-                      category={selectedCategory}
-                      targetPercent={targetPercent}
-                      targetRangeMax={targetRangeMax}
-                      onTargetPercentChange={setTargetPercent}
-                      onRangeChange={handleTargetRangeChange}
-                      onApplyTarget={handleApplyTarget}
-                      onClearTarget={() => {
-                        setTargetPercent(0);
-                        setTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
-                      }}
-                      onClose={handleBackClick}
-                      suggestedLevers={suggestedLevers}
-                      onLeverToggle={(lever) =>
-                        (isLeverInDsl(lever.id) ? removeLeverFromDsl(lever.id) : addLeverToDsl(lever))
-                      }
-                      isLeverSelected={isLeverInDsl}
-                      popularIntents={popularIntents}
-                      onIntentClick={handleIntentClick}
-                      formatCurrency={formatCurrency}
-                      formatShare={formatShare}
-                      displayMode={displayMode}
-                    />
-                  )
-                )
-              )}
-            </div>
+          <div className="hidden lg:flex flex-col min-h-0 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative">
+            {leftPanelContent}
           </div>
 
           {/* CENTER PANEL: TREEMAP */}
-          <div id="treemap-container" className="flex flex-col bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden relative">
+          <div id="treemap-container" className="flex flex-col bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden relative min-h-[50vh] sm:min-h-[60vh] lg:min-h-0">
             {/* Added pb-11 to create safe space for the absolute positioned NewsTicker (h-10) */}
             <div className="flex-1 relative p-1 min-h-0 pb-11">
               <TreemapChart
@@ -1104,96 +1230,70 @@ export default function BuildPageClient() {
           </div>
 
           {/* RIGHT PANEL: REVENUE */}
-          <div id="right-panel-revenue" className="flex flex-col min-h-0 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div className="p-3 border-b border-slate-100 bg-white z-10">
-              <div className="flex bg-slate-100/80 p-1 rounded-xl">
-                <button
-                  onClick={() => {
-                    setActiveRevenueTab('revenues');
-                    toggleRevenuePanel(false);
-                    setSelectedRevenueCategory(null);
-                  }}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold transition-all ${activeRevenueTab === 'revenues'
-                    ? 'bg-white text-slate-800 shadow-sm'
-                    : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'
-                    }`}
-                >
-                  <span className="material-icons text-base">payments</span>
-                  {t('build.revenues')}
-                </button>
-                <button
-                  onClick={() => {
-                    setActiveRevenueTab('reforms');
-                    toggleRevenuePanel(false);
-                    setSelectedRevenueCategory(null);
-                  }}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold transition-all ${activeRevenueTab === 'reforms'
-                    ? 'bg-white text-blue-700 shadow-sm'
-                    : 'text-slate-500 hover:text-blue-600 hover:bg-white/50'
-                    }`}
-                >
-                  <span className="material-icons text-base">receipt_long</span>
-                  {t('build.piece_dials')}
-                </button>
-              </div>
-            </div>
-            <div className="flex-1 min-h-0 overflow-y-auto">
-              {activeRevenueTab === 'reforms' ? (
-                <ReformSidebarList
-                  title={t('build.piece_dials')}
-                  subtitle="Fiscalité et ressources collectives"
-                  levers={revenueLevers}
-                  onSelectReform={(lever) => {
-                    if (!isLeverInDsl(lever.id)) {
-                      addLeverToDsl(lever);
-                    } else {
-                      removeLeverFromDsl(lever.id);
-                    }
-                  }}
-                  onHoverReform={setPreviewReformId}
-                  isLeverSelected={isLeverInDsl}
-                  side="right"
-                />
-              ) : (
-                !isRevenuePanelExpanded ? (
-                  <RevenueCategoryList
-                    categories={revenuePieces}
-                    onSelect={handleRevenueCategoryClick}
-                    formatCurrency={formatCurrency}
-                    visuals={revenueVisuals}
-                  />
-                ) : (
-                  selectedRevenueCategory && (
-                    <RevenueCategoryPanel
-                      category={selectedRevenueCategory}
-                      visual={revenueVisuals.get(selectedRevenueCategory.id)}
-                      targetPercent={revenueTargetPercent}
-                      targetRangeMax={revenueTargetRangeMax}
-                      onTargetPercentChange={setRevenueTargetPercent}
-                      onRangeChange={handleRevenueRangeChange}
-                      onApplyTarget={handleApplyRevenueTarget}
-                      onClearTarget={() => {
-                        setRevenueTargetPercent(0);
-                        setRevenueTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
-                      }}
-                      onBack={handleRevenueBackClick}
-                      suggestedLevers={suggestedLevers}
-                      onLeverToggle={(lever) =>
-                        (isLeverInDsl(lever.id) ? removeLeverFromDsl(lever.id) : addLeverToDsl(lever))
-                      }
-                      isLeverSelected={isLeverInDsl}
-                      popularIntents={popularIntents}
-                      onIntentClick={handleIntentClick}
-                      formatCurrency={formatCurrency}
-                      formatShare={formatShare}
-                      displayMode={displayMode}
-                    />
-                  )
-                )
-              )}
-            </div>
+          <div id="right-panel-revenue" className="hidden lg:flex flex-col min-h-0 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            {rightPanelContent}
           </div>
         </div>
+
+        {isMobileSpendingOpen && (
+          <div className="fixed inset-0 z-[70] lg:hidden" role="dialog" aria-modal="true">
+            <div
+              className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm"
+              onClick={closeMobileSpendingPanel}
+            />
+            <div className="relative flex flex-col h-full w-full">
+              <div className="flex items-center justify-between px-4 py-3 bg-white/95 border-b border-slate-200 shadow-sm">
+                <div className="flex items-center gap-2 text-sm font-bold text-slate-700">
+                  <span className="material-icons text-base text-slate-500">account_balance</span>
+                  Budget public
+                </div>
+                <button
+                  type="button"
+                  onClick={closeMobileSpendingPanel}
+                  className="flex items-center gap-1 text-xs font-bold text-slate-500 hover:text-slate-700"
+                >
+                  <span className="material-icons text-base">close</span>
+                  Fermer
+                </button>
+              </div>
+              <div className="flex-1 min-h-0 p-3">
+                <div className="flex flex-col h-full min-h-0 bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+                  {leftPanelContent}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {isMobileRevenueOpen && (
+          <div className="fixed inset-0 z-[70] lg:hidden" role="dialog" aria-modal="true">
+            <div
+              className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm"
+              onClick={closeMobileRevenuePanel}
+            />
+            <div className="relative flex flex-col h-full w-full">
+              <div className="flex items-center justify-between px-4 py-3 bg-white/95 border-b border-slate-200 shadow-sm">
+                <div className="flex items-center gap-2 text-sm font-bold text-slate-700">
+                  <span className="material-icons text-base text-slate-500">payments</span>
+                  Recettes publiques
+                </div>
+                <button
+                  type="button"
+                  onClick={closeMobileRevenuePanel}
+                  className="flex items-center gap-1 text-xs font-bold text-slate-500 hover:text-slate-700"
+                >
+                  <span className="material-icons text-base">close</span>
+                  Fermer
+                </button>
+              </div>
+              <div className="flex-1 min-h-0 p-3">
+                <div className="flex flex-col h-full min-h-0 bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+                  {rightPanelContent}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {shareFeedback && (
           <div className="absolute bottom-8 left-1/2 -translate-x-1/2 px-6 py-3 bg-slate-800 text-white rounded-full shadow-2xl flex items-center gap-3 animate-slide-up z-50">

@@ -5,7 +5,7 @@ import BuildPageClient from './BuildPageClient';
 export async function generateMetadata({
   searchParams,
 }: {
-  searchParams?: { scenarioId?: string } | Promise<{ scenarioId?: string }>;
+  searchParams?: Promise<{ scenarioId?: string }>;
 }): Promise<Metadata> {
   const resolvedSearchParams = await searchParams;
   const scenarioId = resolvedSearchParams?.scenarioId;
