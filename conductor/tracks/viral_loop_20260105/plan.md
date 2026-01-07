@@ -49,7 +49,7 @@ Goal: Ensure the shared links look great on social media platforms.
 - [x] **Task: Metadata Integration**
     - [x] Sub-task: Implement `generateMetadata` on the build page to point to the `/api/og/[id]` endpoint.
     - [x] Sub-task: Set appropriate social titles and descriptions.
-- [ ] **Task: Final Polish & Accessibility**
-    - [ ] Sub-task: Run `axe` tests on the new page.
-    - [ ] Sub-task: Verify responsive behavior on mobile.
-- [ ] **Task: Conductor - User Manual Verification 'Phase 4: SEO & SEO Integration' (Protocol in workflow.md)**
+- [~] **Task: Final Polish & Accessibility**
+    - [~] Sub-task: Run `axe` tests on the new page.
+    - [~] Sub-task: Verify responsive behavior on mobile.
+- [~] **Task: Conductor - User Manual Verification 'Phase 4: SEO & SEO Integration' (Protocol in workflow.md)**

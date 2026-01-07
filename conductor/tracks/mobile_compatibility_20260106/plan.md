@@ -4,7 +4,7 @@
 - [x] Task: Audit existing layout components for mobile responsiveness issues. (270f20d)
 - [x] Task: Refactor the Global Header and Summary Bar for compact mobile viewports. (6e34470)
 - [x] Task: Implement mobile-specific visibility controls (e.g., `hidden md:block`) for landing page components. (d6cdfb7)
-- [ ] Task: Conductor - User Manual Verification 'Foundation & Layout Optimization' (Protocol in workflow.md)
+- [~] Task: Conductor - User Manual Verification 'Foundation & Layout Optimization' (Protocol in workflow.md)
 
 ## Phase 2: Landing Page Mobile Experience
 - [ ] Task: Implement custom vertical stacking and reordering for landing page sections.
