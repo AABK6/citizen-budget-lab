@@ -840,7 +840,7 @@ export default function BuildPageClient() {
             origin: { y: 0.8 },
           });
         })
-        .catch(() => {});
+        .catch(() => { });
     } catch (err) {
       setShareFeedback('Impossible de copier le lien.');
     }
@@ -1228,6 +1228,7 @@ export default function BuildPageClient() {
         setDisplayMode={setDisplayMode}
         onOpenSpendingPanel={openMobileSpendingPanel}
         onOpenRevenuePanel={openMobileRevenuePanel}
+        activeMobileTab={isMobileRevenueOpen ? 'revenue' : 'spending'}
       />
 
       <div className="w-full flex-1 min-h-0 flex flex-col overflow-hidden relative">

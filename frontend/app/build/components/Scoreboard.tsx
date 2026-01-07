@@ -20,6 +20,7 @@ interface ScoreboardProps {
     previewDeficit?: number | null;
     displayMode: 'amount' | 'share';
     setDisplayMode: (mode: 'amount' | 'share') => void;
+    activeMobileTab?: 'spending' | 'revenue' | 'none';
 }
 
 const formatCurrencyShort = (amount: number) => {
@@ -46,6 +47,7 @@ export function Scoreboard({
     previewDeficit,
     displayMode,
     setDisplayMode,
+    activeMobileTab = 'none',
 }: ScoreboardProps) {
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
@@ -111,154 +113,218 @@ export function Scoreboard({
         return Number.isFinite(val) ? val : 0;
     }, [baselineDeficit, stats.deficit]);
     return (
-        <div className="w-full bg-white/80 backdrop-blur-md border-b border-white/50 shadow-sm sticky top-0 z-50 px-3 py-2 sm:px-6 sm:py-4 flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4 font-['Outfit']">
+        <div className="w-full bg-white/80 backdrop-blur-md border-b border-white/50 shadow-sm sticky top-0 z-50 px-3 py-2 sm:px-6 sm:py-4 font-['Outfit']">
 
-            {/* LEFT: Context & Year */}
-            <div className="flex flex-wrap items-center gap-3 sm:gap-4">
-                <div className="flex flex-col">
-                    <span className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">Budget</span>
-                    <span className="text-lg sm:text-2xl font-bold text-slate-800">{year}</span>
+            {/* MOBILE LAYOUT (< md) - "Option A Refined" */}
+            <div className="flex flex-col gap-2 md:hidden w-full pb-1">
+                {/* Row 1: Deficit & Voter Button */}
+                <div className="flex items-center justify-between w-full">
+                    <div className="flex items-baseline gap-2">
+                        <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Solde</span>
+                        <span className={`text-2xl font-extrabold tracking-tight ${stats.deficit < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
+                            {stats.deficit > 0 ? '+' : ''}{formatCurrencyShort(stats.deficit)}
+                        </span>
+                        {stats.deficitRatio !== null && (
+                            <span className={`text-xs font-semibold ${stats.deficitRatio < -0.03 ? 'text-red-500' : 'text-slate-500'}`}>
+                                ({formatPercent(stats.deficitRatio)})
+                            </span>
+                        )}
+                    </div>
+
+                    <button
+                        id="scoreboard-vote-btn-mobile"
+                        onClick={onShare}
+                        className="px-4 py-1.5 bg-blue-600 active:bg-blue-700 text-white rounded-full font-bold text-xs shadow-sm shadow-blue-200"
+                    >
+                        Voter
+                    </button>
                 </div>
 
-                <div className="hidden sm:block h-8 w-px bg-slate-200 mx-2"></div>
+                {/* Row 2: Main Toggle (Budget vs Recettes) - Pill Style with Explicit Active States */}
+                <div className="flex bg-slate-200/80 p-1 rounded-full w-full relative h-[34px]">
+                    <button
+                        onClick={onOpenSpendingPanel}
+                        className={`flex-1 rounded-full text-[11px] font-bold transition-all duration-200 flex items-center justify-center z-10 ${activeMobileTab === 'spending'
+                            ? 'bg-white text-blue-700 shadow-sm ring-1 ring-black/5'
+                            : 'text-slate-500 hover:text-slate-700'
+                            }`}
+                    >
+                        Dépenses
+                    </button>
+                    <button
+                        onClick={onOpenRevenuePanel}
+                        className={`flex-1 rounded-full text-[11px] font-bold transition-all duration-200 flex items-center justify-center z-10 ${activeMobileTab === 'revenue'
+                            ? 'bg-white text-blue-700 shadow-sm ring-1 ring-black/5'
+                            : 'text-slate-500 hover:text-slate-700'
+                            }`}
+                    >
+                        Recettes
+                    </button>
+                </div>
 
-                {/* Primary Metric: BALANCE / DEFICIT */}
-                <div className="flex flex-wrap items-end gap-2 sm:gap-3">
+                {/* Row 3: Compact Action Toolbar */}
+                <div className="flex items-center justify-between px-2 pt-1">
+                    <button
+                        onClick={() => setIsDetailsOpen((prev) => !prev)}
+                        className={`flex flex-col items-center gap-0.5 p-1 rounded-lg transition-colors min-w-[50px] ${isDetailsOpen ? 'text-blue-600' : 'text-slate-400 active:bg-slate-50'}`}
+                    >
+                        <span className="material-icons text-lg">insights</span>
+                        <span className="text-[8px] font-bold uppercase tracking-wide">Détails</span>
+                    </button>
+
+                    <button
+                        onClick={() => setDisplayMode(displayMode === 'amount' ? 'share' : 'amount')}
+                        className="flex flex-col items-center gap-0.5 p-1 rounded-lg text-slate-400 active:bg-slate-50 min-w-[50px]"
+                    >
+                        <div className="h-4 w-4 flex items-center justify-center font-bold text-[10px] border border-current rounded bg-transparent">
+                            {displayMode === 'amount' ? '%' : '€'}
+                        </div>
+                        <span className="text-[8px] font-bold uppercase tracking-wide">Unité</span>
+                    </button>
+
+                    {onRunTutorial && (
+                        <button
+                            onClick={onRunTutorial}
+                            className="flex flex-col items-center gap-0.5 p-1 rounded-lg text-slate-400 active:bg-slate-50 min-w-[50px]"
+                        >
+                            <span className="material-icons text-lg">help_outline</span>
+                            <span className="text-[8px] font-bold uppercase tracking-wide">Aide</span>
+                        </button>
+                    )}
+
+                    <button
+                        onClick={onReset}
+                        className="flex flex-col items-center gap-0.5 p-1 rounded-lg text-slate-400 active:bg-slate-50 hover:text-red-500 min-w-[50px]"
+                    >
+                        <span className="material-icons text-lg">restart_alt</span>
+                        <span className="text-[8px] font-bold uppercase tracking-wide">Reset</span>
+                    </button>
+                </div>
+
+                {/* Mobile Dashboard Detail View (Collapsible) */}
+                {isDetailsOpen && (
+                    <div className="mt-2 pt-2 border-t border-slate-100 animate-in slide-in-from-top-2">
+                        <ScenarioDashboard
+                            baselineTotals={baselineTotals}
+                            currentTotals={currentTotals}
+                            deficitDelta={deficitDelta}
+                            baselineMasses={baselineMasses}
+                            piecesById={piecesById}
+                            actions={actions}
+                            policyLevers={policyLevers}
+                        />
+                    </div>
+                )}
+            </div>
+
+
+            {/* DESKTOP LAYOUT (md+) - Existing Layout Preserved */}
+            <div className="hidden md:flex flex-row items-center justify-between gap-4 w-full">
+                {/* LEFT: Context & Year */}
+                <div className="flex flex-wrap items-center gap-4">
                     <div className="flex flex-col">
-                        <span className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">Solde Public</span>
-                        <div className="flex flex-col">
-                            <div className="flex items-baseline gap-3">
-                                {/* Current Value */}
-                                <span id="scoreboard-deficit" className={`text-xl sm:text-3xl font-extrabold tracking-tight transition-all duration-300 ${showPreview ? 'opacity-40 blur-[1px]' : ''} ${stats.deficit < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
-                                    {stats.deficit > 0 ? '+' : ''}{formatCurrencyShort(stats.deficit)}
-                                </span>
+                        <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Budget</span>
+                        <span className="text-2xl font-bold text-slate-800">{year}</span>
+                    </div>
 
-                                {/* Ghost / Preview Value */}
-                                {showPreview && (
-                                    <span className={`text-xl sm:text-3xl font-extrabold tracking-tight animate-in fade-in slide-in-from-bottom-2 duration-200 ${previewDeficit! < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
-                                        {previewDeficit! > 0 ? '+' : ''}{formatCurrencyShort(previewDeficit!)}
+                    <div className="h-8 w-px bg-slate-200 mx-2"></div>
+
+                    {/* Primary Metric: BALANCE / DEFICIT */}
+                    <div className="flex flex-wrap items-end gap-3">
+                        <div className="flex flex-col">
+                            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Solde Public</span>
+                            <div className="flex flex-col">
+                                <div className="flex items-baseline gap-3">
+                                    <span id="scoreboard-deficit" className={`text-3xl font-extrabold tracking-tight transition-all duration-300 ${showPreview ? 'opacity-40 blur-[1px]' : ''} ${stats.deficit < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
+                                        {stats.deficit > 0 ? '+' : ''}{formatCurrencyShort(stats.deficit)}
                                     </span>
-                                )}
-                            </div>
-                            <div className="min-h-4 sm:min-h-5">
-                                {showPreview ? (
-                                    <span className={`text-[11px] sm:text-xs font-bold leading-tight ${previewDiff > 0 ? 'text-emerald-500' : 'text-red-500'}`}>
-                                        {previewDiff > 0 ? '▲' : '▼'} Impact: {previewDiff > 0 ? '+' : ''}{formatCurrencyShort(previewDiff)}
-                                    </span>
-                                ) : stats.deficitRatio !== null ? (
-                                    <span className={`text-xs sm:text-sm font-medium leading-tight ${stats.deficitRatio < -0.03 ? 'text-red-500' : 'text-slate-500'}`}>
-                                        {formatPercent(stats.deficitRatio)} du PIB
-                                    </span>
-                                ) : (
-                                    <span className="text-sm text-transparent">.</span>
-                                )}
+                                    {showPreview && (
+                                        <span className={`text-3xl font-extrabold tracking-tight animate-in fade-in slide-in-from-bottom-2 duration-200 ${previewDeficit! < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
+                                            {previewDeficit! > 0 ? '+' : ''}{formatCurrencyShort(previewDeficit!)}
+                                        </span>
+                                    )}
+                                </div>
+                                <div className="min-h-5">
+                                    {showPreview ? (
+                                        <span className={`text-xs font-bold leading-tight ${previewDiff > 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+                                            {previewDiff > 0 ? '▲' : '▼'} Impact: {previewDiff > 0 ? '+' : ''}{formatCurrencyShort(previewDiff)}
+                                        </span>
+                                    ) : stats.deficitRatio !== null ? (
+                                        <span className={`text-sm font-medium leading-tight ${stats.deficitRatio < -0.03 ? 'text-red-500' : 'text-slate-500'}`}>
+                                            {formatPercent(stats.deficitRatio)} du PIB
+                                        </span>
+                                    ) : (
+                                        <span className="text-sm text-transparent">.</span>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            {/* CENTER: Scenario Dashboard */}
-            <div
-                id="scoreboard-resolution"
-                data-testid="scoreboard-details"
-                className={`w-full lg:flex-1 lg:max-w-2xl lg:mx-6 ${isDetailsOpen ? 'block' : 'hidden'} md:block`}
-            >
-                <ScenarioDashboard
-                    baselineTotals={baselineTotals}
-                    currentTotals={currentTotals}
-                    deficitDelta={deficitDelta}
-                    baselineMasses={baselineMasses}
-                    piecesById={piecesById}
-                    actions={actions}
-                    policyLevers={policyLevers}
-                />
-            </div>
-
-            {/* RIGHT: Actions */}
-            <div className="flex flex-wrap items-center gap-3">
-                <button
-                    type="button"
-                    onClick={() => setIsDetailsOpen((prev) => !prev)}
-                    aria-expanded={isDetailsOpen}
-                    aria-controls="scoreboard-resolution"
-                    id="scoreboard-details-toggle"
-                    className="md:hidden flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-200 text-slate-600 text-[11px] font-bold hover:bg-slate-50 transition-colors"
+                {/* CENTER: Scenario Dashboard */}
+                <div
+                    id="scoreboard-resolution"
+                    className={`flex-1 max-w-2xl mx-6 block`}
                 >
-                    <span className="material-icons text-sm">insights</span>
-                    Details
-                </button>
-                {/* View Mode Toggle */}
-                <div className="flex bg-slate-100 p-1 rounded-lg mr-2 border border-slate-200">
-                    <button
-                        onClick={() => setDisplayMode('amount')}
-                        className={`px-2 py-1 rounded text-xs font-bold transition-all ${displayMode === 'amount' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
-                        title="Voir en Montants (€)"
-                    >
-                        €
-                    </button>
-                    <button
-                        onClick={() => setDisplayMode('share')}
-                        className={`px-2 py-1 rounded text-xs font-bold transition-all ${displayMode === 'share' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
-                        title="Voir en Pourcentages (%)"
-                    >
-                        %
-                    </button>
+                    <ScenarioDashboard
+                        baselineTotals={baselineTotals}
+                        currentTotals={currentTotals}
+                        deficitDelta={deficitDelta}
+                        baselineMasses={baselineMasses}
+                        piecesById={piecesById}
+                        actions={actions}
+                        policyLevers={policyLevers}
+                    />
                 </div>
 
-                {onRunTutorial && (
+                {/* RIGHT: Actions */}
+                <div className="flex flex-wrap items-center gap-3">
+                    <div className="flex bg-slate-100 p-1 rounded-lg mr-2 border border-slate-200">
+                        <button
+                            onClick={() => setDisplayMode('amount')}
+                            className={`px-2 py-1 rounded text-xs font-bold transition-all ${displayMode === 'amount' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                            title="Voir en Montants (€)"
+                        >
+                            €
+                        </button>
+                        <button
+                            onClick={() => setDisplayMode('share')}
+                            className={`px-2 py-1 rounded text-xs font-bold transition-all ${displayMode === 'share' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                            title="Voir en Pourcentages (%)"
+                        >
+                            %
+                        </button>
+                    </div>
+
+                    {onRunTutorial && (
+                        <button
+                            onClick={onRunTutorial}
+                            className="p-2 text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+                            title="Relancer le tutoriel"
+                        >
+                            <span className="material-icons">help_outline</span>
+                        </button>
+                    )}
                     <button
-                        onClick={onRunTutorial}
-                        className="p-2 text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
-                        title="Relancer le tutoriel"
+                        onClick={onReset}
+                        className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Réinitialiser la simulation"
                     >
-                        <span className="material-icons">help_outline</span>
+                        <span className="material-icons">restart_alt</span>
                     </button>
-                )}
-                <button
-                    onClick={onReset}
-                    className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                    title="Réinitialiser la simulation"
-                >
-                    <span className="material-icons">restart_alt</span>
-                </button>
 
-                <button
-                    id="scoreboard-vote-btn"
-                    onClick={onShare}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-sm transition-all shadow-md hover:shadow-lg hover:scale-105 w-full sm:w-auto"
-                >
-                    <span className="material-icons text-sm">how_to_vote</span>
-                    Voter
-                </button>
-            </div>
-
-            {(onOpenSpendingPanel || onOpenRevenuePanel) && (
-                <div className="w-full lg:hidden flex items-center gap-2">
-                    {onOpenSpendingPanel && (
-                        <button
-                            type="button"
-                            onClick={onOpenSpendingPanel}
-                            id="tutorial-open-spending"
-                            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 text-xs font-bold shadow-sm"
-                        >
-                            <span className="material-icons text-sm">account_balance</span>
-                            Budget
-                        </button>
-                    )}
-                    {onOpenRevenuePanel && (
-                        <button
-                            type="button"
-                            onClick={onOpenRevenuePanel}
-                            id="tutorial-open-revenue"
-                            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-xl border border-slate-200 bg-slate-900 text-white text-xs font-bold shadow-sm"
-                        >
-                            <span className="material-icons text-sm">payments</span>
-                            Recettes
-                        </button>
-                    )}
+                    <button
+                        id="scoreboard-vote-btn"
+                        onClick={onShare}
+                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-sm transition-all shadow-md hover:shadow-lg hover:scale-105"
+                    >
+                        <span className="material-icons text-sm">how_to_vote</span>
+                        Voter
+                    </button>
                 </div>
-            )}
+            </div>
         </div>
     );
+
 }
