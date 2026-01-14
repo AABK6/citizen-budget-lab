@@ -43,30 +43,30 @@ const cloneCategories = (categories: MassCategory[]) =>
   categories.map((category) => ({ ...category }));
 
 const REVENUE_FAMILY_FALLBACK: Record<string, string> = {
-    "rev_pit": "REV_HOUSEHOLDS",
-    "rev_csg_crds": "REV_HOUSEHOLDS",
-    "rev_property_taxes": "REV_HOUSEHOLDS",
-    "rev_transfer_taxes": "REV_HOUSEHOLDS",
-    
-    "rev_vat_standard": "REV_CONSUMPTION",
-    "rev_vat_reduced": "REV_CONSUMPTION",
-    "rev_excise_tob_alc": "REV_CONSUMPTION",
-    
-    "rev_cit": "REV_COMPANIES",
-    "rev_soc_employer": "REV_COMPANIES",
-    "rev_prod_taxes": "REV_COMPANIES",
-    "rev_wage_tax": "REV_COMPANIES",
-    
-    "rev_soc_employee": "REV_LABOR",
-    "rev_soc_self": "REV_LABOR",
-    
-    "rev_excise_energy": "REV_ECO",
-    "rev_env_taxes": "REV_ECO",
-    
-    "rev_sales_fees": "REV_OTHER",
-    "rev_fines": "REV_OTHER",
-    "rev_public_income": "REV_OTHER",
-    "rev_transfers_in": "REV_OTHER"
+  "rev_pit": "REV_HOUSEHOLDS",
+  "rev_csg_crds": "REV_HOUSEHOLDS",
+  "rev_property_taxes": "REV_HOUSEHOLDS",
+  "rev_transfer_taxes": "REV_HOUSEHOLDS",
+
+  "rev_vat_standard": "REV_CONSUMPTION",
+  "rev_vat_reduced": "REV_CONSUMPTION",
+  "rev_excise_tob_alc": "REV_CONSUMPTION",
+
+  "rev_cit": "REV_COMPANIES",
+  "rev_soc_employer": "REV_COMPANIES",
+  "rev_prod_taxes": "REV_COMPANIES",
+  "rev_wage_tax": "REV_COMPANIES",
+
+  "rev_soc_employee": "REV_LABOR",
+  "rev_soc_self": "REV_LABOR",
+
+  "rev_excise_energy": "REV_ECO",
+  "rev_env_taxes": "REV_ECO",
+
+  "rev_sales_fees": "REV_OTHER",
+  "rev_fines": "REV_OTHER",
+  "rev_public_income": "REV_OTHER",
+  "rev_transfers_in": "REV_OTHER"
 };
 
 const POLICY_TARGET_FALLBACK: Record<string, string> = {
@@ -130,78 +130,78 @@ const POLICY_TARGET_FALLBACK: Record<string, string> = {
 };
 
 const REVENUE_FAMILIES_DEF = [
-    {
-      "id": "REV_HOUSEHOLDS",
-      "displayLabel": "Impôts sur les ménages",
-      "description": "Impôt sur le revenu, CSG, taxes foncières...",
-      "icon": "🏠",
-      "color": "#3b82f6",
-      "vigilancePoints": [
-        "Risque de baisse du pouvoir d'achat des ménages modestes et moyens.",
-        "Risque de désincitation au travail (trappe à inactivité) si la fiscalité est trop lourde.",
-        "Attention à l'acceptabilité sociale (ras-le-bol fiscal)."
-      ]
-    },
-    {
-      "id": "REV_CONSUMPTION",
-      "displayLabel": "Impôts sur la consommation",
-      "description": "TVA, taxes tabac & alcool",
-      "icon": "🛒",
-      "color": "#ec4899",
-      "vigilancePoints": [
-        "Impôts régressifs : pèsent proportionnellement plus sur les ménages modestes.",
-        "Risque d'inflation (hausse des prix) et de baisse de la consommation.",
-        "Risque de marché noir ou d'achats transfrontaliers (tabac, alcool)."
-      ]
-    },
-    {
-      "id": "REV_COMPANIES",
-      "displayLabel": "Impôts sur les entreprises",
-      "description": "IS, charges patronales, impôts de production",
-      "icon": "🏭",
-      "color": "#6366f1",
-      "vigilancePoints": [
-        "Risque de perte de compétitivité des entreprises françaises.",
-        "Risque de délocalisations ou de baisse des investissements.",
-        "Impact potentiel sur l'emploi (coût du travail)."
-      ]
-    },
-    {
-      "id": "REV_LABOR",
-      "displayLabel": "Prélèvements sur le travail",
-      "description": "Cotisations salariés et indépendants",
-      "icon": "👷",
-      "color": "#f97316",
-      "vigilancePoints": [
-        "Baisse du salaire net perçu par les travailleurs.",
-        "Risque de désincitation à l'emploi déclarée (travail au noir).",
-        "Lien direct avec le financement de la protection sociale (retraites, chômage)."
-      ]
-    },
-    {
-      "id": "REV_ECO",
-      "displayLabel": "Impôts écologiques",
-      "description": "Carburants, écotaxes",
-      "icon": "🌿",
-      "color": "#22c55e",
-      "vigilancePoints": [
-        "Risque de rejet social fort (type Gilets Jaunes) si perçu comme injuste.",
-        "Impact sur la compétitivité industrielle.",
-        "Nécessité d'alternatives pour changer les comportements."
-      ]
-    },
-    {
-      "id": "REV_OTHER",
-      "displayLabel": "Autres recettes",
-      "description": "Services, amendes, fonds UE",
-      "icon": "📦",
-      "color": "#64748b",
-      "vigilancePoints": [
-        "Recettes souvent non pérennes ou fluctuantes.",
-        "Dépendance aux fonds européens.",
-        "Acceptabilité des amendes et redevances."
-      ]
-    }
+  {
+    "id": "REV_HOUSEHOLDS",
+    "displayLabel": "Impôts sur les ménages",
+    "description": "Impôt sur le revenu, CSG, taxes foncières...",
+    "icon": "🏠",
+    "color": "#3b82f6",
+    "vigilancePoints": [
+      "Risque de baisse du pouvoir d'achat des ménages modestes et moyens.",
+      "Risque de désincitation au travail (trappe à inactivité) si la fiscalité est trop lourde.",
+      "Attention à l'acceptabilité sociale (ras-le-bol fiscal)."
+    ]
+  },
+  {
+    "id": "REV_CONSUMPTION",
+    "displayLabel": "Impôts sur la consommation",
+    "description": "TVA, taxes tabac & alcool",
+    "icon": "🛒",
+    "color": "#ec4899",
+    "vigilancePoints": [
+      "Impôts régressifs : pèsent proportionnellement plus sur les ménages modestes.",
+      "Risque d'inflation (hausse des prix) et de baisse de la consommation.",
+      "Risque de marché noir ou d'achats transfrontaliers (tabac, alcool)."
+    ]
+  },
+  {
+    "id": "REV_COMPANIES",
+    "displayLabel": "Impôts sur les entreprises",
+    "description": "IS, charges patronales, impôts de production",
+    "icon": "🏭",
+    "color": "#6366f1",
+    "vigilancePoints": [
+      "Risque de perte de compétitivité des entreprises françaises.",
+      "Risque de délocalisations ou de baisse des investissements.",
+      "Impact potentiel sur l'emploi (coût du travail)."
+    ]
+  },
+  {
+    "id": "REV_LABOR",
+    "displayLabel": "Prélèvements sur le travail",
+    "description": "Cotisations salariés et indépendants",
+    "icon": "👷",
+    "color": "#f97316",
+    "vigilancePoints": [
+      "Baisse du salaire net perçu par les travailleurs.",
+      "Risque de désincitation à l'emploi déclarée (travail au noir).",
+      "Lien direct avec le financement de la protection sociale (retraites, chômage)."
+    ]
+  },
+  {
+    "id": "REV_ECO",
+    "displayLabel": "Impôts écologiques",
+    "description": "Carburants, écotaxes",
+    "icon": "🌿",
+    "color": "#22c55e",
+    "vigilancePoints": [
+      "Risque de rejet social fort (type Gilets Jaunes) si perçu comme injuste.",
+      "Impact sur la compétitivité industrielle.",
+      "Nécessité d'alternatives pour changer les comportements."
+    ]
+  },
+  {
+    "id": "REV_OTHER",
+    "displayLabel": "Autres recettes",
+    "description": "Services, amendes, fonds UE",
+    "icon": "📦",
+    "color": "#64748b",
+    "vigilancePoints": [
+      "Recettes souvent non pérennes ou fluctuantes.",
+      "Dépendance aux fonds européens.",
+      "Acceptabilité des amendes et redevances."
+    ]
+  }
 ];
 
 const fallbackTreemapColors = ['#2563eb', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#ef4444', '#6366f1', '#14b8a6', '#a855f7', '#d946ef'];
@@ -259,6 +259,7 @@ export default function BuildPageClient() {
   const [displayMode, setDisplayMode] = useState<'amount' | 'share'>('amount');
   const [isMobileSpendingOpen, setIsMobileSpendingOpen] = useState(false);
   const [isMobileRevenueOpen, setIsMobileRevenueOpen] = useState(false);
+  const [isScoreboardDetailsOpen, setIsScoreboardDetailsOpen] = useState(false);
   const [pendingFamilyAction, setPendingFamilyAction] = useState<{ family: RevenueFamily; targetPercent: number } | null>(null);
   const [massDataByLens, setMassDataByLens] = useState<Record<AggregationLens, MassCategory[]>>({
     MISSION: [],
@@ -892,11 +893,11 @@ export default function BuildPageClient() {
         };
       });
     } else if (selectedRevenueFamily) {
-       // Instead of applying immediately, trigger confirmation modal
-       setPendingFamilyAction({
-         family: selectedRevenueFamily,
-         targetPercent: revenueTargetPercent
-       });
+      // Instead of applying immediately, trigger confirmation modal
+      setPendingFamilyAction({
+        family: selectedRevenueFamily,
+        targetPercent: revenueTargetPercent
+      });
     }
   };
 
@@ -904,25 +905,25 @@ export default function BuildPageClient() {
     if (!pendingFamilyAction) return;
     const { family, targetPercent } = pendingFamilyAction;
     const pieces = revenuePieces.filter(p => p.familyId === family.id);
-    
+
     setDslObject(currentDsl => {
       let newActions = currentDsl.actions;
       const pieceIds = new Set(pieces.map(p => p.id));
       // Remove existing target actions for these pieces
       newActions = newActions.filter(a => !a.id.startsWith('target_') || !pieceIds.has(a.id.replace('target_', '')));
-      
+
       // Add new actions
       pieces.forEach(p => {
         const baseline = p.amountEur || 0;
         const amount = (baseline * targetPercent) / 100;
         if (Number.isFinite(amount) && Math.abs(amount) >= 1) {
-            newActions.push({
-                id: `target_${p.id}`,
-                target: `piece.${p.id}`,
-                op: amount > 0 ? 'increase' : 'decrease',
-                amount_eur: Math.abs(amount),
-                recurring: true,
-            });
+          newActions.push({
+            id: `target_${p.id}`,
+            target: `piece.${p.id}`,
+            op: amount > 0 ? 'increase' : 'decrease',
+            amount_eur: Math.abs(amount),
+            recurring: true,
+          });
         }
       });
       return { ...currentDsl, actions: newActions };
@@ -963,7 +964,7 @@ export default function BuildPageClient() {
     // ... rest of function ...
     // Note: I need to update the existing function to clear family selection too.
     // I will replace the whole function block.
-    
+
     // Actually, I am injecting handleRevenueFamilyClick BEFORE handleRevenueCategoryClick for context match.
   };
 
@@ -974,19 +975,19 @@ export default function BuildPageClient() {
     togglePanel(false);
     setSelectedCategory(null);
     setSelectedRevenueCategory(null);
-    
+
     setRevenueTargetPercent(0);
     setRevenueTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
-    
+
     setSelectedRevenueFamily(family);
     toggleRevenuePanel(true);
-    
+
     // Populate suggested levers for the family
     // Find all pieces in this family
     const familyPieceIds = new Set(revenuePieces.filter(p => p.familyId === family.id).map(p => p.id));
-    
+
     // Find all levers targeting these pieces
-    const relevantLevers = revenueLevers.filter(lever => 
+    const relevantLevers = revenueLevers.filter(lever =>
       lever.targetRevenueCategoryId && familyPieceIds.has(lever.targetRevenueCategoryId)
     );
     setSuggestedLevers(relevantLevers);
@@ -1203,10 +1204,7 @@ export default function BuildPageClient() {
 
     if (isMobile) {
       if (index === 2) {
-        closeMobileSpendingPanel();
-        closeMobileRevenuePanel();
-      }
-      if (index === 3) {
+        // Step 2: "Deux Leviers" -> Ensure a mission is open to see tabs
         const health = masses.find(m => m.id === 'M_HEALTH');
         if (health) {
           handleCategoryClick(health);
@@ -1214,28 +1212,48 @@ export default function BuildPageClient() {
           openMobileSpendingPanel();
         }
       }
+      if (index === 3) {
+        // Step 3: Priority -> Already open from step 2, ensure panel stays open
+        // handleCategoryClick sets mobileSpendingOpen to true
+      }
       if (index === 4) {
+        // Step 4: Revenue -> Open revenue panel
         openMobileRevenuePanel();
       }
-      if (index >= 5) {
+      if (index === 5) {
+        // Step 5: "Vos choix en action" -> Open Scoreboard details
         closeMobileSpendingPanel();
         closeMobileRevenuePanel();
+        setIsScoreboardDetailsOpen(true);
+      }
+      if (index === 6) {
+        // Step 6: "Le Verdict" -> Close details to clear view
+        setIsScoreboardDetailsOpen(false);
       }
       return;
     }
 
-    // Step 3: "Fixer vos Priorités" -> Open Health panel to show slider/reforms
-    if (index === 3) {
+    // Desktop Logic
+    // Step 2: "Deux Leviers"
+    if (index === 2) {
       const health = masses.find(m => m.id === 'M_HEALTH');
       if (health) {
         handleCategoryClick(health);
       }
     }
-    // Step 4: "L'Équation Fiscale" -> Close left panel to focus on right
-    if (index === 4) {
-      if (isPanelExpanded) {
-        handleBackClick();
+
+    // Step 3: "Fixer vos Priorités" 
+    if (index === 3) {
+      // Already handled by step 2 usually, but ensure
+      const health = masses.find(m => m.id === 'M_HEALTH');
+      if (health && !selectedCategory) {
+        handleCategoryClick(health);
       }
+    }
+    // Step 4: "L'Équation Fiscale" -> Focus on right panel
+    if (index === 4) {
+      handleBackClick(); // Close left panel
+      // Maybe open revenue panel? Usually just highlighting the right side is enough on desktop
     }
   }, [
     closeMobileRevenuePanel,
@@ -1246,6 +1264,7 @@ export default function BuildPageClient() {
     masses,
     openMobileRevenuePanel,
     openMobileSpendingPanel,
+    selectedCategory,
   ]);
 
   const renderLeftPanelContent = (variant: 'desktop' | 'mobile') => (
@@ -1493,6 +1512,8 @@ export default function BuildPageClient() {
         onOpenSpendingPanel={openMobileSpendingPanel}
         onOpenRevenuePanel={openMobileRevenuePanel}
         activeMobileTab={isMobileRevenueOpen ? 'revenue' : 'spending'}
+        isDetailsOpen={isScoreboardDetailsOpen}
+        onToggleDetails={() => setIsScoreboardDetailsOpen(prev => !prev)}
       />
 
       <div className="w-full flex-1 min-h-0 flex flex-col overflow-hidden relative">

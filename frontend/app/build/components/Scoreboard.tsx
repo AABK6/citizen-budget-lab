@@ -21,6 +21,8 @@ interface ScoreboardProps {
     displayMode: 'amount' | 'share';
     setDisplayMode: (mode: 'amount' | 'share') => void;
     activeMobileTab?: 'spending' | 'revenue' | 'none';
+    isDetailsOpen: boolean;
+    onToggleDetails: () => void;
 }
 
 const formatCurrencyShort = (amount: number) => {
@@ -48,8 +50,10 @@ export function Scoreboard({
     displayMode,
     setDisplayMode,
     activeMobileTab = 'none',
+    isDetailsOpen,
+    onToggleDetails,
 }: ScoreboardProps) {
-    const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+    // const [isDetailsOpen, setIsDetailsOpen] = useState(false); // Lifted up
 
     // Extract critical metrics from the scenario result (or fallback to baseline)
     const stats = useMemo(() => {
@@ -134,7 +138,7 @@ export function Scoreboard({
                     <button
                         id="scoreboard-vote-btn-mobile"
                         onClick={onShare}
-                        className="px-4 py-1.5 bg-blue-600 active:bg-blue-700 text-white rounded-full font-bold text-xs shadow-sm shadow-blue-200"
+                        className="px-5 py-2 bg-blue-600 active:bg-blue-700 text-white rounded-full font-bold text-sm shadow-sm shadow-blue-200"
                     >
                         Voter
                     </button>
@@ -163,47 +167,48 @@ export function Scoreboard({
                 </div>
 
                 {/* Row 3: Compact Action Toolbar */}
-                <div className="flex items-center justify-between px-2 pt-1">
+                <div className="flex items-center justify-around px-1 pt-0.5">
                     <button
-                        onClick={() => setIsDetailsOpen((prev) => !prev)}
-                        className={`flex flex-col items-center gap-0.5 p-1 rounded-lg transition-colors min-w-[50px] ${isDetailsOpen ? 'text-blue-600' : 'text-slate-400 active:bg-slate-50'}`}
+                        id="scoreboard-details-toggle"
+                        onClick={onToggleDetails}
+                        className={`flex flex-col items-center gap-0 p-0.5 rounded-lg transition-colors ${isDetailsOpen ? 'text-blue-600' : 'text-slate-400 active:bg-slate-50'}`}
                     >
-                        <span className="material-icons text-lg">insights</span>
-                        <span className="text-[8px] font-bold uppercase tracking-wide">Détails</span>
+                        <span className="material-icons text-base">insights</span>
+                        <span className="text-[7px] font-bold uppercase tracking-wide">Détails</span>
                     </button>
 
                     <button
                         onClick={() => setDisplayMode(displayMode === 'amount' ? 'share' : 'amount')}
-                        className="flex flex-col items-center gap-0.5 p-1 rounded-lg text-slate-400 active:bg-slate-50 min-w-[50px]"
+                        className="flex flex-col items-center gap-0 p-0.5 rounded-lg text-slate-400 active:bg-slate-50"
                     >
-                        <div className="h-4 w-4 flex items-center justify-center font-bold text-[10px] border border-current rounded bg-transparent">
+                        <div className="h-4 w-4 flex items-center justify-center font-bold text-[9px] border border-current rounded bg-transparent">
                             {displayMode === 'amount' ? '%' : '€'}
                         </div>
-                        <span className="text-[8px] font-bold uppercase tracking-wide">Unité</span>
+                        <span className="text-[7px] font-bold uppercase tracking-wide">Unité</span>
                     </button>
 
                     {onRunTutorial && (
                         <button
                             onClick={onRunTutorial}
-                            className="flex flex-col items-center gap-0.5 p-1 rounded-lg text-slate-400 active:bg-slate-50 min-w-[50px]"
+                            className="flex flex-col items-center gap-0 p-0.5 rounded-lg text-slate-400 active:bg-slate-50"
                         >
-                            <span className="material-icons text-lg">help_outline</span>
-                            <span className="text-[8px] font-bold uppercase tracking-wide">Aide</span>
+                            <span className="material-icons text-base">help_outline</span>
+                            <span className="text-[7px] font-bold uppercase tracking-wide">Aide</span>
                         </button>
                     )}
 
                     <button
                         onClick={onReset}
-                        className="flex flex-col items-center gap-0.5 p-1 rounded-lg text-slate-400 active:bg-slate-50 hover:text-red-500 min-w-[50px]"
+                        className="flex flex-col items-center gap-0 p-0.5 rounded-lg text-slate-400 active:bg-slate-50 hover:text-red-500"
                     >
-                        <span className="material-icons text-lg">restart_alt</span>
-                        <span className="text-[8px] font-bold uppercase tracking-wide">Reset</span>
+                        <span className="material-icons text-base">restart_alt</span>
+                        <span className="text-[7px] font-bold uppercase tracking-wide">Reset</span>
                     </button>
                 </div>
 
                 {/* Mobile Dashboard Detail View (Collapsible) */}
                 {isDetailsOpen && (
-                    <div className="mt-2 pt-2 border-t border-slate-100 animate-in slide-in-from-top-2">
+                    <div id="scoreboard-dashboard-mobile" className="mt-2 pt-2 border-t border-slate-100 animate-in slide-in-from-top-2">
                         <ScenarioDashboard
                             baselineTotals={baselineTotals}
                             currentTotals={currentTotals}

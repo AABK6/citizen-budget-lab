@@ -55,11 +55,11 @@ const STEPS: TutorialStep[] = [
     },
     {
         targetId: 'scoreboard-resolution',
-        mobileTargetId: 'scoreboard-details-toggle',
+        mobileTargetId: 'scoreboard-dashboard-mobile',
         title: `Vos choix en action`,
         content: `Ici, suivez l'évolution de VOTRE scénario budgétaire. La liste de droite se remplit automatiquement avec vos choix (hausses, baisses, réformes) pour vous montrer d'un coup d'œil comment vous transformez le pays.`,
         position: 'bottom',
-        mobilePosition: 'bottom',
+        mobilePosition: 'top',
     },
     {
         targetId: 'scoreboard-vote-btn',
@@ -143,8 +143,8 @@ export function TutorialOverlay({
         const rect = targetEl.getBoundingClientRect();
         setTargetRect(rect);
 
-        const gap = isMobile ? 16 : 24;
-        const popoverWidth = isMobile ? Math.min(320, window.innerWidth - 32) : 360;
+        const gap = isMobile ? 24 : 24;
+        const popoverWidth = isMobile ? Math.min(280, window.innerWidth - 48) : 360;
         const measuredHeight = popoverRef.current?.getBoundingClientRect().height;
         const popoverHeight = measuredHeight || (isMobile ? 220 : 200);
 

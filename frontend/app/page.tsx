@@ -103,7 +103,7 @@ export default function LandingPage() {
             </span>
           </button>
           {/* Disclaimer */}
-          <div className="mt-2 flex items-start gap-3 opacity-70 hover:opacity-100 transition-opacity max-w-lg order-6">
+          <div className="mt-2 flex items-start gap-3 opacity-70 hover:opacity-100 transition-opacity max-w-lg order-6 mb-24 md:mb-0">
             <div className="text-[10px] text-amber-500 font-bold uppercase tracking-wider shrink-0 mt-0.5 border border-amber-500/20 bg-amber-500/10 px-1.5 py-px rounded">BÊTA</div>
             <p className="text-xs text-slate-500 leading-snug">
               Version expérimentale. Nous faisons tout pour agréger les données avec la plus grande rigueur, mais l'erreur reste humaine. Une incohérence ? Une suggestion ? Contactez <a href="mailto:contact@budget-citoyen.fr" className="text-slate-400 hover:text-white underline decoration-slate-700 underline-offset-2 transition-colors">contact@budget-citoyen.fr</a>
