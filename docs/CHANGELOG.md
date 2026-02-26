@@ -15,6 +15,8 @@ This changelog records **documentation** and **data pipeline conventions** chang
     - with `STRICT_OFFICIAL=1`, snapshot build fails if validation report is missing or not `ok`.
   - Added `SNAPSHOT_FAST` alias in `services/api/settings.py`, mapped to existing static baseline toggles (`LEGO_BASELINE_STATIC`, `MACRO_BASELINE_STATIC`) to keep one prod snapshot path.
   - Added strict operational runbook: `docs/BASELINE_2026_STRICT_RUNBOOK.md`.
+  - Added robust verification matrix for P0→P3 with reproducible commands: `docs/APU_P0_P3_VERIFICATION_MATRIX.md`.
+  - Added focused regression target: `make verify-apu-hardening-tests`.
 
 - **APU hardening P0/P1 enforcement (strict official mode):**
   - Added strict official checks to `tools/apply_voted_2026_to_lego_baseline.py`:

@@ -4,7 +4,7 @@ SHELL := /bin/bash
 YEAR ?= 2026
 COUNTRIES ?= FR,DE,IT
 
-.PHONY: help warm-all warm-eurostat warm-eurostat-sub warm-plf warm-macro warm-decp summary sync-votes verify-lfi-2026 verify-lfi-2026-state-a verify-lfss-2026 verify-apul-2026 verify-apu-closure-2026 build-voted-2026-aggregates warm-voted-2026-baseline check-cloudrun-votes-config verify-qualtrics-integration
+.PHONY: help warm-all warm-eurostat warm-eurostat-sub warm-plf warm-macro warm-decp summary sync-votes verify-lfi-2026 verify-lfi-2026-state-a verify-lfss-2026 verify-apul-2026 verify-apu-closure-2026 verify-apu-hardening-tests build-voted-2026-aggregates warm-voted-2026-baseline check-cloudrun-votes-config verify-qualtrics-integration
 
 help:
 	@echo "Targets:"
@@ -19,6 +19,7 @@ help:
 	@echo "  make verify-lfss-2026  # Verify 2026 enacted LFSS branch balances + ASSO article liminaire"
 	@echo "  make verify-apul-2026  # Build DGCL-first APUL bridge verification artifact (strict link checks)"
 	@echo "  make verify-apu-closure-2026  # Validate bridge closure by subsector/COFOG/mass and anti-double-count guards"
+	@echo "  make verify-apu-hardening-tests  # Run focused P0-P3 robustness test suite"
 	@echo "  make build-voted-2026-aggregates  # Consolidate verified LFI/LFSS/APUL values and build explicit APU targets JSON"
 	@echo "  make warm-voted-2026-baseline  # Rebuild 2026 baseline + apply voted overlay (true_level, strict official) + regenerate build snapshot"
 	@echo "  make check-cloudrun-votes-config PROJECT=reviewflow-nrciu REGION=europe-west1 SERVICE=citizen-budget-api  # Verify Cloud Run vote persistence config"
@@ -109,6 +110,18 @@ build-voted-2026-aggregates:
 verify-apu-closure-2026:
 	@if [ -f .venv/bin/activate ]; then source .venv/bin/activate; fi; \
 	PYTHONPATH=. python tools/validate_apu_closure.py --year 2026 --strict
+
+verify-apu-hardening-tests:
+	@if [ -f .venv/bin/activate ]; then source .venv/bin/activate; fi; \
+	PYTHONPATH=. python -m pytest -q \
+		tests/test_apply_voted_2026_overlay.py \
+		tests/test_build_voted_2026_aggregates.py \
+		tests/test_verify_apul_2026.py \
+		tests/test_validate_apu_closure.py \
+		tests/test_build_snapshot_strict.py \
+		services/api/tests/test_lego.py::test_warm_lego_baseline_strict_official_blocks_proxy_and_fallback \
+		services/api/tests/test_lego.py::test_warm_lego_baseline_strict_official_blocks_d41_proxy \
+		services/api/tests/test_settings_snapshot_fast.py
 
 warm-voted-2026-baseline:
 	@set -euo pipefail; \

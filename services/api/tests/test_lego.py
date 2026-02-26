@@ -93,6 +93,23 @@ def test_warm_lego_baseline_non_strict_allows_temporal_fallback(monkeypatch):
         os.remove(meta_path)
 
 
+def test_warm_lego_baseline_strict_official_blocks_d41_proxy(monkeypatch):
+    from services.api.clients import eurostat as eu
+
+    monkeypatch.setenv("STRICT_OFFICIAL", "1")
+    monkeypatch.setattr(eu, "fetch", lambda dataset, params: {})
+
+    def fake_sdmx_value(flow: str, key: str, time=None):  # noqa: ANN001
+        if flow == "gov_10a_exp" and ".GF0107.TE." in key:
+            return 123.0
+        return 0.0
+
+    monkeypatch.setattr(eu, "sdmx_value", fake_sdmx_value)
+
+    with pytest.raises(RuntimeError, match="forbids debt_interest proxy"):
+        warm_lego_baseline(2091, country="FR", scope="S13")
+
+
 def test_lego_pieces_with_baseline_reads_snapshot(monkeypatch):
     year = 2096
     baseline = {

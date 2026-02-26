@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from tools.apply_voted_2026_to_lego_baseline import _apply_revenue_overlay
+from tools.apply_voted_2026_to_lego_baseline import _apply_revenue_overlay, _build_double_count_checks
 
 
 def _baseline_template() -> dict:
@@ -51,3 +51,19 @@ def test_revenue_overlay_non_strict_keeps_macro_closure_metadata() -> None:
 
     assert "apu_macro_closure_state_non_fiscal_delta_eur" in applied
     assert any(str(adj.get("kind")) == "macro_deficit_closure" for adj in adjustments)
+
+
+def test_double_count_guard_is_warning_signal_only() -> None:
+    baseline = {
+        "pieces": [
+            {"id": "grants_to_locals", "type": "expenditure", "amount_eur": 1_000_000_000.0},
+        ]
+    }
+    after_masses = {
+        "M_TRANSPORT": 100_000_000.0,
+        "M_EDU": 200_000_000.0,
+    }
+
+    checks = _build_double_count_checks(baseline, after_masses)
+    assert checks and checks[0]["status"] == "warn"
+    assert "state->local transfers" in str(checks[0]["note"])
