@@ -47,6 +47,13 @@ def _ensure_dir(path: str) -> None:
     os.makedirs(path, exist_ok=True)
 
 
+def _env_flag(name: str, default: bool = False) -> bool:
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    return str(raw).strip().lower() not in {"0", "false", "no", "off"}
+
+
 def _ods_results(js: Dict[str, Any]) -> List[Dict[str, Any]]:
     # Opendatasoft Explore v2.1 returns a JSON with a top-level `results` list.
     # Be defensive and accept alternative shapes.
@@ -1090,6 +1097,7 @@ def warm_lego_baseline(year: int, country: str = "FR", scope: str = "S13") -> st
     _ensure_dir(CACHE_DIR)
     t0 = time.time()
     LOG.info("[LEGO] build baseline year=%s", year)
+    strict_official = _env_flag("STRICT_OFFICIAL", default=False)
     cfg = _load_lego_config()
 
     # Prepare warning aggregator
@@ -1194,17 +1202,30 @@ def warm_lego_baseline(year: int, country: str = "FR", scope: str = "S13") -> st
             exp_amounts[pid] = exp_amounts.get(pid, 0.0) + (total_mio * share * 1_000_000.0)
 
     # Fill debt_interest from COFOG 01.7 total (TE), since D.41 is not exposed in gov_10a_exp
+    # In strict official mode this proxy is forbidden to prevent silent methodological drift.
     try:
         key_di = f"A.MIO_EUR.{scope}.GF0107.TE.{country}"
         di_mio = eu.sdmx_value("gov_10a_exp", key_di, time=str(year))
         if di_mio is None:
+            if strict_official:
+                raise RuntimeError(
+                    "STRICT_OFFICIAL=1 forbids temporal fallback for debt_interest proxy "
+                    f"(missing gov_10a_exp {key_di} at {year})."
+                )
             di_mio = eu.sdmx_value("gov_10a_exp", key_di, time=None)
         di_mio = float(di_mio or 0.0)
         if di_mio > 0:
+            if strict_official:
+                raise RuntimeError(
+                    "STRICT_OFFICIAL=1 forbids debt_interest proxy from COFOG 01.7 TE "
+                    "(D.41 direct source required)."
+                )
             exp_amounts["debt_interest"] = di_mio * 1_000_000.0
             warn_parts.append("debt_interest from COFOG 01.7 TE (D.41 not exposed in gov_10a_exp)")
-    except Exception:
-        pass
+    except Exception as exc:
+        if strict_official:
+            raise
+        LOG.warning("[LEGO] debt_interest proxy failed: %s", exc)
 
     # If all zeros, fallback to major-only approximation
     dep_total = sum(exp_amounts.values())
@@ -1225,6 +1246,11 @@ def warm_lego_baseline(year: int, country: str = "FR", scope: str = "S13") -> st
     def _sdmx_value_fallback(flow: str, key: str, y: int) -> float:
         v = eu.sdmx_value(flow, key, time=str(y))
         if v is None:
+            if strict_official:
+                raise RuntimeError(
+                    "STRICT_OFFICIAL=1 forbids temporal fallback: "
+                    f"{flow} key={key} missing for year {y}"
+                )
             v = eu.sdmx_value(flow, key, time=None)
         return float(v or 0.0)
 

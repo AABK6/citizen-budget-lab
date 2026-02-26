@@ -11,6 +11,28 @@ from typing import Dict, Any
 
 
 ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_BRIDGE_CSV = ROOT / "data" / "reference" / "cofog_bridge_apu_2026.csv"
+BRIDGE_REQUIRED_COLUMNS = {
+    "year",
+    "entry_type",
+    "subsector",
+    "key",
+    "cofog",
+    "na_item",
+    "mass_id",
+    "weight",
+    "source",
+    "source_url",
+}
+ENTRY_TYPES = {"state_mission", "social_branch", "local_mass"}
+SUBSECTOR_CODES = {
+    "state": "S1311",
+    "social": "S1314",
+    "local": "S1313",
+    "S1311": "S1311",
+    "S1313": "S1313",
+    "S1314": "S1314",
+}
 
 
 # Keep aligned with current simulation typology used in the overlay tool.
@@ -91,6 +113,90 @@ def _clean_source_quality(raw: str | None) -> str:
     return value
 
 
+def _normalize_bridge_subsector(raw: str | None) -> str:
+    key = str(raw or "").strip()
+    if key in SUBSECTOR_CODES:
+        return SUBSECTOR_CODES[key]
+    lowered = key.lower()
+    if lowered in SUBSECTOR_CODES:
+        return SUBSECTOR_CODES[lowered]
+    raise RuntimeError(f"Unsupported bridge subsector '{raw}'")
+
+
+def _read_bridge_rows(path: Path, year: int = 2026) -> list[dict[str, Any]]:
+    if not path.exists():
+        raise RuntimeError(f"Bridge CSV is required but missing: {path}")
+    rows = _read_csv(path)
+    if not rows:
+        raise RuntimeError(f"Bridge CSV is empty: {path}")
+
+    missing = BRIDGE_REQUIRED_COLUMNS - set(rows[0].keys())
+    if missing:
+        missing_str = ", ".join(sorted(missing))
+        raise RuntimeError(f"Bridge CSV missing required columns: {missing_str}")
+
+    out: list[dict[str, Any]] = []
+    by_group_weight: Dict[tuple[str, str, str], float] = defaultdict(float)
+    seen: set[tuple[str, str, str, str]] = set()
+    for idx, row in enumerate(rows, start=2):
+        row_year = _to_int(row.get("year"))
+        if row_year != int(year):
+            continue
+        entry_type = str(row.get("entry_type") or "").strip().lower()
+        if entry_type not in ENTRY_TYPES:
+            raise RuntimeError(f"Bridge row {idx}: invalid entry_type '{entry_type}'")
+        subsector = _normalize_bridge_subsector(row.get("subsector"))
+        key = str(row.get("key") or "").strip()
+        if not key:
+            raise RuntimeError(f"Bridge row {idx}: empty key")
+        mass_id = str(row.get("mass_id") or "").strip().upper()
+        if not mass_id:
+            raise RuntimeError(f"Bridge row {idx}: empty mass_id")
+        weight = _to_float(row.get("weight"))
+        if weight <= 0.0:
+            raise RuntimeError(f"Bridge row {idx}: non-positive weight for {entry_type}/{key}/{mass_id}")
+        source = str(row.get("source") or "").strip()
+        source_url = str(row.get("source_url") or "").strip()
+        if not source or not source_url:
+            raise RuntimeError(f"Bridge row {idx}: source and source_url are required")
+        cofog = str(row.get("cofog") or "").strip().upper()
+        na_item = str(row.get("na_item") or "").strip().upper()
+        if not cofog or not na_item:
+            raise RuntimeError(f"Bridge row {idx}: cofog and na_item are required")
+
+        dup_key = (entry_type, key.upper(), mass_id, subsector)
+        if dup_key in seen:
+            raise RuntimeError(f"Bridge row {idx}: duplicate mapping for {dup_key}")
+        seen.add(dup_key)
+
+        normalized = {
+            "year": row_year,
+            "entry_type": entry_type,
+            "subsector": subsector,
+            "key": key.upper(),
+            "cofog": cofog,
+            "na_item": na_item,
+            "mass_id": mass_id,
+            "weight": weight,
+            "source": source,
+            "source_url": source_url,
+            "note": str(row.get("note") or "").strip(),
+        }
+        out.append(normalized)
+        by_group_weight[(entry_type, subsector, key.upper())] += weight
+
+    if not out:
+        raise RuntimeError(f"Bridge CSV has no rows for year {year}: {path}")
+
+    for (entry_type, subsector, key), total in by_group_weight.items():
+        if abs(total - 1.0) > 1e-9:
+            raise RuntimeError(
+                "Bridge weights must close to 1.0 per entry key. "
+                f"Got {total:.12f} for {entry_type}/{subsector}/{key}"
+            )
+    return out
+
+
 def _read_apul_rows(path: Path) -> list[dict[str, Any]]:
     if not path.exists():
         raise RuntimeError(
@@ -138,61 +244,119 @@ def _build_apu_targets(payload: Dict[str, Any]) -> Dict[str, Any]:
     social_source = str(sources.get("lfss_branch_csv") or "")
     apul_source = str(sources.get("apul_csv") or "")
 
+    bridge_rows = payload.get("bridge", {}).get("rows", [])
+    if not isinstance(bridge_rows, list) or not bridge_rows:
+        raise RuntimeError("Bridge rows are required in aggregate payload to build explicit APU targets.")
+
+    state_bridge: Dict[str, list[dict[str, Any]]] = defaultdict(list)
+    social_bridge: Dict[str, list[dict[str, Any]]] = defaultdict(list)
+    local_bridge: Dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for bridge_row in bridge_rows:
+        if not isinstance(bridge_row, dict):
+            continue
+        key = str(bridge_row.get("key") or "").strip().upper()
+        entry_type = str(bridge_row.get("entry_type") or "").strip().lower()
+        if not key:
+            continue
+        if entry_type == "state_mission":
+            state_bridge[key].append(bridge_row)
+        elif entry_type == "social_branch":
+            social_bridge[key].append(bridge_row)
+        elif entry_type == "local_mass":
+            local_bridge[key].append(bridge_row)
+
     state_missions = payload.get("state", {}).get("etat_b_cp_by_mission_eur", {})
     for mission_code, amount in state_missions.items():
         mission_key = str(mission_code).strip().upper()
         if not mission_key or mission_key in EXCLUDED_STATE_MISSION_CODES:
             continue
-        mapping = PLF_TO_SIM_MISSION.get(mission_key)
-        if not mapping:
-            continue
+        bridge_mapping = state_bridge.get(mission_key) or []
+        if not bridge_mapping:
+            raise RuntimeError(f"Missing state bridge mapping for mission '{mission_key}'")
         base_amount = float(amount or 0.0)
         if base_amount <= 0.0:
             continue
-        for mass_id, weight in mapping.items():
+        for mapping_row in bridge_mapping:
+            mass_id = str(mapping_row.get("mass_id") or "").strip().upper()
+            weight = float(mapping_row.get("weight") or 0.0)
+            if not mass_id or weight <= 0.0:
+                continue
             entries_exp.append(
                 {
                     "mass_id": mass_id,
-                    "subsector": "S1311",
+                    "subsector": str(mapping_row.get("subsector") or "S1311"),
                     "amount_eur": base_amount * float(weight),
+                    "cofog": str(mapping_row.get("cofog") or "").strip().upper(),
+                    "na_item": str(mapping_row.get("na_item") or "").strip().upper(),
                     "source_quality": "voted",
-                    "source_ref": state_source,
-                    "method_note": f"LFI ETAT B mission {mission_key} mapped to simulation mass",
+                    "source_ref": str(mapping_row.get("source_url") or state_source),
+                    "method_note": (
+                        f"LFI ETAT B mission {mission_key} bridge "
+                        f"({mapping_row.get('cofog')}/{mapping_row.get('na_item')})"
+                    ),
                 }
             )
 
     social_branches = payload.get("social", {}).get("lfss_branch_equilibre_eur", {})
-    for branch_key, mapping in LFSS_BRANCH_TO_SIM_MISSION.items():
+    for branch_key in social_branches.keys():
+        if str(branch_key).strip() == "all_branches_hors_transferts":
+            continue
+        branch_mapping = social_bridge.get(str(branch_key).strip().upper()) or []
+        if not branch_mapping:
+            raise RuntimeError(f"Missing social bridge mapping for branch '{branch_key}'")
         dep = float((social_branches.get(branch_key) or {}).get("depenses_eur") or 0.0)
         if dep <= 0.0:
             continue
-        for mass_id, weight in mapping.items():
+        for mapping_row in branch_mapping:
+            mass_id = str(mapping_row.get("mass_id") or "").strip().upper()
+            weight = float(mapping_row.get("weight") or 0.0)
+            if not mass_id or weight <= 0.0:
+                continue
             entries_exp.append(
                 {
                     "mass_id": mass_id,
-                    "subsector": "S1314",
+                    "subsector": str(mapping_row.get("subsector") or "S1314"),
                     "amount_eur": dep * float(weight),
+                    "cofog": str(mapping_row.get("cofog") or "").strip().upper(),
+                    "na_item": str(mapping_row.get("na_item") or "").strip().upper(),
                     "source_quality": "voted",
-                    "source_ref": social_source,
-                    "method_note": f"LFSS branch {branch_key} mapped to simulation mass",
+                    "source_ref": str(mapping_row.get("source_url") or social_source),
+                    "method_note": (
+                        f"LFSS branch {branch_key} bridge "
+                        f"({mapping_row.get('cofog')}/{mapping_row.get('na_item')})"
+                    ),
                 }
             )
 
     apul_rows = payload.get("local", {}).get("apul_rows", [])
     for row in apul_rows:
+        local_key = str(row.get("mass_id") or "").strip().upper()
+        bridge_mapping = local_bridge.get(local_key) or []
+        if not bridge_mapping:
+            raise RuntimeError(f"Missing local bridge mapping for APUL mass '{local_key}'")
         amount = float(row.get("amount_eur") or 0.0)
         if amount <= 0.0:
             continue
-        entries_exp.append(
-            {
-                "mass_id": str(row.get("mass_id") or "").strip().upper(),
-                "subsector": str(row.get("subsector") or "S1313").strip().upper() or "S1313",
-                "amount_eur": amount,
-                "source_quality": _clean_source_quality(row.get("source_quality")),
-                "source_ref": str(row.get("source_ref") or apul_source).strip(),
-                "method_note": str(row.get("method_note") or "DGCL-first APUL bridge row").strip(),
-            }
-        )
+        for mapping_row in bridge_mapping:
+            mass_id = str(mapping_row.get("mass_id") or "").strip().upper()
+            weight = float(mapping_row.get("weight") or 0.0)
+            if not mass_id or weight <= 0.0:
+                continue
+            entries_exp.append(
+                {
+                    "mass_id": mass_id,
+                    "subsector": str(mapping_row.get("subsector") or row.get("subsector") or "S1313").strip().upper() or "S1313",
+                    "amount_eur": amount * weight,
+                    "cofog": str(mapping_row.get("cofog") or "").strip().upper(),
+                    "na_item": str(mapping_row.get("na_item") or "").strip().upper(),
+                    "source_quality": _clean_source_quality(row.get("source_quality")),
+                    "source_ref": str(row.get("source_ref") or mapping_row.get("source_url") or apul_source).strip(),
+                    "method_note": (
+                        f"{str(row.get('method_note') or 'DGCL-first APUL bridge row').strip()} "
+                        f"[{mapping_row.get('cofog')}/{mapping_row.get('na_item')}]"
+                    ),
+                }
+            )
 
     revenue_targets = payload.get("calibration_targets", {}).get("revenue_targets_eur", {})
     state_fiscal = float(revenue_targets.get("state_fiscal_eur") or 0.0)
@@ -246,8 +410,12 @@ def _build_apu_targets(payload: Dict[str, Any]) -> Dict[str, Any]:
 
     # Summaries are useful for quick coverage diagnostics.
     exp_by_mass: Dict[str, float] = defaultdict(float)
+    exp_by_cofog: Dict[str, float] = defaultdict(float)
     for row in entries_exp:
         exp_by_mass[str(row.get("mass_id"))] += float(row.get("amount_eur") or 0.0)
+        cofog_code = str(row.get("cofog") or "").strip().upper()
+        if cofog_code:
+            exp_by_cofog[cofog_code] += float(row.get("amount_eur") or 0.0)
     rev_by_group: Dict[str, float] = defaultdict(float)
     for row in entries_rev:
         rev_by_group[str(row.get("group_id"))] += float(row.get("amount_eur") or 0.0)
@@ -284,11 +452,13 @@ def _build_apu_targets(payload: Dict[str, Any]) -> Dict[str, Any]:
         "pillars": pillars,
         "summary": {
             "expenditure_by_mass_eur": dict(exp_by_mass),
+            "expenditure_by_cofog_eur": dict(exp_by_cofog),
             "revenue_by_group_eur": dict(rev_by_group),
             "by_pillar": summary_by_pillar,
         },
         "notes": [
             "APU targets are explicit rows with source_quality tags (voted/observed/estimated).",
+            "Bridge table is versioned (cofog_bridge_apu_2026.csv) and required to build targets.",
             "Local APUL rows are DGCL-first bridge estimates until full observed accounts are available.",
             "Values are meant for transparent calibration; warn-level quality checks are performed in overlay stage.",
         ],
@@ -302,6 +472,7 @@ def build_aggregates(
     lfss_branch_csv: Path,
     lfss_asso_csv: Path,
     apul_csv: Path,
+    bridge_csv: Path,
 ) -> Dict[str, Any]:
     rows_b = _read_csv(state_b_csv)
     rows_a = _read_csv(state_a_csv)
@@ -309,6 +480,7 @@ def build_aggregates(
     rows_lfss_branch = _read_csv(lfss_branch_csv)
     rows_lfss_asso = _read_csv(lfss_asso_csv)
     rows_apul = _read_apul_rows(apul_csv)
+    bridge_rows = _read_bridge_rows(bridge_csv, year=2026)
 
     if not rows_b:
         raise RuntimeError(f"No rows in {state_b_csv}")
@@ -402,6 +574,7 @@ def build_aggregates(
             "lfss_branch_csv": str(lfss_branch_csv.resolve()),
             "lfss_asso_csv": str(lfss_asso_csv.resolve()),
             "apul_csv": str(apul_csv.resolve()) if apul_csv.exists() else "",
+            "cofog_bridge_csv": str(bridge_csv.resolve()) if bridge_csv.exists() else "",
         },
         "state": {
             "etat_b_cp_by_mission_eur": state_b_cp_by_mission_eur,
@@ -415,6 +588,11 @@ def build_aggregates(
         "local": {
             "apul_blocks_eur": dict(apul_blocks_eur),
             "apul_rows": rows_apul,
+        },
+        "bridge": {
+            "rows": bridge_rows,
+            "required_columns": sorted(BRIDGE_REQUIRED_COLUMNS),
+            "entry_types": sorted(ENTRY_TYPES),
         },
         "calibration_targets": {
             "revenue_targets_eur": {
@@ -466,12 +644,20 @@ def main() -> int:
         default=str(ROOT / "data" / "reference" / "apul_2026_verified.csv"),
     )
     parser.add_argument(
+        "--bridge-csv",
+        default=str(DEFAULT_BRIDGE_CSV),
+    )
+    parser.add_argument(
         "--out",
         default=str(ROOT / "data" / "reference" / "voted_2026_aggregates.json"),
     )
     parser.add_argument(
         "--targets-out",
         default=str(ROOT / "data" / "reference" / "apu_2026_targets.json"),
+    )
+    parser.add_argument(
+        "--validation-out",
+        default=str(ROOT / "data" / "outputs" / "validation_report_2026.json"),
     )
     args = parser.parse_args()
 
@@ -482,6 +668,7 @@ def main() -> int:
         Path(args.lfss_branch_csv),
         Path(args.lfss_asso_csv),
         Path(args.apul_csv),
+        Path(args.bridge_csv),
     )
     apu_targets = _build_apu_targets(payload)
 
@@ -493,8 +680,31 @@ def main() -> int:
     targets_out_path.parent.mkdir(parents=True, exist_ok=True)
     targets_out_path.write_text(json.dumps(apu_targets, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
+    from tools.validate_apu_closure import build_validation_report
+
+    validation_report = build_validation_report(
+        targets_path=targets_out_path,
+        aggregates_path=out_path,
+        bridge_path=Path(args.bridge_csv),
+        year=2026,
+        excluded_state_codes=EXCLUDED_STATE_MISSION_CODES,
+        abs_tol_eur=1e-6,
+        rel_tol=1e-9,
+    )
+    validation_out_path = Path(args.validation_out)
+    validation_out_path.parent.mkdir(parents=True, exist_ok=True)
+    validation_out_path.write_text(
+        json.dumps(validation_report, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    if str(validation_report.get("status")) != "ok":
+        raise RuntimeError(
+            f"APU closure validation failed. See report: {validation_out_path}"
+        )
+
     print(f"Wrote aggregate bundle: {out_path}")
     print(f"Wrote APU targets: {targets_out_path}")
+    print(f"Wrote closure validation: {validation_out_path}")
     return 0
 
 

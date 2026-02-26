@@ -1,0 +1,282 @@
+{
+  "year": 2026,
+  "generated_at": "2026-02-26T21:48:52.938149+00:00",
+  "inputs": {
+    "targets": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/apu_2026_targets.json",
+    "aggregates": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/voted_2026_aggregates.json",
+    "bridge": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/cofog_bridge_apu_2026.csv",
+    "excluded_state_codes": [
+      "PC",
+      "RD"
+    ]
+  },
+  "tolerance": {
+    "abs_eur": 1e-06,
+    "rel": 1e-09
+  },
+  "checks": {
+    "bridge_row_count": 50,
+    "allocation_row_count": 48,
+    "subsector_closure": {
+      "ok": true,
+      "max_abs_diff_eur": 0.0,
+      "max_rel_diff": 0.0,
+      "by_key": {
+        "S1311": {
+          "left_eur": 447814708907.0,
+          "right_eur": 447814708907.0,
+          "diff_eur": 0.0,
+          "abs_diff_eur": 0.0,
+          "rel_diff": 0.0,
+          "ok": true
+        },
+        "S1313": {
+          "left_eur": 120500000000.0,
+          "right_eur": 120500000000.0,
+          "diff_eur": 0.0,
+          "abs_diff_eur": 0.0,
+          "rel_diff": 0.0,
+          "ok": true
+        },
+        "S1314": {
+          "left_eur": 703000000000.0,
+          "right_eur": 703000000000.0,
+          "diff_eur": 0.0,
+          "abs_diff_eur": 0.0,
+          "rel_diff": 0.0,
+          "ok": true
+        }
+      }
+    },
+    "mass_closure": {
+      "ok": true,
+      "max_abs_diff_eur": 0.0,
+      "max_rel_diff": 0.0,
+      "by_key": {
+        "M_ADMIN": {
+          "left_eur": 19676490625.0,
+          "right_eur": 19676490625.0,
+          "diff_eur": 0.0,
+          "abs_diff_eur": 0.0,
+          "rel_diff": 0.0,
+          "ok": true
+        },
+        "M_AGRI": {
+          "left_eur": 4125856189.0,
+          "right_eur": 4125856189.0,
+          "diff_eur": 0.0,
+          "abs_diff_eur": 0.0,
+          "rel_diff": 0.0,
+          "ok": true
+        },
+        "M_CIVIL_PROT": {
+          "left_eur": 12000000000.0,
+          "right_eur": 12000000000.0,
+          "diff_eur": 0.0,
+          "abs_diff_eur": 0.0,
+          "rel_diff": 0.0,
+          "ok": true
+        },
+        "M_CULTURE": {
+          "left_eur": 12076968683.0,
+          "right_eur": 12076968683.0,
+          "diff_eur": 0.0,
+          "abs_diff_eur": 0.0,
+          "rel_diff": 0.0,
+          "ok": true
+        },
+        "M_DEBT": {
+          "left_eur": 60341209199.0,
+          "right_eur": 60341209199.0,
+          "diff_eur": 0.0,
+          "abs_diff_eur": 0.0,
+          "rel_diff": 0.0,
+          "ok": true
+        },
+        "M_DEFENSE": {
+          "left_eur": 68205464010.0,
+          "right_eur": 68205464010.0,
+          "diff_eur": 0.0,
+          "abs_diff_eur": 0.0,
+          "rel_diff": 0.0,
+          "ok": true
+        },
+        "M_DIPLO": {
+          "left_eur": 7023809340.0,
+          "right_eur": 7023809340.0,
+          "diff_eur": 0.0,
+          "abs_diff_eur": 0.0,
+          "rel_diff": 0.0,
+          "ok": true
+        },
+        "M_ECONOMIC": {
+          "left_eur": 7910435878.0,
+          "right_eur": 7910435878.0,
+          "diff_eur": 0.0,
+          "abs_diff_eur": 0.0,
+          "rel_diff": 0.0,
+          "ok": true
+        },
+        "M_EDU": {
+          "left_eur": 117750451082.0,
+          "right_eur": 117750451082.0,
+          "diff_eur": 0.0,
+          "abs_diff_eur": 0.0,
+          "rel_diff": 0.0,
+          "ok": true
+        },
+        "M_EMPLOYMENT": {
+          "left_eur": 33420551935.0,
+          "right_eur": 33420551935.0,
+          "diff_eur": 0.0,
+          "abs_diff_eur": 0.0,
+          "rel_diff": 0.0,
+          "ok": true
+        },
+        "M_ENVIRONMENT": {
+          "left_eur": 20743270350.9,
+          "right_eur": 20743270350.9,
+          "diff_eur": 0.0,
+          "abs_diff_eur": 0.0,
+          "rel_diff": 0.0,
+          "ok": true
+        },
+        "M_HEALTH": {
+          "left_eur": 291668133258.0,
+          "right_eur": 291668133258.0,
+          "diff_eur": 0.0,
+          "abs_diff_eur": 0.0,
+          "rel_diff": 0.0,
+          "ok": true
+        },
+        "M_HIGHER_EDU": {
+          "left_eur": 31633945500.0,
+          "right_eur": 31633945500.0,
+          "diff_eur": 0.0,
+          "abs_diff_eur": 0.0,
+          "rel_diff": 0.0,
+          "ok": true
+        },
+        "M_HOUSING": {
+          "left_eur": 23028359445.6,
+          "right_eur": 23028359445.6,
+          "diff_eur": 0.0,
+          "abs_diff_eur": 0.0,
+          "rel_diff": 0.0,
+          "ok": true
+        },
+        "M_JUSTICE": {
+          "left_eur": 12966577407.0,
+          "right_eur": 12966577407.0,
+          "diff_eur": 0.0,
+          "abs_diff_eur": 0.0,
+          "rel_diff": 0.0,
+          "ok": true
+        },
+        "M_PENSIONS": {
+          "left_eur": 316467878084.0,
+          "right_eur": 316467878084.0,
+          "diff_eur": 0.0,
+          "abs_diff_eur": 0.0,
+          "rel_diff": 0.0,
+          "ok": true
+        },
+        "M_SECURITY": {
+          "left_eur": 26696851022.6,
+          "right_eur": 26696851022.6,
+          "diff_eur": 0.0,
+          "abs_diff_eur": 0.0,
+          "rel_diff": 0.0,
+          "ok": true
+        },
+        "M_SOLIDARITY": {
+          "left_eur": 153779874826.4,
+          "right_eur": 153779874826.4,
+          "diff_eur": 0.0,
+          "abs_diff_eur": 0.0,
+          "rel_diff": 0.0,
+          "ok": true
+        },
+        "M_TERRITORIES": {
+          "left_eur": 20779029420.4,
+          "right_eur": 20779029420.4,
+          "diff_eur": 0.0,
+          "abs_diff_eur": 0.0,
+          "rel_diff": 0.0,
+          "ok": true
+        },
+        "M_TRANSPORT": {
+          "left_eur": 31019552651.1,
+          "right_eur": 31019552651.1,
+          "diff_eur": 0.0,
+          "abs_diff_eur": 0.0,
+          "rel_diff": 0.0,
+          "ok": true
+        }
+      }
+    },
+    "target_subsector_vs_alloc": {
+      "ok": true,
+      "max_abs_diff_eur": 0.0,
+      "max_rel_diff": 0.0,
+      "by_key": {
+        "S1311": {
+          "left_eur": 447814708907.0,
+          "right_eur": 447814708907.0,
+          "diff_eur": 0.0,
+          "abs_diff_eur": 0.0,
+          "rel_diff": 0.0,
+          "ok": true
+        },
+        "S1313": {
+          "left_eur": 120500000000.0,
+          "right_eur": 120500000000.0,
+          "diff_eur": 0.0,
+          "abs_diff_eur": 0.0,
+          "rel_diff": 0.0,
+          "ok": true
+        },
+        "S1314": {
+          "left_eur": 703000000000.0,
+          "right_eur": 703000000000.0,
+          "diff_eur": 0.0,
+          "abs_diff_eur": 0.0,
+          "rel_diff": 0.0,
+          "ok": true
+        }
+      }
+    },
+    "cofog_closure": {
+      "ok": true,
+      "allocated_total_eur": 1271314708907.0,
+      "cofog_total_eur": 1271314708907.0,
+      "diff_eur": 0.0,
+      "by_cofog_eur": {
+        "GF01": 87041509164.0,
+        "GF02": 68205464010.0,
+        "GF03": 51663428429.6,
+        "GF04": 76476396653.1,
+        "GF05": 20743270350.9,
+        "GF06": 43807388866.0,
+        "GF07": 291668133258.0,
+        "GF08": 12076968683.0,
+        "GF09": 149384396582.0,
+        "GF10": 470247752910.4
+      }
+    },
+    "double_count_guards": {
+      "state_fiscal_net_identity": {
+        "ok": true,
+        "state_fiscal_gross_eur": 363603000000.0,
+        "state_psr_collectivites_ue_eur": 73264000000.0,
+        "state_fiscal_net_eur": 290339000000.0,
+        "diff_eur": 0.0
+      },
+      "all_branches_bridge_forbidden": {
+        "ok": true
+      }
+    }
+  },
+  "status": "ok",
+  "errors": []
+}

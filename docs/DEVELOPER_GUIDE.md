@@ -264,7 +264,9 @@ Macro baselines
 | `EUROSTAT_COOKIE` | Optional cookie string for accessing gated Eurostat endpoints. | No |
 | `CORS_ALLOW_ORIGINS` | Comma-separated list of origins for CORS. | No |
 | `NEXT_PUBLIC_BUILD_SNAPSHOT` | Frontend toggle for `/build`: `1` (default) prefers precomputed snapshot, `0` forces live GraphQL loading (useful during local/testing refresh cycles). | No |
+| `STRICT_OFFICIAL` | If `1`, fail fast on non-official fallbacks (temporal SDMX fallback and D.41 proxy) and block snapshot generation when closure validation is not `ok`. Default: `0` for warmers, explicit `--strict-official` for overlay. | No |
 | `NET_EXP_REFERENCE_RATE` | Annual growth rate for the Net Expenditure Rule compliance check. Default: `0.015`. | No |
+| `SNAPSHOT_FAST` | Snapshot-mode alias for prod consistency. If set, it drives static baseline loading defaults for both LEGO and macro series. Default: `1`. | No |
 | `LEGO_BASELINE_STATIC` | Force LEGO baseline to use the warmed JSON snapshot even when the warehouse is enabled. Default: `1` (on). | No |
 | `MACRO_BASELINE_STATIC` | Force macro/baseline series to load from local snapshots (CSV/JSON) even when warehouse is enabled. Default: same as `LEGO_BASELINE_STATIC`. | No |
 | `PLF_2026_PLAFONDS_URL` | Override URL (or local path) for the PLF 2026 mission ceilings source used by the warmer. | No |
@@ -517,6 +519,36 @@ make check-cloudrun-votes-config PROJECT=[PROJECT_ID] REGION=[REGION] SERVICE=ci
 ```
 
 The API applies schema migrations automatically on startup when the Postgres vote store is enabled.
+
+#### **6.3.1. Qualtrics Embed: Vote Metadata + Final Snapshot**
+
+The Build page can run inside a Qualtrics iframe and now sends two layers of data:
+
+1. **Backend persistence** (`submitVote`): stores panel metadata in `votes.meta_json`
+   (`respondentId`, `sessionDurationSec`, `channel`, `entryPath`) and optional snapshot metadata
+   (`finalVoteSnapshotSha256`, `finalVoteSnapshotVersion`, `finalVoteSnapshotTruncated`,
+   optional compressed `finalVoteSnapshotB64`).
+2. **Parent iframe message** (`window.parent.postMessage`): emits `CBL_VOTE_SUBMITTED_V1` with
+   `embeddedData` keys suitable for Qualtrics Embedded Data fields (`CBL_*`).
+
+Recommended Qualtrics iframe URL format:
+
+```text
+https://www.budget-citoyen.fr/build?source=qualtrics&ID=${e://Field/ResponseID}
+```
+
+Notes:
+- The final vote snapshot is compressed + base64url and automatically downgraded
+  (`full -> ids -> minimal`) to stay within size limits.
+- If still too large, snapshot content is dropped and only hash/flags are sent.
+
+Local/runtime consistency check:
+
+```bash
+python tools/verify_qualtrics_integration.py
+# Optional runtime contract check
+python tools/verify_qualtrics_integration.py --graphql-url https://[API_HOST]/graphql
+```
 
 #### **6.4. Custom Domains (Cloud Run)**
 

@@ -4,6 +4,28 @@
 
 Identifier ce qu'il reste a durcir pour que la baseline integre correctement tout le perimetre APU (APUC + APUL + ASSO) avec une ventilation COFOG robuste, en gardant la typologie actuelle de simulation.
 
+## Mise a jour implementation (2026-02-26, P2/P3)
+
+Les items P2/P3 ont ete implementes avec changements minimaux de pipeline:
+
+- Bridge versionne ajoute et rendu obligatoire:
+  - `data/reference/cofog_bridge_apu_2026.csv`
+  - schema: `year, entry_type, subsector, key, cofog, na_item, mass_id, weight, source, source_url, note`
+  - fermeture des poids enforcee a 1.0 par cle de bridge.
+- Build consolide branche sur ce bridge (plus de bridge implicite):
+  - `tools/build_voted_2026_aggregates.py`
+  - genere aussi un rapport de fermeture strict:
+    - `data/outputs/validation_report_2026.json`.
+- Validateur dedie ajoute:
+  - `tools/validate_apu_closure.py`
+  - controles: fermeture `subsector`, `mass_id`, conservation `cofog`, garde-fous anti-double-compte (identite fiscale nette Etat + interdiction de bridge sur `all_branches_hors_transferts`).
+- Mode strict warmer durci:
+  - `services/api/cache_warm.py`
+  - `STRICT_OFFICIAL=1` => echec immediat si fallback temporel SDMX ou proxy D.41 (COFOG 01.7 TE).
+- Mode snapshot prod aligne sans divergence:
+  - `SNAPSHOT_FAST` mappe sur les flags statiques existants (`LEGO_BASELINE_STATIC`, `MACRO_BASELINE_STATIC`) via `services/api/settings.py`.
+  - `tools/build_snapshot.py` bloque en `STRICT_OFFICIAL=1` si le rapport de validation est absent/non `ok`.
+
 ## Constat actuel dans le code
 
 Etat constate sur la branche `baseline-2027-snapshot-rollout`:

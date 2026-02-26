@@ -4,7 +4,7 @@ SHELL := /bin/bash
 YEAR ?= 2026
 COUNTRIES ?= FR,DE,IT
 
-.PHONY: help warm-all warm-eurostat warm-eurostat-sub warm-plf warm-macro warm-decp summary sync-votes verify-lfi-2026 verify-lfi-2026-state-a verify-lfss-2026 verify-apul-2026 build-voted-2026-aggregates warm-voted-2026-baseline check-cloudrun-votes-config
+.PHONY: help warm-all warm-eurostat warm-eurostat-sub warm-plf warm-macro warm-decp summary sync-votes verify-lfi-2026 verify-lfi-2026-state-a verify-lfss-2026 verify-apul-2026 verify-apu-closure-2026 build-voted-2026-aggregates warm-voted-2026-baseline check-cloudrun-votes-config verify-qualtrics-integration
 
 help:
 	@echo "Targets:"
@@ -18,9 +18,11 @@ help:
 	@echo "  make verify-lfi-2026-state-a  # Verify 2026 enacted ETAT A aggregate receipts/balance"
 	@echo "  make verify-lfss-2026  # Verify 2026 enacted LFSS branch balances + ASSO article liminaire"
 	@echo "  make verify-apul-2026  # Build DGCL-first APUL bridge verification artifact (strict link checks)"
+	@echo "  make verify-apu-closure-2026  # Validate bridge closure by subsector/COFOG/mass and anti-double-count guards"
 	@echo "  make build-voted-2026-aggregates  # Consolidate verified LFI/LFSS/APUL values and build explicit APU targets JSON"
 	@echo "  make warm-voted-2026-baseline  # Rebuild 2026 baseline + apply voted overlay (true_level, strict official) + regenerate build snapshot"
 	@echo "  make check-cloudrun-votes-config PROJECT=reviewflow-nrciu REGION=europe-west1 SERVICE=citizen-budget-api  # Verify Cloud Run vote persistence config"
+	@echo "  make verify-qualtrics-integration [GRAPHQL_URL=https://.../graphql]  # Verify Qualtrics integration wiring"
 	@echo "  make sync-votes VOTES_STORE=sqlite VOTES_SQLITE_PATH=data/cache/votes.sqlite3  # Sync votes into DuckDB"
 	@echo "Env (optional): EUROSTAT_SDMX_BASE, EUROSTAT_COOKIE, EUROSTAT_BASE, INSEE_CLIENT_ID, INSEE_CLIENT_SECRET"
 
@@ -104,6 +106,10 @@ build-voted-2026-aggregates:
 	@if [ -f .venv/bin/activate ]; then source .venv/bin/activate; fi; \
 	PYTHONPATH=. python tools/build_voted_2026_aggregates.py
 
+verify-apu-closure-2026:
+	@if [ -f .venv/bin/activate ]; then source .venv/bin/activate; fi; \
+	PYTHONPATH=. python tools/validate_apu_closure.py --year 2026 --strict
+
 warm-voted-2026-baseline:
 	@set -euo pipefail; \
 	if [ -f .venv/bin/activate ]; then source .venv/bin/activate; fi; \
@@ -113,6 +119,7 @@ warm-voted-2026-baseline:
 	PYTHONPATH=. python tools/verify_lfss_2026.py; \
 	PYTHONPATH=. python tools/verify_apul_2026.py --strict-links; \
 	PYTHONPATH=. python tools/build_voted_2026_aggregates.py; \
+	PYTHONPATH=. python tools/validate_apu_closure.py --year 2026 --strict; \
 	PYTHONPATH=. python tools/apply_voted_2026_to_lego_baseline.py --year 2026 --mode true_level --strict-official; \
 	PYTHONPATH=. python tools/build_snapshot.py --year 2026
 
@@ -127,6 +134,11 @@ check-cloudrun-votes-config:
 		--project "$(PROJECT)" \
 		--region "$(REGION)" \
 		--service "$$SERVICE_RUNTIME"
+
+verify-qualtrics-integration:
+	@URL_FLAG=""; \
+	if [ -n "$(GRAPHQL_URL)" ]; then URL_FLAG="--graphql-url $(GRAPHQL_URL)"; fi; \
+	python3 tools/verify_qualtrics_integration.py $$URL_FLAG
 
 .PHONY: verify-warmers
 verify-warmers:

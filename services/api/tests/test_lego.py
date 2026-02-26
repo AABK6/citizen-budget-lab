@@ -65,6 +65,34 @@ def test_warm_lego_baseline_expenditures_monkeypatched(monkeypatch, tmp_path):
     assert has_non_zero
 
 
+def test_warm_lego_baseline_strict_official_blocks_proxy_and_fallback(monkeypatch):
+    from services.api.clients import eurostat as eu
+
+    monkeypatch.setenv("STRICT_OFFICIAL", "1")
+    monkeypatch.setattr(eu, "fetch", lambda dataset, params: {})
+    monkeypatch.setattr(eu, "sdmx_value", lambda flow, key, time=None: None)
+
+    with pytest.raises(RuntimeError, match="STRICT_OFFICIAL=1"):
+        warm_lego_baseline(2093, country="FR", scope="S13")
+
+
+def test_warm_lego_baseline_non_strict_allows_temporal_fallback(monkeypatch):
+    from services.api.clients import eurostat as eu
+
+    monkeypatch.setenv("STRICT_OFFICIAL", "0")
+    monkeypatch.setattr(eu, "fetch", lambda dataset, params: {})
+    monkeypatch.setattr(eu, "sdmx_value", lambda flow, key, time=None: None)
+
+    year = 2092
+    out_path = warm_lego_baseline(year, country="FR", scope="S13")
+    assert os.path.exists(out_path)
+    meta_path = out_path.replace(".json", ".meta.json")
+    if os.path.exists(out_path):
+        os.remove(out_path)
+    if os.path.exists(meta_path):
+        os.remove(meta_path)
+
+
 def test_lego_pieces_with_baseline_reads_snapshot(monkeypatch):
     year = 2096
     baseline = {

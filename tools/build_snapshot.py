@@ -21,6 +21,31 @@ def _load_json(path: str) -> dict:
         return json.load(f)
 
 
+def _env_flag(name: str, default: bool = False) -> bool:
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    return str(raw).strip().lower() not in {"0", "false", "no", "off"}
+
+
+def _assert_strict_validation_ok(year: int) -> None:
+    if not _env_flag("STRICT_OFFICIAL", False):
+        return
+    report_path = os.path.join(DATA_DIR, "outputs", f"validation_report_{year}.json")
+    if not os.path.exists(report_path):
+        raise RuntimeError(
+            "STRICT_OFFICIAL=1 requires validation report before snapshot build: "
+            f"missing {report_path}"
+        )
+    report = _load_json(report_path)
+    status = str(report.get("status") or "").strip().lower()
+    if status != "ok":
+        raise RuntimeError(
+            "STRICT_OFFICIAL=1 blocks snapshot build because validation is not OK: "
+            f"status={status or 'unknown'} report={report_path}"
+        )
+
+
 def _normalize_weights(entries: List[Tuple[str, float]]) -> List[Tuple[str, float]]:
     total = sum(weight for _, weight in entries)
     if total <= 0:
@@ -243,6 +268,7 @@ def main() -> int:
     parser.add_argument("--out", type=str, default="", help="Output path for JSON.")
     args = parser.parse_args()
 
+    _assert_strict_validation_ok(args.year)
     out_path = args.out or os.path.join(CACHE_DIR, f"build_page_{args.year}.json")
     snapshot = build_snapshot(args.year)
 

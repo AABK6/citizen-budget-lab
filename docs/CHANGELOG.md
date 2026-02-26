@@ -4,6 +4,18 @@ This changelog records **documentation** and **data pipeline conventions** chang
 
 ## 2026-02-26
 
+- **APU hardening P2/P3 implementation (bridge + strict pipeline):**
+  - Added versioned bridge table `data/reference/cofog_bridge_apu_2026.csv` and made it mandatory in `tools/build_voted_2026_aggregates.py`.
+  - Added closure validator `tools/validate_apu_closure.py` (subsector/mass/COFOG conservation + anti-double-count guards) with report output `data/outputs/validation_report_2026.json`.
+  - `tools/build_voted_2026_aggregates.py` now emits and enforces closure validation (`status=ok`) as part of the build.
+  - Hardened warmer strict mode in `services/api/cache_warm.py`:
+    - `STRICT_OFFICIAL=1` now fails on SDMX temporal fallback,
+    - `STRICT_OFFICIAL=1` now fails on D.41 proxy via COFOG 01.7.
+  - Added snapshot strict guard in `tools/build_snapshot.py`:
+    - with `STRICT_OFFICIAL=1`, snapshot build fails if validation report is missing or not `ok`.
+  - Added `SNAPSHOT_FAST` alias in `services/api/settings.py`, mapped to existing static baseline toggles (`LEGO_BASELINE_STATIC`, `MACRO_BASELINE_STATIC`) to keep one prod snapshot path.
+  - Added strict operational runbook: `docs/BASELINE_2026_STRICT_RUNBOOK.md`.
+
 - **APU hardening P0/P1 enforcement (strict official mode):**
   - Added strict official checks to `tools/apply_voted_2026_to_lego_baseline.py`:
     - forbid macro deficit closure in strict mode,
