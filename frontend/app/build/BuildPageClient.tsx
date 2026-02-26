@@ -221,6 +221,7 @@ export default function BuildPageClient() {
   const router = useRouter();
   const pathname = usePathname();
   const { state, actions } = useBuildState(INITIAL_DSL_OBJECT.baseline_year);
+  const [isQualtricsChannel, setIsQualtricsChannel] = useState(false);
   const [ghostMode, setGhostMode] = useState(false);
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
   const [isDebriefOpen, setIsDebriefOpen] = useState(false);
@@ -328,9 +329,15 @@ export default function BuildPageClient() {
   const dslString = serializeDsl(dslObject);
   const searchParams = useSearchParams();
   const searchParamsString = searchParams.toString();
+  const respondentId = useMemo(() => {
+    const params = new URLSearchParams(searchParamsString);
+    return params.get('ID') || params.get('id');
+  }, [searchParamsString]);
   const scenarioIdRef = useRef<string | null>(scenarioId);
   const skipFetchRef = useRef(false);
   const latestRunRef = useRef(0);
+  const sessionStartedAtRef = useRef<number | null>(null);
+  const entryPathRef = useRef<string | null>(null);
 
 
   const addPieceToBucket = (bucket: Map<string, LegoPiece[]>, key: string, piece: LegoPiece) => {
@@ -414,6 +421,30 @@ export default function BuildPageClient() {
   useEffect(() => {
     scenarioIdRef.current = scenarioId;
   }, [scenarioId]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (sessionStartedAtRef.current === null) {
+      sessionStartedAtRef.current = Date.now();
+      entryPathRef.current = `${window.location.pathname}${window.location.search}`;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      setIsQualtricsChannel(false);
+      return;
+    }
+    const params = new URLSearchParams(searchParamsString);
+    const source = (params.get('source') || '').toLowerCase();
+    const hasRespondentId = Boolean(params.get('ID') || params.get('id'));
+    const inIframe = window.self !== window.top;
+    const referrer = (document.referrer || '').toLowerCase();
+    const isQualtricsReferrer = referrer.includes('qualtrics.com');
+    setIsQualtricsChannel(
+      source === 'qualtrics' || hasRespondentId || (inIframe && isQualtricsReferrer),
+    );
+  }, [searchParamsString]);
 
   useEffect(() => {
     if (!scenarioId || typeof window === 'undefined') {
@@ -1072,6 +1103,17 @@ export default function BuildPageClient() {
     }
   }, [pathname, searchParamsString]);
 
+  const getSessionDurationSec = () => {
+    if (sessionStartedAtRef.current === null) {
+      return null;
+    }
+    const elapsed = (Date.now() - sessionStartedAtRef.current) / 1000;
+    if (!Number.isFinite(elapsed) || elapsed < 0) {
+      return null;
+    }
+    return Number(elapsed.toFixed(1));
+  };
+
   const deficitPath = scenarioResult ? computeDeficitTotals(scenarioResult.accounting, scenarioResult.macro?.deltaDeficit) : [];
   const latestDeficit = deficitPath.length > 0 ? deficitPath[0] : null;
   const latestDeficitRatio = useMemo(() => {
@@ -1499,6 +1541,14 @@ export default function BuildPageClient() {
       />
 
       <div className="w-full flex-1 min-h-0 flex flex-col overflow-hidden relative">
+        {isQualtricsChannel && (
+          <div className="mx-3 mt-3 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-900 sm:mx-4">
+            <p className="font-semibold">Consigne questionnaire</p>
+            <p className="mt-1">
+              Apr&egrave;s avoir cliqu&eacute; sur &laquo; D&eacute;poser mon vote &raquo;, faites d&eacute;filer vers le bas puis cliquez sur la fl&egrave;che bleue &laquo; Next &raquo; de Qualtrics pour passer &agrave; la question suivante.
+            </p>
+          </div>
+        )}
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-[380px_1fr_350px] gap-3 sm:gap-4 p-3 sm:p-4 min-h-0">
 
 
@@ -1612,7 +1662,13 @@ export default function BuildPageClient() {
           onConfirmVote={async () => {
             try {
               if (scenarioResult?.id) {
-                await gqlRequest(submitVoteMutation, { scenarioId: scenarioResult.id });
+                await gqlRequest(submitVoteMutation, {
+                  scenarioId: scenarioResult.id,
+                  respondentId: respondentId ?? null,
+                  sessionDurationSec: getSessionDurationSec(),
+                  channel: isQualtricsChannel ? 'qualtrics' : 'direct',
+                  entryPath: entryPathRef.current,
+                });
                 setIsShareCardOpen(true);
               }
             } catch (e) {

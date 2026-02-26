@@ -138,6 +138,35 @@ def _flatten_meta(meta: Dict[str, Any], flat: Dict[str, Any]) -> None:
     if timestamp is not None:
         flat["vote_timestamp"] = timestamp
 
+    respondent_id = _first_text(
+        meta,
+        ("respondentId", "respondent_id", "participantId", "participant_id"),
+    )
+    if respondent_id:
+        flat["respondent_id"] = respondent_id
+
+    session_duration_sec = _first_number(
+        meta,
+        (
+            "sessionDurationSec",
+            "session_duration_sec",
+            "durationSec",
+            "duration_sec",
+            "timeOnPageSec",
+            "time_on_page_sec",
+        ),
+    )
+    if session_duration_sec is not None:
+        flat["session_duration_sec"] = session_duration_sec
+
+    channel = _first_text(meta, ("channel", "entry_channel", "source"))
+    if channel:
+        flat["entry_channel"] = channel
+
+    entry_path = _first_text(meta, ("entryPath", "entry_path"))
+    if entry_path:
+        flat["entry_path"] = entry_path
+
     deficit_path = _extract_path(meta, ("deficit_path", "deficitPath"))
     if deficit_path:
         flat["macro_deficit_final_eur"] = deficit_path[-1]
@@ -180,3 +209,15 @@ def _first_number(data: Dict[str, Any], keys: Iterable[str]) -> Optional[float]:
                 return value
     return None
 
+
+def _first_text(data: Dict[str, Any], keys: Iterable[str]) -> Optional[str]:
+    for key in keys:
+        if key not in data:
+            continue
+        value = data.get(key)
+        if value is None:
+            continue
+        text = str(value).strip()
+        if text:
+            return text
+    return None

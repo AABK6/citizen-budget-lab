@@ -135,8 +135,22 @@ export const getScenarioDslQuery = `
 `;
 
 export const submitVoteMutation = `
-  mutation SubmitVote($scenarioId: ID!, $userEmail: String) {
-    submitVote(scenarioId: $scenarioId, userEmail: $userEmail)
+  mutation SubmitVote(
+    $scenarioId: ID!,
+    $userEmail: String,
+    $respondentId: String,
+    $sessionDurationSec: Float,
+    $channel: String,
+    $entryPath: String
+  ) {
+    submitVote(
+      scenarioId: $scenarioId,
+      userEmail: $userEmail,
+      respondentId: $respondentId,
+      sessionDurationSec: $sessionDurationSec,
+      channel: $channel,
+      entryPath: $entryPath
+    )
   }
 `;
 

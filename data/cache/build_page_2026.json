@@ -2,7 +2,7 @@
   "legoBaseline": {
     "pib": 3027000000000.0,
     "depensesTotal": 1271314708907.0,
-    "recettesTotal": 1119964708907.0,
+    "recettesTotal": 984039000000.0001,
     "pieces": [
       {
         "id": "ed_schools_staff_ops",
@@ -448,25 +448,25 @@
       },
       {
         "id": "rev_public_income",
-        "amountEur": 6987344627.0,
+        "amountEur": 6987319457.41808,
         "share": null,
         "missions": []
       },
       {
         "id": "rev_sales_fees",
-        "amountEur": 2546063009.0,
+        "amountEur": 2546053837.6559634,
         "share": null,
         "missions": []
       },
       {
         "id": "rev_fines",
-        "amountEur": 2695870585.0,
+        "amountEur": 2695860874.024063,
         "share": null,
         "missions": []
       },
       {
         "id": "rev_transfers_in",
-        "amountEur": 152596430686.0,
+        "amountEur": 16670765830.901892,
         "share": null,
         "missions": []
       },

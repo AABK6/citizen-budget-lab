@@ -4,7 +4,7 @@ SHELL := /bin/bash
 YEAR ?= 2026
 COUNTRIES ?= FR,DE,IT
 
-.PHONY: help warm-all warm-eurostat warm-eurostat-sub warm-plf warm-macro warm-decp summary sync-votes verify-lfi-2026 verify-lfi-2026-state-a verify-lfss-2026 verify-apul-2026 build-voted-2026-aggregates warm-voted-2026-baseline
+.PHONY: help warm-all warm-eurostat warm-eurostat-sub warm-plf warm-macro warm-decp summary sync-votes verify-lfi-2026 verify-lfi-2026-state-a verify-lfss-2026 verify-apul-2026 build-voted-2026-aggregates warm-voted-2026-baseline check-cloudrun-votes-config
 
 help:
 	@echo "Targets:"
@@ -17,9 +17,10 @@ help:
 	@echo "  make verify-lfi-2026  # Verify 2026 enacted mission CP (JO vs AN ÉTAT B) and update seed"
 	@echo "  make verify-lfi-2026-state-a  # Verify 2026 enacted ETAT A aggregate receipts/balance"
 	@echo "  make verify-lfss-2026  # Verify 2026 enacted LFSS branch balances + ASSO article liminaire"
-	@echo "  make verify-apul-2026  # Build DGCL-first APUL bridge verification artifact"
+	@echo "  make verify-apul-2026  # Build DGCL-first APUL bridge verification artifact (strict link checks)"
 	@echo "  make build-voted-2026-aggregates  # Consolidate verified LFI/LFSS/APUL values and build explicit APU targets JSON"
-	@echo "  make warm-voted-2026-baseline  # Rebuild 2026 baseline + apply voted overlay (true_level) + regenerate build snapshot"
+	@echo "  make warm-voted-2026-baseline  # Rebuild 2026 baseline + apply voted overlay (true_level, strict official) + regenerate build snapshot"
+	@echo "  make check-cloudrun-votes-config PROJECT=reviewflow-nrciu REGION=europe-west1 SERVICE=citizen-budget-api  # Verify Cloud Run vote persistence config"
 	@echo "  make sync-votes VOTES_STORE=sqlite VOTES_SQLITE_PATH=data/cache/votes.sqlite3  # Sync votes into DuckDB"
 	@echo "Env (optional): EUROSTAT_SDMX_BASE, EUROSTAT_COOKIE, EUROSTAT_BASE, INSEE_CLIENT_ID, INSEE_CLIENT_SECRET"
 
@@ -97,7 +98,7 @@ verify-lfss-2026:
 
 verify-apul-2026:
 	@if [ -f .venv/bin/activate ]; then source .venv/bin/activate; fi; \
-	PYTHONPATH=. python tools/verify_apul_2026.py
+	PYTHONPATH=. python tools/verify_apul_2026.py --strict-links
 
 build-voted-2026-aggregates:
 	@if [ -f .venv/bin/activate ]; then source .venv/bin/activate; fi; \
@@ -110,10 +111,22 @@ warm-voted-2026-baseline:
 	PYTHONPATH=. python tools/verify_lfi_2026_state_b.py --update-seed; \
 	PYTHONPATH=. python tools/verify_lfi_2026_state_a.py; \
 	PYTHONPATH=. python tools/verify_lfss_2026.py; \
-	PYTHONPATH=. python tools/verify_apul_2026.py; \
+	PYTHONPATH=. python tools/verify_apul_2026.py --strict-links; \
 	PYTHONPATH=. python tools/build_voted_2026_aggregates.py; \
-	PYTHONPATH=. python tools/apply_voted_2026_to_lego_baseline.py --year 2026 --mode true_level; \
+	PYTHONPATH=. python tools/apply_voted_2026_to_lego_baseline.py --year 2026 --mode true_level --strict-official; \
 	PYTHONPATH=. python tools/build_snapshot.py --year 2026
+
+check-cloudrun-votes-config:
+	@if [ -z "$(PROJECT)" ] || [ -z "$(REGION)" ]; then \
+		echo "ERROR: Set PROJECT and REGION (optional SERVICE, default citizen-budget-api)"; \
+		exit 2; \
+	fi; \
+	SERVICE_RUNTIME="$(SERVICE)"; \
+	if [ -z "$$SERVICE_RUNTIME" ]; then SERVICE_RUNTIME=citizen-budget-api; fi; \
+	python3 tools/check_cloudrun_votes_config.py \
+		--project "$(PROJECT)" \
+		--region "$(REGION)" \
+		--service "$$SERVICE_RUNTIME"
 
 .PHONY: verify-warmers
 verify-warmers:

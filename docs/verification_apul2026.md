@@ -1,5 +1,6 @@
 # Verification APUL 2026 - DGCL-first bridge
 
+- Verified at (UTC): `2026-02-26T21:24:12.619341+00:00`
 - Scope: APUL-sensitive treemap blocks used for 2026 baseline hardening.
 - Nature: source-tagged APUL estimates pending fully observed 2026 APU/COFOG detail.
 - Primary source pages:
@@ -18,3 +19,11 @@
 | M_CULTURE | Culture et sport local | 7000000000 | estimated | OK |
 
 Total APUL bridge amount: **120500000000 EUR**
+
+## Source fetch checks
+
+| URL | Status | HTTP | Error |
+| --- | --- | ---: | --- |
+| https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget | OK | 200 |  |
+| https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl | OK | 200 |  |
+| https://data.ofgl.fr | OK | 200 |  |

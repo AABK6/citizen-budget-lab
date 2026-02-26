@@ -1676,11 +1676,27 @@ class Mutation:
             return False
 
     @strawberry.mutation
-    def submitVote(self, scenarioId: strawberry.ID, userEmail: Optional[str] = None) -> bool:  # noqa: N802
+    def submitVote(  # noqa: N802
+        self,
+        scenarioId: strawberry.ID,
+        userEmail: Optional[str] = None,
+        respondentId: Optional[str] = None,
+        sessionDurationSec: Optional[float] = None,
+        channel: Optional[str] = None,
+        entryPath: Optional[str] = None,
+    ) -> bool:
         try:
             from .votes_store import get_vote_store
             import time
             meta = {"timestamp": time.time()}
+            if respondentId:
+                meta["respondentId"] = str(respondentId)
+            if sessionDurationSec is not None:
+                meta["sessionDurationSec"] = float(sessionDurationSec)
+            if channel:
+                meta["channel"] = str(channel)
+            if entryPath:
+                meta["entryPath"] = str(entryPath)
             get_vote_store().add_vote(str(scenarioId), userEmail, meta)
             return True
         except Exception:

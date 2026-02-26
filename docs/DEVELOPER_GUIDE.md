@@ -141,10 +141,11 @@ The API includes two caching layers:
     ```
     This full chain warms the Eurostat baseline, runs all LFI/LFSS/APUL verifications, builds:
     - `data/reference/voted_2026_aggregates.json`
-    - `data/reference/apu_2026_targets.json` (explicit source-tagged APU targets),
-    then applies the voted overlay in `true_level` mode to `data/cache/lego_baseline_2026.json`, and regenerates `data/cache/build_page_2026.json`.
+    - `data/reference/apu_2026_targets.json` (explicit source-tagged APU targets, including `pillars.state|social|local`),
+    then applies the voted overlay in `true_level` mode with strict official checks to `data/cache/lego_baseline_2026.json`, and regenerates `data/cache/build_page_2026.json`.
     Overlay metadata now exposes warn-level quality checks under `meta.voted_2026_overlay.quality` (source coverage, sentinel blocks, residual adjustments, double-count risk signal).
-    For comparability-only experiments, you can run `tools/apply_voted_2026_to_lego_baseline.py --mode share_rebalance` to keep global totals unchanged.
+    In strict mode (`--strict-official`), macro closure and uncovered expenditure residuals are forbidden and will fail the run.
+    For comparability-only experiments, you can run `tools/apply_voted_2026_to_lego_baseline.py --mode share_rebalance --no-strict-official` to keep global totals unchanged.
 
 #### **2.2. Semantic Layer (dbt)**
 
@@ -274,11 +275,12 @@ Macro baselines
 | `WAREHOUSE_COFOG_OVERRIDE` | Force warehouse COFOG data even when parity heuristics fail. Default: `0` (off). | No |
 | `LOG_LEVEL` | Python logging level. Default: `INFO`. | No |
 | `SENTRY_DSN` | Sentry DSN for error reporting. | No |
-| `VOTES_STORE` | Vote storage backend (`file`, `sqlite`, `postgres`). Default: `file`. | No |
+| `VOTES_STORE` | Vote storage backend hint (`file`, `sqlite`, `postgres`). If `VOTES_DB_DSN` is set, backend is forced to `postgres`. | No |
+| `VOTES_REQUIRE_POSTGRES` | If `1`, API startup fails unless Postgres vote storage is correctly configured. Default: `1` on Cloud Run (`K_SERVICE` present), else `0`. | No |
 | `VOTES_FILE_PATH` | Path to JSON file for vote storage (file backend). Default: `data/cache/votes.json`. | No |
 | `SCENARIOS_DSL_PATH` | Path to JSON mapping scenario IDs to DSL payloads (file backend). Default: `data/cache/scenarios_dsl.json`. | No |
 | `VOTES_SQLITE_PATH` | Path to SQLite file for vote storage (sqlite backend). Default: `data/cache/votes.sqlite3`. | No |
-| `VOTES_DB_DSN` | Postgres DSN for vote storage when `VOTES_STORE=postgres`. | No |
+| `VOTES_DB_DSN` | Postgres DSN for vote storage (required in production). | No |
 | `VOTES_DB_POOL_MIN` | Minimum vote storage pool size. Default: `1`. | No |
 | `VOTES_DB_POOL_MAX` | Maximum vote storage pool size. Default: `5`. | No |
 | `VOTES_DB_POOL_TIMEOUT` | Seconds to wait for a pooled connection. Default: `30`. | No |
@@ -350,7 +352,7 @@ Cloud Run exposes two default domains per service (project-number `run.app` and 
 *   Backend image: `europe-west1-docker.pkg.dev/reviewflow-nrciu/mcp-cloud-run-deployments/citizen-budget-api`
 *   Frontend image: `europe-west1-docker.pkg.dev/reviewflow-nrciu/mcp-cloud-run-deployments/citizen-budget-frontend`
 *   Frontend build metadata records a `NEXT_PUBLIC_GRAPHQL_URL` pointing to the backend `run.app` URL; runtime `GRAPHQL_URL` is not set.
-*   Backend currently uses `VOTES_STORE=firestore`.
+*   Backend vote persistence must be configured with Cloud SQL + `VOTES_DB_DSN` (startup now fails fast otherwise).
 
 #### **6.1. Architecture**
 
@@ -442,7 +444,9 @@ gcloud run deploy citizen-budget-api \
   --project reviewflow-nrciu \
   --region europe-west1 \
   --allow-unauthenticated \
-  --port 8080
+  --port 8080 \
+  --add-cloudsql-instances reviewflow-nrciu:europe-west1:citizen-budget-db \
+  --set-env-vars VOTES_STORE=postgres,VOTES_REQUIRE_POSTGRES=1,VOTES_DB_DSN="postgresql://[USER]:[PASSWORD]@/votes_db?host=/cloudsql/reviewflow-nrciu:europe-west1:citizen-budget-db"
 
 # Build + deploy frontend
 cd frontend
@@ -488,6 +492,7 @@ Both voter preferences (who voted when) and scenario definitions (what they chos
 
 ```bash
 VOTES_STORE=postgres
+VOTES_REQUIRE_POSTGRES=1
 VOTES_DB_DSN=postgresql://[USER]:[PASSWORD]@/[DBNAME]?host=/cloudsql/[PROJECT]:[REGION]:[INSTANCE]
 ```
 
@@ -502,10 +507,16 @@ gcloud run deploy citizen-budget-api \
   --allow-unauthenticated \
   --port 8080 \
   --add-cloudsql-instances [PROJECT]:[REGION]:[INSTANCE] \
-  --set-env-vars VOTES_STORE=postgres,VOTES_DB_DSN="postgresql://[USER]:[PASSWORD]@/[DBNAME]?host=/cloudsql/[PROJECT]:[REGION]:[INSTANCE]"
+  --set-env-vars VOTES_STORE=postgres,VOTES_REQUIRE_POSTGRES=1,VOTES_DB_DSN="postgresql://[USER]:[PASSWORD]@/[DBNAME]?host=/cloudsql/[PROJECT]:[REGION]:[INSTANCE]"
 ```
 
-The API applies schema migrations automatically on startup when `VOTES_STORE=postgres` is enabled.
+5. **Run a post-deploy guardrail check** (recommended):
+
+```bash
+make check-cloudrun-votes-config PROJECT=[PROJECT_ID] REGION=[REGION] SERVICE=citizen-budget-api
+```
+
+The API applies schema migrations automatically on startup when the Postgres vote store is enabled.
 
 #### **6.4. Custom Domains (Cloud Run)**
 

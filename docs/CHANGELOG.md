@@ -2,6 +2,32 @@
 
 This changelog records **documentation** and **data pipeline conventions** changes that impact reproducibility.
 
+## 2026-02-26
+
+- **APU hardening P0/P1 enforcement (strict official mode):**
+  - Added strict official checks to `tools/apply_voted_2026_to_lego_baseline.py`:
+    - forbid macro deficit closure in strict mode,
+    - forbid uncovered expenditure residuals in strict mode,
+    - require explicit source-tagged expenditure targets for every displayed treemap mass.
+  - Added CLI switches `--strict-official` / `--no-strict-official` (default controlled by `STRICT_OFFICIAL`, defaulting to strict).
+  - Recorded strict mode in overlay metadata under `meta.voted_2026_overlay.strict_official`.
+
+- **APU targets structure made explicit by pillar:**
+  - Updated `tools/build_voted_2026_aggregates.py` so `apu_2026_targets.json` now includes:
+    - flat `targets.expenditure` / `targets.revenue` (backward compatible),
+    - explicit `pillars.state|social|local` sections with expenditure/revenue rows,
+    - `summary.by_pillar` totals/row counts.
+  - Enforced APUL verified artifact presence: build now fails if `apul_2026_verified.csv` is missing or empty.
+
+- **APUL verification artifact transparency:**
+  - Updated `tools/verify_apul_2026.py` report output to include:
+    - UTC verification timestamp,
+    - per-URL source fetch checks (status and HTTP code).
+
+- **Pipeline defaults hardened:**
+  - `make verify-apul-2026` now runs with `--strict-links`.
+  - `make warm-voted-2026-baseline` now uses strict APUL link checks and applies overlay with `--strict-official`.
+
 ## 2026-02-25
 
 - **LFI 2026 enacted mission credits (CP) re-baselined with dual-source verification:**

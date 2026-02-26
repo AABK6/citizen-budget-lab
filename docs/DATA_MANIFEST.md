@@ -113,9 +113,11 @@ This document provides a central inventory of all data sources, configuration fi
 *   **Explicit APU targets (`apu_2026_targets.json`):**
     * Built by `tools/build_voted_2026_aggregates.py`.
     * Row-level targets for expenditures and revenues with `source_quality` (`voted`, `observed`, `estimated`) and `subsector` tags (`S1311`, `S1313`, `S1314`).
+    * Includes explicit pillarized views under `pillars.state`, `pillars.social`, `pillars.local` (each with `expenditure` and `revenue` rows), while keeping the flat `targets` arrays for backward compatibility.
 *   **LEGO Baseline (`lego_baseline_2026.json`):**
     * See §1.2 — warmed for 2026 with Eurostat SDMX sources, then overlaid with voted 2026 LFI/LFSS targets via `tools/apply_voted_2026_to_lego_baseline.py`.
-    * Overlay metadata is recorded under `meta.voted_2026_overlay` (source bundle path, mappings, excluded mission codes, execution timestamp, and quality checks under `meta.voted_2026_overlay.quality`).
+    * Overlay metadata is recorded under `meta.voted_2026_overlay` (source bundle path, mappings, excluded mission codes, strict-mode flag, execution timestamp, and quality checks under `meta.voted_2026_overlay.quality`).
+    * In strict official mode (`--strict-official`), macro closure and uncovered expenditure residuals are forbidden; the build fails instead of injecting synthetic adjustments.
 *   **Eurostat COFOG Shares (`eu_cofog_shares_{YEAR}.json`, `eu_cofog_subshares_{YEAR}.json`):**
     * 2026 FR/DE/IT shares and subshares refreshed 2025-09-22 via `eurostat-cofog` and `eurostat-cofog-sub` warmers.
 *   **Procurement Contracts (`procurement_contracts_{YEAR}.csv`):**

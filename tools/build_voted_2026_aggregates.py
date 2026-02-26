@@ -59,6 +59,12 @@ LFSS_BRANCH_TO_SIM_MISSION: Dict[str, Dict[str, float]] = {
 
 ALLOWED_SOURCE_QUALITY = {"voted", "observed", "estimated"}
 EXCLUDED_STATE_MISSION_CODES = {"RD", "PC"}
+PILLAR_BY_SUBSECTOR = {
+    "S1311": "state",
+    "S1313": "local",
+    "S1314": "social",
+}
+PILLAR_KEYS = ("state", "social", "local")
 
 
 def _read_csv(path: Path) -> list[dict[str, str]]:
@@ -87,7 +93,9 @@ def _clean_source_quality(raw: str | None) -> str:
 
 def _read_apul_rows(path: Path) -> list[dict[str, Any]]:
     if not path.exists():
-        return []
+        raise RuntimeError(
+            f"APUL verified CSV is required for hardening but is missing: {path}"
+        )
     rows = _read_csv(path)
     out: list[dict[str, Any]] = []
     for row in rows:
@@ -111,6 +119,14 @@ def _read_apul_rows(path: Path) -> list[dict[str, Any]]:
             }
         )
     return out
+
+
+def _pillar_for_subsector(subsector: str | None) -> str | None:
+    return PILLAR_BY_SUBSECTOR.get(str(subsector or "").strip().upper())
+
+
+def _init_pillars() -> Dict[str, Dict[str, list[dict[str, Any]]]]:
+    return {key: {"expenditure": [], "revenue": []} for key in PILLAR_KEYS}
 
 
 def _build_apu_targets(payload: Dict[str, Any]) -> Dict[str, Any]:
@@ -236,6 +252,27 @@ def _build_apu_targets(payload: Dict[str, Any]) -> Dict[str, Any]:
     for row in entries_rev:
         rev_by_group[str(row.get("group_id"))] += float(row.get("amount_eur") or 0.0)
 
+    pillars = _init_pillars()
+    for row in entries_exp:
+        pillar = _pillar_for_subsector(str(row.get("subsector") or ""))
+        if pillar:
+            pillars[pillar]["expenditure"].append(row)
+    for row in entries_rev:
+        pillar = _pillar_for_subsector(str(row.get("subsector") or ""))
+        if pillar:
+            pillars[pillar]["revenue"].append(row)
+
+    summary_by_pillar: Dict[str, Dict[str, float | int]] = {}
+    for pillar in PILLAR_KEYS:
+        exp_rows = pillars[pillar]["expenditure"]
+        rev_rows = pillars[pillar]["revenue"]
+        summary_by_pillar[pillar] = {
+            "expenditure_eur": sum(float(row.get("amount_eur") or 0.0) for row in exp_rows),
+            "revenue_eur": sum(float(row.get("amount_eur") or 0.0) for row in rev_rows),
+            "expenditure_rows": len(exp_rows),
+            "revenue_rows": len(rev_rows),
+        }
+
     return {
         "year": int(payload.get("year") or 2026),
         "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -244,9 +281,11 @@ def _build_apu_targets(payload: Dict[str, Any]) -> Dict[str, Any]:
             "expenditure": entries_exp,
             "revenue": entries_rev,
         },
+        "pillars": pillars,
         "summary": {
             "expenditure_by_mass_eur": dict(exp_by_mass),
             "revenue_by_group_eur": dict(rev_by_group),
+            "by_pillar": summary_by_pillar,
         },
         "notes": [
             "APU targets are explicit rows with source_quality tags (voted/observed/estimated).",
@@ -281,6 +320,10 @@ def build_aggregates(
         raise RuntimeError(f"No rows in {lfss_asso_csv}")
     if not rows_a_lines:
         raise RuntimeError(f"No rows in {state_a_lines_csv}")
+    if not rows_apul:
+        raise RuntimeError(
+            f"No APUL rows in {apul_csv}. Hardening requires explicit, verified APUL rows."
+        )
 
     if any(not _to_bool(r.get("match_ok")) for r in rows_b):
         raise RuntimeError("State B verification CSV contains mismatches")

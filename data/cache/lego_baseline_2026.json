@@ -4,7 +4,7 @@
   "country": "FR",
   "pib_eur": 3027000000000.0,
   "depenses_total_eur": 1271314708907.0,
-  "recettes_total_eur": 1119964708907.0,
+  "recettes_total_eur": 984039000000.0001,
   "pieces": [
     {
       "id": "ed_schools_staff_ops",
@@ -291,25 +291,25 @@
     {
       "id": "rev_public_income",
       "type": "revenue",
-      "amount_eur": 6987344627.0,
+      "amount_eur": 6987319457.41808,
       "share": null
     },
     {
       "id": "rev_sales_fees",
       "type": "revenue",
-      "amount_eur": 2546063009.0,
+      "amount_eur": 2546053837.6559634,
       "share": null
     },
     {
       "id": "rev_fines",
       "type": "revenue",
-      "amount_eur": 2695870585.0,
+      "amount_eur": 2695860874.024063,
       "share": null
     },
     {
       "id": "rev_transfers_in",
       "type": "revenue",
-      "amount_eur": 152596430686.0,
+      "amount_eur": 16670765830.901892,
       "share": null
     },
     {
@@ -321,12 +321,13 @@
   ],
   "meta": {
     "source": "Eurostat SDMX 2.1 (dissemination): gov_10a_exp (exp) + gov_10a_taxag (taxes/contrib) + gov_10a_main (sales/totals)",
-    "warning": "gov_10a_main JSON failed: RetryError; debt_interest from COFOG 01.7 TE (D.41 not exposed in gov_10a_exp); Voted-2026 overlay applied from LFI ETAT A/ETAT B and LFSS branch balances (explicit residual and source-quality reporting enabled); Voted-2026 overlay applied from LFI ETAT A/ETAT B and LFSS branch balances (explicit residual and source-quality reporting enabled)",
+    "warning": "gov_10a_main JSON failed: RetryError; debt_interest from COFOG 01.7 TE (D.41 not exposed in gov_10a_exp); Voted-2026 overlay applied from LFI ETAT A/ETAT B and LFSS branch balances (explicit residual and source-quality reporting enabled)",
     "voted_2026_overlay": {
-      "applied_at": "2026-02-26T20:55:18.088186+00:00",
+      "applied_at": "2026-02-26T21:24:12.696071+00:00",
       "sources_bundle": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/voted_2026_aggregates.json",
       "apu_targets_path": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/apu_2026_targets.json",
       "mode": "true_level",
+      "strict_official": true,
       "excluded_state_codes": [
         "PC",
         "RD"
@@ -357,15 +358,14 @@
       "applied_revenue_targets_eur": {
         "social_security": 664800000000.0,
         "state_fiscal": 290339000000.0,
-        "state_non_fiscal": 164825708907.0,
-        "apu_macro_closure_state_non_fiscal_delta_eur": 135925708907.0,
+        "state_non_fiscal": 28900000000.0,
         "macro_deficit_target_abs_eur": 151350000000.0
       },
       "post_checks": {
         "mission_target_count": 20,
         "mission_max_abs_error_eur": 0.0,
         "mission_max_rel_error": 0.0,
-        "revenue_group_target_count": 5,
+        "revenue_group_target_count": 4,
         "revenue_group_max_abs_error_eur": 0.0,
         "revenue_group_max_rel_error": 0.0
       },
@@ -642,15 +642,8 @@
           "Heuristic risk: state->local transfers and APUL-sensitive final-use blocks are both non-zero. Ensure transfers are not re-counted as additional final spending."
         ],
         "source_quality_coverage_pct": 100.0,
-        "residual_adjustments_total_eur": 135925708907.0,
-        "residual_adjustments": [
-          {
-            "kind": "macro_deficit_closure",
-            "group_id": "state_non_fiscal",
-            "amount_eur": 135925708907.0,
-            "note": "Applied to close to baseline deficit target in true_level mode"
-          }
-        ],
+        "residual_adjustments_total_eur": 0,
+        "residual_adjustments": [],
         "sentinel_checks": [
           {
             "mass_id": "M_TRANSPORT",

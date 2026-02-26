@@ -1,6 +1,6 @@
 {
   "year": 2026,
-  "generated_at": "2026-02-26T19:56:24.248026+00:00",
+  "generated_at": "2026-02-26T21:24:12.663180+00:00",
   "sources": {
     "state_b_csv": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
     "state_a_csv": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_a_aggregates_verified.csv",

@@ -5,6 +5,7 @@ import argparse
 import csv
 import json
 import math
+import os
 from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -449,6 +450,30 @@ def _load_apu_targets(path: Path) -> dict | None:
         return None
 
 
+def _rows_from_apu_targets(apu_targets: dict | None, section: str) -> List[Dict[str, Any]]:
+    if not apu_targets:
+        return []
+
+    targets = apu_targets.get("targets", {}) if isinstance(apu_targets.get("targets", {}), dict) else {}
+    explicit = targets.get(section, [])
+    if isinstance(explicit, list) and explicit:
+        return [row for row in explicit if isinstance(row, dict)]
+
+    # Backward-compatible fallback: infer rows from pillarized structure if explicit rows are absent.
+    rows: List[Dict[str, Any]] = []
+    pillars = apu_targets.get("pillars", {})
+    if not isinstance(pillars, dict):
+        return rows
+    for pillar in pillars.values():
+        if not isinstance(pillar, dict):
+            continue
+        sec_rows = pillar.get(section, [])
+        if not isinstance(sec_rows, list):
+            continue
+        rows.extend(row for row in sec_rows if isinstance(row, dict))
+    return rows
+
+
 def _weighted_quality_coverage(rows: List[Dict[str, Any]]) -> float:
     total = 0.0
     covered = 0.0
@@ -491,11 +516,7 @@ def _build_expenditure_targets(
 ) -> tuple[Dict[str, float], List[Dict[str, Any]], List[str]]:
     warnings: List[str] = []
     if apu_targets:
-        rows = [
-            row
-            for row in (apu_targets.get("targets", {}) or {}).get("expenditure", [])
-            if isinstance(row, dict)
-        ]
+        rows = _rows_from_apu_targets(apu_targets, "expenditure")
         if rows:
             filtered_rows: List[Dict[str, Any]] = []
             for row in rows:
@@ -580,11 +601,7 @@ def _build_revenue_group_targets(
 ) -> tuple[Dict[str, float], List[Dict[str, Any]], List[str]]:
     warnings: List[str] = []
     if apu_targets:
-        rows = [
-            row
-            for row in (apu_targets.get("targets", {}) or {}).get("revenue", [])
-            if isinstance(row, dict)
-        ]
+        rows = _rows_from_apu_targets(apu_targets, "revenue")
         if rows:
             filtered_rows: List[Dict[str, Any]] = []
             for row in rows:
@@ -686,6 +703,7 @@ def _apply_revenue_overlay(
     group_target_values: Dict[str, float],
     mode: str,
     year: int,
+    strict_official: bool,
 ) -> tuple[float, Dict[str, float], List[Dict[str, Any]]]:
     adjustments: List[Dict[str, Any]] = []
     group_targets = {k: float(v or 0.0) for k, v in (group_target_values or {}).items()}
@@ -701,18 +719,19 @@ def _apply_revenue_overlay(
             + group_targets.get("state_non_fiscal", 0.0)
         )
         macro_residual_closure_eur = desired_rev_total - base_rev_total
-        group_targets["state_non_fiscal"] = max(
-            group_targets.get("state_non_fiscal", 0.0) + macro_residual_closure_eur,
-            0.0,
-        )
-        adjustments.append(
-            {
-                "kind": "macro_deficit_closure",
-                "group_id": "state_non_fiscal",
-                "amount_eur": macro_residual_closure_eur,
-                "note": "Applied to close to baseline deficit target in true_level mode",
-            }
-        )
+        if not strict_official:
+            group_targets["state_non_fiscal"] = max(
+                group_targets.get("state_non_fiscal", 0.0) + macro_residual_closure_eur,
+                0.0,
+            )
+            adjustments.append(
+                {
+                    "kind": "macro_deficit_closure",
+                    "group_id": "state_non_fiscal",
+                    "amount_eur": macro_residual_closure_eur,
+                    "note": "Applied to close to baseline deficit target in true_level mode",
+                }
+            )
 
     amount_by_piece: Dict[str, float] = {}
     for ent in baseline.get("pieces", []):
@@ -853,7 +872,8 @@ def _apply_revenue_overlay(
                     ent["amount_eur"] = float(ent.get("amount_eur") or 0.0) * rev_scale
 
     if mode == "true_level" and macro_deficit_target_abs is not None:
-        applied_target_by_group["apu_macro_closure_state_non_fiscal_delta_eur"] = macro_residual_closure_eur
+        if not strict_official:
+            applied_target_by_group["apu_macro_closure_state_non_fiscal_delta_eur"] = macro_residual_closure_eur
         applied_target_by_group["macro_deficit_target_abs_eur"] = macro_deficit_target_abs
 
     return covered_reference / max(original_total, 1.0), applied_target_by_group, adjustments
@@ -935,6 +955,36 @@ def _build_double_count_checks(
     ]
 
 
+def _assert_displayed_masses_have_explicit_targets(
+    after_masses: Dict[str, float],
+    applied_exp_targets: Dict[str, float],
+    exp_target_rows: List[Dict[str, Any]],
+) -> None:
+    displayed_masses = sorted(
+        mass_id for mass_id, amount in after_masses.items() if float(amount or 0.0) > 0.0
+    )
+    rows_by_mass = {
+        str(row.get("mass_id") or "").strip().upper()
+        for row in exp_target_rows
+        if float(row.get("amount_eur") or 0.0) > 0.0
+    }
+    target_masses = {str(k).strip().upper() for k in applied_exp_targets.keys()}
+
+    missing_in_targets = [mass_id for mass_id in displayed_masses if mass_id not in target_masses]
+    if missing_in_targets:
+        raise RuntimeError(
+            "Strict official mode requires explicit expenditure targets for all displayed masses. "
+            f"Missing targets: {', '.join(missing_in_targets)}"
+        )
+
+    missing_in_rows = [mass_id for mass_id in displayed_masses if mass_id not in rows_by_mass]
+    if missing_in_rows:
+        raise RuntimeError(
+            "Strict official mode requires explicit source-tagged rows for all displayed masses. "
+            f"Missing source rows: {', '.join(missing_in_rows)}"
+        )
+
+
 def apply_overlay(
     baseline_path: Path,
     lego_cfg_path: Path,
@@ -944,6 +994,7 @@ def apply_overlay(
     excluded_state_codes: set[str],
     mode: str,
     apu_targets_path: Path | None,
+    strict_official: bool,
 ) -> OverlayStats:
     baseline = _load_json(baseline_path)
     lego_cfg = _load_json(lego_cfg_path)
@@ -987,6 +1038,7 @@ def apply_overlay(
         group_target_values=rev_group_targets,
         mode=mode,
         year=int(baseline.get("year") or 2026),
+        strict_official=strict_official,
     )
 
     _recompute_totals_and_shares(baseline)
@@ -1060,6 +1112,16 @@ def apply_overlay(
             }
         )
 
+    if strict_official:
+        if abs(uncovered_exp_residual_eur) > 1e-6:
+            raise RuntimeError(
+                "Strict official mode forbids uncovered expenditure residuals. "
+                f"Residual={uncovered_exp_residual_eur:.6f} EUR"
+            )
+        if any(str(adj.get("kind")) == "macro_deficit_closure" for adj in residual_adjustments):
+            raise RuntimeError("Strict official mode forbids macro deficit closure adjustments.")
+        _assert_displayed_masses_have_explicit_targets(after_masses, applied_exp_targets, exp_target_rows)
+
     quality_warnings: List[str] = []
     quality_warnings.extend(exp_target_warnings)
     quality_warnings.extend(rev_target_warnings)
@@ -1090,6 +1152,7 @@ def apply_overlay(
         "sources_bundle": str(aggregates_path.resolve()),
         "apu_targets_path": str(apu_targets_path.resolve()) if apu_targets_path and apu_targets_path.exists() else "",
         "mode": mode,
+        "strict_official": bool(strict_official),
         "excluded_state_codes": sorted(excluded_state_codes),
         "iterations": iterations,
         "applied_expenditure_targets_eur": applied_exp_targets,
@@ -1182,6 +1245,21 @@ def main() -> int:
         default="RD,PC",
         help="Comma-separated LFI mission codes excluded from state overlay (default: RD,PC)",
     )
+    parser.add_argument(
+        "--strict-official",
+        dest="strict_official",
+        action="store_true",
+        help="Enable strict official checks (forbid macro closure and uncovered residuals).",
+    )
+    parser.add_argument(
+        "--no-strict-official",
+        dest="strict_official",
+        action="store_false",
+        help="Disable strict official checks.",
+    )
+    parser.set_defaults(
+        strict_official=str(os.getenv("STRICT_OFFICIAL", "1")).strip().lower() not in {"0", "false", "no"}
+    )
     args = parser.parse_args()
 
     baseline_path = Path(args.baseline) if args.baseline else DATA_DIR / "cache" / f"lego_baseline_{args.year}.json"
@@ -1197,6 +1275,7 @@ def main() -> int:
         excluded_state_codes=excluded_state_codes,
         mode=args.mode,
         apu_targets_path=Path(args.apu_targets) if str(args.apu_targets).strip() else None,
+        strict_official=bool(args.strict_official),
     )
 
     print(f"Wrote {out_path}")
@@ -1211,6 +1290,7 @@ def main() -> int:
             "covered_rev_share": stats.covered_rev_share,
             "iterations": stats.iterations,
             "mode": stats.mode,
+            "strict_official": bool(args.strict_official),
         },
     )
     return 0
