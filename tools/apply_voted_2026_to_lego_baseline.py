@@ -15,6 +15,16 @@ from typing import Any, Dict, List, Tuple
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data"
 BASELINE_DEFICIT_CSV = DATA_DIR / "baseline_deficit_debt.csv"
+DEFAULT_APU_TARGETS_JSON = DATA_DIR / "reference" / "apu_2026_targets.json"
+ALLOWED_SOURCE_QUALITY = {"voted", "observed", "estimated"}
+SENTINEL_MASSES = [
+    "M_TRANSPORT",
+    "M_EDU",
+    "M_SOLIDARITY",
+    "M_HOUSING",
+    "M_CIVIL_PROT",
+    "M_TERRITORIES",
+]
 
 
 # Mission bridge kept aligned with current simulation typology.
@@ -351,13 +361,98 @@ def _macro_deficit_target_abs_eur(year: int) -> float | None:
     return None
 
 
-def _build_expenditure_targets(aggregates: dict, excluded_state_codes: set[str]) -> Dict[str, float]:
+def _clean_source_quality(raw: Any) -> str:
+    value = str(raw or "").strip().lower()
+    if value not in ALLOWED_SOURCE_QUALITY:
+        return ""
+    return value
+
+
+def _load_apu_targets(path: Path) -> dict | None:
+    if not path.exists():
+        return None
+    try:
+        return _load_json(path)
+    except Exception:
+        return None
+
+
+def _weighted_quality_coverage(rows: List[Dict[str, Any]]) -> float:
+    total = 0.0
+    covered = 0.0
+    for row in rows:
+        amount = abs(float(row.get("amount_eur") or 0.0))
+        if amount <= 0.0:
+            continue
+        total += amount
+        if _clean_source_quality(row.get("source_quality")):
+            covered += amount
+    if total <= 0.0:
+        return 0.0
+    return (covered / total) * 100.0
+
+
+def _build_expenditure_targets_from_rows(rows: List[Dict[str, Any]]) -> Dict[str, float]:
     out: Dict[str, float] = defaultdict(float)
+    for row in rows:
+        mass_id = str(row.get("mass_id") or "").strip().upper()
+        if not mass_id:
+            continue
+        out[mass_id] += float(row.get("amount_eur") or 0.0)
+    return dict(out)
+
+
+def _build_revenue_targets_from_rows(rows: List[Dict[str, Any]]) -> Dict[str, float]:
+    out: Dict[str, float] = defaultdict(float)
+    for row in rows:
+        group_id = str(row.get("group_id") or "").strip()
+        if not group_id:
+            continue
+        out[group_id] += float(row.get("amount_eur") or 0.0)
+    return dict(out)
+
+
+def _build_expenditure_targets(
+    aggregates: dict,
+    excluded_state_codes: set[str],
+    apu_targets: dict | None = None,
+) -> tuple[Dict[str, float], List[Dict[str, Any]], List[str]]:
+    warnings: List[str] = []
+    if apu_targets:
+        rows = [
+            row
+            for row in (apu_targets.get("targets", {}) or {}).get("expenditure", [])
+            if isinstance(row, dict)
+        ]
+        if rows:
+            filtered_rows: List[Dict[str, Any]] = []
+            for row in rows:
+                mass_id = str(row.get("mass_id") or "").strip().upper()
+                amount = float(row.get("amount_eur") or 0.0)
+                if not mass_id or amount <= 0.0:
+                    continue
+                filtered_rows.append(
+                    {
+                        "mass_id": mass_id,
+                        "amount_eur": amount,
+                        "source_quality": _clean_source_quality(row.get("source_quality")),
+                        "subsector": str(row.get("subsector") or "").strip().upper(),
+                        "source_ref": str(row.get("source_ref") or "").strip(),
+                        "method_note": str(row.get("method_note") or "").strip(),
+                    }
+                )
+            if filtered_rows:
+                return _build_expenditure_targets_from_rows(filtered_rows), filtered_rows, warnings
+            warnings.append("APU targets file found but no valid expenditure rows were usable")
+
+    out: Dict[str, float] = defaultdict(float)
+    rows_out: List[Dict[str, Any]] = []
 
     state_missions = (
         aggregates.get("state", {})
         .get("etat_b_cp_by_mission_eur", {})
     )
+    state_ref = str((aggregates.get("sources", {}) or {}).get("state_b_csv") or "")
     for code, amount in state_missions.items():
         mission_code = str(code).strip().upper()
         if not mission_code or mission_code in excluded_state_codes:
@@ -367,20 +462,113 @@ def _build_expenditure_targets(aggregates: dict, excluded_state_codes: set[str])
             continue
         amt = float(amount or 0.0)
         for mass, w in mapping.items():
-            out[mass] += amt * float(w)
+            value = amt * float(w)
+            out[mass] += value
+            rows_out.append(
+                {
+                    "mass_id": mass,
+                    "amount_eur": value,
+                    "source_quality": "voted",
+                    "subsector": "S1311",
+                    "source_ref": state_ref,
+                    "method_note": f"legacy bridge ETAT B mission {mission_code}",
+                }
+            )
 
     social_branches = (
         aggregates.get("social", {})
         .get("lfss_branch_equilibre_eur", {})
     )
+    social_ref = str((aggregates.get("sources", {}) or {}).get("lfss_branch_csv") or "")
     for branch_key, map_weights in LFSS_BRANCH_TO_SIM_MISSION.items():
         dep = float((social_branches.get(branch_key) or {}).get("depenses_eur") or 0.0)
         if dep <= 0.0:
             continue
         for mass, w in map_weights.items():
-            out[mass] += dep * float(w)
+            value = dep * float(w)
+            out[mass] += value
+            rows_out.append(
+                {
+                    "mass_id": mass,
+                    "amount_eur": value,
+                    "source_quality": "voted",
+                    "subsector": "S1314",
+                    "source_ref": social_ref,
+                    "method_note": f"legacy bridge LFSS branch {branch_key}",
+                }
+            )
 
-    return dict(out)
+    warnings.append("APU targets file unavailable, using legacy ETAT/LFSS bridge")
+    return dict(out), rows_out, warnings
+
+
+def _build_revenue_group_targets(
+    aggregates: dict,
+    apu_targets: dict | None = None,
+) -> tuple[Dict[str, float], List[Dict[str, Any]], List[str]]:
+    warnings: List[str] = []
+    if apu_targets:
+        rows = [
+            row
+            for row in (apu_targets.get("targets", {}) or {}).get("revenue", [])
+            if isinstance(row, dict)
+        ]
+        if rows:
+            filtered_rows: List[Dict[str, Any]] = []
+            for row in rows:
+                group_id = str(row.get("group_id") or "").strip()
+                amount = float(row.get("amount_eur") or 0.0)
+                if not group_id or amount <= 0.0:
+                    continue
+                filtered_rows.append(
+                    {
+                        "group_id": group_id,
+                        "amount_eur": amount,
+                        "source_quality": _clean_source_quality(row.get("source_quality")),
+                        "subsector": str(row.get("subsector") or "").strip().upper(),
+                        "source_ref": str(row.get("source_ref") or "").strip(),
+                        "method_note": str(row.get("method_note") or "").strip(),
+                    }
+                )
+            if filtered_rows:
+                return _build_revenue_targets_from_rows(filtered_rows), filtered_rows, warnings
+            warnings.append("APU targets file found but no valid revenue rows were usable")
+
+    revenue_targets = (
+        aggregates.get("calibration_targets", {})
+        .get("revenue_targets_eur", {})
+    )
+    source_state_a = str((aggregates.get("sources", {}) or {}).get("state_a_csv") or "")
+    source_lfss = str((aggregates.get("sources", {}) or {}).get("lfss_branch_csv") or "")
+    rows_out = [
+        {
+            "group_id": "social_security",
+            "amount_eur": float(revenue_targets.get("lfss_all_branches_recettes_eur") or 0.0),
+            "source_quality": "voted",
+            "subsector": "S1314",
+            "source_ref": source_lfss,
+            "method_note": "legacy bridge LFSS recettes",
+        },
+        {
+            "group_id": "state_fiscal",
+            "amount_eur": float(revenue_targets.get("state_fiscal_eur") or 0.0),
+            "source_quality": "voted",
+            "subsector": "S1311",
+            "source_ref": source_state_a,
+            "method_note": "legacy bridge ETAT A fiscal",
+        },
+        {
+            "group_id": "state_non_fiscal",
+            "amount_eur": float(revenue_targets.get("state_non_fiscal_eur") or 0.0),
+            "source_quality": "voted",
+            "subsector": "S1311",
+            "source_ref": source_state_a,
+            "method_note": "legacy bridge ETAT A non-fiscal",
+        },
+    ]
+    rows_out = [row for row in rows_out if float(row["amount_eur"]) > 0.0]
+    warnings.append("APU targets file unavailable, using legacy revenue groups bridge")
+    return _build_revenue_targets_from_rows(rows_out), rows_out, warnings
 
 
 def _apply_expenditure_overlay(
@@ -420,18 +608,12 @@ def _apply_expenditure_overlay(
 def _apply_revenue_overlay(
     baseline: dict,
     aggregates: dict,
+    group_target_values: Dict[str, float],
     mode: str,
     year: int,
-) -> tuple[float, Dict[str, float]]:
-    revenue_targets = (
-        aggregates.get("calibration_targets", {})
-        .get("revenue_targets_eur", {})
-    )
-    group_target_values = {
-        "social_security": float(revenue_targets.get("lfss_all_branches_recettes_eur") or 0.0),
-        "state_fiscal": float(revenue_targets.get("state_fiscal_eur") or 0.0),
-        "state_non_fiscal": float(revenue_targets.get("state_non_fiscal_eur") or 0.0),
-    }
+) -> tuple[float, Dict[str, float], List[Dict[str, Any]]]:
+    adjustments: List[Dict[str, Any]] = []
+    group_targets = {k: float(v or 0.0) for k, v in (group_target_values or {}).items()}
 
     macro_deficit_target_abs = _macro_deficit_target_abs_eur(year) if mode == "true_level" else None
     macro_residual_closure_eur = 0.0
@@ -439,14 +621,22 @@ def _apply_revenue_overlay(
         dep_total_now = _sum_type(baseline, "expenditure")
         desired_rev_total = max(dep_total_now - macro_deficit_target_abs, 0.0)
         base_rev_total = (
-            group_target_values.get("social_security", 0.0)
-            + group_target_values.get("state_fiscal", 0.0)
-            + group_target_values.get("state_non_fiscal", 0.0)
+            group_targets.get("social_security", 0.0)
+            + group_targets.get("state_fiscal", 0.0)
+            + group_targets.get("state_non_fiscal", 0.0)
         )
         macro_residual_closure_eur = desired_rev_total - base_rev_total
-        group_target_values["state_non_fiscal"] = max(
-            group_target_values.get("state_non_fiscal", 0.0) + macro_residual_closure_eur,
+        group_targets["state_non_fiscal"] = max(
+            group_targets.get("state_non_fiscal", 0.0) + macro_residual_closure_eur,
             0.0,
+        )
+        adjustments.append(
+            {
+                "kind": "macro_deficit_closure",
+                "group_id": "state_non_fiscal",
+                "amount_eur": macro_residual_closure_eur,
+                "note": "Applied to close to baseline deficit target in true_level mode",
+            }
         )
 
     amount_by_piece: Dict[str, float] = {}
@@ -471,34 +661,34 @@ def _apply_revenue_overlay(
         valid_groups = [
             g
             for g in REVENUE_GROUP_PIECES.keys()
-            if current_by_group.get(g, 0.0) > 0.0 and group_target_values.get(g, 0.0) > 0.0
+            if current_by_group.get(g, 0.0) > 0.0 and group_targets.get(g, 0.0) > 0.0
         ]
     elif mode == "true_level":
         valid_groups = [
             g
             for g in REVENUE_GROUP_PIECES.keys()
-            if group_target_values.get(g, 0.0) > 0.0 and len(REVENUE_GROUP_PIECES.get(g, [])) > 0
+            if group_targets.get(g, 0.0) > 0.0 and len(REVENUE_GROUP_PIECES.get(g, [])) > 0
         ]
     else:
         raise ValueError(f"Unsupported overlay mode: {mode}")
 
     if not valid_groups:
-        return 0.0, {}
+        return 0.0, {}, adjustments
 
     covered_current = sum(current_by_group[g] for g in valid_groups)
-    covered_target = sum(group_target_values[g] for g in valid_groups)
+    covered_target = sum(group_targets[g] for g in valid_groups)
     if covered_current <= 0.0 or covered_target <= 0.0:
-        return 0.0, {}
+        return 0.0, {}, adjustments
 
     if mode == "share_rebalance":
         applied_target_by_group = {
-            g: covered_current * (group_target_values[g] / covered_target)
+            g: covered_current * (group_targets[g] / covered_target)
             for g in valid_groups
         }
         covered_reference = covered_current
     elif mode == "true_level":
         applied_target_by_group = {
-            g: group_target_values[g]
+            g: group_targets[g]
             for g in valid_groups
         }
         covered_reference = covered_target
@@ -591,7 +781,7 @@ def _apply_revenue_overlay(
         applied_target_by_group["apu_macro_closure_state_non_fiscal_delta_eur"] = macro_residual_closure_eur
         applied_target_by_group["macro_deficit_target_abs_eur"] = macro_deficit_target_abs
 
-    return covered_reference / max(original_total, 1.0), applied_target_by_group
+    return covered_reference / max(original_total, 1.0), applied_target_by_group, adjustments
 
 
 def _recompute_totals_and_shares(baseline: dict) -> None:
@@ -607,6 +797,69 @@ def _recompute_totals_and_shares(baseline: dict) -> None:
     baseline["recettes_total_eur"] = rev_total
 
 
+def _build_sentinel_checks(
+    after_masses: Dict[str, float],
+    applied_exp_targets: Dict[str, float],
+) -> List[Dict[str, Any]]:
+    checks: List[Dict[str, Any]] = []
+    for mass_id in SENTINEL_MASSES:
+        amount = float(after_masses.get(mass_id, 0.0))
+        targeted = mass_id in applied_exp_targets
+        status = "ok"
+        note = "targeted and non-zero"
+        if not targeted:
+            status = "warn"
+            note = "not explicitly targeted in overlay inputs"
+        if amount <= 0.0:
+            status = "warn"
+            note = "resulting amount is zero or negative"
+        checks.append(
+            {
+                "mass_id": mass_id,
+                "status": status,
+                "amount_eur": amount,
+                "targeted": targeted,
+                "note": note,
+            }
+        )
+    return checks
+
+
+def _build_double_count_checks(
+    baseline: dict,
+    after_masses: Dict[str, float],
+) -> List[Dict[str, Any]]:
+    revenue_by_id = {
+        str(ent.get("id")): float(ent.get("amount_eur") or 0.0)
+        for ent in baseline.get("pieces", [])
+        if str(ent.get("type")) == "expenditure"
+    }
+    transfer_state_to_local = float(revenue_by_id.get("grants_to_locals", 0.0))
+    local_usage_total = sum(
+        float(after_masses.get(mass_id, 0.0))
+        for mass_id in ["M_TRANSPORT", "M_EDU", "M_SOLIDARITY", "M_HOUSING", "M_CIVIL_PROT", "M_ENVIRONMENT", "M_CULTURE"]
+    )
+
+    status = "ok"
+    note = "No obvious transfer/final-use overlap signal."
+    if transfer_state_to_local > 0.0 and local_usage_total > 0.0:
+        status = "warn"
+        note = (
+            "Heuristic risk: state->local transfers and APUL-sensitive final-use blocks are both non-zero. "
+            "Ensure transfers are not re-counted as additional final spending."
+        )
+
+    return [
+        {
+            "name": "state_to_local_vs_local_final_use",
+            "status": status,
+            "value_eur": transfer_state_to_local,
+            "local_final_use_eur": local_usage_total,
+            "note": note,
+        }
+    ]
+
+
 def apply_overlay(
     baseline_path: Path,
     lego_cfg_path: Path,
@@ -615,6 +868,7 @@ def apply_overlay(
     iterations: int,
     excluded_state_codes: set[str],
     mode: str,
+    apu_targets_path: Path | None,
 ) -> OverlayStats:
     baseline = _load_json(baseline_path)
     lego_cfg = _load_json(lego_cfg_path)
@@ -624,7 +878,16 @@ def apply_overlay(
     rev_before = _sum_type(baseline, "revenue")
 
     piece_missions = _build_piece_missions(lego_cfg)
-    exp_targets = _build_expenditure_targets(aggregates, excluded_state_codes)
+    apu_targets = _load_apu_targets(apu_targets_path) if apu_targets_path else None
+    exp_targets, exp_target_rows, exp_target_warnings = _build_expenditure_targets(
+        aggregates,
+        excluded_state_codes,
+        apu_targets=apu_targets,
+    )
+    rev_group_targets, rev_target_rows, rev_target_warnings = _build_revenue_group_targets(
+        aggregates,
+        apu_targets=apu_targets,
+    )
 
     covered_exp_share, applied_exp_targets = _apply_expenditure_overlay(
         baseline,
@@ -643,19 +906,20 @@ def apply_overlay(
                 if str(ent.get("type")) == "expenditure":
                     ent["amount_eur"] = float(ent.get("amount_eur") or 0.0) * dep_scale
 
-    covered_rev_share, applied_rev_targets = _apply_revenue_overlay(
+    covered_rev_share, applied_rev_targets, rev_adjustments = _apply_revenue_overlay(
         baseline,
         aggregates,
-        mode,
-        int(baseline.get("year") or 2026),
+        group_target_values=rev_group_targets,
+        mode=mode,
+        year=int(baseline.get("year") or 2026),
     )
 
     _recompute_totals_and_shares(baseline)
+    after_masses = _mission_totals_from_baseline(baseline, piece_missions)
 
     post_checks: Dict[str, Dict[str, float] | float | int] = {}
     if mode == "true_level":
         # Check mission-level convergence against targeted masses (iterative reweighting).
-        after_masses = _mission_totals_from_baseline(baseline, piece_missions)
         max_mission_rel_err = 0.0
         max_mission_abs_err = 0.0
         for mass_id, target in applied_exp_targets.items():
@@ -702,16 +966,54 @@ def apply_overlay(
                 f"True-level overlay revenue mismatch: max_rel_error={max_rev_rel_err:.6f}"
             )
 
+    dep_after_now = _sum_type(baseline, "expenditure")
+    targeted_exp_total = sum(float(v or 0.0) for v in applied_exp_targets.values())
+    uncovered_exp_residual_eur = dep_after_now - targeted_exp_total
+
+    sentinel_checks = _build_sentinel_checks(after_masses, applied_exp_targets)
+    double_count_checks = _build_double_count_checks(baseline, after_masses)
+    source_quality_rows = exp_target_rows + rev_target_rows
+    source_quality_coverage_pct = _weighted_quality_coverage(source_quality_rows)
+    residual_adjustments: List[Dict[str, Any]] = []
+    residual_adjustments.extend(rev_adjustments)
+    if abs(uncovered_exp_residual_eur) > 1e-6:
+        residual_adjustments.append(
+            {
+                "kind": "uncovered_expenditure_residual",
+                "amount_eur": uncovered_exp_residual_eur,
+                "note": "Difference between total expenditure and sum of explicitly targeted masses.",
+            }
+        )
+
+    quality_warnings: List[str] = []
+    quality_warnings.extend(exp_target_warnings)
+    quality_warnings.extend(rev_target_warnings)
+    if source_quality_coverage_pct < 100.0:
+        quality_warnings.append(
+            f"Source quality coverage is {source_quality_coverage_pct:.2f}% (<100%)."
+        )
+    if abs(uncovered_exp_residual_eur) > 1_000_000.0:
+        quality_warnings.append(
+            f"Uncovered expenditure residual is {uncovered_exp_residual_eur:.2f} EUR."
+        )
+    for chk in sentinel_checks:
+        if str(chk.get("status")) == "warn":
+            quality_warnings.append(f"Sentinel {chk.get('mass_id')}: {chk.get('note')}")
+    for chk in double_count_checks:
+        if str(chk.get("status")) == "warn":
+            quality_warnings.append(str(chk.get("note")))
+
     meta = baseline.setdefault("meta", {})
     warning = str(meta.get("warning") or "")
     overlay_note = (
         "Voted-2026 overlay applied from LFI ETAT A/ETAT B and LFSS branch balances "
-        "(proportional residual for uncovered APU blocks)"
+        "(explicit residual and source-quality reporting enabled)"
     )
     meta["warning"] = f"{warning}; {overlay_note}".strip("; ").strip()
     meta["voted_2026_overlay"] = {
         "applied_at": datetime.now(timezone.utc).isoformat(),
         "sources_bundle": str(aggregates_path.resolve()),
+        "apu_targets_path": str(apu_targets_path.resolve()) if apu_targets_path and apu_targets_path.exists() else "",
         "mode": mode,
         "excluded_state_codes": sorted(excluded_state_codes),
         "iterations": iterations,
@@ -723,6 +1025,15 @@ def apply_overlay(
         "state_vat_total_line_codes": STATE_VAT_TOTAL_LINE_CODES,
         "state_to_sim_mapping": PLF_TO_SIM_MISSION,
         "lfss_to_sim_mapping": LFSS_BRANCH_TO_SIM_MISSION,
+        "quality": {
+            "warning_count": len(quality_warnings),
+            "warnings": quality_warnings,
+            "source_quality_coverage_pct": source_quality_coverage_pct,
+            "residual_adjustments_total_eur": sum(abs(float(x.get("amount_eur") or 0.0)) for x in residual_adjustments),
+            "residual_adjustments": residual_adjustments,
+            "sentinel_checks": sentinel_checks,
+            "double_count_checks": double_count_checks,
+        },
     }
 
     with out_path.open("w", encoding="utf-8") as fh:
@@ -747,7 +1058,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(
         description=(
             "Apply voted-2026 LFI/LFSS overlay to lego_baseline while keeping current "
-            "simulation typology and proportional residual allocation."
+            "simulation typology and explicit quality-tagged residual reporting."
         )
     )
     parser.add_argument("--year", type=int, default=2026)
@@ -766,6 +1077,12 @@ def main() -> int:
         "--aggregates",
         type=str,
         default=str(DATA_DIR / "reference" / "voted_2026_aggregates.json"),
+    )
+    parser.add_argument(
+        "--apu-targets",
+        type=str,
+        default=str(DEFAULT_APU_TARGETS_JSON),
+        help="Optional explicit APU targets JSON (defaults to data/reference/apu_2026_targets.json).",
     )
     parser.add_argument(
         "--out",
@@ -804,6 +1121,7 @@ def main() -> int:
         iterations=args.iterations,
         excluded_state_codes=excluded_state_codes,
         mode=args.mode,
+        apu_targets_path=Path(args.apu_targets) if str(args.apu_targets).strip() else None,
     )
 
     print(f"Wrote {out_path}")

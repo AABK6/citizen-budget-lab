@@ -1,12 +1,13 @@
 {
   "year": 2026,
-  "generated_at": "2026-02-25T23:04:54.151152+00:00",
+  "generated_at": "2026-02-26T19:56:24.248026+00:00",
   "sources": {
     "state_b_csv": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
     "state_a_csv": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_a_aggregates_verified.csv",
     "state_a_lines_csv": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_a_line_items_verified.csv",
     "lfss_branch_csv": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfss_2026_branch_equilibre_verified.csv",
-    "lfss_asso_csv": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfss_2026_asso_pct_verified.csv"
+    "lfss_asso_csv": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfss_2026_asso_pct_verified.csv",
+    "apul_csv": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/apul_2026_verified.csv"
   },
   "state": {
     "etat_b_cp_by_mission_eur": {
@@ -960,6 +961,96 @@
       "asso_solde_pct_pib_2026": 0.1
     }
   },
+  "local": {
+    "apul_blocks_eur": {
+      "M_TRANSPORT": 18500000000.0,
+      "M_EDU": 27500000000.0,
+      "M_SOLIDARITY": 31000000000.0,
+      "M_HOUSING": 14000000000.0,
+      "M_CIVIL_PROT": 12000000000.0,
+      "M_ENVIRONMENT": 10500000000.0,
+      "M_CULTURE": 7000000000.0
+    },
+    "apul_rows": [
+      {
+        "year": 2026,
+        "mass_id": "M_TRANSPORT",
+        "mass_label": "Transport local",
+        "subsector": "S1313",
+        "amount_eur": 18500000000.0,
+        "source_quality": "estimated",
+        "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+        "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged.",
+        "match_ok": true
+      },
+      {
+        "year": 2026,
+        "mass_id": "M_EDU",
+        "mass_label": "Education locale (batiments/entretien)",
+        "subsector": "S1313",
+        "amount_eur": 27500000000.0,
+        "source_quality": "estimated",
+        "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+        "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged.",
+        "match_ok": true
+      },
+      {
+        "year": 2026,
+        "mass_id": "M_SOLIDARITY",
+        "mass_label": "Action sociale locale (RSA/APA/PCH/ASE)",
+        "subsector": "S1313",
+        "amount_eur": 31000000000.0,
+        "source_quality": "estimated",
+        "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+        "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged.",
+        "match_ok": true
+      },
+      {
+        "year": 2026,
+        "mass_id": "M_HOUSING",
+        "mass_label": "Politique locale du logement",
+        "subsector": "S1313",
+        "amount_eur": 14000000000.0,
+        "source_quality": "estimated",
+        "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+        "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged.",
+        "match_ok": true
+      },
+      {
+        "year": 2026,
+        "mass_id": "M_CIVIL_PROT",
+        "mass_label": "Securite civile (SDIS)",
+        "subsector": "S1313",
+        "amount_eur": 12000000000.0,
+        "source_quality": "estimated",
+        "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+        "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged.",
+        "match_ok": true
+      },
+      {
+        "year": 2026,
+        "mass_id": "M_ENVIRONMENT",
+        "mass_label": "Services locaux environnement/eau/dechets",
+        "subsector": "S1313",
+        "amount_eur": 10500000000.0,
+        "source_quality": "estimated",
+        "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+        "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged.",
+        "match_ok": true
+      },
+      {
+        "year": 2026,
+        "mass_id": "M_CULTURE",
+        "mass_label": "Culture et sport local",
+        "subsector": "S1313",
+        "amount_eur": 7000000000.0,
+        "source_quality": "estimated",
+        "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+        "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged.",
+        "match_ok": true
+      }
+    ]
+  },
   "calibration_targets": {
     "revenue_targets_eur": {
       "state_fiscal_eur": 290339000000,
@@ -973,7 +1064,8 @@
       "State mission CP targets are from ETAT B.",
       "State fiscal target is ETAT A fiscal receipts net of PSR (collectivites + UE) for APU resource consistency.",
       "State non-fiscal target is from ETAT A.",
-      "Social branch receipts/expenses are from LFSS voted branch equilibrium table."
+      "Social branch receipts/expenses are from LFSS voted branch equilibrium table.",
+      "Local APUL bridge rows are imported from verify_apul_2026 output (DGCL-first, source-tagged)."
     ]
   }
 }

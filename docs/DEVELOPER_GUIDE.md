@@ -131,14 +131,19 @@ The API includes two caching layers:
     ```bash
     make verify-lfi-2026-state-a
     make verify-lfss-2026
+    make verify-apul-2026
     ```
-    These commands validate LFI ÉTAT A aggregate receipts/balance and LFSS branch/ASSO balances against official adopted AN texts.
+    These commands validate LFI ÉTAT A aggregate receipts/balance, LFSS branch/ASSO balances, and build a DGCL-first APUL bridge artifact (`data/reference/apul_2026_verified.csv` + `docs/verification_apul2026.md`).
 
 8.  **Rebuild the voted-2026 simulation baseline (APU scope preserved):**
     ```bash
     make warm-voted-2026-baseline
     ```
-    This full chain warms the Eurostat baseline, runs all LFI/LFSS verifications, builds `data/reference/voted_2026_aggregates.json`, applies the voted overlay in `true_level` mode to `data/cache/lego_baseline_2026.json`, then regenerates `data/cache/build_page_2026.json`.
+    This full chain warms the Eurostat baseline, runs all LFI/LFSS/APUL verifications, builds:
+    - `data/reference/voted_2026_aggregates.json`
+    - `data/reference/apu_2026_targets.json` (explicit source-tagged APU targets),
+    then applies the voted overlay in `true_level` mode to `data/cache/lego_baseline_2026.json`, and regenerates `data/cache/build_page_2026.json`.
+    Overlay metadata now exposes warn-level quality checks under `meta.voted_2026_overlay.quality` (source coverage, sentinel blocks, residual adjustments, double-count risk signal).
     For comparability-only experiments, you can run `tools/apply_voted_2026_to_lego_baseline.py --mode share_rebalance` to keep global totals unchanged.
 
 #### **2.2. Semantic Layer (dbt)**

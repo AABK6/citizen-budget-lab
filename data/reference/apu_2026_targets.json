@@ -1,0 +1,460 @@
+{
+  "year": 2026,
+  "generated_at": "2026-02-26T19:56:24.248188+00:00",
+  "sources": {
+    "state_b_csv": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+    "state_a_csv": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_a_aggregates_verified.csv",
+    "state_a_lines_csv": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_a_line_items_verified.csv",
+    "lfss_branch_csv": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfss_2026_branch_equilibre_verified.csv",
+    "lfss_asso_csv": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfss_2026_asso_pct_verified.csv",
+    "apul_csv": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/apul_2026_verified.csv"
+  },
+  "targets": {
+    "expenditure": [
+      {
+        "mass_id": "M_DIPLO",
+        "subsector": "S1311",
+        "amount_eur": 3454425325.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission AA mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_ADMIN",
+        "subsector": "S1311",
+        "amount_eur": 5081543463.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission AB mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_AGRI",
+        "subsector": "S1311",
+        "amount_eur": 4125856189.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission AC mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_DIPLO",
+        "subsector": "S1311",
+        "amount_eur": 3569384015.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission AD mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_ECONOMIC",
+        "subsector": "S1311",
+        "amount_eur": 4397829332.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission AV mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_ADMIN",
+        "subsector": "S1311",
+        "amount_eur": 866116724.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission CA mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_CULTURE",
+        "subsector": "S1311",
+        "amount_eur": 3744547181.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission CB mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_DEFENSE",
+        "subsector": "S1311",
+        "amount_eur": 66475476236.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission DA mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_ECONOMIC",
+        "subsector": "S1311",
+        "amount_eur": 3512606546.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission DB mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_ADMIN",
+        "subsector": "S1311",
+        "amount_eur": 1052475340.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission DC mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_DEBT",
+        "subsector": "S1311",
+        "amount_eur": 60341209199.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission EB mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_EDU",
+        "subsector": "S1311",
+        "amount_eur": 89621003132.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission EC mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_ADMIN",
+        "subsector": "S1311",
+        "amount_eur": 11017882630.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission GA mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_SOLIDARITY",
+        "subsector": "S1311",
+        "amount_eur": 1278350672.3999999,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission IA mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_SECURITY",
+        "subsector": "S1311",
+        "amount_eur": 852233781.6,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission IA mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_JUSTICE",
+        "subsector": "S1311",
+        "amount_eur": 12966577407.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission JA mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_CULTURE",
+        "subsector": "S1311",
+        "amount_eur": 702973552.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission MA mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_DEFENSE",
+        "subsector": "S1311",
+        "amount_eur": 1729987774.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission MB mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_TERRITORIES",
+        "subsector": "S1311",
+        "amount_eur": 3277446171.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission OA mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_ADMIN",
+        "subsector": "S1311",
+        "amount_eur": 1140179221.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission PB mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_HIGHER_EDU",
+        "subsector": "S1311",
+        "amount_eur": 31633945500.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission RA mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_PENSIONS",
+        "subsector": "S1311",
+        "amount_eur": 6067878084.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission RB mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_TERRITORIES",
+        "subsector": "S1311",
+        "amount_eur": 3959044081.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission RC mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_HEALTH",
+        "subsector": "S1311",
+        "amount_eur": 1888133258.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission SA mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_SECURITY",
+        "subsector": "S1311",
+        "amount_eur": 25844617241.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission SB mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_SOLIDARITY",
+        "subsector": "S1311",
+        "amount_eur": 31281524154.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission SE mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_CULTURE",
+        "subsector": "S1311",
+        "amount_eur": 629447950.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission SF mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_EDU",
+        "subsector": "S1311",
+        "amount_eur": 629447950.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission SF mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_TRANSPORT",
+        "subsector": "S1311",
+        "amount_eur": 12519552651.1,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission TA mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_ENVIRONMENT",
+        "subsector": "S1311",
+        "amount_eur": 10243270350.9,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission TA mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_EMPLOYMENT",
+        "subsector": "S1311",
+        "amount_eur": 20820551935.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission TB mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_ADMIN",
+        "subsector": "S1311",
+        "amount_eur": 518293247.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission TR mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_TERRITORIES",
+        "subsector": "S1311",
+        "amount_eur": 13542539168.4,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission VA mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_HOUSING",
+        "subsector": "S1311",
+        "amount_eur": 9028359445.6,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+        "method_note": "LFI ETAT B mission VA mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_HEALTH",
+        "subsector": "S1314",
+        "amount_eur": 271300000000.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfss_2026_branch_equilibre_verified.csv",
+        "method_note": "LFSS branch maladie mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_EMPLOYMENT",
+        "subsector": "S1314",
+        "amount_eur": 12600000000.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfss_2026_branch_equilibre_verified.csv",
+        "method_note": "LFSS branch at_mp mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_HEALTH",
+        "subsector": "S1314",
+        "amount_eur": 5400000000.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfss_2026_branch_equilibre_verified.csv",
+        "method_note": "LFSS branch at_mp mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_PENSIONS",
+        "subsector": "S1314",
+        "amount_eur": 310400000000.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfss_2026_branch_equilibre_verified.csv",
+        "method_note": "LFSS branch vieillesse mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_SOLIDARITY",
+        "subsector": "S1314",
+        "amount_eur": 59700000000.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfss_2026_branch_equilibre_verified.csv",
+        "method_note": "LFSS branch famille mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_SOLIDARITY",
+        "subsector": "S1314",
+        "amount_eur": 30519999999.999996,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfss_2026_branch_equilibre_verified.csv",
+        "method_note": "LFSS branch autonomie mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_HEALTH",
+        "subsector": "S1314",
+        "amount_eur": 13080000000.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfss_2026_branch_equilibre_verified.csv",
+        "method_note": "LFSS branch autonomie mapped to simulation mass"
+      },
+      {
+        "mass_id": "M_TRANSPORT",
+        "subsector": "S1313",
+        "amount_eur": 18500000000.0,
+        "source_quality": "estimated",
+        "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+        "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged."
+      },
+      {
+        "mass_id": "M_EDU",
+        "subsector": "S1313",
+        "amount_eur": 27500000000.0,
+        "source_quality": "estimated",
+        "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+        "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged."
+      },
+      {
+        "mass_id": "M_SOLIDARITY",
+        "subsector": "S1313",
+        "amount_eur": 31000000000.0,
+        "source_quality": "estimated",
+        "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+        "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged."
+      },
+      {
+        "mass_id": "M_HOUSING",
+        "subsector": "S1313",
+        "amount_eur": 14000000000.0,
+        "source_quality": "estimated",
+        "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+        "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged."
+      },
+      {
+        "mass_id": "M_CIVIL_PROT",
+        "subsector": "S1313",
+        "amount_eur": 12000000000.0,
+        "source_quality": "estimated",
+        "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+        "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged."
+      },
+      {
+        "mass_id": "M_ENVIRONMENT",
+        "subsector": "S1313",
+        "amount_eur": 10500000000.0,
+        "source_quality": "estimated",
+        "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+        "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged."
+      },
+      {
+        "mass_id": "M_CULTURE",
+        "subsector": "S1313",
+        "amount_eur": 7000000000.0,
+        "source_quality": "estimated",
+        "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+        "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged."
+      }
+    ],
+    "revenue": [
+      {
+        "group_id": "state_fiscal",
+        "subsector": "S1311",
+        "amount_eur": 290339000000.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_a_aggregates_verified.csv",
+        "method_note": "LFI ETAT A fiscal receipts net of PSR"
+      },
+      {
+        "group_id": "state_non_fiscal",
+        "subsector": "S1311",
+        "amount_eur": 28900000000.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_a_aggregates_verified.csv",
+        "method_note": "LFI ETAT A non-fiscal receipts"
+      },
+      {
+        "group_id": "social_security",
+        "subsector": "S1314",
+        "amount_eur": 664800000000.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfss_2026_branch_equilibre_verified.csv",
+        "method_note": "LFSS all branches receipts (hors transferts entre branches)"
+      }
+    ]
+  },
+  "summary": {
+    "expenditure_by_mass_eur": {
+      "M_DIPLO": 7023809340.0,
+      "M_ADMIN": 19676490625.0,
+      "M_AGRI": 4125856189.0,
+      "M_ECONOMIC": 7910435878.0,
+      "M_CULTURE": 12076968683.0,
+      "M_DEFENSE": 68205464010.0,
+      "M_DEBT": 60341209199.0,
+      "M_EDU": 117750451082.0,
+      "M_SOLIDARITY": 153779874826.4,
+      "M_SECURITY": 26696851022.6,
+      "M_JUSTICE": 12966577407.0,
+      "M_TERRITORIES": 20779029420.4,
+      "M_HIGHER_EDU": 31633945500.0,
+      "M_PENSIONS": 316467878084.0,
+      "M_HEALTH": 291668133258.0,
+      "M_TRANSPORT": 31019552651.1,
+      "M_ENVIRONMENT": 20743270350.9,
+      "M_EMPLOYMENT": 33420551935.0,
+      "M_HOUSING": 23028359445.6,
+      "M_CIVIL_PROT": 12000000000.0
+    },
+    "revenue_by_group_eur": {
+      "state_fiscal": 290339000000.0,
+      "state_non_fiscal": 28900000000.0,
+      "social_security": 664800000000.0
+    }
+  },
+  "notes": [
+    "APU targets are explicit rows with source_quality tags (voted/observed/estimated).",
+    "Local APUL rows are DGCL-first bridge estimates until full observed accounts are available.",
+    "Values are meant for transparent calibration; warn-level quality checks are performed in overlay stage."
+  ]
+}

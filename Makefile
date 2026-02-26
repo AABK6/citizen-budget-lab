@@ -4,7 +4,7 @@ SHELL := /bin/bash
 YEAR ?= 2026
 COUNTRIES ?= FR,DE,IT
 
-.PHONY: help warm-all warm-eurostat warm-eurostat-sub warm-plf warm-macro warm-decp summary sync-votes verify-lfi-2026 verify-lfi-2026-state-a verify-lfss-2026 build-voted-2026-aggregates warm-voted-2026-baseline
+.PHONY: help warm-all warm-eurostat warm-eurostat-sub warm-plf warm-macro warm-decp summary sync-votes verify-lfi-2026 verify-lfi-2026-state-a verify-lfss-2026 verify-apul-2026 build-voted-2026-aggregates warm-voted-2026-baseline
 
 help:
 	@echo "Targets:"
@@ -17,7 +17,8 @@ help:
 	@echo "  make verify-lfi-2026  # Verify 2026 enacted mission CP (JO vs AN ÉTAT B) and update seed"
 	@echo "  make verify-lfi-2026-state-a  # Verify 2026 enacted ETAT A aggregate receipts/balance"
 	@echo "  make verify-lfss-2026  # Verify 2026 enacted LFSS branch balances + ASSO article liminaire"
-	@echo "  make build-voted-2026-aggregates  # Consolidate verified LFI/LFSS values into one JSON bundle"
+	@echo "  make verify-apul-2026  # Build DGCL-first APUL bridge verification artifact"
+	@echo "  make build-voted-2026-aggregates  # Consolidate verified LFI/LFSS/APUL values and build explicit APU targets JSON"
 	@echo "  make warm-voted-2026-baseline  # Rebuild 2026 baseline + apply voted overlay (true_level) + regenerate build snapshot"
 	@echo "  make sync-votes VOTES_STORE=sqlite VOTES_SQLITE_PATH=data/cache/votes.sqlite3  # Sync votes into DuckDB"
 	@echo "Env (optional): EUROSTAT_SDMX_BASE, EUROSTAT_COOKIE, EUROSTAT_BASE, INSEE_CLIENT_ID, INSEE_CLIENT_SECRET"
@@ -94,6 +95,10 @@ verify-lfss-2026:
 	@if [ -f .venv/bin/activate ]; then source .venv/bin/activate; fi; \
 	PYTHONPATH=. python tools/verify_lfss_2026.py
 
+verify-apul-2026:
+	@if [ -f .venv/bin/activate ]; then source .venv/bin/activate; fi; \
+	PYTHONPATH=. python tools/verify_apul_2026.py
+
 build-voted-2026-aggregates:
 	@if [ -f .venv/bin/activate ]; then source .venv/bin/activate; fi; \
 	PYTHONPATH=. python tools/build_voted_2026_aggregates.py
@@ -105,6 +110,7 @@ warm-voted-2026-baseline:
 	PYTHONPATH=. python tools/verify_lfi_2026_state_b.py --update-seed; \
 	PYTHONPATH=. python tools/verify_lfi_2026_state_a.py; \
 	PYTHONPATH=. python tools/verify_lfss_2026.py; \
+	PYTHONPATH=. python tools/verify_apul_2026.py; \
 	PYTHONPATH=. python tools/build_voted_2026_aggregates.py; \
 	PYTHONPATH=. python tools/apply_voted_2026_to_lego_baseline.py --year 2026 --mode true_level; \
 	PYTHONPATH=. python tools/build_snapshot.py --year 2026

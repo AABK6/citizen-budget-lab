@@ -103,12 +103,19 @@ This document provides a central inventory of all data sources, configuration fi
       * `data/reference/lfss_2026_branch_equilibre_verified.csv` (branch recettes/dépenses/solde),
       * `data/reference/lfss_2026_asso_pct_verified.csv` (ASSO article liminaire, % PIB).
     * Human audit report: `docs/verification_lfss2026.md`.
+*   **APUL 2026 bridge (DGCL-first, source-tagged):**
+    * Canonical verification script: `tools/verify_apul_2026.py`.
+    * Canonical reference table: `data/reference/apul_2026_verified.csv` (APUL-sensitive treemap blocks with source tags and quality level).
+    * Human audit report: `docs/verification_apul2026.md`.
 *   **Consolidated voted bundle (`voted_2026_aggregates.json`):**
-    * Built by `tools/build_voted_2026_aggregates.py` from verified LFI/LFSS tables.
-    * Contains the official targets used to calibrate baseline revenues/expenditures while preserving current APU typology/repartition behavior.
+    * Built by `tools/build_voted_2026_aggregates.py` from verified LFI/LFSS/APUL tables.
+    * Contains state/social/local calibration inputs used by the overlay.
+*   **Explicit APU targets (`apu_2026_targets.json`):**
+    * Built by `tools/build_voted_2026_aggregates.py`.
+    * Row-level targets for expenditures and revenues with `source_quality` (`voted`, `observed`, `estimated`) and `subsector` tags (`S1311`, `S1313`, `S1314`).
 *   **LEGO Baseline (`lego_baseline_2026.json`):**
     * See §1.2 — warmed for 2026 with Eurostat SDMX sources, then overlaid with voted 2026 LFI/LFSS targets via `tools/apply_voted_2026_to_lego_baseline.py`.
-    * Overlay metadata is recorded under `meta.voted_2026_overlay` (source bundle path, mappings, excluded mission codes, execution timestamp).
+    * Overlay metadata is recorded under `meta.voted_2026_overlay` (source bundle path, mappings, excluded mission codes, execution timestamp, and quality checks under `meta.voted_2026_overlay.quality`).
 *   **Eurostat COFOG Shares (`eu_cofog_shares_{YEAR}.json`, `eu_cofog_subshares_{YEAR}.json`):**
     * 2026 FR/DE/IT shares and subshares refreshed 2025-09-22 via `eurostat-cofog` and `eurostat-cofog-sub` warmers.
 *   **Procurement Contracts (`procurement_contracts_{YEAR}.csv`):**

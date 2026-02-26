@@ -1,13 +1,13 @@
 {
   "legoBaseline": {
     "pib": 3027000000000.0,
-    "depensesTotal": 1154813763092.4224,
-    "recettesTotal": 1003463763092.4225,
+    "depensesTotal": 1248286349461.4001,
+    "recettesTotal": 1096936349461.4003,
     "pieces": [
       {
         "id": "ed_schools_staff_ops",
-        "amountEur": 46187912282.59868,
-        "share": 0.03999598355921409,
+        "amountEur": 60261721028.633766,
+        "share": 0.04827555877274071,
         "missions": [
           {
             "code": "M_EDU",
@@ -17,8 +17,8 @@
       },
       {
         "id": "ed_secondary",
-        "amountEur": 44062538799.40133,
-        "share": 0.03815553659614196,
+        "amountEur": 57488730053.36624,
+        "share": 0.04605412057751892,
         "missions": [
           {
             "code": "M_EDU",
@@ -29,7 +29,7 @@
       {
         "id": "ed_universities",
         "amountEur": 15889018197.162367,
-        "share": 0.01375894426008043,
+        "share": 0.012728664544011095,
         "missions": [
           {
             "code": "M_HIGHER_EDU",
@@ -40,7 +40,7 @@
       {
         "id": "ed_research_public",
         "amountEur": 15744927302.837631,
-        "share": 0.013634170119929137,
+        "share": 0.012613233581886974,
         "missions": [
           {
             "code": "M_HIGHER_EDU",
@@ -51,7 +51,7 @@
       {
         "id": "health_hospitals",
         "amountEur": 64017598454.52779,
-        "share": 0.05543543080323014,
+        "share": 0.05128438557559293,
         "missions": [
           {
             "code": "M_HEALTH",
@@ -62,7 +62,7 @@
       {
         "id": "health_citycare",
         "amountEur": 158683706842.74005,
-        "share": 0.13741064742578776,
+        "share": 0.1271212385773565,
         "missions": [
           {
             "code": "M_HEALTH",
@@ -73,7 +73,7 @@
       {
         "id": "health_public_health",
         "amountEur": 68966827960.7322,
-        "share": 0.05972116904465107,
+        "share": 0.05524920463200563,
         "missions": [
           {
             "code": "M_HEALTH",
@@ -84,7 +84,7 @@
       {
         "id": "soc_pensions",
         "amountEur": 316467878084.0,
-        "share": 0.27404235054884113,
+        "share": 0.2535218607657985,
         "missions": [
           {
             "code": "M_PENSIONS",
@@ -94,8 +94,8 @@
       },
       {
         "id": "soc_family",
-        "amountEur": 68211041570.22222,
-        "share": 0.059066703004615244,
+        "amountEur": 85433263792.44444,
+        "share": 0.06844043742792386,
         "missions": [
           {
             "code": "M_SOLIDARITY",
@@ -106,7 +106,7 @@
       {
         "id": "soc_unemployment",
         "amountEur": 22866900200.033634,
-        "share": 0.019801374845758175,
+        "share": 0.018318633549025066,
         "missions": [
           {
             "code": "M_EMPLOYMENT",
@@ -116,8 +116,8 @@
       },
       {
         "id": "soc_disability_dependence",
-        "amountEur": 54568833256.17778,
-        "share": 0.0472533624036922,
+        "amountEur": 68346611033.95555,
+        "share": 0.05475234994233908,
         "missions": [
           {
             "code": "M_SOLIDARITY",
@@ -139,7 +139,7 @@
       {
         "id": "sec_police_gendarmerie",
         "amountEur": 26696851022.6,
-        "share": 0.023117884351421078,
+        "share": 0.021386800419726553,
         "missions": [
           {
             "code": "M_SECURITY",
@@ -150,7 +150,7 @@
       {
         "id": "sec_justice_prisons",
         "amountEur": 12966577407.0,
-        "share": 0.011228284439802139,
+        "share": 0.010387502364817742,
         "missions": [
           {
             "code": "M_JUSTICE",
@@ -160,8 +160,8 @@
       },
       {
         "id": "sec_civil_protection",
-        "amountEur": 13027413631.022327,
-        "share": 0.011280964989659302,
+        "amountEur": 12000000000.0,
+        "share": 0.009613178903364326,
         "missions": [
           {
             "code": "M_CIVIL_PROT",
@@ -172,7 +172,7 @@
       {
         "id": "defense_personnel",
         "amountEur": 28362242798.526512,
-        "share": 0.024560014527863414,
+        "share": 0.02272094284357432,
         "missions": [
           {
             "code": "M_DEFENSE",
@@ -183,7 +183,7 @@
       {
         "id": "defense_equipment",
         "amountEur": 39843221211.47349,
-        "share": 0.03450185864150005,
+        "share": 0.03191833446601791,
         "missions": [
           {
             "code": "M_DEFENSE",
@@ -193,8 +193,8 @@
       },
       {
         "id": "transport_ops",
-        "amountEur": 3838675514.389032,
-        "share": 0.0033240645696061156,
+        "amountEur": 9511042490.692892,
+        "share": 0.00761927941837755,
         "missions": [
           {
             "code": "M_TRANSPORT",
@@ -204,8 +204,8 @@
       },
       {
         "id": "transport_invest",
-        "amountEur": 8680877136.710968,
-        "share": 0.007517123032431522,
+        "amountEur": 21508510160.407104,
+        "share": 0.0172304296764019,
         "missions": [
           {
             "code": "M_TRANSPORT",
@@ -215,8 +215,8 @@
       },
       {
         "id": "env_renov_energy",
-        "amountEur": 2508466788.9347596,
-        "share": 0.002172182969327844,
+        "amountEur": 5079803908.9689665,
+        "share": 0.004069421980910675,
         "missions": [
           {
             "code": "M_ENVIRONMENT",
@@ -226,8 +226,8 @@
       },
       {
         "id": "env_waste_sanitation",
-        "amountEur": 3946520764.561933,
-        "share": 0.003417452138770608,
+        "amountEur": 7991954167.0162,
+        "share": 0.006402340432917895,
         "missions": [
           {
             "code": "M_ENVIRONMENT",
@@ -237,8 +237,8 @@
       },
       {
         "id": "env_water_biodiversity",
-        "amountEur": 3788282797.403307,
-        "share": 0.003280427475386888,
+        "amountEur": 7671512274.914834,
+        "share": 0.006145634996509312,
         "missions": [
           {
             "code": "M_ENVIRONMENT",
@@ -249,7 +249,7 @@
       {
         "id": "econ_business_support",
         "amountEur": 7910435878.0,
-        "share": 0.00684996674859244,
+        "share": 0.006337036274900488,
         "missions": [
           {
             "code": "M_ECONOMIC",
@@ -260,7 +260,7 @@
       {
         "id": "agri_food",
         "amountEur": 4125856189.0,
-        "share": 0.0035727459447240746,
+        "share": 0.0033052161395341613,
         "missions": [
           {
             "code": "M_AGRI",
@@ -271,7 +271,7 @@
       {
         "id": "labor_market_services",
         "amountEur": 10553651734.966366,
-        "share": 0.009138834392400407,
+        "share": 0.008454511851002749,
         "missions": [
           {
             "code": "M_EMPLOYMENT",
@@ -281,8 +281,8 @@
       },
       {
         "id": "culture_heritage",
-        "amountEur": 2475278057.938049,
-        "share": 0.002143443503227409,
+        "amountEur": 5888130783.144891,
+        "share": 0.004716971218731544,
         "missions": [
           {
             "code": "M_CULTURE",
@@ -292,8 +292,8 @@
       },
       {
         "id": "sport_youth",
-        "amountEur": 1298883149.2534742,
-        "share": 0.0011247555153614166,
+        "amountEur": 3089751404.009325,
+        "share": 0.0024751944178052292,
         "missions": [
           {
             "code": "M_CULTURE",
@@ -303,8 +303,8 @@
       },
       {
         "id": "media_public",
-        "amountEur": 1302807475.808477,
-        "share": 0.001128153748635407,
+        "amountEur": 3099086495.8457837,
+        "share": 0.00248267274346383,
         "missions": [
           {
             "code": "M_CULTURE",
@@ -315,7 +315,7 @@
       {
         "id": "admin_services",
         "amountEur": 19676490625.0,
-        "share": 0.01703867000364564,
+        "share": 0.015762802047374663,
         "missions": [
           {
             "code": "M_ADMIN",
@@ -326,7 +326,7 @@
       {
         "id": "europe_diplomacy",
         "amountEur": 7023809340.0,
-        "share": 0.006082200926659608,
+        "share": 0.005626761314045109,
         "missions": [
           {
             "code": "M_DIPLO",
@@ -337,7 +337,7 @@
       {
         "id": "grants_to_locals",
         "amountEur": 20779029420.4,
-        "share": 0.017993402992320422,
+        "share": 0.016646043938047996,
         "missions": [
           {
             "code": "M_TERRITORIES",
@@ -348,7 +348,7 @@
       {
         "id": "debt_interest",
         "amountEur": 60341209199.0,
-        "share": 0.05225189647672285,
+        "share": 0.04833923660627668,
         "missions": [
           {
             "code": "M_DEBT",
@@ -466,7 +466,7 @@
       },
       {
         "id": "rev_transfers_in",
-        "amountEur": 36095484871.42236,
+        "amountEur": 129568071240.40015,
         "share": null,
         "missions": []
       },
@@ -1134,97 +1134,97 @@
     {
       "massId": "M_PENSIONS",
       "amountEur": 316467878084.0,
-      "share": 0.27404235054884113
+      "share": 0.2535218607657986
     },
     {
       "massId": "M_HEALTH",
       "amountEur": 291668133258.0,
-      "share": 0.25256724727366897
+      "share": 0.23365482878495508
     },
     {
       "massId": "M_SOLIDARITY",
-      "amountEur": 122779874826.4,
-      "share": 0.10632006540830743
+      "amountEur": 153779874826.4,
+      "share": 0.12319278737026296
     },
     {
       "massId": "M_EDU",
-      "amountEur": 90250451082.0,
-      "share": 0.07815152015535604
+      "amountEur": 117750451082.0,
+      "share": 0.09432967935025964
     },
     {
       "massId": "M_DEFENSE",
       "amountEur": 68205464010.0,
-      "share": 0.05906187316936347
+      "share": 0.05463927730959224
     },
     {
       "massId": "M_DEBT",
       "amountEur": 60341209199.0,
-      "share": 0.05225189647672285
+      "share": 0.04833923660627669
     },
     {
       "massId": "M_EMPLOYMENT",
       "amountEur": 33420551935.0,
-      "share": 0.028940209238158585
+      "share": 0.02677314540002782
     },
     {
       "massId": "M_HIGHER_EDU",
       "amountEur": 31633945500.0,
-      "share": 0.02739311438000957
+      "share": 0.025341898125898075
+    },
+    {
+      "massId": "M_TRANSPORT",
+      "amountEur": 31019552651.1,
+      "share": 0.02484970909477946
     },
     {
       "massId": "M_SECURITY",
       "amountEur": 26696851022.6,
-      "share": 0.023117884351421078
+      "share": 0.021386800419726557
     },
     {
       "massId": "M_TERRITORIES",
       "amountEur": 20779029420.4,
-      "share": 0.017993402992320422
+      "share": 0.016646043938048
+    },
+    {
+      "massId": "M_ENVIRONMENT",
+      "amountEur": 20743270350.9,
+      "share": 0.016617397410337888
     },
     {
       "massId": "M_ADMIN",
       "amountEur": 19676490625.0,
-      "share": 0.01703867000364564
-    },
-    {
-      "massId": "M_CIVIL_PROT",
-      "amountEur": 13027413631.022327,
-      "share": 0.011280964989659302
+      "share": 0.015762802047374663
     },
     {
       "massId": "M_JUSTICE",
       "amountEur": 12966577407.0,
-      "share": 0.011228284439802139
+      "share": 0.010387502364817744
     },
     {
-      "massId": "M_TRANSPORT",
-      "amountEur": 12519552651.1,
-      "share": 0.010841187602037639
+      "massId": "M_CULTURE",
+      "amountEur": 12076968683.0,
+      "share": 0.009674838380000605
     },
     {
-      "massId": "M_ENVIRONMENT",
-      "amountEur": 10243270350.9,
-      "share": 0.00887006258348534
+      "massId": "M_CIVIL_PROT",
+      "amountEur": 12000000000.0,
+      "share": 0.009613178903364328
     },
     {
       "massId": "M_ECONOMIC",
       "amountEur": 7910435878.0,
-      "share": 0.00684996674859244
+      "share": 0.006337036274900489
     },
     {
       "massId": "M_DIPLO",
       "amountEur": 7023809340.0,
-      "share": 0.006082200926659608
-    },
-    {
-      "massId": "M_CULTURE",
-      "amountEur": 5076968683.0,
-      "share": 0.004396352767224232
+      "share": 0.00562676131404511
     },
     {
       "massId": "M_AGRI",
       "amountEur": 4125856189.0,
-      "share": 0.0035727459447240746
+      "share": 0.003305216139534162
     }
   ],
   "massLabels": [
