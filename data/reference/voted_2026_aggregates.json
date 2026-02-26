@@ -1,0 +1,1743 @@
+{
+  "year": 2026,
+  "generated_at": "2026-02-26T21:48:52.926903+00:00",
+  "sources": {
+    "state_b_csv": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+    "state_a_csv": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_a_aggregates_verified.csv",
+    "state_a_lines_csv": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_a_line_items_verified.csv",
+    "lfss_branch_csv": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfss_2026_branch_equilibre_verified.csv",
+    "lfss_asso_csv": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfss_2026_asso_pct_verified.csv",
+    "apul_csv": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/apul_2026_verified.csv",
+    "cofog_bridge_csv": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/cofog_bridge_apu_2026.csv"
+  },
+  "state": {
+    "etat_b_cp_by_mission_eur": {
+      "AA": 3454425325,
+      "AB": 5081543463,
+      "AC": 4125856189,
+      "AD": 3569384015,
+      "AV": 4397829332,
+      "CA": 866116724,
+      "CB": 3744547181,
+      "DA": 66475476236,
+      "DB": 3512606546,
+      "DC": 1052475340,
+      "EB": 60341209199,
+      "EC": 89621003132,
+      "GA": 11017882630,
+      "IA": 2130584454,
+      "JA": 12966577407,
+      "MA": 702973552,
+      "MB": 1729987774,
+      "OA": 3277446171,
+      "PB": 1140179221,
+      "PC": 475000000,
+      "RA": 31633945500,
+      "RB": 6067878084,
+      "RC": 3959044081,
+      "RD": 145600362742,
+      "SA": 1888133258,
+      "SB": 25844617241,
+      "SE": 31281524154,
+      "SF": 1258895900,
+      "TA": 22762823002,
+      "TB": 20820551935,
+      "TR": 518293247,
+      "VA": 22570898614
+    },
+    "etat_a_aggregates_eur": {
+      "budget_general_recettes_fiscales_nettes": 363603000000,
+      "budget_general_recettes_non_fiscales": 28900000000,
+      "budget_general_recettes_totales": 392503000000,
+      "budget_general_psr_collectivites_ue": 73264000000,
+      "budget_general_montants_nets_ressources": 319239000000,
+      "budget_general_montants_nets_charges": 452716000000,
+      "budget_general_montants_nets_solde": -133477000000,
+      "solde_general": -134627000000
+    },
+    "etat_a_line_items_eur": {
+      "1101": {
+        "section": "fiscal",
+        "label": "Impôt net sur le revenu",
+        "amount_eur": 99836208951
+      },
+      "1201": {
+        "section": "fiscal",
+        "label": "Autres impôts directs perçus par voie d’émission de rôles",
+        "amount_eur": 2414300000
+      },
+      "1301": {
+        "section": "fiscal",
+        "label": "Impôt net sur les sociétés",
+        "amount_eur": 61628838886
+      },
+      "1302": {
+        "section": "fiscal",
+        "label": "Contribution sociale sur les bénéfices des sociétés",
+        "amount_eur": 1411000000
+      },
+      "1303": {
+        "section": "fiscal",
+        "label": "Contribution de la Caisse des dépôts et consignations représentative de l’impôt sur les sociétés",
+        "amount_eur": 374000000
+      },
+      "1304": {
+        "section": "fiscal",
+        "label": "Impôt minimum mondial à 15 % - pilier 2",
+        "amount_eur": 500000000
+      },
+      "1401": {
+        "section": "fiscal",
+        "label": "Retenues à la source sur certains bénéfices non commerciaux et de l’impôt sur le revenu",
+        "amount_eur": 1127940000
+      },
+      "1402": {
+        "section": "fiscal",
+        "label": "Retenues à la source et prélèvements sur les revenus de capitaux mobiliers et le prélèvement sur les bons anonymes",
+        "amount_eur": 4800000000
+      },
+      "1403": {
+        "section": "fiscal",
+        "label": "Prélèvements sur les bénéfices tirés de la construction immobilière (loi n° 63-254 du 15 mars 1963, art. 28-IV)",
+        "amount_eur": 0
+      },
+      "1404": {
+        "section": "fiscal",
+        "label": "Précompte dû par les sociétés au titre de certains bénéfices distribués (loi n° 65-566 du 12 juillet 1965, art. 3)",
+        "amount_eur": 23276
+      },
+      "1405": {
+        "section": "fiscal",
+        "label": "Prélèvement exceptionnel de 25 % sur les distributions de bénéfices",
+        "amount_eur": 168407
+      },
+      "1406": {
+        "section": "fiscal",
+        "label": "Impôt sur la fortune immobilière",
+        "amount_eur": 3094517338
+      },
+      "1407": {
+        "section": "fiscal",
+        "label": "Taxe sur les locaux à usage de bureaux, les locaux commerciaux et de stockage",
+        "amount_eur": 28420067
+      },
+      "1408": {
+        "section": "fiscal",
+        "label": "Prélèvements sur les entreprises d’assurance",
+        "amount_eur": 166981751
+      },
+      "1409": {
+        "section": "fiscal",
+        "label": "Taxe sur les salaires",
+        "amount_eur": 0
+      },
+      "1410": {
+        "section": "fiscal",
+        "label": "Cotisation minimale de taxe professionnelle",
+        "amount_eur": 822828
+      },
+      "1411": {
+        "section": "fiscal",
+        "label": "Cotisations perçues au titre de la participation des employeurs à l’effort de construction",
+        "amount_eur": 27451462
+      },
+      "1412": {
+        "section": "fiscal",
+        "label": "Taxe de participation des employeurs au financement de la formation professionnelle continue",
+        "amount_eur": 34654281
+      },
+      "1413": {
+        "section": "fiscal",
+        "label": "Taxe forfaitaire sur les métaux précieux, les bijoux, les objets d’art, de collection et d’antiquité",
+        "amount_eur": 148510276
+      },
+      "1415": {
+        "section": "fiscal",
+        "label": "Contribution des institutions financières",
+        "amount_eur": 0
+      },
+      "1416": {
+        "section": "fiscal",
+        "label": "Taxe sur les surfaces commerciales",
+        "amount_eur": 240601099
+      },
+      "1421": {
+        "section": "fiscal",
+        "label": "Cotisation nationale de péréquation de taxe professionnelle",
+        "amount_eur": 1029273
+      },
+      "1427": {
+        "section": "fiscal",
+        "label": "Prélèvements de solidarité",
+        "amount_eur": 15634906822
+      },
+      "1429": {
+        "section": "fiscal",
+        "label": "Taxe sur les gestionnaires d’infrastructures de transport (écrêtement)",
+        "amount_eur": 0
+      },
+      "1430": {
+        "section": "fiscal",
+        "label": "Taxe sur les services numériques",
+        "amount_eur": 881600000
+      },
+      "1431": {
+        "section": "fiscal",
+        "label": "Taxe d’habitation sur les résidences principales",
+        "amount_eur": 0
+      },
+      "1439": {
+        "section": "fiscal",
+        "label": "Taxe sur le patrimoine financier",
+        "amount_eur": 0
+      },
+      "1440": {
+        "section": "fiscal",
+        "label": "Contribution différentielle applicable à certains contribuables titulaires de très hauts revenus",
+        "amount_eur": 650000000
+      },
+      "1441": {
+        "section": "fiscal",
+        "label": "Contribution exceptionnelle sur les bénéfices des grandes entreprises",
+        "amount_eur": 7300000000
+      },
+      "1442": {
+        "section": "fiscal",
+        "label": "Taxe sur les petits colis",
+        "amount_eur": 400000000
+      },
+      "1497": {
+        "section": "fiscal",
+        "label": "Cotisation sur la valeur ajoutée des entreprises",
+        "amount_eur": 4041291801
+      },
+      "1498": {
+        "section": "fiscal",
+        "label": "Cotisation foncière des entreprises",
+        "amount_eur": 1000000
+      },
+      "1499": {
+        "section": "fiscal",
+        "label": "Recettes diverses",
+        "amount_eur": 1311300179
+      },
+      "1501": {
+        "section": "fiscal",
+        "label": "Accises sur les énergies (ex-TICPE)",
+        "amount_eur": 17469533401
+      },
+      "1502": {
+        "section": "fiscal",
+        "label": "Accises sur les énergies (ex-TICGN)",
+        "amount_eur": 2226300000
+      },
+      "1503": {
+        "section": "fiscal",
+        "label": "Accises sur les énergies (ex-TICFE)",
+        "amount_eur": 5585300000
+      },
+      "1504": {
+        "section": "fiscal",
+        "label": "Autres taxes intérieures",
+        "amount_eur": 9000000
+      },
+      "1601": {
+        "section": "fiscal",
+        "label": "Taxe sur la valeur ajoutée nette",
+        "amount_eur": 99805199715
+      },
+      "1701": {
+        "section": "fiscal",
+        "label": "Mutations à titre onéreux de créances, rentes, prix d’offices",
+        "amount_eur": 471303447
+      },
+      "1702": {
+        "section": "fiscal",
+        "label": "Mutations à titre onéreux de fonds de commerce",
+        "amount_eur": 241186681
+      },
+      "1703": {
+        "section": "fiscal",
+        "label": "Mutations à titre onéreux de meubles corporels",
+        "amount_eur": 239536
+      },
+      "1704": {
+        "section": "fiscal",
+        "label": "Mutations à titre onéreux d’immeubles et droits immobiliers",
+        "amount_eur": 75335666
+      },
+      "1705": {
+        "section": "fiscal",
+        "label": "Mutations à titre gratuit entre vifs (donations)",
+        "amount_eur": 4422986306
+      },
+      "1706": {
+        "section": "fiscal",
+        "label": "Mutations à titre gratuit par décès",
+        "amount_eur": 16995331339
+      },
+      "1707": {
+        "section": "fiscal",
+        "label": "Contribution de sécurité immobilière",
+        "amount_eur": 814607244
+      },
+      "1711": {
+        "section": "fiscal",
+        "label": "Autres conventions et actes civils",
+        "amount_eur": 586128882
+      },
+      "1712": {
+        "section": "fiscal",
+        "label": "Actes judiciaires et extrajudiciaires",
+        "amount_eur": 0
+      },
+      "1713": {
+        "section": "fiscal",
+        "label": "Taxe de publicité foncière",
+        "amount_eur": 617316900
+      },
+      "1714": {
+        "section": "fiscal",
+        "label": "Prélèvement sur les sommes versées par les organismes d’assurance et assimilés à raison des contrats d’assurance en cas de décès",
+        "amount_eur": 478273006
+      },
+      "1715": {
+        "section": "fiscal",
+        "label": "Taxe additionnelle au droit de bail",
+        "amount_eur": 0
+      },
+      "1716": {
+        "section": "fiscal",
+        "label": "Recettes diverses et pénalités",
+        "amount_eur": 322226234
+      },
+      "1721": {
+        "section": "fiscal",
+        "label": "Timbre unique",
+        "amount_eur": 495000000
+      },
+      "1722": {
+        "section": "fiscal",
+        "label": "Taxe sur les véhicules de société",
+        "amount_eur": 0
+      },
+      "1723": {
+        "section": "fiscal",
+        "label": "Actes et écrits assujettis au timbre de dimension",
+        "amount_eur": 0
+      },
+      "1725": {
+        "section": "fiscal",
+        "label": "Permis de chasser",
+        "amount_eur": 0
+      },
+      "1726": {
+        "section": "fiscal",
+        "label": "Produit de la taxe additionnelle à la taxe sur les certifications d’immatriculation des véhicules",
+        "amount_eur": 1270000000
+      },
+      "1751": {
+        "section": "fiscal",
+        "label": "Droits d’importation",
+        "amount_eur": 0
+      },
+      "1752": {
+        "section": "fiscal",
+        "label": "Contribution sur la rente inframarginale de la production d’électricité",
+        "amount_eur": 0
+      },
+      "1754": {
+        "section": "fiscal",
+        "label": "Autres droits et recettes accessoires",
+        "amount_eur": 4530152
+      },
+      "1755": {
+        "section": "fiscal",
+        "label": "Amendes et confiscations",
+        "amount_eur": 42903860
+      },
+      "1756": {
+        "section": "fiscal",
+        "label": "Taxe générale sur les activités polluantes",
+        "amount_eur": 1273000000
+      },
+      "1757": {
+        "section": "fiscal",
+        "label": "Cotisation à la production sur les sucres",
+        "amount_eur": 0
+      },
+      "1758": {
+        "section": "fiscal",
+        "label": "Droit de licence sur la rémunération des débitants de tabac",
+        "amount_eur": 0
+      },
+      "1761": {
+        "section": "fiscal",
+        "label": "Taxe et droits de consommation sur les tabacs",
+        "amount_eur": 78000000
+      },
+      "1766": {
+        "section": "fiscal",
+        "label": "Garantie des matières d’or et d’argent",
+        "amount_eur": 0
+      },
+      "1768": {
+        "section": "fiscal",
+        "label": "Taxe spéciale sur certains véhicules routiers",
+        "amount_eur": 176500433
+      },
+      "1769": {
+        "section": "fiscal",
+        "label": "Autres droits et recettes à différents titres",
+        "amount_eur": 194326520
+      },
+      "1773": {
+        "section": "fiscal",
+        "label": "Taxe sur les achats de viande",
+        "amount_eur": 0
+      },
+      "1774": {
+        "section": "fiscal",
+        "label": "Taxe spéciale sur la publicité télévisée",
+        "amount_eur": 0
+      },
+      "1776": {
+        "section": "fiscal",
+        "label": "Redevances sanitaires d’abattage et de découpage",
+        "amount_eur": 49327696
+      },
+      "1777": {
+        "section": "fiscal",
+        "label": "Taxe sur certaines dépenses de publicité",
+        "amount_eur": 14931000
+      },
+      "1780": {
+        "section": "fiscal",
+        "label": "Taxe de l’aviation civile",
+        "amount_eur": 0
+      },
+      "1781": {
+        "section": "fiscal",
+        "label": "Taxe sur les installations nucléaires de base",
+        "amount_eur": 683000000
+      },
+      "1782": {
+        "section": "fiscal",
+        "label": "Taxes sur les stations et liaisons radioélectriques privées",
+        "amount_eur": 23560308
+      },
+      "1785": {
+        "section": "fiscal",
+        "label": "Produits des jeux exploités par la Française des jeux (hors paris sportifs)",
+        "amount_eur": 3233000000
+      },
+      "1786": {
+        "section": "fiscal",
+        "label": "Prélèvements sur le produit des jeux dans les casinos",
+        "amount_eur": 991544429
+      },
+      "1787": {
+        "section": "fiscal",
+        "label": "Prélèvement sur le produit brut des paris hippiques",
+        "amount_eur": 434990196
+      },
+      "1788": {
+        "section": "fiscal",
+        "label": "Prélèvement sur les paris sportifs",
+        "amount_eur": 1041745542
+      },
+      "1789": {
+        "section": "fiscal",
+        "label": "Prélèvement sur les jeux de cercle en ligne",
+        "amount_eur": 125826524
+      },
+      "1790": {
+        "section": "fiscal",
+        "label": "Redevance sur les paris hippiques en ligne",
+        "amount_eur": 0
+      },
+      "1796": {
+        "section": "fiscal",
+        "label": "Taxe sur les rachats d’actions",
+        "amount_eur": 200000000
+      },
+      "1797": {
+        "section": "fiscal",
+        "label": "Taxe sur les transactions financières",
+        "amount_eur": 2630000000
+      },
+      "1798": {
+        "section": "fiscal",
+        "label": "Impositions forfaitaires sur les entreprises de réseaux (affectation temporaire à l’État en 2010)",
+        "amount_eur": 0
+      },
+      "1799": {
+        "section": "fiscal",
+        "label": "Autres taxes",
+        "amount_eur": 4926699089
+      },
+      "2110": {
+        "section": "non_fiscal",
+        "label": "Produits des participations de l’État dans des entreprises financières",
+        "amount_eur": 1257454531
+      },
+      "2116": {
+        "section": "non_fiscal",
+        "label": "Produits des participations de l’État dans des entreprises non financières et bénéfices des établissements publics non financiers",
+        "amount_eur": 3911700000
+      },
+      "2199": {
+        "section": "non_fiscal",
+        "label": "Autres dividendes et recettes assimilées",
+        "amount_eur": 6058036
+      },
+      "2201": {
+        "section": "non_fiscal",
+        "label": "Revenus du domaine public non militaire",
+        "amount_eur": 600000000
+      },
+      "2202": {
+        "section": "non_fiscal",
+        "label": "Autres revenus du domaine public",
+        "amount_eur": 9000000
+      },
+      "2203": {
+        "section": "non_fiscal",
+        "label": "Revenus du domaine privé",
+        "amount_eur": 314152593
+      },
+      "2204": {
+        "section": "non_fiscal",
+        "label": "Redevances d’usage des fréquences radioélectriques",
+        "amount_eur": 434666667
+      },
+      "2209": {
+        "section": "non_fiscal",
+        "label": "Paiement par les administrations de leurs loyers budgétaires",
+        "amount_eur": 0
+      },
+      "2211": {
+        "section": "non_fiscal",
+        "label": "Produit de la cession d’éléments du patrimoine immobilier de l’État",
+        "amount_eur": 0
+      },
+      "2212": {
+        "section": "non_fiscal",
+        "label": "Autres produits de cessions d’actifs",
+        "amount_eur": 0
+      },
+      "2299": {
+        "section": "non_fiscal",
+        "label": "Autres revenus du Domaine",
+        "amount_eur": 2000000
+      },
+      "2301": {
+        "section": "non_fiscal",
+        "label": "Remboursement par l’Union européenne des frais d’assiette et de perception des impôts et taxes perçus au profit de son budget",
+        "amount_eur": 677333333
+      },
+      "2303": {
+        "section": "non_fiscal",
+        "label": "Autres frais d’assiette et de recouvrement",
+        "amount_eur": 995750997
+      },
+      "2304": {
+        "section": "non_fiscal",
+        "label": "Rémunération des prestations assurées par les services du Trésor public au titre de la collecte de l’épargne",
+        "amount_eur": 33719302
+      },
+      "2305": {
+        "section": "non_fiscal",
+        "label": "Produits de la vente de divers biens",
+        "amount_eur": 21630
+      },
+      "2306": {
+        "section": "non_fiscal",
+        "label": "Produits de la vente de divers services",
+        "amount_eur": 3649187
+      },
+      "2399": {
+        "section": "non_fiscal",
+        "label": "Autres recettes diverses",
+        "amount_eur": 814664347
+      },
+      "2401": {
+        "section": "non_fiscal",
+        "label": "Intérêts des prêts à des banques et à des États étrangers",
+        "amount_eur": 216427403
+      },
+      "2402": {
+        "section": "non_fiscal",
+        "label": "Intérêts des prêts du fonds de développement économique et social",
+        "amount_eur": 26383753
+      },
+      "2403": {
+        "section": "non_fiscal",
+        "label": "Prêts et avances à divers services de l’État ou organismes gérant des services publics",
+        "amount_eur": 46259644
+      },
+      "2409": {
+        "section": "non_fiscal",
+        "label": "Intérêts des autres prêts et avances",
+        "amount_eur": 163242000
+      },
+      "2411": {
+        "section": "non_fiscal",
+        "label": "Avances remboursables sous conditions consenties à l’aviation civile",
+        "amount_eur": 184000000
+      },
+      "2412": {
+        "section": "non_fiscal",
+        "label": "Autres avances remboursables sous conditions",
+        "amount_eur": 0
+      },
+      "2413": {
+        "section": "non_fiscal",
+        "label": "Reversement au titre des créances garanties par l’État",
+        "amount_eur": 13483162
+      },
+      "2499": {
+        "section": "non_fiscal",
+        "label": "Autres remboursements d’avances, de prêts et d’autres créances immobilisées",
+        "amount_eur": 7213917997
+      },
+      "2501": {
+        "section": "non_fiscal",
+        "label": "Produits des amendes de la police de la circulation et du stationnement routiers",
+        "amount_eur": 796444287
+      },
+      "2502": {
+        "section": "non_fiscal",
+        "label": "Produits des amendes prononcées par les autorités de la concurrence",
+        "amount_eur": 708326831
+      },
+      "2503": {
+        "section": "non_fiscal",
+        "label": "Produits des amendes prononcées par les autres autorités administratives indépendantes",
+        "amount_eur": 114322164
+      },
+      "2504": {
+        "section": "non_fiscal",
+        "label": "Recouvrements poursuivis à l’initiative de l’agence judiciaire de l’État",
+        "amount_eur": 11815651
+      },
+      "2505": {
+        "section": "non_fiscal",
+        "label": "Produit des autres amendes et condamnations pécuniaires",
+        "amount_eur": 1048281302
+      },
+      "2510": {
+        "section": "non_fiscal",
+        "label": "Frais de poursuite",
+        "amount_eur": 5051373
+      },
+      "2511": {
+        "section": "non_fiscal",
+        "label": "Frais de justice et d’instance",
+        "amount_eur": 7503411
+      },
+      "2512": {
+        "section": "non_fiscal",
+        "label": "Intérêts moratoires",
+        "amount_eur": 17292
+      },
+      "2513": {
+        "section": "non_fiscal",
+        "label": "Pénalités",
+        "amount_eur": 4108274
+      },
+      "2601": {
+        "section": "non_fiscal",
+        "label": "Reversements de Natixis",
+        "amount_eur": 0
+      },
+      "2602": {
+        "section": "non_fiscal",
+        "label": "Reversements au titre des procédures de soutien financier au commerce extérieur",
+        "amount_eur": 401700000
+      },
+      "2603": {
+        "section": "non_fiscal",
+        "label": "Prélèvements sur les fonds d’épargne gérés par la Caisse des dépôts et consignations",
+        "amount_eur": 790000000
+      },
+      "2604": {
+        "section": "non_fiscal",
+        "label": "Divers produits de la rémunération de la garantie de l’État",
+        "amount_eur": 329720000
+      },
+      "2611": {
+        "section": "non_fiscal",
+        "label": "Produits des chancelleries diplomatiques et consulaires",
+        "amount_eur": 289355000
+      },
+      "2612": {
+        "section": "non_fiscal",
+        "label": "Redevances et divers produits pour frais de contrôle et de gestion",
+        "amount_eur": 13810903
+      },
+      "2613": {
+        "section": "non_fiscal",
+        "label": "Prélèvement effectué sur les salaires des conservateurs des hypothèques",
+        "amount_eur": 3938
+      },
+      "2614": {
+        "section": "non_fiscal",
+        "label": "Prélèvements effectués dans le cadre de la directive épargne",
+        "amount_eur": 0
+      },
+      "2615": {
+        "section": "non_fiscal",
+        "label": "Commissions et frais de trésorerie perçus par l’État dans le cadre de son activité régalienne",
+        "amount_eur": 32628
+      },
+      "2616": {
+        "section": "non_fiscal",
+        "label": "Frais d’inscription",
+        "amount_eur": 7076744
+      },
+      "2617": {
+        "section": "non_fiscal",
+        "label": "Recouvrement des indemnisations versées par l’État au titre des expulsions locatives",
+        "amount_eur": 6262809
+      },
+      "2618": {
+        "section": "non_fiscal",
+        "label": "Remboursement des frais de scolarité et accessoires",
+        "amount_eur": 5752308
+      },
+      "2620": {
+        "section": "non_fiscal",
+        "label": "Récupération d’indus",
+        "amount_eur": 63324964
+      },
+      "2621": {
+        "section": "non_fiscal",
+        "label": "Recouvrements après admission en non-valeur",
+        "amount_eur": 125082363
+      },
+      "2622": {
+        "section": "non_fiscal",
+        "label": "Divers versements de l’Union européenne",
+        "amount_eur": 6140000000
+      },
+      "2623": {
+        "section": "non_fiscal",
+        "label": "Reversements de fonds sur les dépenses des ministères ne donnant pas lieu à rétablissement de crédits",
+        "amount_eur": 101012363
+      },
+      "2624": {
+        "section": "non_fiscal",
+        "label": "Intérêts divers (hors immobilisations financières)",
+        "amount_eur": 51849207
+      },
+      "2625": {
+        "section": "non_fiscal",
+        "label": "Recettes diverses en provenance de l’étranger",
+        "amount_eur": 3439916
+      },
+      "2626": {
+        "section": "non_fiscal",
+        "label": "Remboursement de certaines exonérations de taxe foncière sur les propriétés non bâties (art. 109 de la loi de finances pour 1992)",
+        "amount_eur": 3963753
+      },
+      "2627": {
+        "section": "non_fiscal",
+        "label": "Soulte sur reprise de dette et recettes assimilées",
+        "amount_eur": 0
+      },
+      "2697": {
+        "section": "non_fiscal",
+        "label": "Recettes accidentelles",
+        "amount_eur": 378114827
+      },
+      "2698": {
+        "section": "non_fiscal",
+        "label": "Produits divers",
+        "amount_eur": 106000000
+      },
+      "2699": {
+        "section": "non_fiscal",
+        "label": "Autres produits divers",
+        "amount_eur": 463847213
+      },
+      "3101": {
+        "section": "prelevements_sur_recettes",
+        "label": "Prélèvement sur les recettes de l’État au titre de la dotation globale de fonctionnement",
+        "amount_eur": 27405973591
+      },
+      "3103": {
+        "section": "prelevements_sur_recettes",
+        "label": "Prélèvement sur les recettes de l’État au titre de la dotation spéciale pour le logement des instituteurs",
+        "amount_eur": 3575438
+      },
+      "3104": {
+        "section": "prelevements_sur_recettes",
+        "label": "Dotation de compensation des pertes de bases de la taxe professionnelle et de redevance des mines des communes et de leurs groupements",
+        "amount_eur": 15000000
+      },
+      "3106": {
+        "section": "prelevements_sur_recettes",
+        "label": "Prélèvement sur les recettes de l’État au profit du fonds de compensation pour la taxe sur la valeur ajoutée (FCTVA)",
+        "amount_eur": 7866719297
+      },
+      "3107": {
+        "section": "prelevements_sur_recettes",
+        "label": "Prélèvement sur les recettes de l’État au titre de la compensation d’exonérations relatives à la fiscalité locale",
+        "amount_eur": 896979349
+      },
+      "3108": {
+        "section": "prelevements_sur_recettes",
+        "label": "Dotation élu local",
+        "amount_eur": 183000000
+      },
+      "3109": {
+        "section": "prelevements_sur_recettes",
+        "label": "Prélèvement sur les recettes de l’État au profit de la collectivité de Corse",
+        "amount_eur": 42946742
+      },
+      "3111": {
+        "section": "prelevements_sur_recettes",
+        "label": "Fonds de mobilisation départementale pour l’insertion",
+        "amount_eur": 431738376
+      },
+      "3112": {
+        "section": "prelevements_sur_recettes",
+        "label": "Dotation départementale d’équipement des collèges",
+        "amount_eur": 326317000
+      },
+      "3113": {
+        "section": "prelevements_sur_recettes",
+        "label": "Dotation régionale d’équipement scolaire",
+        "amount_eur": 661186000
+      },
+      "3118": {
+        "section": "prelevements_sur_recettes",
+        "label": "Dotation globale de construction et d’équipement scolaire",
+        "amount_eur": 2686000
+      },
+      "3119": {
+        "section": "prelevements_sur_recettes",
+        "label": "Dotation de compensation de la réforme de la taxe professionnelle (régions)",
+        "amount_eur": 97697769
+      },
+      "3120": {
+        "section": "prelevements_sur_recettes",
+        "label": "Dotation de compensation de la réforme de la taxe professionnelle (départements)",
+        "amount_eur": 1174315500
+      },
+      "3121": {
+        "section": "prelevements_sur_recettes",
+        "label": "Dotation de compensation de la réforme de la taxe professionnelle (établissements publics de coopération intercommunale) .",
+        "amount_eur": 610772436
+      },
+      "3122": {
+        "section": "prelevements_sur_recettes",
+        "label": "Dotation de compensation de la réforme de la taxe professionnelle (communes)",
+        "amount_eur": 137455
+      },
+      "3123": {
+        "section": "prelevements_sur_recettes",
+        "label": "Dotation pour transferts de compensations d’exonérations de fiscalité directe locale",
+        "amount_eur": 370103970
+      },
+      "3130": {
+        "section": "prelevements_sur_recettes",
+        "label": "Dotation de compensation de la réforme de la taxe sur les logements vacants pour les communes et les établissements publics de coopération intercommunale percevant la taxe d’habitation sur les logements vacants",
+        "amount_eur": 3308187
+      },
+      "3131": {
+        "section": "prelevements_sur_recettes",
+        "label": "Dotation de compensation liée au processus de départementalisation de Mayotte",
+        "amount_eur": 107000000
+      },
+      "3133": {
+        "section": "prelevements_sur_recettes",
+        "label": "Fonds de compensation des nuisances aéroportuaires",
+        "amount_eur": 6822000
+      },
+      "3134": {
+        "section": "prelevements_sur_recettes",
+        "label": "Dotation de garantie des reversements des fonds départementaux de taxe professionnelle",
+        "amount_eur": 164278401
+      },
+      "3135": {
+        "section": "prelevements_sur_recettes",
+        "label": "Prélèvement sur les recettes de l’État au titre de la compensation des pertes de recettes liées au relèvement du seuil d’assujettissement des entreprises au versement transport",
+        "amount_eur": 48020649
+      },
+      "3136": {
+        "section": "prelevements_sur_recettes",
+        "label": "Prélèvement sur les recettes de l’État au profit de la collectivité territoriale de Guyane",
+        "amount_eur": 27000000
+      },
+      "3137": {
+        "section": "prelevements_sur_recettes",
+        "label": "Prélèvement sur les recettes de l’État au profit des régions au titre de la neutralisation financière de la réforme de l’apprentissage",
+        "amount_eur": 122559085
+      },
+      "3138": {
+        "section": "prelevements_sur_recettes",
+        "label": "Prélèvement sur les recettes de l’État au titre de la dotation globale d’autonomie de la Polynésie française",
+        "amount_eur": 90552000
+      },
+      "3145": {
+        "section": "prelevements_sur_recettes",
+        "label": "Prélèvement sur les recettes de l’État au titre de la compensation de la réduction de 50 % des valeurs locatives de taxe foncière sur les propriétés bâties et de cotisation foncière des entreprises des locaux industriels",
+        "amount_eur": 3983647589
+      },
+      "3146": {
+        "section": "prelevements_sur_recettes",
+        "label": "Prélèvement sur les recettes de l’État au titre de la compensation des communes et des établissements publics de coopération intercommunale contributeurs au fonds national de garantie individuelle des ressources (FNGIR) subissant une perte de base de cotisation foncière des entreprises",
+        "amount_eur": 3000000
+      },
+      "3159": {
+        "section": "prelevements_sur_recettes",
+        "label": "Prélèvement sur les recettes de l’État au titre de la compensation de la réforme de 2023 de la taxe sur les logements vacants pour les communes et les établissements publics de coopération intercommunale percevant la taxe d’habitation sur les logements vacants",
+        "amount_eur": 33366000
+      },
+      "3160": {
+        "section": "prelevements_sur_recettes",
+        "label": "Prélèvement sur les recettes de l’État en faveur des communes nouvelles",
+        "amount_eur": 33201983
+      },
+      "3163": {
+        "section": "prelevements_sur_recettes",
+        "label": "Prélèvement sur les recettes de l’État au titre de la compensation et du lissage des pertes exceptionnelles de recettes de taxe foncière sur les propriétés bâties",
+        "amount_eur": 17393977
+      },
+      "3164": {
+        "section": "prelevements_sur_recettes",
+        "label": "Prélèvement sur les recettes de l’État compensant les pertes de recettes résultant du recentrage de l’assiette de taxe d’habitation sur les résidences secondaires",
+        "amount_eur": 94786610
+      },
+      "3168": {
+        "section": "prelevements_sur_recettes",
+        "label": "Prélèvement sur les recettes de l’État compensant les retards de versement de la taxe d’aménagement",
+        "amount_eur": 0
+      },
+      "3201": {
+        "section": "prelevements_sur_recettes",
+        "label": "Prélèvement sur les recettes de l’État au profit du budget de l’Union européenne",
+        "amount_eur": 28439880549
+      }
+    }
+  },
+  "social": {
+    "lfss_branch_equilibre_eur": {
+      "maladie": {
+        "recettes_eur": 257500000000,
+        "depenses_eur": 271300000000,
+        "solde_eur": -13800000000
+      },
+      "at_mp": {
+        "recettes_eur": 17100000000,
+        "depenses_eur": 18000000000,
+        "solde_eur": -1000000000
+      },
+      "vieillesse": {
+        "recettes_eur": 305800000000,
+        "depenses_eur": 310400000000,
+        "solde_eur": -4600000000
+      },
+      "famille": {
+        "recettes_eur": 60100000000,
+        "depenses_eur": 59700000000,
+        "solde_eur": 400000000
+      },
+      "autonomie": {
+        "recettes_eur": 43300000000,
+        "depenses_eur": 43600000000,
+        "solde_eur": -400000000
+      },
+      "all_branches_hors_transferts": {
+        "recettes_eur": 664800000000,
+        "depenses_eur": 684200000000,
+        "solde_eur": -19400000000
+      }
+    },
+    "lfss_asso_pct_pib": {
+      "asso_recettes_pct_pib_2026": 26.9,
+      "asso_depenses_pct_pib_2026": 26.8,
+      "asso_solde_pct_pib_2026": 0.1
+    }
+  },
+  "local": {
+    "apul_blocks_eur": {
+      "M_TRANSPORT": 18500000000.0,
+      "M_EDU": 27500000000.0,
+      "M_SOLIDARITY": 31000000000.0,
+      "M_HOUSING": 14000000000.0,
+      "M_CIVIL_PROT": 12000000000.0,
+      "M_ENVIRONMENT": 10500000000.0,
+      "M_CULTURE": 7000000000.0
+    },
+    "apul_rows": [
+      {
+        "year": 2026,
+        "mass_id": "M_TRANSPORT",
+        "mass_label": "Transport local",
+        "subsector": "S1313",
+        "amount_eur": 18500000000.0,
+        "source_quality": "estimated",
+        "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+        "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged.",
+        "match_ok": true
+      },
+      {
+        "year": 2026,
+        "mass_id": "M_EDU",
+        "mass_label": "Education locale (batiments/entretien)",
+        "subsector": "S1313",
+        "amount_eur": 27500000000.0,
+        "source_quality": "estimated",
+        "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+        "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged.",
+        "match_ok": true
+      },
+      {
+        "year": 2026,
+        "mass_id": "M_SOLIDARITY",
+        "mass_label": "Action sociale locale (RSA/APA/PCH/ASE)",
+        "subsector": "S1313",
+        "amount_eur": 31000000000.0,
+        "source_quality": "estimated",
+        "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+        "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged.",
+        "match_ok": true
+      },
+      {
+        "year": 2026,
+        "mass_id": "M_HOUSING",
+        "mass_label": "Politique locale du logement",
+        "subsector": "S1313",
+        "amount_eur": 14000000000.0,
+        "source_quality": "estimated",
+        "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+        "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged.",
+        "match_ok": true
+      },
+      {
+        "year": 2026,
+        "mass_id": "M_CIVIL_PROT",
+        "mass_label": "Securite civile (SDIS)",
+        "subsector": "S1313",
+        "amount_eur": 12000000000.0,
+        "source_quality": "estimated",
+        "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+        "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged.",
+        "match_ok": true
+      },
+      {
+        "year": 2026,
+        "mass_id": "M_ENVIRONMENT",
+        "mass_label": "Services locaux environnement/eau/dechets",
+        "subsector": "S1313",
+        "amount_eur": 10500000000.0,
+        "source_quality": "estimated",
+        "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+        "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged.",
+        "match_ok": true
+      },
+      {
+        "year": 2026,
+        "mass_id": "M_CULTURE",
+        "mass_label": "Culture et sport local",
+        "subsector": "S1313",
+        "amount_eur": 7000000000.0,
+        "source_quality": "estimated",
+        "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+        "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged.",
+        "match_ok": true
+      }
+    ]
+  },
+  "bridge": {
+    "rows": [
+      {
+        "year": 2026,
+        "entry_type": "local_mass",
+        "subsector": "S1313",
+        "key": "M_CIVIL_PROT",
+        "cofog": "GF03",
+        "na_item": "TE",
+        "mass_id": "M_CIVIL_PROT",
+        "weight": 1.0,
+        "source": "DGCL APUL 2026 verified bridge",
+        "source_url": "https://www.collectivites-locales.gouv.fr/finances-locales/les-donnees-des-finances-locales",
+        "note": "APUL local mass bridge for M_CIVIL_PROT"
+      },
+      {
+        "year": 2026,
+        "entry_type": "local_mass",
+        "subsector": "S1313",
+        "key": "M_CULTURE",
+        "cofog": "GF08",
+        "na_item": "TE",
+        "mass_id": "M_CULTURE",
+        "weight": 1.0,
+        "source": "DGCL APUL 2026 verified bridge",
+        "source_url": "https://www.collectivites-locales.gouv.fr/finances-locales/les-donnees-des-finances-locales",
+        "note": "APUL local mass bridge for M_CULTURE"
+      },
+      {
+        "year": 2026,
+        "entry_type": "local_mass",
+        "subsector": "S1313",
+        "key": "M_EDU",
+        "cofog": "GF09",
+        "na_item": "TE",
+        "mass_id": "M_EDU",
+        "weight": 1.0,
+        "source": "DGCL APUL 2026 verified bridge",
+        "source_url": "https://www.collectivites-locales.gouv.fr/finances-locales/les-donnees-des-finances-locales",
+        "note": "APUL local mass bridge for M_EDU"
+      },
+      {
+        "year": 2026,
+        "entry_type": "local_mass",
+        "subsector": "S1313",
+        "key": "M_ENVIRONMENT",
+        "cofog": "GF05",
+        "na_item": "TE",
+        "mass_id": "M_ENVIRONMENT",
+        "weight": 1.0,
+        "source": "DGCL APUL 2026 verified bridge",
+        "source_url": "https://www.collectivites-locales.gouv.fr/finances-locales/les-donnees-des-finances-locales",
+        "note": "APUL local mass bridge for M_ENVIRONMENT"
+      },
+      {
+        "year": 2026,
+        "entry_type": "local_mass",
+        "subsector": "S1313",
+        "key": "M_HOUSING",
+        "cofog": "GF06",
+        "na_item": "TE",
+        "mass_id": "M_HOUSING",
+        "weight": 1.0,
+        "source": "DGCL APUL 2026 verified bridge",
+        "source_url": "https://www.collectivites-locales.gouv.fr/finances-locales/les-donnees-des-finances-locales",
+        "note": "APUL local mass bridge for M_HOUSING"
+      },
+      {
+        "year": 2026,
+        "entry_type": "local_mass",
+        "subsector": "S1313",
+        "key": "M_SOLIDARITY",
+        "cofog": "GF10",
+        "na_item": "TE",
+        "mass_id": "M_SOLIDARITY",
+        "weight": 1.0,
+        "source": "DGCL APUL 2026 verified bridge",
+        "source_url": "https://www.collectivites-locales.gouv.fr/finances-locales/les-donnees-des-finances-locales",
+        "note": "APUL local mass bridge for M_SOLIDARITY"
+      },
+      {
+        "year": 2026,
+        "entry_type": "local_mass",
+        "subsector": "S1313",
+        "key": "M_TRANSPORT",
+        "cofog": "GF04",
+        "na_item": "TE",
+        "mass_id": "M_TRANSPORT",
+        "weight": 1.0,
+        "source": "DGCL APUL 2026 verified bridge",
+        "source_url": "https://www.collectivites-locales.gouv.fr/finances-locales/les-donnees-des-finances-locales",
+        "note": "APUL local mass bridge for M_TRANSPORT"
+      },
+      {
+        "year": 2026,
+        "entry_type": "social_branch",
+        "subsector": "S1314",
+        "key": "AT_MP",
+        "cofog": "GF04",
+        "na_item": "TE",
+        "mass_id": "M_EMPLOYMENT",
+        "weight": 0.7,
+        "source": "LFSS 2026 verified branch bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053226384",
+        "note": "LFSS branch at_mp to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "social_branch",
+        "subsector": "S1314",
+        "key": "AT_MP",
+        "cofog": "GF07",
+        "na_item": "TE",
+        "mass_id": "M_HEALTH",
+        "weight": 0.3,
+        "source": "LFSS 2026 verified branch bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053226384",
+        "note": "LFSS branch at_mp to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "social_branch",
+        "subsector": "S1314",
+        "key": "AUTONOMIE",
+        "cofog": "GF07",
+        "na_item": "TE",
+        "mass_id": "M_HEALTH",
+        "weight": 0.3,
+        "source": "LFSS 2026 verified branch bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053226384",
+        "note": "LFSS branch autonomie to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "social_branch",
+        "subsector": "S1314",
+        "key": "AUTONOMIE",
+        "cofog": "GF10",
+        "na_item": "TE",
+        "mass_id": "M_SOLIDARITY",
+        "weight": 0.7,
+        "source": "LFSS 2026 verified branch bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053226384",
+        "note": "LFSS branch autonomie to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "social_branch",
+        "subsector": "S1314",
+        "key": "FAMILLE",
+        "cofog": "GF10",
+        "na_item": "TE",
+        "mass_id": "M_SOLIDARITY",
+        "weight": 1.0,
+        "source": "LFSS 2026 verified branch bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053226384",
+        "note": "LFSS branch famille to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "social_branch",
+        "subsector": "S1314",
+        "key": "MALADIE",
+        "cofog": "GF07",
+        "na_item": "TE",
+        "mass_id": "M_HEALTH",
+        "weight": 1.0,
+        "source": "LFSS 2026 verified branch bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053226384",
+        "note": "LFSS branch maladie to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "social_branch",
+        "subsector": "S1314",
+        "key": "VIEILLESSE",
+        "cofog": "GF10",
+        "na_item": "TE",
+        "mass_id": "M_PENSIONS",
+        "weight": 1.0,
+        "source": "LFSS 2026 verified branch bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053226384",
+        "note": "LFSS branch vieillesse to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "AA",
+        "cofog": "GF01",
+        "na_item": "TE",
+        "mass_id": "M_DIPLO",
+        "weight": 1.0,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission AA to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "AB",
+        "cofog": "GF01",
+        "na_item": "TE",
+        "mass_id": "M_ADMIN",
+        "weight": 1.0,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission AB to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "AC",
+        "cofog": "GF04",
+        "na_item": "TE",
+        "mass_id": "M_AGRI",
+        "weight": 1.0,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission AC to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "AD",
+        "cofog": "GF01",
+        "na_item": "TE",
+        "mass_id": "M_DIPLO",
+        "weight": 1.0,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission AD to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "AV",
+        "cofog": "GF04",
+        "na_item": "TE",
+        "mass_id": "M_ECONOMIC",
+        "weight": 1.0,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission AV to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "CA",
+        "cofog": "GF01",
+        "na_item": "TE",
+        "mass_id": "M_ADMIN",
+        "weight": 1.0,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission CA to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "CB",
+        "cofog": "GF08",
+        "na_item": "TE",
+        "mass_id": "M_CULTURE",
+        "weight": 1.0,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission CB to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "DA",
+        "cofog": "GF02",
+        "na_item": "TE",
+        "mass_id": "M_DEFENSE",
+        "weight": 1.0,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission DA to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "DB",
+        "cofog": "GF04",
+        "na_item": "TE",
+        "mass_id": "M_ECONOMIC",
+        "weight": 1.0,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission DB to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "DC",
+        "cofog": "GF01",
+        "na_item": "TE",
+        "mass_id": "M_ADMIN",
+        "weight": 1.0,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission DC to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "EB",
+        "cofog": "GF01",
+        "na_item": "TE",
+        "mass_id": "M_DEBT",
+        "weight": 1.0,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission EB to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "EC",
+        "cofog": "GF09",
+        "na_item": "TE",
+        "mass_id": "M_EDU",
+        "weight": 1.0,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission EC to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "GA",
+        "cofog": "GF01",
+        "na_item": "TE",
+        "mass_id": "M_ADMIN",
+        "weight": 1.0,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission GA to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "IA",
+        "cofog": "GF03",
+        "na_item": "TE",
+        "mass_id": "M_SECURITY",
+        "weight": 0.4,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission IA to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "IA",
+        "cofog": "GF10",
+        "na_item": "TE",
+        "mass_id": "M_SOLIDARITY",
+        "weight": 0.6,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission IA to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "JA",
+        "cofog": "GF03",
+        "na_item": "TE",
+        "mass_id": "M_JUSTICE",
+        "weight": 1.0,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission JA to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "MA",
+        "cofog": "GF08",
+        "na_item": "TE",
+        "mass_id": "M_CULTURE",
+        "weight": 1.0,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission MA to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "MB",
+        "cofog": "GF02",
+        "na_item": "TE",
+        "mass_id": "M_DEFENSE",
+        "weight": 1.0,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission MB to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "OA",
+        "cofog": "GF06",
+        "na_item": "TE",
+        "mass_id": "M_TERRITORIES",
+        "weight": 1.0,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission OA to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "PB",
+        "cofog": "GF01",
+        "na_item": "TE",
+        "mass_id": "M_ADMIN",
+        "weight": 1.0,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission PB to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "PC",
+        "cofog": "GF01",
+        "na_item": "TE",
+        "mass_id": "M_ADMIN",
+        "weight": 1.0,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission PC to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "RA",
+        "cofog": "GF09",
+        "na_item": "TE",
+        "mass_id": "M_HIGHER_EDU",
+        "weight": 1.0,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission RA to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "RB",
+        "cofog": "GF10",
+        "na_item": "TE",
+        "mass_id": "M_PENSIONS",
+        "weight": 1.0,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission RB to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "RC",
+        "cofog": "GF06",
+        "na_item": "TE",
+        "mass_id": "M_TERRITORIES",
+        "weight": 1.0,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission RC to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "RD",
+        "cofog": "GF00",
+        "na_item": "TE",
+        "mass_id": "M_UNKNOWN",
+        "weight": 1.0,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission RD to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "SA",
+        "cofog": "GF07",
+        "na_item": "TE",
+        "mass_id": "M_HEALTH",
+        "weight": 1.0,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission SA to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "SB",
+        "cofog": "GF03",
+        "na_item": "TE",
+        "mass_id": "M_SECURITY",
+        "weight": 1.0,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission SB to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "SE",
+        "cofog": "GF10",
+        "na_item": "TE",
+        "mass_id": "M_SOLIDARITY",
+        "weight": 1.0,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission SE to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "SF",
+        "cofog": "GF08",
+        "na_item": "TE",
+        "mass_id": "M_CULTURE",
+        "weight": 0.5,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission SF to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "SF",
+        "cofog": "GF09",
+        "na_item": "TE",
+        "mass_id": "M_EDU",
+        "weight": 0.5,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission SF to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "TA",
+        "cofog": "GF05",
+        "na_item": "TE",
+        "mass_id": "M_ENVIRONMENT",
+        "weight": 0.45,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission TA to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "TA",
+        "cofog": "GF04",
+        "na_item": "TE",
+        "mass_id": "M_TRANSPORT",
+        "weight": 0.55,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission TA to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "TB",
+        "cofog": "GF04",
+        "na_item": "TE",
+        "mass_id": "M_EMPLOYMENT",
+        "weight": 1.0,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission TB to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "TR",
+        "cofog": "GF01",
+        "na_item": "TE",
+        "mass_id": "M_ADMIN",
+        "weight": 1.0,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission TR to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "VA",
+        "cofog": "GF06",
+        "na_item": "TE",
+        "mass_id": "M_HOUSING",
+        "weight": 0.4,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission VA to simulation mass bridge"
+      },
+      {
+        "year": 2026,
+        "entry_type": "state_mission",
+        "subsector": "S1311",
+        "key": "VA",
+        "cofog": "GF06",
+        "na_item": "TE",
+        "mass_id": "M_TERRITORIES",
+        "weight": 0.6,
+        "source": "LFI 2026 ETAT B verified mission bridge",
+        "source_url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "note": "LFI mission VA to simulation mass bridge"
+      }
+    ],
+    "required_columns": [
+      "cofog",
+      "entry_type",
+      "key",
+      "mass_id",
+      "na_item",
+      "source",
+      "source_url",
+      "subsector",
+      "weight",
+      "year"
+    ],
+    "entry_types": [
+      "local_mass",
+      "social_branch",
+      "state_mission"
+    ]
+  },
+  "calibration_targets": {
+    "revenue_targets_eur": {
+      "state_fiscal_eur": 290339000000,
+      "state_fiscal_gross_eur": 363603000000,
+      "state_psr_collectivites_ue_eur": 73264000000,
+      "state_non_fiscal_eur": 28900000000,
+      "lfss_all_branches_recettes_eur": 664800000000,
+      "lfss_all_branches_depenses_eur": 684200000000
+    },
+    "notes": [
+      "State mission CP targets are from ETAT B.",
+      "State fiscal target is ETAT A fiscal receipts net of PSR (collectivites + UE) for APU resource consistency.",
+      "State non-fiscal target is from ETAT A.",
+      "Social branch receipts/expenses are from LFSS voted branch equilibrium table.",
+      "Local APUL bridge rows are imported from verify_apul_2026 output (DGCL-first, source-tagged)."
+    ]
+  }
+}

@@ -5,6 +5,13 @@ from dataclasses import dataclass
 from dotenv import load_dotenv
 
 
+def _env_bool(name: str, default: bool) -> bool:
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    return str(raw).strip().lower() not in ("0", "false", "no", "off")
+
+
 @dataclass(frozen=True)
 class Settings:
     # INSEE (OAuth2 client credentials)
@@ -49,11 +56,16 @@ class Settings:
     # Optional enrichment for procurement suppliers using INSEE SIRENE. Disable for benchmarks.
     procurement_enrich_sirene: bool = os.getenv("PROCUREMENT_ENRICH_SIRENE", "1") not in ("0", "false", "False")
 
-    # Force LEGO baseline to use static JSON snapshot instead of warehouse when enabled
-    lego_baseline_static: bool = os.getenv("LEGO_BASELINE_STATIC", "1") not in ("0", "false", "False")
-    macro_baseline_static: bool = (
-        os.getenv("MACRO_BASELINE_STATIC", os.getenv("LEGO_BASELINE_STATIC", "1"))
-        not in ("0", "false", "False")
+    # Snapshot mode alias used for prod consistency. When set, it drives both static toggles.
+    snapshot_fast: bool = _env_bool("SNAPSHOT_FAST", True)
+    # Force LEGO baseline to use static JSON snapshot instead of warehouse when enabled.
+    lego_baseline_static: bool = _env_bool(
+        "LEGO_BASELINE_STATIC",
+        _env_bool("SNAPSHOT_FAST", True),
+    )
+    macro_baseline_static: bool = _env_bool(
+        "MACRO_BASELINE_STATIC",
+        _env_bool("SNAPSHOT_FAST", _env_bool("LEGO_BASELINE_STATIC", True)),
     )
 
     # Macro kernel configuration (V2 prep): override IRF parameters JSON path
@@ -67,6 +79,11 @@ class Settings:
 
     # Voter preferences storage
     votes_store: str = os.getenv("VOTES_STORE", "file")  # file|sqlite|postgres
+    # Guardrail: require Postgres in production-like runtimes (Cloud Run sets K_SERVICE).
+    votes_require_postgres: bool = os.getenv(
+        "VOTES_REQUIRE_POSTGRES",
+        "1" if os.getenv("K_SERVICE") else "0",
+    ) in ("1", "true", "True")
     votes_db_dsn: str | None = os.getenv("VOTES_DB_DSN")
     votes_db_pool_min: int = int(os.getenv("VOTES_DB_POOL_MIN", "1"))
     votes_db_pool_max: int = int(os.getenv("VOTES_DB_POOL_MAX", "5"))

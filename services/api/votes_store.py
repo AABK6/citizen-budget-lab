@@ -23,6 +23,17 @@ class VoteSummary:
     last_vote_ts: float | None
 
 
+@dataclass(frozen=True)
+class VoteStoreConfigStatus:
+    ok: bool
+    configured_backend: str
+    selected_backend: str
+    dsn_present: bool
+    require_postgres: bool
+    cloud_run: bool
+    errors: tuple[str, ...]
+
+
 class VoteStore:
     def add_vote(self, scenario_id: str, user_email: Optional[str], meta: Dict[str, Any]) -> None:
         raise NotImplementedError
@@ -45,6 +56,69 @@ def _normalize_meta(meta: Optional[Dict[str, Any]], user_email: Optional[str]) -
     if user_email and not normalized.get("userEmail"):
         normalized["userEmail"] = user_email
     return normalized
+
+
+def _normalize_backend(raw_backend: Optional[str]) -> str:
+    return str(raw_backend or "file").strip().lower()
+
+
+def _resolve_vote_store_status() -> VoteStoreConfigStatus:
+    settings = get_settings()
+    configured = _normalize_backend(settings.votes_store)
+    dsn = (settings.votes_db_dsn or "").strip()
+    dsn_present = bool(dsn)
+    require_postgres = bool(settings.votes_require_postgres)
+    cloud_run = bool(os.getenv("K_SERVICE"))
+    errors: list[str] = []
+
+    if dsn_present:
+        selected = "postgres"
+    elif configured in ("file", "sqlite"):
+        selected = configured
+    elif configured == "postgres":
+        selected = "postgres"
+        errors.append("VOTES_STORE=postgres requires VOTES_DB_DSN to be set.")
+    else:
+        selected = "file"
+        errors.append(
+            f"Unsupported VOTES_STORE='{configured}'. Allowed values: file, sqlite, postgres."
+        )
+
+    if require_postgres and selected != "postgres":
+        errors.append(
+            "Postgres vote storage is required but not configured. "
+            "Set VOTES_DB_DSN (and attach Cloud SQL on Cloud Run)."
+        )
+
+    return VoteStoreConfigStatus(
+        ok=len(errors) == 0,
+        configured_backend=configured,
+        selected_backend=selected,
+        dsn_present=dsn_present,
+        require_postgres=require_postgres,
+        cloud_run=cloud_run,
+        errors=tuple(errors),
+    )
+
+
+def get_vote_store_status() -> Dict[str, Any]:
+    status = _resolve_vote_store_status()
+    return {
+        "ok": status.ok,
+        "configured_backend": status.configured_backend,
+        "selected_backend": status.selected_backend,
+        "dsn_present": status.dsn_present,
+        "require_postgres": status.require_postgres,
+        "cloud_run": status.cloud_run,
+        "errors": list(status.errors),
+    }
+
+
+def validate_vote_store_configuration() -> None:
+    status = _resolve_vote_store_status()
+    if status.ok:
+        return
+    raise RuntimeError("Invalid vote store configuration: " + " ".join(status.errors))
 
 
 class FileVoteStore(VoteStore):
@@ -317,11 +391,13 @@ class PostgresVoteStore(VoteStore):
 @lru_cache(maxsize=1)
 def get_vote_store() -> VoteStore:
     settings = get_settings()
-    
-    # Force Postgres if DSN available (Primary Strategy)
-    if settings.votes_db_dsn:
+    status = _resolve_vote_store_status()
+    if not status.ok:
+        raise RuntimeError("Invalid vote store configuration: " + " ".join(status.errors))
+
+    if status.selected_backend == "postgres":
         return PostgresVoteStore(
-            settings.votes_db_dsn,
+            settings.votes_db_dsn or "",
             settings.votes_db_pool_min,
             settings.votes_db_pool_max,
             settings.votes_db_pool_timeout,
@@ -329,9 +405,12 @@ def get_vote_store() -> VoteStore:
             settings.votes_db_pool_max_lifetime,
         )
 
-    if settings.votes_store == "sqlite":
+    if status.selected_backend == "sqlite":
         return SqliteVoteStore(settings.votes_sqlite_path)
-        
+
+    if status.cloud_run:
+        logger.warning("Using file vote store on Cloud Run; data is ephemeral and not shared across instances.")
+
     return FileVoteStore(settings.votes_file_path)
 
 

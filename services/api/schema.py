@@ -1,6 +1,10 @@
 from __future__ import annotations
 
 import base64
+import logging
+import math
+import re
+import time
 from typing import List, Optional
 
 import strawberry
@@ -22,6 +26,117 @@ from .models import Basis, MissionAllocation
 from .clients import insee as insee_client
 from .clients import data_gouv as datagouv_client
 from .clients import geo as geo_client
+
+logger = logging.getLogger(__name__)
+
+_ALLOWED_VOTE_CHANNELS = {"qualtrics", "direct", "unknown"}
+_RESPONDENT_ID_MAX_LEN = 128
+_ENTRY_PATH_MAX_LEN = 1024
+_SNAPSHOT_MAX_LEN = 30_000
+_MAX_SESSION_DURATION_SEC = 6 * 60 * 60
+_SHA256_HEX_RE = re.compile(r"^[0-9a-f]{64}$")
+_B64URLISH_RE = re.compile(r"^[A-Za-z0-9\-_]+=*$")
+
+
+def _normalize_submit_vote_meta(
+    respondent_id: Optional[str],
+    session_duration_sec: Optional[float],
+    channel: Optional[str],
+    entry_path: Optional[str],
+    final_vote_snapshot_b64: Optional[str],
+    final_vote_snapshot_sha256: Optional[str],
+    final_vote_snapshot_version: Optional[int],
+    final_vote_snapshot_truncated: Optional[bool],
+) -> tuple[dict[str, object], list[str]]:
+    meta: dict[str, object] = {}
+    warnings: list[str] = []
+
+    if respondent_id is not None:
+        text = str(respondent_id).strip()
+        if not text:
+            warnings.append("respondentId is empty and was ignored")
+        elif len(text) > _RESPONDENT_ID_MAX_LEN:
+            warnings.append(
+                f"respondentId exceeds {_RESPONDENT_ID_MAX_LEN} chars and was ignored"
+            )
+        else:
+            meta["respondentId"] = text
+
+    if session_duration_sec is not None:
+        try:
+            duration = float(session_duration_sec)
+        except (TypeError, ValueError):
+            warnings.append("sessionDurationSec is not numeric and was ignored")
+        else:
+            if not math.isfinite(duration):
+                warnings.append("sessionDurationSec is not finite and was ignored")
+            elif duration < 0 or duration > _MAX_SESSION_DURATION_SEC:
+                warnings.append(
+                    f"sessionDurationSec out of range [0, {_MAX_SESSION_DURATION_SEC}] and was ignored"
+                )
+            else:
+                meta["sessionDurationSec"] = duration
+
+    if channel is not None:
+        text = str(channel).strip().lower()
+        if not text:
+            warnings.append("channel is empty and was ignored")
+        elif text in _ALLOWED_VOTE_CHANNELS:
+            meta["channel"] = text
+        else:
+            warnings.append(f"channel '{text}' is invalid and was normalized to 'unknown'")
+            meta["channel"] = "unknown"
+
+    if entry_path is not None:
+        text = str(entry_path).strip()
+        if not text:
+            warnings.append("entryPath is empty and was ignored")
+        elif len(text) > _ENTRY_PATH_MAX_LEN:
+            warnings.append(
+                f"entryPath exceeds {_ENTRY_PATH_MAX_LEN} chars and was ignored"
+            )
+        else:
+            meta["entryPath"] = text
+
+    if final_vote_snapshot_version is not None:
+        try:
+            version = int(final_vote_snapshot_version)
+        except (TypeError, ValueError):
+            warnings.append("finalVoteSnapshotVersion is not an integer and was ignored")
+        else:
+            if version < 1 or version > 100:
+                warnings.append(
+                    "finalVoteSnapshotVersion out of range [1, 100] and was ignored"
+                )
+            else:
+                meta["finalVoteSnapshotVersion"] = version
+
+    if final_vote_snapshot_truncated is not None:
+        meta["finalVoteSnapshotTruncated"] = bool(final_vote_snapshot_truncated)
+
+    if final_vote_snapshot_sha256 is not None:
+        text = str(final_vote_snapshot_sha256).strip().lower()
+        if not text:
+            warnings.append("finalVoteSnapshotSha256 is empty and was ignored")
+        elif not _SHA256_HEX_RE.match(text):
+            warnings.append("finalVoteSnapshotSha256 is invalid and was ignored")
+        else:
+            meta["finalVoteSnapshotSha256"] = text
+
+    if final_vote_snapshot_b64 is not None:
+        text = str(final_vote_snapshot_b64).strip()
+        if not text:
+            warnings.append("finalVoteSnapshotB64 is empty and was ignored")
+        elif len(text) > _SNAPSHOT_MAX_LEN:
+            warnings.append(
+                f"finalVoteSnapshotB64 exceeds {_SNAPSHOT_MAX_LEN} chars and was ignored"
+            )
+        elif not _B64URLISH_RE.match(text):
+            warnings.append("finalVoteSnapshotB64 is invalid and was ignored")
+        else:
+            meta["finalVoteSnapshotB64"] = text
+
+    return meta, warnings
 
 
 @strawberry.type
@@ -1676,11 +1791,41 @@ class Mutation:
             return False
 
     @strawberry.mutation
-    def submitVote(self, scenarioId: strawberry.ID, userEmail: Optional[str] = None) -> bool:  # noqa: N802
+    def submitVote(  # noqa: N802
+        self,
+        scenarioId: strawberry.ID,
+        userEmail: Optional[str] = None,
+        respondentId: Optional[str] = None,
+        sessionDurationSec: Optional[float] = None,
+        channel: Optional[str] = None,
+        entryPath: Optional[str] = None,
+        finalVoteSnapshotB64: Optional[str] = None,
+        finalVoteSnapshotSha256: Optional[str] = None,
+        finalVoteSnapshotVersion: Optional[int] = None,
+        finalVoteSnapshotTruncated: Optional[bool] = None,
+    ) -> bool:
         try:
             from .votes_store import get_vote_store
-            import time
+
             meta = {"timestamp": time.time()}
+            normalized_meta, warnings = _normalize_submit_vote_meta(
+                respondent_id=respondentId,
+                session_duration_sec=sessionDurationSec,
+                channel=channel,
+                entry_path=entryPath,
+                final_vote_snapshot_b64=finalVoteSnapshotB64,
+                final_vote_snapshot_sha256=finalVoteSnapshotSha256,
+                final_vote_snapshot_version=finalVoteSnapshotVersion,
+                final_vote_snapshot_truncated=finalVoteSnapshotTruncated,
+            )
+            meta.update(normalized_meta)
+
+            if warnings:
+                logger.warning(
+                    "submitVote metadata validation warnings scenario_id=%s details=%s",
+                    str(scenarioId),
+                    warnings,
+                )
             get_vote_store().add_vote(str(scenarioId), userEmail, meta)
             return True
         except Exception:

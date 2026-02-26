@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 const MESSAGES = [
     "DIRECT : Les marchés financiers surveillent la note de la France...",
     "POLITIQUE : L'opposition dénonce un « budget d'austérité cachée ».",
-    "ÉCONOMIE : La croissance revue à la baisse pour 2026 selon la Banque de France.",
+    "ÉCONOMIE : La croissance revue à la baisse pour 2027 selon la Banque de France.",
     "SOCIAL : Les syndicats préviennent : « Pas touche aux retraites ».",
     "BRUXELLES : La Commission Européenne attend des « efforts structurels »."
 ];

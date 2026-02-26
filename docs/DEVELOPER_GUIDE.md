@@ -121,6 +121,32 @@ The API includes two caching layers:
     python -m services.api.cache_warm macro-insee --config data/macro_series_config.json
     ```
 
+6.  **Verify enacted LFI 2026 mission CP (dual official sources):**
+    ```bash
+    make verify-lfi-2026
+    ```
+    This command compares JO (`JORFTEXT000053508155`, ÉTAT B) with the Assemblée nationale annex raw table (`PRJLANR5L17BTA0227.raw`), writes `data/reference/lfi_2026_etat_b_cp_verified.csv`, and updates `warehouse/seeds/plf_2026_plafonds.csv`.
+
+7.  **Verify enacted 2026 aggregates beyond ÉTAT B:**
+    ```bash
+    make verify-lfi-2026-state-a
+    make verify-lfss-2026
+    make verify-apul-2026
+    ```
+    These commands validate LFI ÉTAT A aggregate receipts/balance, LFSS branch/ASSO balances, and build a DGCL-first APUL bridge artifact (`data/reference/apul_2026_verified.csv` + `docs/verification_apul2026.md`).
+
+8.  **Rebuild the voted-2026 simulation baseline (APU scope preserved):**
+    ```bash
+    make warm-voted-2026-baseline
+    ```
+    This full chain warms the Eurostat baseline, runs all LFI/LFSS/APUL verifications, builds:
+    - `data/reference/voted_2026_aggregates.json`
+    - `data/reference/apu_2026_targets.json` (explicit source-tagged APU targets, including `pillars.state|social|local`),
+    then applies the voted overlay in `true_level` mode with strict official checks to `data/cache/lego_baseline_2026.json`, and regenerates `data/cache/build_page_2026.json`.
+    Overlay metadata now exposes warn-level quality checks under `meta.voted_2026_overlay.quality` (source coverage, sentinel blocks, residual adjustments, double-count risk signal).
+    In strict mode (`--strict-official`), macro closure and uncovered expenditure residuals are forbidden and will fail the run.
+    For comparability-only experiments, you can run `tools/apply_voted_2026_to_lego_baseline.py --mode share_rebalance --no-strict-official` to keep global totals unchanged.
+
 #### **2.2. Semantic Layer (dbt)**
 
 -   **Overview:** The dbt project lives in `warehouse/` and uses DuckDB by default. It reads the warmed CSVs from `data/cache/` to produce the semantic models used by the API.
@@ -237,7 +263,10 @@ Macro baselines
 | `EUROSTAT_LANG` | Preferred language for Eurostat labels. Default: `en`. | No |
 | `EUROSTAT_COOKIE` | Optional cookie string for accessing gated Eurostat endpoints. | No |
 | `CORS_ALLOW_ORIGINS` | Comma-separated list of origins for CORS. | No |
+| `NEXT_PUBLIC_BUILD_SNAPSHOT` | Frontend toggle for `/build`: `1` (default) prefers precomputed snapshot, `0` forces live GraphQL loading (useful during local/testing refresh cycles). | No |
+| `STRICT_OFFICIAL` | If `1`, fail fast on non-official fallbacks (temporal SDMX fallback and D.41 proxy) and block snapshot generation when closure validation is not `ok`. Default: `0` for warmers, explicit `--strict-official` for overlay. | No |
 | `NET_EXP_REFERENCE_RATE` | Annual growth rate for the Net Expenditure Rule compliance check. Default: `0.015`. | No |
+| `SNAPSHOT_FAST` | Snapshot-mode alias for prod consistency. If set, it drives static baseline loading defaults for both LEGO and macro series. Default: `1`. | No |
 | `LEGO_BASELINE_STATIC` | Force LEGO baseline to use the warmed JSON snapshot even when the warehouse is enabled. Default: `1` (on). | No |
 | `MACRO_BASELINE_STATIC` | Force macro/baseline series to load from local snapshots (CSV/JSON) even when warehouse is enabled. Default: same as `LEGO_BASELINE_STATIC`. | No |
 | `PLF_2026_PLAFONDS_URL` | Override URL (or local path) for the PLF 2026 mission ceilings source used by the warmer. | No |
@@ -248,11 +277,12 @@ Macro baselines
 | `WAREHOUSE_COFOG_OVERRIDE` | Force warehouse COFOG data even when parity heuristics fail. Default: `0` (off). | No |
 | `LOG_LEVEL` | Python logging level. Default: `INFO`. | No |
 | `SENTRY_DSN` | Sentry DSN for error reporting. | No |
-| `VOTES_STORE` | Vote storage backend (`file`, `sqlite`, `postgres`). Default: `file`. | No |
+| `VOTES_STORE` | Vote storage backend hint (`file`, `sqlite`, `postgres`). If `VOTES_DB_DSN` is set, backend is forced to `postgres`. | No |
+| `VOTES_REQUIRE_POSTGRES` | If `1`, API startup fails unless Postgres vote storage is correctly configured. Default: `1` on Cloud Run (`K_SERVICE` present), else `0`. | No |
 | `VOTES_FILE_PATH` | Path to JSON file for vote storage (file backend). Default: `data/cache/votes.json`. | No |
 | `SCENARIOS_DSL_PATH` | Path to JSON mapping scenario IDs to DSL payloads (file backend). Default: `data/cache/scenarios_dsl.json`. | No |
 | `VOTES_SQLITE_PATH` | Path to SQLite file for vote storage (sqlite backend). Default: `data/cache/votes.sqlite3`. | No |
-| `VOTES_DB_DSN` | Postgres DSN for vote storage when `VOTES_STORE=postgres`. | No |
+| `VOTES_DB_DSN` | Postgres DSN for vote storage (required in production). | No |
 | `VOTES_DB_POOL_MIN` | Minimum vote storage pool size. Default: `1`. | No |
 | `VOTES_DB_POOL_MAX` | Maximum vote storage pool size. Default: `5`. | No |
 | `VOTES_DB_POOL_TIMEOUT` | Seconds to wait for a pooled connection. Default: `30`. | No |
@@ -324,7 +354,7 @@ Cloud Run exposes two default domains per service (project-number `run.app` and 
 *   Backend image: `europe-west1-docker.pkg.dev/reviewflow-nrciu/mcp-cloud-run-deployments/citizen-budget-api`
 *   Frontend image: `europe-west1-docker.pkg.dev/reviewflow-nrciu/mcp-cloud-run-deployments/citizen-budget-frontend`
 *   Frontend build metadata records a `NEXT_PUBLIC_GRAPHQL_URL` pointing to the backend `run.app` URL; runtime `GRAPHQL_URL` is not set.
-*   Backend currently uses `VOTES_STORE=firestore`.
+*   Backend vote persistence must be configured with Cloud SQL + `VOTES_DB_DSN` (startup now fails fast otherwise).
 
 #### **6.1. Architecture**
 
@@ -416,7 +446,9 @@ gcloud run deploy citizen-budget-api \
   --project reviewflow-nrciu \
   --region europe-west1 \
   --allow-unauthenticated \
-  --port 8080
+  --port 8080 \
+  --add-cloudsql-instances reviewflow-nrciu:europe-west1:citizen-budget-db \
+  --set-env-vars VOTES_STORE=postgres,VOTES_REQUIRE_POSTGRES=1,VOTES_DB_DSN="postgresql://[USER]:[PASSWORD]@/votes_db?host=/cloudsql/reviewflow-nrciu:europe-west1:citizen-budget-db"
 
 # Build + deploy frontend
 cd frontend
@@ -437,7 +469,7 @@ Tip: The frontend service can also rely on a build-time `NEXT_PUBLIC_GRAPHQL_URL
 
 #### **6.2.2. Build Page Snapshot (Temporary)**
 
-To reduce cold-start latency on the Build page, the API can serve a precomputed snapshot at `/build-snapshot?year=2026`. This is a temporary mitigation and can be removed once the GraphQL response time is consistently fast.
+To reduce cold-start latency on the Build page, the API can serve a precomputed snapshot at `/build-snapshot?year=<YEAR>`. This is a temporary mitigation and can be removed once the GraphQL response time is consistently fast.
 
 Generate/update the snapshot:
 
@@ -445,7 +477,7 @@ Generate/update the snapshot:
 python tools/build_snapshot.py --year 2026
 ```
 
-This writes `data/cache/build_page_2026.json` (and a `.meta.json` sidecar) which is baked into the API image at deploy time.
+This writes `data/cache/build_page_<YEAR>.json` (and a `.meta.json` sidecar) which is baked into the API image at deploy time.
 
 #### **6.3. Votes & Scenarios Persistence (Cloud SQL)**
 
@@ -462,6 +494,7 @@ Both voter preferences (who voted when) and scenario definitions (what they chos
 
 ```bash
 VOTES_STORE=postgres
+VOTES_REQUIRE_POSTGRES=1
 VOTES_DB_DSN=postgresql://[USER]:[PASSWORD]@/[DBNAME]?host=/cloudsql/[PROJECT]:[REGION]:[INSTANCE]
 ```
 
@@ -476,10 +509,49 @@ gcloud run deploy citizen-budget-api \
   --allow-unauthenticated \
   --port 8080 \
   --add-cloudsql-instances [PROJECT]:[REGION]:[INSTANCE] \
-  --set-env-vars VOTES_STORE=postgres,VOTES_DB_DSN="postgresql://[USER]:[PASSWORD]@/[DBNAME]?host=/cloudsql/[PROJECT]:[REGION]:[INSTANCE]"
+  --set-env-vars VOTES_STORE=postgres,VOTES_REQUIRE_POSTGRES=1,VOTES_DB_DSN="postgresql://[USER]:[PASSWORD]@/[DBNAME]?host=/cloudsql/[PROJECT]:[REGION]:[INSTANCE]"
 ```
 
-The API applies schema migrations automatically on startup when `VOTES_STORE=postgres` is enabled.
+5. **Run a post-deploy guardrail check** (recommended):
+
+```bash
+make check-cloudrun-votes-config PROJECT=[PROJECT_ID] REGION=[REGION] SERVICE=citizen-budget-api
+```
+
+The API applies schema migrations automatically on startup when the Postgres vote store is enabled.
+
+#### **6.3.1. Qualtrics Embed: Vote Metadata + Final Snapshot**
+
+Operational details (exact HTML + JavaScript snippets) are documented in:
+`docs/QUALTRICS_INTEGRATION.md`.
+
+The Build page can run inside a Qualtrics iframe and now sends two layers of data:
+
+1. **Backend persistence** (`submitVote`): stores panel metadata in `votes.meta_json`
+   (`respondentId`, `sessionDurationSec`, `channel`, `entryPath`) and optional snapshot metadata
+   (`finalVoteSnapshotSha256`, `finalVoteSnapshotVersion`, `finalVoteSnapshotTruncated`,
+   optional compressed `finalVoteSnapshotB64`).
+2. **Parent iframe message** (`window.parent.postMessage`): emits `CBL_VOTE_SUBMITTED_V1` with
+   `embeddedData` keys suitable for Qualtrics Embedded Data fields (`CBL_*`).
+
+Recommended Qualtrics iframe URL format:
+
+```text
+https://www.budget-citoyen.fr/build?source=qualtrics&ID=${e://Field/ResponseID}
+```
+
+Notes:
+- The final vote snapshot is compressed + base64url and automatically downgraded
+  (`full -> ids -> minimal`) to stay within size limits.
+- If still too large, snapshot content is dropped and only hash/flags are sent.
+
+Local/runtime consistency check:
+
+```bash
+python tools/verify_qualtrics_integration.py
+# Optional runtime contract check
+python tools/verify_qualtrics_integration.py --graphql-url https://[API_HOST]/graphql
+```
 
 #### **6.4. Custom Domains (Cloud Run)**
 

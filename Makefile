@@ -4,18 +4,28 @@ SHELL := /bin/bash
 YEAR ?= 2026
 COUNTRIES ?= FR,DE,IT
 
-.PHONY: help warm-all warm-eurostat warm-eurostat-sub warm-plf warm-macro warm-decp summary sync-votes
+.PHONY: help warm-all warm-eurostat warm-eurostat-sub warm-plf warm-macro warm-decp summary sync-votes verify-lfi-2026 verify-lfi-2026-state-a verify-lfss-2026 verify-apul-2026 verify-apu-closure-2026 verify-apu-hardening-tests build-voted-2026-aggregates warm-voted-2026-baseline check-cloudrun-votes-config verify-qualtrics-integration
 
-	help:
-		@echo "Targets:"
-		@echo "  make warm-all YEAR=2026 COUNTRIES=FR,DE,IT  # Warm LEGO baseline (SDMX XML) + EU COFOG shares, then print summary"
-		@echo "  make warm-eurostat YEAR=2026 COUNTRIES=FR,DE,IT  # Only Eurostat warmers"
-		@echo "  make warm-eurostat-sub YEAR=2026 COUNTRIES=FR,DE,IT  # Eurostat COFOG subfunction shares"
-		@echo "  make warm-plf YEAR=2025 DATASET=plf25-depenses-2025-selon-destination  # Optional ODS snapshot"
-		@echo "  make warm-macro CFG=data/macro_config.json  # Warm INSEE BDM macro series cache"
-		@echo "  make warm-decp YEAR=2024 DATASET=decp-v3-marches-valides ENRICH=1 SIRENE_MAX=100 SIRENE_QPS=5  # DECP ingest"
-		@echo "  make sync-votes VOTES_STORE=sqlite VOTES_SQLITE_PATH=data/cache/votes.sqlite3  # Sync votes into DuckDB"
-		@echo "Env (optional): EUROSTAT_SDMX_BASE, EUROSTAT_COOKIE, EUROSTAT_BASE, INSEE_CLIENT_ID, INSEE_CLIENT_SECRET"
+help:
+	@echo "Targets:"
+	@echo "  make warm-all YEAR=2026 COUNTRIES=FR,DE,IT  # Warm LEGO baseline (SDMX XML) + EU COFOG shares, then print summary"
+	@echo "  make warm-eurostat YEAR=2026 COUNTRIES=FR,DE,IT  # Only Eurostat warmers"
+	@echo "  make warm-eurostat-sub YEAR=2026 COUNTRIES=FR,DE,IT  # Eurostat COFOG subfunction shares"
+	@echo "  make warm-plf YEAR=2025 DATASET=plf25-depenses-2025-selon-destination  # Optional ODS snapshot"
+	@echo "  make warm-macro CFG=data/macro_config.json  # Warm INSEE BDM macro series cache"
+	@echo "  make warm-decp YEAR=2024 DATASET=decp-v3-marches-valides ENRICH=1 SIRENE_MAX=100 SIRENE_QPS=5  # DECP ingest"
+	@echo "  make verify-lfi-2026  # Verify 2026 enacted mission CP (JO vs AN ÉTAT B) and update seed"
+	@echo "  make verify-lfi-2026-state-a  # Verify 2026 enacted ETAT A aggregate receipts/balance"
+	@echo "  make verify-lfss-2026  # Verify 2026 enacted LFSS branch balances + ASSO article liminaire"
+	@echo "  make verify-apul-2026  # Build DGCL-first APUL bridge verification artifact (strict link checks)"
+	@echo "  make verify-apu-closure-2026  # Validate bridge closure by subsector/COFOG/mass and anti-double-count guards"
+	@echo "  make verify-apu-hardening-tests  # Run focused P0-P3 robustness test suite"
+	@echo "  make build-voted-2026-aggregates  # Consolidate verified LFI/LFSS/APUL values and build explicit APU targets JSON"
+	@echo "  make warm-voted-2026-baseline  # Rebuild 2026 baseline + apply voted overlay (true_level, strict official) + regenerate build snapshot"
+	@echo "  make check-cloudrun-votes-config PROJECT=reviewflow-nrciu REGION=europe-west1 SERVICE=citizen-budget-api  # Verify Cloud Run vote persistence config"
+	@echo "  make verify-qualtrics-integration [GRAPHQL_URL=https://.../graphql]  # Verify Qualtrics integration wiring"
+	@echo "  make sync-votes VOTES_STORE=sqlite VOTES_SQLITE_PATH=data/cache/votes.sqlite3  # Sync votes into DuckDB"
+	@echo "Env (optional): EUROSTAT_SDMX_BASE, EUROSTAT_COOKIE, EUROSTAT_BASE, INSEE_CLIENT_ID, INSEE_CLIENT_SECRET"
 
 warm-eurostat:
 	@echo "==> Warming LEGO baseline for $(YEAR) (Eurostat SDMX XML)"
@@ -76,6 +86,72 @@ sync-votes:
 	echo "==> Syncing votes to warehouse (store=$(VOTES_STORE))"; \
 	if [ -f .venv/bin/activate ]; then source .venv/bin/activate; fi; \
 	PYTHONPATH=. python tools/sync_votes_to_warehouse.py
+
+verify-lfi-2026:
+	@if [ -f .venv/bin/activate ]; then source .venv/bin/activate; fi; \
+	PYTHONPATH=. python tools/verify_lfi_2026_state_b.py --update-seed
+
+verify-lfi-2026-state-a:
+	@if [ -f .venv/bin/activate ]; then source .venv/bin/activate; fi; \
+	PYTHONPATH=. python tools/verify_lfi_2026_state_a.py
+
+verify-lfss-2026:
+	@if [ -f .venv/bin/activate ]; then source .venv/bin/activate; fi; \
+	PYTHONPATH=. python tools/verify_lfss_2026.py
+
+verify-apul-2026:
+	@if [ -f .venv/bin/activate ]; then source .venv/bin/activate; fi; \
+	PYTHONPATH=. python tools/verify_apul_2026.py --strict-links
+
+build-voted-2026-aggregates:
+	@if [ -f .venv/bin/activate ]; then source .venv/bin/activate; fi; \
+	PYTHONPATH=. python tools/build_voted_2026_aggregates.py
+
+verify-apu-closure-2026:
+	@if [ -f .venv/bin/activate ]; then source .venv/bin/activate; fi; \
+	PYTHONPATH=. python tools/validate_apu_closure.py --year 2026 --strict
+
+verify-apu-hardening-tests:
+	@if [ -f .venv/bin/activate ]; then source .venv/bin/activate; fi; \
+	PYTHONPATH=. python -m pytest -q \
+		tests/test_apply_voted_2026_overlay.py \
+		tests/test_build_voted_2026_aggregates.py \
+		tests/test_verify_apul_2026.py \
+		tests/test_validate_apu_closure.py \
+		tests/test_build_snapshot_strict.py \
+		services/api/tests/test_lego.py::test_warm_lego_baseline_strict_official_blocks_proxy_and_fallback \
+		services/api/tests/test_lego.py::test_warm_lego_baseline_strict_official_blocks_d41_proxy \
+		services/api/tests/test_settings_snapshot_fast.py
+
+warm-voted-2026-baseline:
+	@set -euo pipefail; \
+	if [ -f .venv/bin/activate ]; then source .venv/bin/activate; fi; \
+	PYTHONPATH=. python -m services.api.cache_warm lego --year 2026; \
+	PYTHONPATH=. python tools/verify_lfi_2026_state_b.py --update-seed; \
+	PYTHONPATH=. python tools/verify_lfi_2026_state_a.py; \
+	PYTHONPATH=. python tools/verify_lfss_2026.py; \
+	PYTHONPATH=. python tools/verify_apul_2026.py --strict-links; \
+	PYTHONPATH=. python tools/build_voted_2026_aggregates.py; \
+	PYTHONPATH=. python tools/validate_apu_closure.py --year 2026 --strict; \
+	PYTHONPATH=. python tools/apply_voted_2026_to_lego_baseline.py --year 2026 --mode true_level --strict-official; \
+	PYTHONPATH=. python tools/build_snapshot.py --year 2026
+
+check-cloudrun-votes-config:
+	@if [ -z "$(PROJECT)" ] || [ -z "$(REGION)" ]; then \
+		echo "ERROR: Set PROJECT and REGION (optional SERVICE, default citizen-budget-api)"; \
+		exit 2; \
+	fi; \
+	SERVICE_RUNTIME="$(SERVICE)"; \
+	if [ -z "$$SERVICE_RUNTIME" ]; then SERVICE_RUNTIME=citizen-budget-api; fi; \
+	python3 tools/check_cloudrun_votes_config.py \
+		--project "$(PROJECT)" \
+		--region "$(REGION)" \
+		--service "$$SERVICE_RUNTIME"
+
+verify-qualtrics-integration:
+	@URL_FLAG=""; \
+	if [ -n "$(GRAPHQL_URL)" ]; then URL_FLAG="--graphql-url $(GRAPHQL_URL)"; fi; \
+	python3 tools/verify_qualtrics_integration.py $$URL_FLAG
 
 .PHONY: verify-warmers
 verify-warmers:

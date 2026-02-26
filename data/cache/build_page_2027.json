@@ -1,0 +1,5954 @@
+{
+  "legoBaseline": {
+    "pib": 3112000000000.0,
+    "depensesTotal": 1324088100000.0,
+    "recettesTotal": 1309912800000.0,
+    "pieces": [
+      {
+        "id": "ed_schools_staff_ops",
+        "amountEur": 31256043428.571426,
+        "share": 0.023605712813649957,
+        "missions": [
+          {
+            "code": "M_EDU",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "ed_secondary",
+        "amountEur": 29817771755.10204,
+        "share": 0.022519477182146745,
+        "missions": [
+          {
+            "code": "M_EDU",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "ed_universities",
+        "amountEur": 30975142748.299316,
+        "share": 0.023393566295399314,
+        "missions": [
+          {
+            "code": "M_HIGHER_EDU",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "ed_research_public",
+        "amountEur": 30694242068.027206,
+        "share": 0.02318141977714867,
+        "missions": [
+          {
+            "code": "M_HIGHER_EDU",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "health_hospitals",
+        "amountEur": 52584581118.88112,
+        "share": 0.03971380840812716,
+        "missions": [
+          {
+            "code": "M_HEALTH",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "health_citycare",
+        "amountEur": 130344100000.0,
+        "share": 0.09844065511954983,
+        "missions": [
+          {
+            "code": "M_HEALTH",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "health_public_health",
+        "amountEur": 56649918881.11888,
+        "share": 0.04278410090772576,
+        "missions": [
+          {
+            "code": "M_HEALTH",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "soc_pensions",
+        "amountEur": 366695000000.00006,
+        "share": 0.2769415418807858,
+        "missions": [
+          {
+            "code": "M_PENSIONS",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "soc_family",
+        "amountEur": 52385000000.00001,
+        "share": 0.039563077411540824,
+        "missions": [
+          {
+            "code": "M_SOLIDARITY",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "soc_unemployment",
+        "amountEur": 62862000000.00001,
+        "share": 0.04747569289384899,
+        "missions": [
+          {
+            "code": "M_EMPLOYMENT",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "soc_disability_dependence",
+        "amountEur": 41908000000.00001,
+        "share": 0.03165046192923266,
+        "missions": [
+          {
+            "code": "M_SOLIDARITY",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "soc_housing",
+        "amountEur": 0.0,
+        "share": 0.0,
+        "missions": [
+          {
+            "code": "M_HOUSING",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "sec_police_gendarmerie",
+        "amountEur": 15161161692.126911,
+        "share": 0.01145026655864282,
+        "missions": [
+          {
+            "code": "M_SECURITY",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "sec_justice_prisons",
+        "amountEur": 14627724676.850765,
+        "share": 0.011047395318219962,
+        "missions": [
+          {
+            "code": "M_JUSTICE",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "sec_civil_protection",
+        "amountEur": 13027413631.022327,
+        "share": 0.009838781596951387,
+        "missions": [
+          {
+            "code": "M_CIVIL_PROT",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "defense_personnel",
+        "amountEur": 20529500000.0,
+        "share": 0.015504632962111811,
+        "missions": [
+          {
+            "code": "M_DEFENSE",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "defense_equipment",
+        "amountEur": 28839800000.0,
+        "share": 0.021780876967325665,
+        "missions": [
+          {
+            "code": "M_DEFENSE",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "transport_ops",
+        "amountEur": 14995500000.000002,
+        "share": 0.011325152759850347,
+        "missions": [
+          {
+            "code": "M_TRANSPORT",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "transport_invest",
+        "amountEur": 33911199999.999996,
+        "share": 0.025610984646716482,
+        "missions": [
+          {
+            "code": "M_TRANSPORT",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "env_renov_energy",
+        "amountEur": 5040016666.666666,
+        "share": 0.0038064058325625507,
+        "missions": [
+          {
+            "code": "M_ENVIRONMENT",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "env_waste_sanitation",
+        "amountEur": 7929357692.3076935,
+        "share": 0.005988542372903807,
+        "missions": [
+          {
+            "code": "M_ENVIRONMENT",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "env_water_biodiversity",
+        "amountEur": 7611425641.025642,
+        "share": 0.005748428402177802,
+        "missions": [
+          {
+            "code": "M_ENVIRONMENT",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "econ_business_support",
+        "amountEur": 35351666666.66667,
+        "share": 0.026698878017759296,
+        "missions": [
+          {
+            "code": "M_ECONOMIC",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "agri_food",
+        "amountEur": 31280433333.333336,
+        "share": 0.023624132966177505,
+        "missions": [
+          {
+            "code": "M_AGRI",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "labor_market_services",
+        "amountEur": 29012400000.0,
+        "share": 0.021911230831241517,
+        "missions": [
+          {
+            "code": "M_EMPLOYMENT",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "culture_heritage",
+        "amountEur": 16605868750.0,
+        "share": 0.012541362428980367,
+        "missions": [
+          {
+            "code": "M_CULTURE",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "sport_youth",
+        "amountEur": 8713802083.333332,
+        "share": 0.006580983609272927,
+        "missions": [
+          {
+            "code": "M_CULTURE",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "media_public",
+        "amountEur": 8740129166.666668,
+        "share": 0.006600866790258645,
+        "missions": [
+          {
+            "code": "M_CULTURE",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "admin_services",
+        "amountEur": 54347800000.0,
+        "share": 0.04104545611428726,
+        "missions": [
+          {
+            "code": "M_ADMIN",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "europe_diplomacy",
+        "amountEur": 20047700000.0,
+        "share": 0.015140759893544848,
+        "missions": [
+          {
+            "code": "M_DIPLO",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "grants_to_locals",
+        "amountEur": 20437000000.0,
+        "share": 0.015434773562272783,
+        "missions": [
+          {
+            "code": "M_TERRITORIES",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "debt_interest",
+        "amountEur": 51706400000.0,
+        "share": 0.0390505737495866,
+        "missions": [
+          {
+            "code": "M_DEBT",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "rev_vat_standard",
+        "amountEur": 144432400000.0,
+        "share": null,
+        "missions": []
+      },
+      {
+        "id": "rev_vat_reduced",
+        "amountEur": 61899600000.00001,
+        "share": null,
+        "missions": []
+      },
+      {
+        "id": "rev_excise_energy",
+        "amountEur": 59113000000.0,
+        "share": null,
+        "missions": []
+      },
+      {
+        "id": "rev_excise_tob_alc",
+        "amountEur": 7020800000.0,
+        "share": null,
+        "missions": []
+      },
+      {
+        "id": "rev_pit",
+        "amountEur": 110048800000.0,
+        "share": null,
+        "missions": []
+      },
+      {
+        "id": "rev_cit",
+        "amountEur": 83760000000.0,
+        "share": null,
+        "missions": []
+      },
+      {
+        "id": "rev_csg_crds",
+        "amountEur": 165073199999.99997,
+        "share": null,
+        "missions": []
+      },
+      {
+        "id": "rev_soc_employee",
+        "amountEur": 293148000000.0,
+        "share": null,
+        "missions": []
+      },
+      {
+        "id": "rev_soc_employer",
+        "amountEur": 51216000000.0,
+        "share": null,
+        "missions": []
+      },
+      {
+        "id": "rev_soc_self",
+        "amountEur": 137917000000.0,
+        "share": null,
+        "missions": []
+      },
+      {
+        "id": "rev_prod_taxes",
+        "amountEur": 64511000000.0,
+        "share": null,
+        "missions": []
+      },
+      {
+        "id": "rev_wage_tax",
+        "amountEur": 18063080000.0,
+        "share": null,
+        "missions": []
+      },
+      {
+        "id": "rev_property_taxes",
+        "amountEur": 6646000000.0,
+        "share": null,
+        "missions": []
+      },
+      {
+        "id": "rev_transfer_taxes",
+        "amountEur": 30965280000.0,
+        "share": null,
+        "missions": []
+      },
+      {
+        "id": "rev_env_taxes",
+        "amountEur": 12902200000.0,
+        "share": null,
+        "missions": []
+      },
+      {
+        "id": "rev_public_income",
+        "amountEur": 0.0,
+        "share": null,
+        "missions": []
+      },
+      {
+        "id": "rev_sales_fees",
+        "amountEur": 60616000000.0,
+        "share": null,
+        "missions": []
+      },
+      {
+        "id": "rev_fines",
+        "amountEur": 2580440000.0,
+        "share": null,
+        "missions": []
+      },
+      {
+        "id": "rev_transfers_in",
+        "amountEur": 0.0,
+        "share": null,
+        "missions": []
+      },
+      {
+        "id": "test_piece_no_cofog",
+        "amountEur": 0.0,
+        "share": 0.0,
+        "missions": [
+          {
+            "code": "M_TEST",
+            "weight": 1.0
+          }
+        ]
+      }
+    ]
+  },
+  "legoPieces": [
+    {
+      "id": "ed_schools_staff_ops",
+      "label": "Enseignants et écoles",
+      "description": "Salaires des enseignants, cantines, manuels, entretien des écoles primaires/élémentaires.",
+      "type": "expenditure",
+      "cofogMajors": [
+        "09"
+      ],
+      "missions": [
+        {
+          "code": "M_EDU",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "ed_secondary",
+      "label": "Collèges & lycées",
+      "description": "Fonctionnement des collèges et lycées, vie scolaire.",
+      "type": "expenditure",
+      "cofogMajors": [
+        "09"
+      ],
+      "missions": [
+        {
+          "code": "M_EDU",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "ed_universities",
+      "label": "Universités",
+      "description": "Facs, bourses, vie étudiante.",
+      "type": "expenditure",
+      "cofogMajors": [
+        "09"
+      ],
+      "missions": [
+        {
+          "code": "M_HIGHER_EDU",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "ed_research_public",
+      "label": "Recherche publique",
+      "description": "Laboratoires et projets rattachés au supérieur.",
+      "type": "expenditure",
+      "cofogMajors": [
+        "09"
+      ],
+      "missions": [
+        {
+          "code": "M_HIGHER_EDU",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "health_hospitals",
+      "label": "Hôpitaux & urgences",
+      "description": "Personnel, équipements, lits, SAMU.",
+      "type": "expenditure",
+      "cofogMajors": [
+        "07"
+      ],
+      "missions": [
+        {
+          "code": "M_HEALTH",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "health_citycare",
+      "label": "Médecins & médicaments",
+      "description": "Remboursements de soins de ville et pharmacie.",
+      "type": "expenditure",
+      "cofogMajors": [
+        "07"
+      ],
+      "missions": [
+        {
+          "code": "M_HEALTH",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "health_public_health",
+      "label": "Prévention & santé publique",
+      "description": "Vaccins, dépistages, agences sanitaires.",
+      "type": "expenditure",
+      "cofogMajors": [
+        "07"
+      ],
+      "missions": [
+        {
+          "code": "M_HEALTH",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "soc_pensions",
+      "label": "Retraites",
+      "description": "Pensions versées aux retraités.",
+      "type": "expenditure",
+      "cofogMajors": [
+        "10"
+      ],
+      "missions": [
+        {
+          "code": "M_PENSIONS",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "soc_family",
+      "label": "Famille & enfance",
+      "description": "Allocations familiales, garde, naissance.",
+      "type": "expenditure",
+      "cofogMajors": [
+        "10"
+      ],
+      "missions": [
+        {
+          "code": "M_SOLIDARITY",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "soc_unemployment",
+      "label": "Chômage & insertion",
+      "description": "Indemnisation et accompagnement vers l’emploi.",
+      "type": "expenditure",
+      "cofogMajors": [
+        "10"
+      ],
+      "missions": [
+        {
+          "code": "M_EMPLOYMENT",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "soc_disability_dependence",
+      "label": "Handicap & dépendance",
+      "description": "APA, PCH, aides aux aidants.",
+      "type": "expenditure",
+      "cofogMajors": [
+        "10"
+      ],
+      "missions": [
+        {
+          "code": "M_SOLIDARITY",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "soc_housing",
+      "label": "Logement",
+      "description": "APL et aides à l’accès/maintien.",
+      "type": "expenditure",
+      "cofogMajors": [
+        "06"
+      ],
+      "missions": [
+        {
+          "code": "M_HOUSING",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "sec_police_gendarmerie",
+      "label": "Police & gendarmerie",
+      "description": "Présence, équipement, proximité.",
+      "type": "expenditure",
+      "cofogMajors": [
+        "03"
+      ],
+      "missions": [
+        {
+          "code": "M_SECURITY",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "sec_justice_prisons",
+      "label": "Justice & prisons",
+      "description": "Tribunaux, aide juridictionnelle, pénitentiaire.",
+      "type": "expenditure",
+      "cofogMajors": [
+        "03"
+      ],
+      "missions": [
+        {
+          "code": "M_JUSTICE",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "sec_civil_protection",
+      "label": "Secours & pompiers",
+      "description": "Sécurité civile et prévention des risques.",
+      "type": "expenditure",
+      "cofogMajors": [
+        "03"
+      ],
+      "missions": [
+        {
+          "code": "M_CIVIL_PROT",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "defense_personnel",
+      "label": "Militaires & opérations",
+      "description": "Solde, entraînement, missions.",
+      "type": "expenditure",
+      "cofogMajors": [
+        "02"
+      ],
+      "missions": [
+        {
+          "code": "M_DEFENSE",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "defense_equipment",
+      "label": "Matériel & innovation",
+      "description": "Équipements, maintenance, R&D.",
+      "type": "expenditure",
+      "cofogMajors": [
+        "02"
+      ],
+      "missions": [
+        {
+          "code": "M_DEFENSE",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "transport_ops",
+      "label": "Transports du quotidien",
+      "description": "Entretien routes, TER, RER/bus.",
+      "type": "expenditure",
+      "cofogMajors": [
+        "04"
+      ],
+      "missions": [
+        {
+          "code": "M_TRANSPORT",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "transport_invest",
+      "label": "Construire infrastructures",
+      "description": "Routes, rails, métro, mobilités douces.",
+      "type": "expenditure",
+      "cofogMajors": [
+        "04"
+      ],
+      "missions": [
+        {
+          "code": "M_TRANSPORT",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "env_renov_energy",
+      "label": "Rénovation & énergie propre",
+      "description": "Bâtiments, renouvelables, efficacité.",
+      "type": "expenditure",
+      "cofogMajors": [
+        "05"
+      ],
+      "missions": [
+        {
+          "code": "M_ENVIRONMENT",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "env_waste_sanitation",
+      "label": "Déchets & assainissement",
+      "description": "Collecte, tri, traitement, réseaux.",
+      "type": "expenditure",
+      "cofogMajors": [
+        "05"
+      ],
+      "missions": [
+        {
+          "code": "M_ENVIRONMENT",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "env_water_biodiversity",
+      "label": "Eau & biodiversité",
+      "description": "Rivières, zones protégées.",
+      "type": "expenditure",
+      "cofogMajors": [
+        "05"
+      ],
+      "missions": [
+        {
+          "code": "M_ENVIRONMENT",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "econ_business_support",
+      "label": "Soutien aux entreprises & à l’emploi",
+      "description": "Aides ciblées, innovation, filières.",
+      "type": "expenditure",
+      "cofogMajors": [
+        "04"
+      ],
+      "missions": [
+        {
+          "code": "M_ECONOMIC",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "agri_food",
+      "label": "Agriculture & alimentation",
+      "description": "Soutien aux agriculteurs, sécurité alimentaire.",
+      "type": "expenditure",
+      "cofogMajors": [
+        "04"
+      ],
+      "missions": [
+        {
+          "code": "M_AGRI",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "labor_market_services",
+      "label": "Services de l’emploi",
+      "description": "Accompagnement, formation, agences.",
+      "type": "expenditure",
+      "cofogMajors": [
+        "04"
+      ],
+      "missions": [
+        {
+          "code": "M_EMPLOYMENT",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "culture_heritage",
+      "label": "Culture & patrimoine",
+      "description": "Musées, bibliothèques, monuments.",
+      "type": "expenditure",
+      "cofogMajors": [
+        "08"
+      ],
+      "missions": [
+        {
+          "code": "M_CULTURE",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "sport_youth",
+      "label": "Sport & jeunesse",
+      "description": "Équipements, associations, encadrement.",
+      "type": "expenditure",
+      "cofogMajors": [
+        "08"
+      ],
+      "missions": [
+        {
+          "code": "M_CULTURE",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "media_public",
+      "label": "Médias publics",
+      "description": "Audiovisuel public, information, création.",
+      "type": "expenditure",
+      "cofogMajors": [
+        "08"
+      ],
+      "missions": [
+        {
+          "code": "M_CULTURE",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "admin_services",
+      "label": "Services publics au quotidien",
+      "description": "Gestion des finances publiques (DGFiP, Douanes), préfectures, support interministériel et immobilier de l'État.",
+      "type": "expenditure",
+      "cofogMajors": [
+        "01"
+      ],
+      "missions": [
+        {
+          "code": "M_ADMIN",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "europe_diplomacy",
+      "label": "Europe & diplomatie",
+      "description": "Action extérieure et contributions internationales.",
+      "type": "expenditure",
+      "cofogMajors": [
+        "01"
+      ],
+      "missions": [
+        {
+          "code": "M_DIPLO",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "grants_to_locals",
+      "label": "Transferts aux collectivités",
+      "description": "Dotations État→collectivités (vue État).",
+      "type": "expenditure",
+      "cofogMajors": [
+        "01"
+      ],
+      "missions": [
+        {
+          "code": "M_TERRITORIES",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "debt_interest",
+      "label": "Intérêts de la dette",
+      "description": "Service de la dette.",
+      "type": "expenditure",
+      "cofogMajors": [
+        "01"
+      ],
+      "missions": [
+        {
+          "code": "M_DEBT",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "rev_vat_standard",
+      "label": "TVA — taux normal",
+      "description": "TVA sur la plupart des achats (taux normal).",
+      "type": "revenue",
+      "cofogMajors": [],
+      "missions": []
+    },
+    {
+      "id": "rev_vat_reduced",
+      "label": "TVA — taux réduits",
+      "description": "TVA à taux réduits.",
+      "type": "revenue",
+      "cofogMajors": [],
+      "missions": []
+    },
+    {
+      "id": "rev_excise_energy",
+      "label": "Taxes carburants & énergie",
+      "description": "TICPE et assimilées.",
+      "type": "revenue",
+      "cofogMajors": [],
+      "missions": []
+    },
+    {
+      "id": "rev_excise_tob_alc",
+      "label": "Taxes tabac & alcool",
+      "description": "Accises santé publique.",
+      "type": "revenue",
+      "cofogMajors": [],
+      "missions": []
+    },
+    {
+      "id": "rev_pit",
+      "label": "Impôt sur le revenu",
+      "description": "Barème et crédits d’impôt.",
+      "type": "revenue",
+      "cofogMajors": [],
+      "missions": []
+    },
+    {
+      "id": "rev_cit",
+      "label": "Impôt sur les sociétés",
+      "description": "Imposition des bénéfices.",
+      "type": "revenue",
+      "cofogMajors": [],
+      "missions": []
+    },
+    {
+      "id": "rev_csg_crds",
+      "label": "CSG/CRDS",
+      "description": "Contributions sur revenus d’activité/remplacement.",
+      "type": "revenue",
+      "cofogMajors": [],
+      "missions": []
+    },
+    {
+      "id": "rev_soc_employee",
+      "label": "Cotisations sociales salariés",
+      "description": "Part prélevée sur salaires.",
+      "type": "revenue",
+      "cofogMajors": [],
+      "missions": []
+    },
+    {
+      "id": "rev_soc_employer",
+      "label": "Cotisations sociales employeurs",
+      "description": "Part versée par les entreprises.",
+      "type": "revenue",
+      "cofogMajors": [],
+      "missions": []
+    },
+    {
+      "id": "rev_soc_self",
+      "label": "Cotisations indépendants",
+      "description": "Contributions des travailleurs indépendants.",
+      "type": "revenue",
+      "cofogMajors": [],
+      "missions": []
+    },
+    {
+      "id": "rev_prod_taxes",
+      "label": "Autres impôts sur la production",
+      "description": "CFE et assimilés.",
+      "type": "revenue",
+      "cofogMajors": [],
+      "missions": []
+    },
+    {
+      "id": "rev_wage_tax",
+      "label": "Taxe sur les salaires",
+      "description": "Taxe assise sur salaires versés.",
+      "type": "revenue",
+      "cofogMajors": [],
+      "missions": []
+    },
+    {
+      "id": "rev_property_taxes",
+      "label": "Impôts fonciers",
+      "description": "Impôts récurrents sur la propriété.",
+      "type": "revenue",
+      "cofogMajors": [],
+      "missions": []
+    },
+    {
+      "id": "rev_transfer_taxes",
+      "label": "Droits de mutation",
+      "description": "Taxes sur transactions immobilières.",
+      "type": "revenue",
+      "cofogMajors": [],
+      "missions": []
+    },
+    {
+      "id": "rev_env_taxes",
+      "label": "Taxes environnement (hors accises)",
+      "description": "Écotaxes diverses.",
+      "type": "revenue",
+      "cofogMajors": [],
+      "missions": []
+    },
+    {
+      "id": "rev_public_income",
+      "label": "Dividendes & intérêts publics",
+      "description": "Revenus d’actifs publics.",
+      "type": "revenue",
+      "cofogMajors": [],
+      "missions": []
+    },
+    {
+      "id": "rev_sales_fees",
+      "label": "Services payants & redevances",
+      "description": "Titres, concessions, péages.",
+      "type": "revenue",
+      "cofogMajors": [],
+      "missions": []
+    },
+    {
+      "id": "rev_fines",
+      "label": "Amendes & pénalités",
+      "description": "Amendes routières et autres.",
+      "type": "revenue",
+      "cofogMajors": [],
+      "missions": []
+    },
+    {
+      "id": "rev_transfers_in",
+      "label": "Aides reçues (UE & autres APU)",
+      "description": "Transferts nets entrants.",
+      "type": "revenue",
+      "cofogMajors": [],
+      "missions": []
+    },
+    {
+      "id": "test_piece_no_cofog",
+      "label": "Test Piece No COFOG",
+      "description": "A test piece without a COFOG mapping.",
+      "type": "expenditure",
+      "cofogMajors": [],
+      "missions": [
+        {
+          "code": "M_TEST",
+          "weight": 1.0
+        }
+      ]
+    }
+  ],
+  "builderMassesAdmin": [
+    {
+      "massId": "M_PENSIONS",
+      "amountEur": 366695000000.00006,
+      "share": 0.2769415418807858
+    },
+    {
+      "massId": "M_HEALTH",
+      "amountEur": 239578600000.0,
+      "share": 0.18093856443540274
+    },
+    {
+      "massId": "M_SOLIDARITY",
+      "amountEur": 94293000000.00002,
+      "share": 0.07121353934077349
+    },
+    {
+      "massId": "M_EMPLOYMENT",
+      "amountEur": 91874400000.0,
+      "share": 0.0693869237250905
+    },
+    {
+      "massId": "M_HIGHER_EDU",
+      "amountEur": 61669384816.32652,
+      "share": 0.04657498607254799
+    },
+    {
+      "massId": "M_EDU",
+      "amountEur": 61073815183.67346,
+      "share": 0.0461251899957967
+    },
+    {
+      "massId": "M_ADMIN",
+      "amountEur": 54347800000.0,
+      "share": 0.04104545611428726
+    },
+    {
+      "massId": "M_DEBT",
+      "amountEur": 51706400000.0,
+      "share": 0.0390505737495866
+    },
+    {
+      "massId": "M_DEFENSE",
+      "amountEur": 49369300000.0,
+      "share": 0.03728550992943747
+    },
+    {
+      "massId": "M_TRANSPORT",
+      "amountEur": 48906700000.0,
+      "share": 0.03693613740656683
+    },
+    {
+      "massId": "M_ECONOMIC",
+      "amountEur": 35351666666.66667,
+      "share": 0.026698878017759296
+    },
+    {
+      "massId": "M_CULTURE",
+      "amountEur": 34059800000.0,
+      "share": 0.02572321282851194
+    },
+    {
+      "massId": "M_AGRI",
+      "amountEur": 31280433333.333336,
+      "share": 0.023624132966177505
+    },
+    {
+      "massId": "M_ENVIRONMENT",
+      "amountEur": 20580800000.0,
+      "share": 0.015543376607644158
+    },
+    {
+      "massId": "M_TERRITORIES",
+      "amountEur": 20437000000.0,
+      "share": 0.015434773562272783
+    },
+    {
+      "massId": "M_DIPLO",
+      "amountEur": 20047700000.0,
+      "share": 0.015140759893544848
+    },
+    {
+      "massId": "M_SECURITY",
+      "amountEur": 15161161692.126911,
+      "share": 0.01145026655864282
+    },
+    {
+      "massId": "M_JUSTICE",
+      "amountEur": 14627724676.850765,
+      "share": 0.011047395318219962
+    },
+    {
+      "massId": "M_CIVIL_PROT",
+      "amountEur": 13027413631.022327,
+      "share": 0.009838781596951387
+    }
+  ],
+  "massLabels": [
+    {
+      "id": "01",
+      "displayLabel": "General public services",
+      "color": "#1f2937",
+      "icon": "🏛️"
+    },
+    {
+      "id": "02",
+      "displayLabel": "Defense",
+      "color": "#b91c1c",
+      "icon": "🛡️"
+    },
+    {
+      "id": "03",
+      "displayLabel": "Public order & safety",
+      "color": "#7c3aed",
+      "icon": "🚓"
+    },
+    {
+      "id": "04",
+      "displayLabel": "Economic affairs",
+      "color": "#2563eb",
+      "icon": "⚙️"
+    },
+    {
+      "id": "05",
+      "displayLabel": "Environmental protection",
+      "color": "#047857",
+      "icon": "🌿"
+    },
+    {
+      "id": "06",
+      "displayLabel": "Housing & community amenities",
+      "color": "#f59e0b",
+      "icon": "🏠"
+    },
+    {
+      "id": "07",
+      "displayLabel": "Health",
+      "color": "#16a34a",
+      "icon": "🩺"
+    },
+    {
+      "id": "08",
+      "displayLabel": "Recreation, culture, religion",
+      "color": "#d946ef",
+      "icon": "🎭"
+    },
+    {
+      "id": "09",
+      "displayLabel": "Education",
+      "color": "#0ea5e9",
+      "icon": "🎓"
+    },
+    {
+      "id": "10",
+      "displayLabel": "Social protection",
+      "color": "#f97316",
+      "icon": "🤝"
+    }
+  ],
+  "missionLabels": [
+    {
+      "id": "M_EDU",
+      "displayLabel": "Éducation primaire & secondaire",
+      "color": "#2563eb",
+      "icon": "📚"
+    },
+    {
+      "id": "M_HIGHER_EDU",
+      "displayLabel": "Enseignement supérieur & recherche",
+      "color": "#4338ca",
+      "icon": "🎓"
+    },
+    {
+      "id": "M_HEALTH",
+      "displayLabel": "Santé",
+      "color": "#16a34a",
+      "icon": "🩺"
+    },
+    {
+      "id": "M_PENSIONS",
+      "displayLabel": "Retraites",
+      "color": "#6366f1",
+      "icon": "💼"
+    },
+    {
+      "id": "M_SOLIDARITY",
+      "displayLabel": "Solidarité & inclusion",
+      "color": "#f97316",
+      "icon": "🤝"
+    },
+    {
+      "id": "M_EMPLOYMENT",
+      "displayLabel": "Travail & emploi",
+      "color": "#0ea5e9",
+      "icon": "🛠️"
+    },
+    {
+      "id": "M_HOUSING",
+      "displayLabel": "Logement et ville",
+      "color": "#f59e0b",
+      "icon": "🏠"
+    },
+    {
+      "id": "M_SECURITY",
+      "displayLabel": "Sécurité intérieure",
+      "color": "#dc2626",
+      "icon": "🚔"
+    },
+    {
+      "id": "M_JUSTICE",
+      "displayLabel": "Justice",
+      "color": "#7c3aed",
+      "icon": "⚖️"
+    },
+    {
+      "id": "M_CIVIL_PROT",
+      "displayLabel": "Sécurité civile",
+      "color": "#fb7185",
+      "icon": "🚒"
+    },
+    {
+      "id": "M_DEFENSE",
+      "displayLabel": "Défense",
+      "color": "#1f2937",
+      "icon": "🛡️"
+    },
+    {
+      "id": "M_TRANSPORT",
+      "displayLabel": "Transports & mobilités",
+      "color": "#0f766e",
+      "icon": "🚆"
+    },
+    {
+      "id": "M_ENVIRONMENT",
+      "displayLabel": "Transition écologique",
+      "color": "#22c55e",
+      "icon": "🌿"
+    },
+    {
+      "id": "M_ECONOMIC",
+      "displayLabel": "Économie et entreprises",
+      "color": "#0284c7",
+      "icon": "🏭"
+    },
+    {
+      "id": "M_AGRI",
+      "displayLabel": "Agriculture & alimentation",
+      "color": "#65a30d",
+      "icon": "🌾"
+    },
+    {
+      "id": "M_CULTURE",
+      "displayLabel": "Culture, médias & sport",
+      "color": "#db2777",
+      "icon": "🎭"
+    },
+    {
+      "id": "M_ADMIN",
+      "displayLabel": "Services généraux de l’État",
+      "color": "#4b5563",
+      "icon": "🏛️"
+    },
+    {
+      "id": "M_DIPLO",
+      "displayLabel": "Affaires étrangères & Europe",
+      "color": "#3b82f6",
+      "icon": "🌍"
+    },
+    {
+      "id": "M_TERRITORIES",
+      "displayLabel": "Relations avec les collectivités",
+      "color": "#ea580c",
+      "icon": "🗺️"
+    },
+    {
+      "id": "M_DEBT",
+      "displayLabel": "Charge de la dette",
+      "color": "#475569",
+      "icon": "💶"
+    },
+    {
+      "id": "M_TEST",
+      "displayLabel": "Pièce de test",
+      "color": "#6b7280",
+      "icon": "❓"
+    },
+    {
+      "id": "M_UNKNOWN",
+      "displayLabel": "Mission non catégorisée",
+      "color": "#6b7280",
+      "icon": "❓"
+    }
+  ],
+  "policyLevers": [
+    {
+      "id": "amend_ifi_to_fortune_improductive",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": true,
+      "label": "Remplacer l'IFI par un impôt sur la fortune improductive",
+      "description": "Suppression de l'Impôt sur la fortune immobilière (IFI) et création d'un nouvel impôt visant le patrimoine non productif (biens somptuaires, actifs non investis)[7].",
+      "fixedImpactEur": 100000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 100000000,
+        "2027": 150000000,
+        "2028": 200000000
+      },
+      "pushbacks": [
+        {
+          "type": "legal",
+          "description": "Complexité de définition du caractère 'productif' ou 'improductif' d'un actif.",
+          "source": "Légifiscal (2025)"
+        },
+        {
+          "type": "political",
+          "description": "Sujet de désaccord majeur entre la majorité et l'opposition sur le périmètre des actifs taxés.",
+          "source": "Sénat.fr"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "amend_ir_bracket_indexation_1pct",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": true,
+      "label": "Indexation limitée du barème de l'IR à +1,1%",
+      "description": "Revalorisation des tranches du barème de l'impôt sur le revenu de seulement +1,1% pour 2026 (soit en deçà de l'inflation prévue)[8].",
+      "fixedImpactEur": 2500000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 2500000000,
+        "2027": 2600000000,
+        "2028": 2700000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Risque de 'perte de pouvoir d'achat' si l'inflation dépasse 1,1%.",
+          "source": "Capital.fr (2025)"
+        },
+        {
+          "type": "political",
+          "description": "Amendement de compromis adopté par l'Assemblée contre l'avis initial du gouvernement (gel).",
+          "source": "LCP.fr"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "amend_alimony_tax_exemption",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": true,
+      "label": "Défiscalisation des pensions alimentaires (plafond)",
+      "description": "Exonérer d'impôt sur le revenu les pensions alimentaires perçues, dans la limite de 4 000 € par enfant (et 12 000 € par an au total)[8].",
+      "fixedImpactEur": -470000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": -470000000,
+        "2027": -480000000,
+        "2028": -490000000
+      },
+      "pushbacks": [
+        {
+          "type": "administrative",
+          "description": "Complexité de mise en œuvre pour le calcul du revenu imposable des deux parties.",
+          "source": "LCP.fr (2025)"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "amend_home_service_credit_cap",
+      "family": "TAX_EXPENDITURES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": true,
+      "label": "Abaissement du plafond du crédit d'impôt services à la personne",
+      "description": "Réduire le plafond des dépenses ouvrant droit au crédit d'impôt pour l'emploi à domicile de 12 000 € à 10 000 € par an, limitant l'avantage fiscal accordé[10].",
+      "fixedImpactEur": 110000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {
+        "M_SOLIDARITY": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 110000000,
+        "2027": 120000000,
+        "2028": 130000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Inquiétude des ménages employeurs sur le reste à charge des services de garde d'enfants ou d'aide aux seniors.",
+          "source": "Notre Temps (2025)"
+        },
+        {
+          "type": "economic",
+          "description": "Risque de favoriser le travail dissimulé (au noir) si l'avantage fiscal est trop réduit.",
+          "source": "Public Sénat"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "amend_dependence_reduction_to_credit",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": true,
+      "label": "Transformation de la réduction d'impôt dépendance en crédit d'impôt",
+      "description": "Convertir la réduction d'impôt pour dépenses liées à la dépendance (personnes âgées dépendantes) en un crédit d'impôt remboursable, afin d'en faire bénéficier même les ménages non-imposables[11].",
+      "fixedImpactEur": -272000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": -272000000,
+        "2027": -280000000,
+        "2028": -290000000
+      },
+      "pushbacks": [
+        {
+          "type": "financial",
+          "description": "Coût budgétaire supplémentaire pour l'État lié au remboursement des ménages non-imposables.",
+          "source": "Légifiscal (2025)"
+        },
+        {
+          "type": "social",
+          "description": "Mesure de justice sociale visant à réduire le reste à charge pour les résidents en EHPAD les plus modestes.",
+          "source": "Le Média Social"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "amend_extend_tips_exemption",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": true,
+      "label": "Prorogation de l'exonération fiscale des pourboires",
+      "description": "Prolonger jusqu'à fin 2028 l'exonération d'impôt sur le revenu des pourboires perçus par les salariés (notamment dans la restauration), mesure initialement temporaire[12].",
+      "fixedImpactEur": -30000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": -30000000,
+        "2027": -31000000,
+        "2028": -32000000
+      },
+      "pushbacks": [
+        {
+          "type": "sector",
+          "description": "Mesure jugée indispensable par le secteur de l'hôtellerie-restauration pour maintenir l'attractivité des métiers.",
+          "source": "Le Figaro (2025)"
+        },
+        {
+          "type": "financial",
+          "description": "Perte de recettes pour la Sécurité Sociale (cotisations non perçues sur les pourboires).",
+          "source": "Boursorama"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "amend_high_income_surtax_permanent",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": true,
+      "label": "Pérennisation de la contribution exceptionnelle hauts revenus",
+      "description": "Maintenir au-delà de 2026 la contribution fiscale additionnelle sur les très hauts revenus (instaurée initialement en 2012), au lieu de la laisser expirer fin 2025[13].",
+      "fixedImpactEur": 2000000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 2000000000,
+        "2027": 2100000000,
+        "2028": 2200000000
+      },
+      "pushbacks": [
+        {
+          "type": "political",
+          "description": "Débat sur la pérennisation vs. caractère exceptionnel initial.",
+          "source": "Vie-publique.fr"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "amend_return_exit_tax",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": true,
+      "label": "Rétablissement de l'Exit Tax (version antérieure à 2019)",
+      "description": "Réintroduire l'« Exit Tax » sur les plus-values latentes en cas d'expatriation, avec le régime antérieur à 2019 (imposition annulée seulement après 15 ans de résidence fiscale à l'étranger, contre 2 ans aujourd'hui)[14].",
+      "fixedImpactEur": 700000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 700000000,
+        "2027": 750000000,
+        "2028": 800000000
+      },
+      "pushbacks": [
+        {
+          "type": "economic",
+          "description": "Frein potentiel à l'attractivité pour les investisseurs internationaux.",
+          "source": "2ndmarket.fr"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "amend_one_time_donation_exemption",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": true,
+      "label": "Don familial exceptionnel exonéré jusqu'à 152 500 € en 2026",
+      "description": "Instaurer une exonération unique de droits de donation à hauteur de 152 500 € pour les dons effectués en 2026 au profit d'un descendant (enfant, petit-enfant) ou conjoint[15].",
+      "fixedImpactEur": 0,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 0,
+        "2027": 0,
+        "2028": 0
+      },
+      "pushbacks": [
+        {
+          "type": "financial",
+          "description": "Opération blanche pour l'État (avance d'un avantage successoral existant).",
+          "source": "Boursorama (2025)"
+        },
+        {
+          "type": "administrative",
+          "description": "Conditions strictes d'âge (70+) et de date de versement initial (avant oct 2025).",
+          "source": "Légifiscal"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "amend_ald_sickleave_exempt_ir",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": true,
+      "label": "Maintien de l'exonération fiscale des IJ maladie (ALD)",
+      "description": "Conserver l'exonération d'impôt sur le revenu pour les indemnités journalières versées lors d'un arrêt maladie de longue durée (affection longue durée), alors qu'une fiscalisation était envisagée[16].",
+      "fixedImpactEur": -150000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": -150000000,
+        "2027": -150000000,
+        "2028": -150000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Forte opposition parlementaire : mesure jugée pénalisante pour les patients les plus fragiles (maladies chroniques).",
+          "source": "Le Moniteur des Pharmacies (2025)"
+        },
+        {
+          "type": "political",
+          "description": "Amendement de rejet adopté par l'Assemblée Nationale.",
+          "source": "OpenWork"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "amend_school_fees_tax_reduction",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": true,
+      "label": "Maintien de la réduction d'impôt pour frais de scolarité",
+      "description": "Préserver l'avantage fiscal accordé aux familles au titre des frais de scolarité des enfants (collège, lycée, supérieur), alors que sa suppression était initialement prévue[17].",
+      "fixedImpactEur": 450000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 450000000,
+        "2027": 460000000,
+        "2028": 470000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Mesure impopulaire auprès des familles, particulièrement celles du second degré et de l'enseignement supérieur.",
+          "source": "Vie-publique.fr"
+        },
+        {
+          "type": "political",
+          "description": "Soutien transpartisan pour le maintien de cette aide au pouvoir d'achat des parents.",
+          "source": "Sénat (2025)"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "amend_limit_holding_tax_to_luxury",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": true,
+      "label": "Limitation de la taxe sur les holdings patrimoniales aux biens somptuaires",
+      "description": "Restreindre l'assiette de la nouvelle taxe sur les holdings patrimoniales (sociétés non opérationnelles détenant du patrimoine) aux seuls actifs « somptuaires » (de luxe), excluant ainsi les autres biens de cette taxation[18].",
+      "fixedImpactEur": 150000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 150000000,
+        "2027": 160000000,
+        "2028": 170000000
+      },
+      "pushbacks": [
+        {
+          "type": "legal",
+          "description": "Difficulté de distinction entre actifs 'productifs' et 'somptuaires' au sein des holdings.",
+          "source": "Village Justice (2025)"
+        },
+        {
+          "type": "economic",
+          "description": "Risque de double imposition et de complexification du droit des sociétés.",
+          "source": "August Debouzy"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "amend_raise_big_corp_profit_contrib",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": true,
+      "label": "Hausse de la contribution exceptionnelle sur les bénéfices des grandes entreprises",
+      "description": "Augmenter le taux et/ou la durée de la contribution exceptionnelle appliquée aux bénéfices des grandes entreprises, afin de solliciter davantage les grands groupes qui ont réalisé des profits importants[19].",
+      "fixedImpactEur": 6000000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 6000000000,
+        "2027": 6000000000,
+        "2028": 6000000000
+      },
+      "pushbacks": [
+        {
+          "type": "economic",
+          "description": "Crainte d'un impact sur l'investissement et l'attractivité du site France.",
+          "source": "Le Monde (2025)"
+        },
+        {
+          "type": "legal",
+          "description": "Risque de contentieux constitutionnel sur l'égalité devant l'impôt.",
+          "source": "Conseil d'État"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "amend_universal_tax_multinationals",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": true,
+      "label": "Instauration d'un impôt universel sur les multinationales",
+      "description": "Mettre en place un mécanisme d'imposition universelle visant les multinationales, pour s'assurer qu'elles contribuent fiscalement en France sur leurs bénéfices mondiaux (en complément du dispositif international d'impôt minimum)[20].",
+      "fixedImpactEur": 1500000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 1500000000,
+        "2027": 1600000000,
+        "2028": 1700000000
+      },
+      "pushbacks": [
+        {
+          "type": "legal",
+          "description": "Complexité de mise en œuvre technique (Pilier 2 de l'OCDE).",
+          "source": "OCDE"
+        },
+        {
+          "type": "economic",
+          "description": "Incertitude sur le rendement réel en fonction des stratégies d'optimisation des groupes.",
+          "source": "Le Monde"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "amend_double_gafam_tax",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": true,
+      "label": "Taxe GAFAM renforcée (de 3 % à 15 %)",
+      "description": "Porter de 3 % à 15 % le taux de la taxe sur les services numériques, en relevant le seuil d'application à 2 Md€ de chiffre d'affaires mondial pour concentrer la mesure sur les très grands groupes[21].",
+      "fixedImpactEur": 2400000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 2400000000,
+        "2027": 2400000000,
+        "2028": 2400000000
+      },
+      "pushbacks": [
+        {
+          "type": "legal",
+          "description": "Risque de mesures de rétorsion commerciales (notamment des États-Unis).",
+          "source": "Le Figaro (2025)"
+        },
+        {
+          "type": "economic",
+          "description": "Incertitude sur la compatibilité avec les accords internationaux du Pilier 1 de l'OCDE.",
+          "source": "Les Échos"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "amend_lower_global_min_tax_threshold",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": true,
+      "label": "Abaissement du seuil d'application du taux d'IS minimum mondial à 250 M€ de CA",
+      "description": "Abaisser de 750 millions à 250 millions d'euros de chiffre d'affaires le seuil à partir duquel s'applique le taux minimum mondial de 15 % sur les bénéfices, élargissant ainsi le champ des entreprises concernées (notamment les ETI).",
+      "fixedImpactEur": 400000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 400000000,
+        "2027": 420000000,
+        "2028": 440000000
+      },
+      "pushbacks": [
+        {
+          "type": "administrative",
+          "description": "Charge de conformité accrue pour les ETI (Entreprises de Taille Intermédiaire).",
+          "source": "Légifiscal (2025)"
+        },
+        {
+          "type": "economic",
+          "description": "Risque de perte de compétitivité par rapport aux pays n'ayant pas abaissé le seuil standard de l'OCDE.",
+          "source": "OECD"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "amend_raise_buyback_tax",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": true,
+      "label": "Rehaussement de la taxe sur les rachats d'actions de 8 % à 33 %",
+      "description": "Augmenter drastiquement le taux de la taxe sur les rachats d'actions (ou « buybacks ») des entreprises, en le faisant passer de 8 % à 33 %, afin de décourager ces pratiques et de générer des recettes fiscales supplémentaires[24].",
+      "fixedImpactEur": 2000000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 2000000000,
+        "2027": 2000000000,
+        "2028": 2000000000
+      },
+      "pushbacks": [
+        {
+          "type": "economic",
+          "description": "Risque de décourager le retour de liquidités vers les marchés financiers et de pénaliser les actionnaires.",
+          "source": "Les Échos (2025)"
+        },
+        {
+          "type": "behavioral",
+          "description": "Possibilité pour les entreprises de privilégier les dividendes classiques au détriment des rachats d'actions.",
+          "source": "Le Monde"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "amend_windfall_dividend_tax",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": true,
+      "label": "Contribution sur les dividendes exceptionnels des grandes entreprises (20 % à 33 %)",
+      "description": "Instituer une contribution fiscale spécifique sur les dividendes exceptionnels versés par les grandes entreprises, à un taux situé entre 20 % et 33 %, pour faire contribuer les « super-dividendes » au budget public[25].",
+      "fixedImpactEur": 2000000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 2000000000,
+        "2027": 2000000000,
+        "2028": 2000000000
+      },
+      "pushbacks": [
+        {
+          "type": "behavioral",
+          "description": "Risque de rétention des bénéfices ou de rachats d'actions pour contourner la taxe sur les dividendes.",
+          "source": "WanSquare (2025)"
+        },
+        {
+          "type": "economic",
+          "description": "Inquiétude des investisseurs institutionnels sur le rendement des fonds propres.",
+          "source": "L'Argus de l'Assurance"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "amend_clawback_cir_relocation",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": true,
+      "label": "Remboursement du CIR en cas de délocalisation sous 3 ans",
+      "description": "Exiger qu'une entreprise qui a bénéficié du Crédit d'impôt recherche (CIR) rembourse les trois dernières années de crédit perçues si elle délocalise ses activités de R&D hors de France, afin de décourager les délocalisations après usage du CIR[26].",
+      "fixedImpactEur": 100000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 100000000,
+        "2027": 110000000,
+        "2028": 120000000
+      },
+      "pushbacks": [
+        {
+          "type": "legal",
+          "description": "Risque de non-conformité avec le droit européen (libre circulation des capitaux) et problèmes de rétroactivité.",
+          "source": "Deloitte (2025)"
+        },
+        {
+          "type": "economic",
+          "description": "Crainte d'une instabilité du cadre fiscal de l'innovation décourageant l'implantation de nouveaux centres de R&D.",
+          "source": "Zabala Innovation"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "amend_sme_cit_threshold_100k",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": true,
+      "label": "Relèvement du seuil d'accès au taux réduit d'IS (15 %) de 42 500 à 100 000 €",
+      "description": "Augmenter le plafond de bénéfice taxable au taux réduit de 15 % d'impôt sur les sociétés pour les PME, en le faisant passer de 42 500 € à 100 000 € de profit, afin d'élargir le nombre de petites entreprises bénéficiant du taux d'IS réduit[27].",
+      "fixedImpactEur": -200000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": -200000000,
+        "2027": -200000000,
+        "2028": -200000000
+      },
+      "pushbacks": [
+        {
+          "type": "financial",
+          "description": "Coût budgétaire significatif pour l'État (niche fiscale supplémentaire).",
+          "source": "TGS France (2025)"
+        },
+        {
+          "type": "political",
+          "description": "Réserves du gouvernement sur le coût total de la mesure malgré l'adoption par les députés.",
+          "source": "Légifiscal"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "amend_tighten_pacte_dutreil",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": true,
+      "label": "Recentrage du pacte Dutreil (biens professionnels uniquement, durée 6 ans)",
+      "description": "Restreindre le dispositif d'exonération partielle des droits de succession/donation « pacte Dutreil » aux seuls biens professionnels (entreprises effectivement actives), et allonger la durée d'engagement de conservation des titres de 4 à 6 ans[28].",
+      "fixedImpactEur": 2000000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 2000000000,
+        "2027": 2000000000,
+        "2028": 2000000000
+      },
+      "pushbacks": [
+        {
+          "type": "economic",
+          "description": "Risque de fragilisation de la transmission des entreprises familiales et de l'actionnariat de long terme.",
+          "source": "Les Échos (2025)"
+        },
+        {
+          "type": "political",
+          "description": "Forte opposition des organisations patronales (MEDEF, CPME).",
+          "source": "Le Figaro"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "amend_ondam_3pct_increase",
+      "family": "HEALTH",
+      "budgetSide": "SPENDING",
+      "majorAmendment": true,
+      "label": "Hausse de l'Ondam 2026 portée à +3 % au lieu de +1,6 %",
+      "description": "Augmenter l'objectif national de dépenses d'assurance maladie (Ondam) pour 2026 à +3 % (au lieu de +1,6 % initialement prévu), ce qui relève le plafond de dépenses de santé à env. 273,9 Md€[1].",
+      "fixedImpactEur": -3000000000,
+      "massMapping": {
+        "07": 1
+      },
+      "cofogMapping": {
+        "07": 1
+      },
+      "missionMapping": {
+        "M_HEALTH": 1.0
+      },
+      "multiYearImpact": {
+        "2026": -3000000000,
+        "2027": -3200000000,
+        "2028": -3400000000
+      },
+      "pushbacks": [
+        {
+          "type": "sector",
+          "description": "Les fédérations hospitalières (FHF) jugent cette hausse insuffisante par rapport à l'inflation médicale (4%).",
+          "source": "FHF.fr (2025)"
+        },
+        {
+          "type": "political",
+          "description": "Débat tendu au Parlement sur l'équilibre entre rigueur budgétaire et besoins du système de soin.",
+          "source": "Info.gouv.fr"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "amend_suspend_retirement_reform",
+      "family": "SOCIAL_SECURITY",
+      "budgetSide": "SPENDING",
+      "majorAmendment": true,
+      "label": "Suspension de la réforme des retraites (report âge 64 ans suspendu)",
+      "description": "Suspendre jusqu'en janvier 2028 la poursuite de la réforme des retraites de 2023 : le relèvement progressif de l'âge légal (vers 64 ans) et de la durée de cotisation sont mis en pause. Par exemple, la génération 1964 ne verra pas son âge légal passer à 64 ans mais pourra partir à 62 ans et 9 mois[29].",
+      "fixedImpactEur": -100000000,
+      "massMapping": {
+        "10.2": 1
+      },
+      "cofogMapping": {
+        "10.2": 1
+      },
+      "missionMapping": {
+        "M_PENSIONS": 1.0
+      },
+      "multiYearImpact": {
+        "2026": -100000000,
+        "2027": -1400000000,
+        "2028": -2000000000
+      },
+      "pushbacks": [
+        {
+          "type": "financial",
+          "description": "Risque sur la soutenabilité à long terme du système par répartition (CSR).",
+          "source": "iFRAP (2025)"
+        },
+        {
+          "type": "political",
+          "description": "Suspension jusqu'en 2028 vue comme une 'année blanche' électorale par certains opposants.",
+          "source": "Public Sénat"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "amend_new_birth_leave",
+      "family": "SOCIAL_SECURITY",
+      "budgetSide": "SPENDING",
+      "majorAmendment": true,
+      "label": "Création d'un congé de naissance supplémentaire (1 à 2 mois)",
+      "description": "Instaurer un nouveau congé de naissance, s'ajoutant aux congés maternité et paternité existants, d'une durée au choix du salarié de un mois (à 70 % du salaire) ou deux mois (à 60 %). Ce congé pourra être pris en deux fois et vise à renforcer le soutien à la parentalité[30].",
+      "fixedImpactEur": -800000000,
+      "massMapping": {
+        "10": 1
+      },
+      "cofogMapping": {
+        "10": 1
+      },
+      "missionMapping": {
+        "M_SOLIDARITY": 1.0
+      },
+      "multiYearImpact": {
+        "2026": -800000000,
+        "2027": -1200000000,
+        "2028": -1500000000
+      },
+      "pushbacks": [
+        {
+          "type": "economic",
+          "description": "Coût important pour la branche Famille.",
+          "source": "Solidarités.gouv.fr"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "amend_limit_sick_leave_duration",
+      "family": "SOCIAL_SECURITY",
+      "budgetSide": "SPENDING",
+      "majorAmendment": true,
+      "label": "Encadrement des Indemnités Journalières (durée et plafond)",
+      "description": "Limiter la durée des arrêts de travail (max 360 jours) et abaisser le plafond de prise en charge des IJ de 1,8 à 1,4 SMIC, pour freiner la dynamique des dépenses de santé.",
+      "fixedImpactEur": 900000000,
+      "massMapping": {
+        "07": 1
+      },
+      "cofogMapping": {
+        "07": 1
+      },
+      "missionMapping": {
+        "M_HEALTH": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 900000000,
+        "2027": 950000000,
+        "2028": 1000000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Inquiétude sur la précarisation des salariés malades.",
+          "source": "Légifiscal"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "amend_no_benefit_index_freeze",
+      "family": "SOCIAL_SECURITY",
+      "budgetSide": "SPENDING",
+      "majorAmendment": true,
+      "label": "Annulation du gel 2024-2025 des pensions et minima sociaux",
+      "description": "Supprimer l'article prévoyant une « année blanche » sans revalorisation des pensions de retraite et prestations sociales en avril 2026. Les retraites et minima sociaux seront finalement indexés sur l'inflation comme d'habitude, évitant ~3 Mds€ d'économies initialement envisagées[2].",
+      "fixedImpactEur": -4000000000,
+      "massMapping": {
+        "10": 1
+      },
+      "cofogMapping": {
+        "10": 1
+      },
+      "missionMapping": {
+        "M_PENSIONS": 1.0
+      },
+      "multiYearImpact": {
+        "2026": -4000000000,
+        "2027": -4000000000,
+        "2028": -4000000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Mesure de protection du pouvoir d'achat des plus précaires face à l'inflation.",
+          "source": "Vie-publique.fr"
+        },
+        {
+          "type": "political",
+          "description": "Amendement soutenu par une large majorité de l'opposition pour contrer la rigueur budgétaire.",
+          "source": "Le Monde (2025)"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "amend_no_new_apprentice_contrib",
+      "family": "SOCIAL_SECURITY",
+      "budgetSide": "REVENUE",
+      "majorAmendment": true,
+      "label": "Abandon de la fin d'exonération de cotisations pour les apprentis",
+      "description": "Annuler la mesure envisagée de suppression de l'exonération de cotisations sociales pour les nouveaux contrats d'apprentissage. Autrement dit, les employeurs d'apprentis continueront à bénéficier de l'allègement actuel, aucune cotisation nouvelle ne sera créée[2].",
+      "fixedImpactEur": -1100000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": -1100000000,
+        "2027": -1150000000,
+        "2028": -1200000000
+      },
+      "pushbacks": [
+        {
+          "type": "economic",
+          "description": "Protection des entreprises contre une hausse des charges sociales et fiscales sur l'emploi.",
+          "source": "Le Figaro (2025)"
+        },
+        {
+          "type": "political",
+          "description": "Victoire des organisations patronales (MEDEF) contre le financement de l'apprentissage par les entreprises.",
+          "source": "Les Échos"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "amend_no_meal_voucher_tax",
+      "family": "SOCIAL_SECURITY",
+      "budgetSide": "REVENUE",
+      "majorAmendment": true,
+      "label": "Abandon de la cotisation patronale sur les titres-restaurants",
+      "description": "Retirer la disposition qui visait à instaurer une nouvelle cotisation patronale sur la part patronale des titres-restaurant. En conséquence, les entreprises ne seront pas soumises en 2026 à une charge supplémentaire sur les tickets-resto distribués à leurs salariés[2].",
+      "fixedImpactEur": -950000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": -950000000,
+        "2027": -1000000000,
+        "2028": -1050000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Protection du pouvoir d'achat des salariés utilisant les titres-restaurant (environ 5 millions de bénéficiaires).",
+          "source": "Journal de l'Économie (2025)"
+        },
+        {
+          "type": "sector",
+          "description": "Inquiétude du secteur de la restauration sur une baisse potentielle de l'utilisation des titres si taxés.",
+          "source": "Capital.fr"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "amend_no_medical_copay_doubling",
+      "family": "SOCIAL_SECURITY",
+      "budgetSide": "SPENDING",
+      "majorAmendment": true,
+      "label": "Renonciation au doublement des franchises médicales par décret",
+      "description": "Le gouvernement renonce à son projet d'augmenter par décret (sans vote) le montant des franchises médicales – ces participations forfaitaires laissées à charge des patients sur les boîtes de médicaments, actes médicaux, etc. Initialement, un doublement de ces franchises était envisagé[32].",
+      "fixedImpactEur": -800000000,
+      "massMapping": {
+        "07": 1
+      },
+      "cofogMapping": {
+        "07": 1
+      },
+      "missionMapping": {
+        "M_HEALTH": 1.0
+      },
+      "multiYearImpact": {
+        "2026": -800000000,
+        "2027": -800000000,
+        "2028": -800000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Protection de l'accès aux soins et du pouvoir d'achat des patients, notamment les plus modestes.",
+          "source": "Acuite.fr (2025)"
+        },
+        {
+          "type": "political",
+          "description": "Recul du gouvernement face à une opposition quasi-unanime au Parlement sur ce doublement.",
+          "source": "Capital.fr"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "amend_raise_csg_on_capital",
+      "family": "SOCIAL_SECURITY",
+      "budgetSide": "REVENUE",
+      "majorAmendment": true,
+      "label": "Hausse de la fiscalité via CSG sur revenus du capital (+1,4 pt)",
+      "description": "Augmenter de 1,4 point le taux de Contribution sociale généralisée (CSG) sur certains revenus du capital (dividendes, plus-values mobilières). La CSG passe ainsi d'environ 9,2 % à 10,6 % sur ces revenus pour les foyers aisés, ce qui devrait rapporter ~1,5 Md€ affecté à la branche autonomie[3].",
+      "fixedImpactEur": 1500000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 1500000000,
+        "2027": 1550000000,
+        "2028": 1600000000
+      },
+      "pushbacks": [
+        {
+          "type": "economic",
+          "description": "Risque de découragement de l'épargne et de l'investissement productif.",
+          "source": "Les Échos (2025)"
+        },
+        {
+          "type": "political",
+          "description": "Débat sur la pression fiscale globale déjà élevée sur le capital en France.",
+          "source": "Commission des Finances"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "amend_surtax_health_insurers",
+      "family": "SOCIAL_SECURITY",
+      "budgetSide": "REVENUE",
+      "majorAmendment": true,
+      "label": "Contribution exceptionnelle des mutuelles santé (1 Md€)",
+      "description": "Instaurer une taxe exceptionnelle sur les organismes complémentaires santé (mutuelles et assureurs) d'environ 1 Md€ en 2026. Objectif affiché : compenser le coût des mesures et répondre aux hausses de tarifs jugées excessives des mutuelles, sans répercussion sur les assurés (plafond d'augmentation des cotisations en 2026)[4].",
+      "fixedImpactEur": 1100000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 1100000000,
+        "2027": 0,
+        "2028": 0
+      },
+      "pushbacks": [
+        {
+          "type": "sector",
+          "description": "Opposition frontale des mutuelles dénonçant une 'taxe sur la santé' et un 'impôt déguisé'.",
+          "source": "Le Lynx (2025)"
+        },
+        {
+          "type": "social",
+          "description": "Risque de répercussion sur les cotisations des assurés dès 2027 (hausse des tarifs).",
+          "source": "Viva Magazine"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "amend_extend_overtime_deduction",
+      "family": "SOCIAL_SECURITY",
+      "budgetSide": "REVENUE",
+      "majorAmendment": true,
+      "label": "Extension de la déduction de cotisations sur les heures sup' aux >250 salariés",
+      "description": "Étendre aux entreprises de plus de 250 salariés la déduction forfaitaire de cotisations patronales aujourd'hui applicable aux heures supplémentaires dans les plus petites entreprises. Cette mesure, portée par des députés de l'opposition, vise à soutenir le pouvoir d'achat des salariés des grands groupes (coût < 150 M€)[33].",
+      "fixedImpactEur": -500000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": -500000000,
+        "2027": -520000000,
+        "2028": -540000000
+      },
+      "pushbacks": [
+        {
+          "type": "economic",
+          "description": "Inquiétude sur le coût global des exonérations sur les heures supplémentaires (coût total > 3Md€).",
+          "source": "Sénat (2025)"
+        },
+        {
+          "type": "political",
+          "description": "Débat sur l'efficacité de la mesure pour stimuler l'offre de travail vs. coût pour les finances publiques.",
+          "source": "Les Échos"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "amend_increase_severance_tax",
+      "family": "SOCIAL_SECURITY",
+      "budgetSide": "REVENUE",
+      "majorAmendment": true,
+      "label": "Augmentation du forfait social sur les indemnités de rupture (30% → 40%)",
+      "description": "Rehausser de 30 % à 40 % le taux du forfait social (contribution patronale) appliqué aux indemnités de rupture conventionnelle et de mise à la retraite. Cette mesure accroît le coût des départs négociés pour l'employeur, générant des recettes supplémentaires pour la Sécurité sociale[34].",
+      "fixedImpactEur": 600000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 600000000,
+        "2027": 620000000,
+        "2028": 640000000
+      },
+      "pushbacks": [
+        {
+          "type": "economic",
+          "description": "Risque de renchérissement du coût des ruptures de contrat pour les entreprises.",
+          "source": "Les Échos (2025)"
+        },
+        {
+          "type": "labor",
+          "description": "Inquiétude sur une baisse potentielle du montant net perçu par les salariés en cas de rupture.",
+          "source": "Le Figaro"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "annee_blanche_indexation",
+      "family": "SOCIAL_SECURITY",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Année Blanche (Geler l'indexation des prestations)",
+      "description": "Suspendre la revalorisation annuelle (indexation sur l'inflation) des prestations sociales et des retraites pendant un an.",
+      "fixedImpactEur": 4000000000,
+      "massMapping": {
+        "10": 1
+      },
+      "cofogMapping": {
+        "10": 1
+      },
+      "missionMapping": {
+        "M_PENSIONS": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 4000000000,
+        "2027": 4000000000,
+        "2028": 4000000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Risque de forte précarisation des ménages modestes face à une inflation non compensée.",
+          "source": "Vie-publique.fr (2025)"
+        },
+        {
+          "type": "political",
+          "description": "Mesure hautement inflammable politiquement, souvent qualifiée de 'rigueur aveugle'.",
+          "source": "Le Monde"
+        }
+      ],
+      "impact": {
+        "householdsImpacted": 17000000,
+        "decile1ImpactEur": -150,
+        "decile10ImpactEur": -480,
+        "gdpImpactPct": -0.05,
+        "jobsImpactCount": -2000
+      }
+    },
+    {
+      "id": "plf2026_mission_justice_efficiency",
+      "family": "OPERATIONS",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Économies d'efficacité (Mission Justice)",
+      "description": "Mettre en œuvre des mesures d'efficacité (numérisation, services partagés) au sein du ministère de la Justice.",
+      "fixedImpactEur": 250000000,
+      "massMapping": {
+        "03": 1
+      },
+      "cofogMapping": {
+        "03": 1
+      },
+      "missionMapping": {
+        "M_JUSTICE": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 250000000,
+        "2027": 300000000,
+        "2028": 350000000
+      },
+      "pushbacks": [
+        {
+          "type": "operational",
+          "description": "Risque de ralentissement de la modernisation de l'institution judiciaire et de la dématérialisation.",
+          "source": "Sénat (2025)"
+        },
+        {
+          "type": "social",
+          "description": "Inquiétude des syndicats de magistrats sur les moyens de fonctionnement des tribunaux.",
+          "source": "Le Monde"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "plf2026_mission_education_efficiency",
+      "family": "OPERATIONS",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Efficacité opérationnelle (Mission Éducation)",
+      "description": "Rationaliser les services support et les achats au sein de l'Éducation nationale, en préservant les dépenses pour les classes.",
+      "fixedImpactEur": 400000000,
+      "massMapping": {
+        "9": 1
+      },
+      "cofogMapping": {
+        "9": 1
+      },
+      "missionMapping": {
+        "M_EDU": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 400000000,
+        "2027": 450000000,
+        "2028": 500000000
+      },
+      "pushbacks": [
+        {
+          "type": "operational",
+          "description": "Risque de dégradation des conditions d'encadrement si les mesures d'efficience touchent les postes devant élèves.",
+          "source": "Sénat (2025)"
+        },
+        {
+          "type": "social",
+          "description": "Forte mobilisation syndicale contre toute réduction de moyens dans l'éducation nationale.",
+          "source": "Les Échos"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "plf2026_mission_foreign_affairs_streamlining",
+      "family": "OPERATIONS",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Rationalisation (Mission Affaires étrangères)",
+      "description": "Rationaliser les postes diplomatiques et les services partagés à l'étranger pour réaliser des économies.",
+      "fixedImpactEur": 150000000,
+      "massMapping": {
+        "01": 1
+      },
+      "cofogMapping": {
+        "01": 1
+      },
+      "missionMapping": {
+        "M_DIPLO": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 150000000,
+        "2027": 160000000,
+        "2028": 170000000
+      },
+      "pushbacks": [
+        {
+          "type": "diplomatic",
+          "description": "Risque d'affaiblissement de l'influence diplomatique française et de la qualité du service aux Français de l'étranger.",
+          "source": "Commission des Affaires Étrangères (Assemblée Nationale)"
+        },
+        {
+          "type": "operational",
+          "description": "Complexité de la réorganisation du réseau consulaire sans nuire à la continuité du service public.",
+          "source": "Sénat (2025)"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "wealth_tax",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Rétablir l'Impôt de Solidarité sur la Fortune (ISF)",
+      "description": "Restaurer un impôt général sur le patrimoine des ménages les plus aisés (en remplacement de l'IFI, qui ne concerne que l'immobilier).",
+      "fixedImpactEur": 6300000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 6300000000,
+        "2027": 6300000000,
+        "2028": 6300000000
+      },
+      "pushbacks": [
+        {
+          "type": "economic",
+          "description": "Risque de fuite des capitaux et d'évasion fiscale des contribuables les plus aisés.",
+          "source": "Conseil d'Analyse Économique"
+        },
+        {
+          "type": "vigilance",
+          "description": "Risque de fuite des capitaux et d'expatriation fiscale des contribuables les plus aisés.",
+          "source": "Gemini Research"
+        },
+        {
+          "type": "vigilance",
+          "description": "Impact potentiel sur le financement des entreprises (Business Angels, investissement PME).",
+          "source": "Gemini Research"
+        },
+        {
+          "type": "vigilance",
+          "description": "Complexité d'évaluation des actifs non cotés (œuvres d'art, parts de sociétés fermées).",
+          "source": "Gemini Research"
+        }
+      ],
+      "impact": {
+        "householdsImpacted": 350000,
+        "decile1ImpactEur": 0,
+        "decile10ImpactEur": -12000,
+        "gdpImpactPct": -0.02,
+        "jobsImpactCount": -500
+      }
+    },
+    {
+      "id": "high_income_surtax",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Surtaxe sur les très hauts revenus",
+      "description": "Introduire de nouvelles tranches supérieures ou une surtaxe sur l'impôt sur le revenu pour les plus hauts revenus.",
+      "fixedImpactEur": 2000000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 2000000000,
+        "2027": 2000000000,
+        "2028": 2000000000
+      },
+      "pushbacks": [
+        {
+          "type": "economic",
+          "description": "Risque d'expatriation fiscale des hauts revenus et de baisse de l'attractivité pour les talents internationaux.",
+          "source": "Institut Montaigne (2025)"
+        },
+        {
+          "type": "social",
+          "description": "Perçu comme une mesure de justice fiscale nécessaire par une partie de l'opinion publique.",
+          "source": "Sondage OpinionWay"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "superprofits_tax",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Taxe sur les 'super-profits' des entreprises",
+      "description": "Prélever une taxe exceptionnelle sur les 'super-profits' (bénéfices exceptionnels) des grandes entreprises.",
+      "fixedImpactEur": 6000000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 6000000000,
+        "2027": 6000000000,
+        "2028": 6000000000
+      },
+      "pushbacks": [
+        {
+          "type": "economic",
+          "description": "Risque de frein à l'investissement productif si les bénéfices réinvestis sont taxés.",
+          "source": "La Tribune (2025)"
+        },
+        {
+          "type": "legal",
+          "description": "Instabilité fiscale dénoncée par les organisations patronales (MEDEF).",
+          "source": "Le Figaro"
+        },
+        {
+          "type": "vigilance",
+          "description": "Risque constitutionnel lié à la rupture d'égalité devant les charges publiques.",
+          "source": "Gemini Research"
+        },
+        {
+          "type": "vigilance",
+          "description": "Impact négatif sur la capacité d'investissement futur des secteurs ciblés (énergie, etc.).",
+          "source": "Gemini Research"
+        },
+        {
+          "type": "vigilance",
+          "description": "Difficulté technique à définir la notion de 'super-profit' par rapport au cycle économique.",
+          "source": "Gemini Research"
+        }
+      ],
+      "impact": {
+        "householdsImpacted": 0,
+        "decile1ImpactEur": 0,
+        "decile10ImpactEur": -200,
+        "gdpImpactPct": -0.05,
+        "jobsImpactCount": -2000
+      }
+    },
+    {
+      "id": "end_flat_tax",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Supprimer la 'Flat Tax' (PFU) sur les revenus du capital",
+      "description": "Supprimer le Prélèvement Forfaitaire Unique (PFU) de 30% sur les dividendes et intérêts, et revenir au barème progressif de l'impôt.",
+      "fixedImpactEur": 3500000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 3500000000,
+        "2027": 3500000000,
+        "2028": 3500000000
+      },
+      "pushbacks": [
+        {
+          "type": "economic",
+          "description": "Crainte d'un retour de l'évasion fiscale et d'une baisse de l'investissement productif.",
+          "source": "Bloomberg Tax (2025)"
+        },
+        {
+          "type": "social",
+          "description": "Mesure de justice fiscale visant à aligner la taxation du capital sur celle du travail.",
+          "source": "Alternatives Économiques"
+        },
+        {
+          "type": "vigilance",
+          "description": "Risque de fuite des capitaux et moindre attractivité pour les investisseurs étrangers.",
+          "source": "Gemini Research"
+        },
+        {
+          "type": "vigilance",
+          "description": "Instabilité fiscale décourageant l'épargne longue et l'actionnariat.",
+          "source": "Gemini Research"
+        },
+        {
+          "type": "vigilance",
+          "description": "Risque de baisse de l'assiette taxable (optimisation ou baisse des distributions) réduisant le rendement attendu.",
+          "source": "Gemini Research"
+        }
+      ],
+      "impact": {
+        "householdsImpacted": 4000000,
+        "decile1ImpactEur": 0,
+        "decile10ImpactEur": -850,
+        "gdpImpactPct": -0.03,
+        "jobsImpactCount": -1000
+      }
+    },
+    {
+      "id": "expand_ftt",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Étendre la Taxe sur les Transactions Financières (TTF)",
+      "description": "Élargir l'assiette ou augmenter le taux de la taxe sur les transactions financières (achats d'actions, etc.).",
+      "fixedImpactEur": 1200000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 1200000000,
+        "2027": 1250000000,
+        "2028": 1300000000
+      },
+      "pushbacks": [
+        {
+          "type": "economic",
+          "description": "Crainte d'une délocalisation des activités de trading vers Londres ou d'autres places financières sans TTF large.",
+          "source": "Fédération Bancaire Française (2025)"
+        },
+        {
+          "type": "operational",
+          "description": "Difficulté technique de taxation du trading haute fréquence et des produits dérivés complexes.",
+          "source": "Note du Trésor"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "progressive_csg",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Rendre la CSG plus progressive",
+      "description": "Augmenter la CSG sur les revenus du capital ou les hautes retraites, tout en la réduisant pour les bas revenus.",
+      "fixedImpactEur": 2800000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 2800000000,
+        "2027": 2800000000,
+        "2028": 2800000000
+      },
+      "pushbacks": [
+        {
+          "type": "legal",
+          "description": "Risque constitutionnel lié à l'individualisation de la CSG (actuellement basée sur le foyer pour certains revenus) et à la rupture d'égalité.",
+          "source": "Conseil Constitutionnel"
+        },
+        {
+          "type": "social",
+          "description": "Incertitude sur le gain réel pour les classes moyennes en fonction des seuils de progressivité retenus.",
+          "source": "Note de l'IPP"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "carbon_tax",
+      "family": "CLIMATE",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Rétablir / Augmenter la taxe carbone",
+      "description": "Augmenter progressivement les taxes sur les émissions de carbone (carburants, gaz...) en restaurant la trajectoire de la taxe carbone.",
+      "fixedImpactEur": 4000000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 4000000000,
+        "2027": 4200000000,
+        "2028": 4400000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Risque de contestation sociale type 'Gilets Jaunes' en cas de hausse brutale sans compensation.",
+          "source": "Note de la CAE"
+        },
+        {
+          "type": "vigilance",
+          "description": "Acceptabilité sociale faible et risque de contestation (type Gilets Jaunes).",
+          "source": "Gemini Research"
+        },
+        {
+          "type": "vigilance",
+          "description": "Caractère régressif impactant davantage les ménages modestes et ruraux.",
+          "source": "Gemini Research"
+        },
+        {
+          "type": "vigilance",
+          "description": "Nécessité impérative de mécanismes de redistribution (chèque vert) pour compenser la perte de pouvoir d'achat.",
+          "source": "Gemini Research"
+        }
+      ],
+      "impact": {
+        "householdsImpacted": 25000000,
+        "decile1ImpactEur": -80,
+        "decile10ImpactEur": -250,
+        "gdpImpactPct": -0.1,
+        "jobsImpactCount": -5000
+      }
+    },
+    {
+      "id": "cap_research_credit",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Réformer le Crédit d'Impôt Recherche (CIR)",
+      "description": "Réduire ou plafonner le Crédit d'Impôt Recherche (CIR) pour les entreprises afin de réaliser des économies.",
+      "fixedImpactEur": 2000000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 2000000000,
+        "2027": 2000000000,
+        "2028": 2000000000
+      },
+      "pushbacks": [
+        {
+          "type": "economic",
+          "description": "Risque de baisse de la R&D privée et de délocalisation des chercheurs vers des pays plus attractifs.",
+          "source": "Conseil d'Analyse Économique (2025)"
+        },
+        {
+          "type": "operational",
+          "description": "Instabilité fiscale critiquée par les entreprises innovantes et les startups.",
+          "source": "Myriad Consulting"
+        }
+      ],
+      "impact": {
+        "householdsImpacted": 0,
+        "decile1ImpactEur": 0,
+        "decile10ImpactEur": 0,
+        "gdpImpactPct": -0.08,
+        "jobsImpactCount": -15000
+      }
+    },
+    {
+      "id": "reduce_home_services_credit",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Réduire le crédit d'impôt 'Services à la personne'",
+      "description": "Diminuer le crédit d'impôt pour l'emploi à domicile (ménage, garde d'enfants...) pour réduire son coût.",
+      "fixedImpactEur": 1000000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 1000000000,
+        "2027": 1050000000,
+        "2028": 1100000000
+      },
+      "pushbacks": [
+        {
+          "type": "economic",
+          "description": "Risque de forte hausse du travail au noir dans le secteur des services à la personne (ménage, jardinage).",
+          "source": "Note de la DG Trésor (2025)"
+        },
+        {
+          "type": "social",
+          "description": "Impact sur le pouvoir d'achat des familles et des personnes âgées dépendantes employant à domicile.",
+          "source": "Les Échos"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "remove_pension_deduction",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Supprimer l'abattement fiscal de 10% sur les pensions",
+      "description": "Supprimer l'abattement forfaitaire de 10% appliqué aux pensions de retraite, alignant leur fiscalité sur celle des salaires.",
+      "fixedImpactEur": 4600000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 4600000000,
+        "2027": 4600000000,
+        "2028": 4600000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Forte baisse du pouvoir d'achat pour environ 17 millions de retraités imposables.",
+          "source": "Note de l'IPP (2025)"
+        },
+        {
+          "type": "political",
+          "description": "Mesure politiquement très sensible, souvent qualifiée de 'ponction sur les retraités'.",
+          "source": "Le Figaro"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "end_overtime_exemption",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Supprimer l'exonération fiscale des heures supplémentaires",
+      "description": "Rendre les heures supplémentaires imposables à l'impôt sur le revenu, comme le salaire normal.",
+      "fixedImpactEur": 1700000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 1700000000,
+        "2027": 1700000000,
+        "2028": 1700000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Forte baisse de pouvoir d'achat pour les salariés effectuant des heures supplémentaires (environ 9 millions de personnes).",
+          "source": "INSEE (2025)"
+        },
+        {
+          "type": "political",
+          "description": "Mesure hautement impopulaire, remettant en cause le slogan 'travailler plus pour gagner plus'.",
+          "source": "Le Monde"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "fight_tax_fraud",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Lutter contre la fraude et l'évasion fiscales",
+      "description": "Renforcer les contrôles, le partage de données et les sanctions pour récupérer davantage d'impôts impayés.",
+      "fixedImpactEur": 1500000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 1500000000,
+        "2027": 1600000000,
+        "2028": 1700000000
+      },
+      "pushbacks": [
+        {
+          "type": "operational",
+          "description": "Nécessite des moyens humains supplémentaires substantiels (DGFiP) pour des résultats parfois différés.",
+          "source": "Cour des Comptes (2025)"
+        },
+        {
+          "type": "economic",
+          "description": "Incertitude inhérente au rendement réel de la lutte contre la fraude.",
+          "source": "Note du Trésor"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "expand_digital_tax",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Augmenter la taxe sur le numérique (GAFAM)",
+      "description": "Augmenter les revenus issus des entreprises multinationales du numérique (via la taxe nationale ou l'impôt minimum mondial).",
+      "fixedImpactEur": 800000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 800000000,
+        "2027": 850000000,
+        "2028": 900000000
+      },
+      "pushbacks": [
+        {
+          "type": "legal",
+          "description": "Difficulté de définition juridique des services numériques taxables pour éviter les doubles impositions.",
+          "source": "Conseil d'État (2025)"
+        },
+        {
+          "type": "international",
+          "description": "Tensions avec les partenaires commerciaux (USA) sur le caractère discriminatoire de la taxe.",
+          "source": "Les Échos"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "reinstate_cvae",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Rétablir la CVAE (Impôt de production)",
+      "description": "Annuler la suppression totale de la CVAE (Cotisation sur la Valeur Ajoutée des Entreprises) pour restaurer cet impôt de production.",
+      "fixedImpactEur": 4000000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 4000000000,
+        "2027": 4200000000,
+        "2028": 4400000000
+      },
+      "pushbacks": [
+        {
+          "type": "economic",
+          "description": "Crainte d'une dégradation de la compétitivité industrielle française (la CVAE étant un impôt de production).",
+          "source": "France Industrie (2025)"
+        },
+        {
+          "type": "political",
+          "description": "Remise en cause de la promesse de baisse des impôts de production pour les entreprises.",
+          "source": "Le Figaro"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "cut_fuel_taxes",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Réduire les taxes sur le carburant (TICPE)",
+      "description": "Baisser la taxe (TICPE) sur l'essence et le diesel, ou subventionner le prix à la pompe.",
+      "fixedImpactEur": -5000000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": -5000000000,
+        "2027": -5000000000,
+        "2028": -5000000000
+      },
+      "pushbacks": [
+        {
+          "type": "environmental",
+          "description": "Mesure 'brune' contraire aux engagements climatiques de la France (incitation à la consommation fossile).",
+          "source": "Haut Conseil pour le Climat (2025)"
+        },
+        {
+          "type": "financial",
+          "description": "Coût budgétaire massif pesant lourdement sur le déficit de l'État.",
+          "source": "Note de la DG Trésor"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "cut_income_tax_middle",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Baisser l'impôt sur le revenu des classes moyennes",
+      "description": "Alléger l'impôt pour les contribuables de la classe moyenne (ex: en ajustant les tranches du barème).",
+      "fixedImpactEur": -2000000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": -2000000000,
+        "2027": -2050000000,
+        "2028": -2100000000
+      },
+      "pushbacks": [
+        {
+          "type": "financial",
+          "description": "Creusement du déficit public de 2 milliards d'euros dans un contexte de forte tension budgétaire.",
+          "source": "Le Monde (2025)"
+        },
+        {
+          "type": "economic",
+          "description": "Incertitude sur l'effet de relance réelle par rapport au coût pour les finances de l'État.",
+          "source": "Note de l'Observatoire Français des Conjonctures Économiques (OFCE)"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "expand_overtime_exemption",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Étendre la défiscalisation des heures sup. / primes",
+      "description": "Réduire davantage les impôts ou charges sociales sur les heures supplémentaires ou les primes salariales.",
+      "fixedImpactEur": -500000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": -500000000,
+        "2027": -520000000,
+        "2028": -540000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Mesure de soutien au pouvoir d'achat par le travail, très populaire auprès des salariés.",
+          "source": "Le Figaro (2025)"
+        },
+        {
+          "type": "economic",
+          "description": "Risque de substitution entre emploi permanent et recours aux heures supplémentaires, pesant sur les finances de la Sécurité Sociale.",
+          "source": "Note de la Dares"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "cut_vat_essentials",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Baisser la TVA sur les produits de première nécessité",
+      "description": "Appliquer un taux de TVA réduit (ou nul) sur les produits essentiels (alimentation, produits d'hygiène...).",
+      "fixedImpactEur": -1500000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": -1500000000,
+        "2027": -1500000000,
+        "2028": -1500000000
+      },
+      "pushbacks": [
+        {
+          "type": "economic",
+          "description": "Risque de non-répercussion de la baisse de TVA sur les prix finaux par la grande distribution (effet d'aubaine).",
+          "source": "INSEE (2025)"
+        },
+        {
+          "type": "financial",
+          "description": "Coût budgétaire très élevé et ciblage imparfait (bénéficie aussi aux ménages aisés).",
+          "source": "Note du Trésor"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "cut_vat_energy",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Baisser la TVA sur l'énergie à 5,5%",
+      "description": "Réduire la TVA sur l'électricité, le gaz et les carburants de 20% à 5,5%.",
+      "fixedImpactEur": -11300000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": -11300000000,
+        "2027": -11300000000,
+        "2028": -11300000000
+      },
+      "pushbacks": [
+        {
+          "type": "legal",
+          "description": "Nécessite une modification de la directive européenne TVA pour une application pérenne sur l'ensemble de la facture.",
+          "source": "Fondation Jean Jaurès (2025)"
+        },
+        {
+          "type": "environmental",
+          "description": "Effet ambivalent : soutient le pouvoir d'achat mais réduit le signal-prix pour la sobriété énergétique.",
+          "source": "Selectra"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "freeze_tax_brackets",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Geler le barème de l'impôt sur le revenu",
+      "description": "Ne pas revaloriser les tranches du barème de l'impôt sur l'inflation (ce qui augmente mécaniquement l'impôt).",
+      "fixedImpactEur": 2200000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 2200000000,
+        "2027": 2200000000,
+        "2028": 2200000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Augmentation mécanique de l'impôt pour des millions de ménages, y compris les plus modestes (effet de seuil).",
+          "source": "MoneyVox (2025)"
+        },
+        {
+          "type": "political",
+          "description": "Mesure perçue comme une 'hausse d'impôt cachée' par l'opposition.",
+          "source": "Public Sénat"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "raise_retirement_age_65",
+      "family": "PENSIONS",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Augmenter l'âge légal de la retraite à 65 ans",
+      "description": "Augmenter l'âge légal de départ à la retraite à 65 ans (au-delà de la réforme actuelle le fixant à 64 ans).",
+      "fixedImpactEur": 8000000000,
+      "massMapping": {
+        "10": 1
+      },
+      "cofogMapping": {
+        "10": 1
+      },
+      "missionMapping": {
+        "M_PENSIONS": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 8000000000,
+        "2027": 8000000000,
+        "2028": 8000000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Forte opposition syndicale et risque de mouvements sociaux massifs (type grèves de 2023).",
+          "source": "Le Monde (2025)"
+        },
+        {
+          "type": "labor",
+          "description": "Inquiétude sur l'emploi des seniors et le basculement vers le chômage ou l'invalidité.",
+          "source": "Note de l'OFCE"
+        }
+      ],
+      "impact": {
+        "householdsImpacted": 16000000,
+        "decile1ImpactEur": -800,
+        "decile10ImpactEur": -200,
+        "gdpImpactPct": 0.1,
+        "jobsImpactCount": 200000
+      }
+    },
+    {
+      "id": "lower_retirement_age_62",
+      "family": "PENSIONS",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Revenir à l'âge légal de la retraite à 62 ans",
+      "description": "Annuler la réforme de 2023 et rétablir l'âge légal de départ à la retraite à 62 ans.",
+      "fixedImpactEur": -14000000000,
+      "massMapping": {
+        "10": 1
+      },
+      "cofogMapping": {
+        "10": 1
+      },
+      "missionMapping": {
+        "M_PENSIONS": 1.0
+      },
+      "multiYearImpact": {
+        "2026": -14000000000,
+        "2027": -14000000000,
+        "2028": -14000000000
+      },
+      "pushbacks": [
+        {
+          "type": "financial",
+          "description": "Creusement massif du déficit de la branche vieillesse, menaçant l'équilibre du système par répartition.",
+          "source": "COR (Comité de Suivi des Retraites) 2025"
+        },
+        {
+          "type": "economic",
+          "description": "Risque de baisse de la population active et de ralentissement de la croissance du PIB.",
+          "source": "Note de la DG Trésor"
+        }
+      ],
+      "impact": {
+        "householdsImpacted": 800000,
+        "decile1ImpactEur": 600,
+        "decile10ImpactEur": 2200,
+        "gdpImpactPct": -0.4,
+        "jobsImpactCount": -300000
+      }
+    },
+    {
+      "id": "lower_retirement_age_60",
+      "family": "PENSIONS",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Abaisser l'âge légal de la retraite à 60 ans",
+      "description": "Réduire l'âge légal de départ à la retraite à 60 ans (pour ceux ayant les annuités requises).",
+      "fixedImpactEur": -33000000000,
+      "massMapping": {
+        "10": 1
+      },
+      "cofogMapping": {
+        "10": 1
+      },
+      "missionMapping": {
+        "M_PENSIONS": 1.0
+      },
+      "multiYearImpact": {
+        "2026": -33000000000,
+        "2027": -33000000000,
+        "2028": -33000000000
+      },
+      "pushbacks": [
+        {
+          "type": "financial",
+          "description": "Coût budgétaire massif jugé insoutenable par la plupart des institutions (Cour des Comptes, COR) sans hausse massive des cotisations.",
+          "source": "Rapport du COR (2025)"
+        },
+        {
+          "type": "economic",
+          "description": "Risque de forte pénurie de main-d'œuvre et de dégradation du ratio actifs/retraités.",
+          "source": "Note de la DG Trésor"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "extend_contribution_period",
+      "family": "PENSIONS",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Allonger la durée de cotisation pour la retraite",
+      "description": "Exiger davantage de trimestres de travail pour obtenir une retraite à taux plein.",
+      "fixedImpactEur": 5000000000,
+      "massMapping": {
+        "10": 1
+      },
+      "cofogMapping": {
+        "10": 1
+      },
+      "missionMapping": {
+        "M_PENSIONS": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 5000000000,
+        "2027": 5000000000,
+        "2028": 5000000000
+      },
+      "pushbacks": [
+        {
+          "type": "labor",
+          "description": "Injustice dénoncée pour les carrières longues et hachées, particulièrement pour les femmes.",
+          "source": "Note de l'IPP (2025)"
+        },
+        {
+          "type": "social",
+          "description": "Risque de baisse du niveau des pensions pour ceux ne pouvant pas atteindre la durée requise.",
+          "source": "Le Monde"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "close_special_regimes",
+      "family": "PENSIONS",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Supprimer les régimes spéciaux de retraite restants",
+      "description": "Mettre fin aux régimes spéciaux de retraite encore existants et restreindre les départs anticipés.",
+      "fixedImpactEur": 300000000,
+      "massMapping": {
+        "10": 1
+      },
+      "cofogMapping": {
+        "10": 1
+      },
+      "missionMapping": {
+        "M_PENSIONS": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 300000000,
+        "2027": 600000000,
+        "2028": 900000000
+      },
+      "pushbacks": [
+        {
+          "type": "labor",
+          "description": "Risque de fortes tensions sociales et de grèves ciblées dans les secteurs concernés (énergie, transports).",
+          "source": "Le Monde (2025)"
+        },
+        {
+          "type": "operational",
+          "description": "Complexité de la gestion de la transition ('clause du grand-père') s'étalant sur plusieurs décennies.",
+          "source": "Rapport de l'IFRAP"
+        }
+      ],
+      "impact": {
+        "householdsImpacted": 250000,
+        "decile1ImpactEur": 0,
+        "decile10ImpactEur": -400,
+        "gdpImpactPct": 0,
+        "jobsImpactCount": 0
+      }
+    },
+    {
+      "id": "freeze_pension_indexation",
+      "family": "PENSIONS",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Geler ou sous-indexer les pensions de retraite",
+      "description": "Limiter ou retarder temporairement la revalorisation des pensions par rapport à l'inflation.",
+      "fixedImpactEur": 4000000000,
+      "massMapping": {
+        "10": 1
+      },
+      "cofogMapping": {
+        "10": 1
+      },
+      "missionMapping": {
+        "M_SOLIDARITY": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 4000000000,
+        "2027": 4000000000,
+        "2028": 4000000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Forte baisse du pouvoir d'achat réel des retraités, particulièrement les petites pensions, dans un contexte d'inflation.",
+          "source": "Le Monde (2025)"
+        },
+        {
+          "type": "political",
+          "description": "Mesure politiquement explosive, souvent contestée par les associations de retraités et les partis d'opposition.",
+          "source": "Public Sénat"
+        }
+      ],
+      "impact": {
+        "householdsImpacted": 17000000,
+        "decile1ImpactEur": -150,
+        "decile10ImpactEur": -450,
+        "gdpImpactPct": -0.1,
+        "jobsImpactCount": -2000
+      }
+    },
+    {
+      "id": "align_public_private_pensions",
+      "family": "PENSIONS",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Aligner le calcul des retraites public/privé",
+      "description": "Calculer les pensions des fonctionnaires sur une période plus longue (ex: 25 ans) au lieu des 6 derniers mois, pour aligner sur le privé.",
+      "fixedImpactEur": 500000000,
+      "massMapping": {
+        "10": 1
+      },
+      "cofogMapping": {
+        "10": 1
+      },
+      "missionMapping": {
+        "M_SOLIDARITY": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 500000000,
+        "2027": 1000000000,
+        "2028": 1500000000
+      },
+      "pushbacks": [
+        {
+          "type": "labor",
+          "description": "Forte hostilité des agents de la fonction publique, dénonçant une baisse de pension sans revalorisation salariale compensatoire.",
+          "source": "Le Figaro (2025)"
+        },
+        {
+          "type": "economic",
+          "description": "Débat sur l'équité réelle public-privé (différence de primes, de carrières et de cotisations).",
+          "source": "Note de l'IPP"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "raise_pension_contributions",
+      "family": "PENSIONS",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Augmenter les cotisations retraite",
+      "description": "Augmenter les taux de cotisation (salariale et/ou patronale) qui financent les retraites.",
+      "fixedImpactEur": 10000000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 10000000000,
+        "2027": 10000000000,
+        "2028": 10000000000
+      },
+      "pushbacks": [
+        {
+          "type": "economic",
+          "description": "Risque de dégradation de la compétitivité-coût des entreprises (part patronale) ou baisse du salaire net (part salariale).",
+          "source": "Note de la DG Trésor (2025)"
+        },
+        {
+          "type": "political",
+          "description": "Mesure impopulaire auprès des actifs, augmentant la pression fiscale globale déjà élevée en France.",
+          "source": "Le Figaro"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "raise_min_pension",
+      "family": "PENSIONS",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Augmenter les pensions minimales",
+      "description": "Augmenter le montant de la pension minimum (ex: pour les carrières complètes) pour les retraités modestes.",
+      "fixedImpactEur": -2000000000,
+      "massMapping": {
+        "10": 1
+      },
+      "cofogMapping": {
+        "10": 1
+      },
+      "missionMapping": {
+        "M_SOLIDARITY": 1.0
+      },
+      "multiYearImpact": {
+        "2026": -2000000000,
+        "2027": -2100000000,
+        "2028": -2200000000
+      },
+      "pushbacks": [
+        {
+          "type": "financial",
+          "description": "Coût budgétaire important pesant sur l'équilibre financier de la branche vieillesse.",
+          "source": "Note de la Direction de la Sécurité Sociale (2025)"
+        },
+        {
+          "type": "operational",
+          "description": "Complexité de mise en œuvre pour les retraités ayant des carrières multi-régimes.",
+          "source": "Rapport du COR"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "tighten_unemployment_benefits",
+      "family": "SOCIAL_SECURITY",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Durcir les règles de l'assurance chômage",
+      "description": "Restreindre l'assurance chômage en raccourcissant la durée d'indemnisation ou en durcissant les conditions d'accès.",
+      "fixedImpactEur": 2500000000,
+      "massMapping": {
+        "10": 1
+      },
+      "cofogMapping": {
+        "10": 1
+      },
+      "missionMapping": {
+        "M_EMPLOYMENT": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 2500000000,
+        "2027": 2500000000,
+        "2028": 2500000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Forte opposition des syndicats dénonçant une stigmatisation des chômeurs et une baisse de la protection sociale.",
+          "source": "Culture RH (2025)"
+        },
+        {
+          "type": "economic",
+          "description": "Risque de précarisation accrue des demandeurs d'emploi en fin de droits.",
+          "source": "Note de l'Unédic"
+        }
+      ],
+      "impact": {
+        "householdsImpacted": 2500000,
+        "decile1ImpactEur": -400,
+        "decile10ImpactEur": 0,
+        "gdpImpactPct": -0.05,
+        "jobsImpactCount": 15000
+      }
+    },
+    {
+      "id": "expand_unemployment_benefits",
+      "family": "SOCIAL_SECURITY",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Annuler les coupes dans l'assurance chômage",
+      "description": "Rendre l'assurance chômage plus généreuse (ex: rétablir des durées d'indemnisation plus longues).",
+      "fixedImpactEur": -1500000000,
+      "massMapping": {
+        "10": 1
+      },
+      "cofogMapping": {
+        "10": 1
+      },
+      "missionMapping": {
+        "M_EMPLOYMENT": 1.0
+      },
+      "multiYearImpact": {
+        "2026": -1500000000,
+        "2027": -1600000000,
+        "2028": -1700000000
+      },
+      "pushbacks": [
+        {
+          "type": "behavioral",
+          "description": "Crainte d'une hausse massive des démissions et d'une déstabilisation du marché du travail.",
+          "source": "L'Express (2025)"
+        },
+        {
+          "type": "financial",
+          "description": "Pression sur l'équilibre financier de l'Unédic, nécessitant potentiellement une hausse des cotisations.",
+          "source": "Note de l'Unédic"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "tighten_rsa_requirements",
+      "family": "SOCIAL_SECURITY",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Conditionner le versement du RSA",
+      "description": "Exiger des bénéficiaires du RSA (Revenu de Solidarité Active) des activités (travail, formation) en contrepartie de l'allocation.",
+      "fixedImpactEur": 500000000,
+      "massMapping": {
+        "10": 1
+      },
+      "cofogMapping": {
+        "10": 1
+      },
+      "missionMapping": {
+        "M_SOLIDARITY": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 500000000,
+        "2027": 800000000,
+        "2028": 1000000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Inquiétude des associations de lutte contre la pauvreté sur le risque de radiation des publics les plus éloignés de l'emploi.",
+          "source": "Le Monde (2025)"
+        },
+        {
+          "type": "administrative",
+          "description": "Complexité et coût de l'accompagnement et du contrôle des 15-20 heures d'activité hebdomadaires.",
+          "source": "Note de l'IPP"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "restrict_non_citizen_benefits",
+      "family": "SOCIAL_SECURITY",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Restreindre les aides sociales aux non-citoyens",
+      "description": "Appliquer une 'préférence nationale' en limitant l'accès de certains non-citoyens aux aides sociales non-contributives (RSA, APL...).",
+      "fixedImpactEur": 2000000000,
+      "massMapping": {
+        "10": 1
+      },
+      "cofogMapping": {
+        "10": 1
+      },
+      "missionMapping": {
+        "M_SOLIDARITY": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 2000000000,
+        "2027": 2000000000,
+        "2028": 2000000000
+      },
+      "pushbacks": [
+        {
+          "type": "legal",
+          "description": "Risque de censure par le Conseil Constitutionnel (principe de fraternité et égalité devant les prestations sociales).",
+          "source": "Conseil Constitutionnel (2024/2025)"
+        },
+        {
+          "type": "social",
+          "description": "Inquiétude sur l'aggravation de la grande pauvreté chez les populations immigrées en situation régulière.",
+          "source": "Le Monde"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "freeze_social_benefits",
+      "family": "SOCIAL_SECURITY",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Geler l'indexation des minima sociaux",
+      "description": "Suspendre temporairement la revalorisation sur l'inflation des minima sociaux (RSA, AAH...) pendant un an.",
+      "fixedImpactEur": 2300000000,
+      "massMapping": {
+        "10": 1
+      },
+      "cofogMapping": {
+        "10": 1
+      },
+      "missionMapping": {
+        "M_SOLIDARITY": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 2300000000,
+        "2027": 2300000000,
+        "2028": 2300000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Forte dégradation du pouvoir d'achat des ménages les plus pauvres, déjà impactés par l'inflation alimentaire et énergétique.",
+          "source": "Vie-publique.fr (2025)"
+        },
+        {
+          "type": "financial",
+          "description": "Risque de hausse indirecte des dépenses d'urgence sociale (hébergement, aides alimentaires) pour compenser la baisse de revenu.",
+          "source": "Note de l'IPP"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "cut_housing_aid",
+      "family": "SOCIAL_SECURITY",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Réduire les Aides au Logement (APL)",
+      "description": "Réduire les dépenses d'APL (Aide Personnalisée au Logement), par exemple en durcissant les conditions d'éligibilité.",
+      "fixedImpactEur": 1500000000,
+      "massMapping": {
+        "10": 1
+      },
+      "cofogMapping": {
+        "10": 1
+      },
+      "missionMapping": {
+        "M_HOUSING": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 1500000000,
+        "2027": 1550000000,
+        "2028": 1600000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Impact direct sur le reste à charge des locataires les plus modestes et des étudiants.",
+          "source": "Le Monde (2025)"
+        },
+        {
+          "type": "financial",
+          "description": "Risque de hausse des impayés de loyer pour les bailleurs sociaux (HLM).",
+          "source": "Union Sociale pour l'Habitat (USH)"
+        }
+      ],
+      "impact": {
+        "householdsImpacted": 3000000,
+        "decile1ImpactEur": -350,
+        "decile10ImpactEur": 0,
+        "gdpImpactPct": -0.05,
+        "jobsImpactCount": 0
+      }
+    },
+    {
+      "id": "cut_family_benefits",
+      "family": "SOCIAL_SECURITY",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Réduire les allocations familiales (hauts revenus)",
+      "description": "Diminuer les allocations familiales versées aux ménages les plus aisés.",
+      "fixedImpactEur": 1500000000,
+      "massMapping": {
+        "10": 1
+      },
+      "cofogMapping": {
+        "10": 1
+      },
+      "missionMapping": {
+        "M_SOLIDARITY": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 1500000000,
+        "2027": 1550000000,
+        "2028": 1600000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Injustice dénoncée pour les familles des classes moyennes supérieures qui ont déjà subi un fort écrêtement.",
+          "source": "Le Figaro (2025)"
+        },
+        {
+          "type": "economic",
+          "description": "Risque de baisse de la natalité si les aides familiales sont perçues comme instables.",
+          "source": "Note de l'Unaf"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "fight_social_fraud",
+      "family": "SOCIAL_SECURITY",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Lutter contre la fraude aux prestations sociales",
+      "description": "Renforcer les contrôles pour détecter et prévenir la fraude aux prestations sociales (famille, chômage, santé...).",
+      "fixedImpactEur": 500000000,
+      "massMapping": {
+        "10": 1
+      },
+      "cofogMapping": {
+        "10": 1
+      },
+      "missionMapping": {
+        "M_SOLIDARITY": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 500000000,
+        "2027": 550000000,
+        "2028": 600000000
+      },
+      "pushbacks": [
+        {
+          "type": "operational",
+          "description": "Nécessite des investissements importants en outils numériques (croisement de fichiers) et en effectifs de contrôle (CAF, CPAM).",
+          "source": "Modernisation.gouv.fr (2025)"
+        },
+        {
+          "type": "social",
+          "description": "Risque de stigmatisation des bénéficiaires de prestations sociales et de multiplication des contrôles intrusifs.",
+          "source": "Public Sénat"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "eliminate_ame",
+      "family": "SOCIAL_SECURITY",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Supprimer l'Aide Médicale d'État (AME)",
+      "description": "Supprimer l'AME (Aide Médicale d'État), le programme de santé pour les immigrés sans papiers.",
+      "fixedImpactEur": 800000000,
+      "massMapping": {
+        "07": 1
+      },
+      "cofogMapping": {
+        "07": 1
+      },
+      "missionMapping": {
+        "M_HEALTH": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 800000000,
+        "2027": 850000000,
+        "2028": 900000000
+      },
+      "pushbacks": [
+        {
+          "type": "health",
+          "description": "Risque de santé publique (propagation de maladies infectieuses) et engorgement des services d'urgence hospitalière.",
+          "source": "Académie de Médecine (2025)"
+        },
+        {
+          "type": "social",
+          "description": "Contestation par les associations humanitaires dénonçant une rupture de l'accès aux soins fondamentaux.",
+          "source": "Le Monde"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "cap_health_spending",
+      "family": "HEALTH",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Plafonner la croissance des dépenses de santé (ONDAM)",
+      "description": "Imposer un plafond plus strict (ONDAM) à la croissance annuelle des dépenses de santé.",
+      "fixedImpactEur": 2500000000,
+      "massMapping": {
+        "07": 1
+      },
+      "cofogMapping": {
+        "07": 1
+      },
+      "missionMapping": {
+        "M_HEALTH": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 2500000000,
+        "2027": 2500000000,
+        "2028": 2500000000
+      },
+      "pushbacks": [
+        {
+          "type": "health",
+          "description": "Risque de sous-financement chronique de l'hôpital public et dégradation de l'accès aux soins.",
+          "source": "Fédération Hospitalière de France (2025)"
+        },
+        {
+          "type": "social",
+          "description": "Inquiétude sur le déremboursement de soins ou médicaments pour compenser le plafonnement.",
+          "source": "Les Échos"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "reduce_health_costs",
+      "family": "HEALTH",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Réduire les dépenses de santé 'inutiles'",
+      "description": "Réduire les dépenses de santé jugées inefficaces (ex: moins rembourser certains médicaments, promouvoir les génériques).",
+      "fixedImpactEur": 1200000000,
+      "massMapping": {
+        "07": 1
+      },
+      "cofogMapping": {
+        "07": 1
+      },
+      "missionMapping": {
+        "M_HEALTH": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 1200000000,
+        "2027": 1300000000,
+        "2028": 1400000000
+      },
+      "pushbacks": [
+        {
+          "type": "sector",
+          "description": "Difficulté de mise en œuvre réelle sans dégrader la qualité des soins ou augmenter la charge de travail des soignants.",
+          "source": "Le Monde (2025)"
+        },
+        {
+          "type": "operational",
+          "description": "Nécessite des investissements préalables (numérique, formation) pour générer des économies à terme.",
+          "source": "Note de l'Assurance Maladie"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "increase_patient_copays",
+      "family": "HEALTH",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Augmenter le reste à charge (franchises médicales)",
+      "description": "Mettre en place ou augmenter les franchises médicales (participation forfaitaire) sur les visites ou les médicaments.",
+      "fixedImpactEur": 1100000000,
+      "massMapping": {
+        "07": 1
+      },
+      "cofogMapping": {
+        "07": 1
+      },
+      "missionMapping": {
+        "M_HEALTH": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 1100000000,
+        "2027": 1150000000,
+        "2028": 1200000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Augmentation du reste à charge pour les patients, pouvant entraîner un renoncement aux soins pour les plus précaires sans mutuelle.",
+          "source": "Note de la DREES (2025)"
+        },
+        {
+          "type": "economic",
+          "description": "Transfert de charge vers les mutuelles et assurances complémentaires, entraînant une hausse mécanique de leurs cotisations.",
+          "source": "Le Monde"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "hire_health_workers",
+      "family": "HEALTH",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Embaucher du personnel soignant supplémentaire",
+      "description": "Recruter davantage de personnel médical (ex: un plan pour embaucher 20 000 infirmiers et aides-soignants).",
+      "fixedImpactEur": -2800000000,
+      "massMapping": {
+        "07": 1
+      },
+      "cofogMapping": {
+        "07": 1
+      },
+      "missionMapping": {
+        "M_HEALTH": 1.0
+      },
+      "multiYearImpact": {
+        "2026": -2800000000,
+        "2027": -2800000000,
+        "2028": -2800000000
+      },
+      "pushbacks": [
+        {
+          "type": "labor",
+          "description": "Difficultés majeures de recrutement (98% des établissements impactés) malgré l'ouverture de postes.",
+          "source": "Infirmiers.com (2025)"
+        },
+        {
+          "type": "financial",
+          "description": "Pression sur les budgets hospitaliers déjà en fort déficit (1,2Md€ cumulé pour les CHU en 2023).",
+          "source": "Le Quotidien du Médecin"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "raise_healthcare_wages",
+      "family": "HEALTH",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Augmenter les salaires des soignants à l'hôpital",
+      "description": "Augmenter les grilles de salaires des infirmiers et autres soignants à l'hôpital public.",
+      "fixedImpactEur": -4500000000,
+      "massMapping": {
+        "07": 1
+      },
+      "cofogMapping": {
+        "07": 1
+      },
+      "missionMapping": {
+        "M_HEALTH": 1.0
+      },
+      "multiYearImpact": {
+        "2026": -4500000000,
+        "2027": -4500000000,
+        "2028": -4500000000
+      },
+      "pushbacks": [
+        {
+          "type": "financial",
+          "description": "Impact massif sur le déficit de la Sécurité Sociale et nécessité de financement pérenne.",
+          "source": "Cour des Comptes (2025)"
+        },
+        {
+          "type": "economic",
+          "description": "Risque d'inflation par les salaires dans le secteur public hospitalier.",
+          "source": "Note de l'Insee"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "cut_officials_privileges",
+      "family": "STAFFING",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Réduire les 'privilèges' des élus",
+      "description": "Supprimer ou réduire les avantages des hommes et femmes politiques (ex: régimes de retraite spéciaux, budgets de frais).",
+      "fixedImpactEur": 100000000,
+      "massMapping": {
+        "01": 1
+      },
+      "cofogMapping": {
+        "01": 1
+      },
+      "missionMapping": {
+        "M_ADMIN": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 100000000,
+        "2027": 105000000,
+        "2028": 110000000
+      },
+      "pushbacks": [
+        {
+          "type": "symbolic",
+          "description": "Mesure à fort impact symbolique mais à rendement budgétaire limité au regard du déficit global.",
+          "source": "Rapport de la Cour des Comptes (2025)"
+        },
+        {
+          "type": "political",
+          "description": "Résistances internes au sein des assemblées parlementaires et des grands corps de l'État.",
+          "source": "Le Figaro"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "freeze_civil_service_pay",
+      "family": "STAFFING",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Geler le point d'indice des fonctionnaires",
+      "description": "Suspendre l'augmentation générale du point d'indice des fonctionnaires pendant un an.",
+      "fixedImpactEur": 3600000000,
+      "massMapping": {
+        "9": 0.3,
+        "07": 0.2,
+        "03": 0.1,
+        "02": 0.1,
+        "01": 0.3
+      },
+      "cofogMapping": {
+        "9": 0.3,
+        "07": 0.2,
+        "03": 0.1,
+        "02": 0.1,
+        "01": 0.3
+      },
+      "missionMapping": {
+        "M_ADMIN": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 3600000000,
+        "2027": 3600000000,
+        "2028": 3600000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Baisse du pouvoir d'achat réel des fonctionnaires, particulièrement marquée en période d'inflation.",
+          "source": "FIPECO (2025)"
+        },
+        {
+          "type": "labor",
+          "description": "Risque de perte d'attractivité des métiers de la fonction publique et tensions sociales (grèves).",
+          "source": "Solidaires Finances Publiques"
+        }
+      ],
+      "impact": {
+        "householdsImpacted": 5700000,
+        "decile1ImpactEur": -200,
+        "decile10ImpactEur": -500,
+        "gdpImpactPct": -0.1,
+        "jobsImpactCount": 0
+      }
+    },
+    {
+      "id": "freeze_civil_service_promotions",
+      "family": "STAFFING",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Geler les promotions automatiques (Fonction Publique)",
+      "description": "Suspendre temporairement les augmentations automatiques liées à l'ancienneté (GVT) pour les fonctionnaires.",
+      "fixedImpactEur": 2700000000,
+      "massMapping": {
+        "9": 0.3,
+        "07": 0.2,
+        "03": 0.1,
+        "02": 0.1,
+        "01": 0.3
+      },
+      "cofogMapping": {
+        "9": 0.3,
+        "07": 0.2,
+        "03": 0.1,
+        "02": 0.1,
+        "01": 0.3
+      },
+      "missionMapping": {
+        "M_ADMIN": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 2700000000,
+        "2027": 2700000000,
+        "2028": 2700000000
+      },
+      "pushbacks": [
+        {
+          "type": "labor",
+          "description": "Blocage des carrières et du GVT (Glissement Vieillesse Technicité), perçu comme une sanction injuste par les agents.",
+          "source": "CGT Finances Publiques (2025)"
+        },
+        {
+          "type": "administrative",
+          "description": "Complexité de gestion des reliquats d'avancement lors du dégel futur des carrières.",
+          "source": "Note de la DGAFP"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "raise_civil_service_pay",
+      "family": "STAFFING",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Augmenter le point d'indice de 10% (Fonction Publique)",
+      "description": "Augmenter la valeur du point d'indice (salaire de base des fonctionnaires) de 10%.",
+      "fixedImpactEur": -21700000000,
+      "massMapping": {
+        "9": 0.3,
+        "07": 0.2,
+        "03": 0.1,
+        "02": 0.1,
+        "01": 0.3
+      },
+      "cofogMapping": {
+        "9": 0.3,
+        "07": 0.2,
+        "03": 0.1,
+        "02": 0.1,
+        "01": 0.3
+      },
+      "missionMapping": {
+        "M_ADMIN": 1.0
+      },
+      "multiYearImpact": {
+        "2026": -21700000000,
+        "2027": -21700000000,
+        "2028": -21700000000
+      },
+      "pushbacks": [
+        {
+          "type": "financial",
+          "description": "Coût budgétaire massif pour les finances publiques (2Md€ par point d'indice) dans un contexte de réduction du déficit.",
+          "source": "Sénat (2025)"
+        },
+        {
+          "type": "economic",
+          "description": "Risque d'effet d'entraînement sur les salaires du secteur privé et de boucle prix-salaires.",
+          "source": "Note de la Banque de France"
+        }
+      ],
+      "impact": {
+        "householdsImpacted": 5700000,
+        "decile1ImpactEur": 300,
+        "decile10ImpactEur": 800,
+        "gdpImpactPct": 0.2,
+        "jobsImpactCount": 5000
+      }
+    },
+    {
+      "id": "cut_public_workforce",
+      "family": "STAFFING",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Réduire le nombre de fonctionnaires (non-remplacement)",
+      "description": "Diminuer le nombre d'agents publics en ne remplaçant qu'une partie des départs à la retraite.",
+      "fixedImpactEur": 2500000000,
+      "massMapping": {
+        "9": 0.3,
+        "07": 0.2,
+        "03": 0.1,
+        "02": 0.1,
+        "01": 0.3
+      },
+      "cofogMapping": {
+        "9": 0.3,
+        "07": 0.2,
+        "03": 0.1,
+        "02": 0.1,
+        "01": 0.3
+      },
+      "missionMapping": {
+        "M_ADMIN": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 2500000000,
+        "2027": 2500000000,
+        "2028": 2500000000
+      },
+      "pushbacks": [
+        {
+          "type": "labor",
+          "description": "Inquiétude sur la charge de travail accrue pour les agents restants et la dégradation de la qualité du service public.",
+          "source": "Miroir Social (2025)"
+        },
+        {
+          "type": "operational",
+          "description": "Difficulté de ciblage des suppressions de postes sans nuire aux missions régaliennes (justice, police).",
+          "source": "Budget.gouv.fr"
+        }
+      ],
+      "impact": {
+        "householdsImpacted": 50000,
+        "decile1ImpactEur": -50,
+        "decile10ImpactEur": -50,
+        "gdpImpactPct": -0.05,
+        "jobsImpactCount": -50000
+      }
+    },
+    {
+      "id": "cut_agencies",
+      "family": "STAFFING",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Supprimer ou fusionner des agences publiques",
+      "description": "Éliminer ou regrouper certaines agences ou comités publics jugés redondants.",
+      "fixedImpactEur": 500000000,
+      "massMapping": {
+        "01": 1
+      },
+      "cofogMapping": {
+        "01": 1
+      },
+      "missionMapping": {
+        "M_ADMIN": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 500000000,
+        "2027": 1500000000,
+        "2028": 2500000000
+      },
+      "pushbacks": [
+        {
+          "type": "operational",
+          "description": "Complexité majeure des fusions d'agences et des réaffectations de missions de service public.",
+          "source": "Sénat (2025)"
+        },
+        {
+          "type": "labor",
+          "description": "Inquiétude sur le devenir des 180 000 salariés des opérateurs de l'État et risques de conflits sociaux.",
+          "source": "Les Échos"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "reduce_sick_leave",
+      "family": "STAFFING",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Réduire l'absentéisme dans la fonction publique",
+      "description": "Mettre en place des mesures pour réduire l'absentéisme (ex: réintroduire un jour de carence, contrôles renforcés).",
+      "fixedImpactEur": 900000000,
+      "massMapping": {
+        "9": 0.3,
+        "07": 0.2,
+        "03": 0.1,
+        "02": 0.1,
+        "01": 0.3
+      },
+      "cofogMapping": {
+        "9": 0.3,
+        "07": 0.2,
+        "03": 0.1,
+        "02": 0.1,
+        "01": 0.3
+      },
+      "missionMapping": {
+        "M_ADMIN": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 900000000,
+        "2027": 950000000,
+        "2028": 1000000000
+      },
+      "pushbacks": [
+        {
+          "type": "labor",
+          "description": "Contestation syndicale dénonçant une mesure punitive et une stigmatisation des agents publics par rapport au privé.",
+          "source": "Maire-Info (2025)"
+        },
+        {
+          "type": "operational",
+          "description": "Efficacité budgétaire réelle débattue (risque de report sur des arrêts plus longs ou présentisme).",
+          "source": "Note de l'IGF/IGAS"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "cut_defense_spending",
+      "family": "DEFENSE",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Réduire le budget de la Défense de 10%",
+      "description": "Réduire la croissance des dépenses militaires en annulant ou reportant des programmes d'équipement majeurs.",
+      "fixedImpactEur": 6000000000,
+      "massMapping": {
+        "02": 1
+      },
+      "cofogMapping": {
+        "02": 1
+      },
+      "missionMapping": {
+        "M_DEFENSE": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 6000000000,
+        "2027": 6000000000,
+        "2028": 6000000000
+      },
+      "pushbacks": [
+        {
+          "type": "geopolitical",
+          "description": "Affaiblissement de la posture de dissuasion et remise en cause de la Loi de Programmation Militaire.",
+          "source": "Commission de la Défense (Sénat)"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "reduce_payroll_subsidies",
+      "family": "SUBSIDIES",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Réduire les allègements de cotisations patronales",
+      "description": "Diminuer les réductions générales de cotisations sociales patronales (ex-CICE), en particulier pour les grandes entreprises.",
+      "fixedImpactEur": 5000000000,
+      "massMapping": {
+        "04": 1
+      },
+      "cofogMapping": {
+        "04": 1
+      },
+      "missionMapping": {
+        "M_EMPLOYMENT": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 5000000000,
+        "2027": 5000000000,
+        "2028": 5000000000
+      },
+      "pushbacks": [
+        {
+          "type": "economic",
+          "description": "Risque de destruction d'emplois (estimé entre 50 000 et 150 000) et de hausse du coût du travail sur les bas salaires.",
+          "source": "Note de l'OFCE (2025)"
+        },
+        {
+          "type": "sector",
+          "description": "Forte opposition des organisations patronales (MEDEF, CPME) dénonçant un coup de frein à la compétitivité.",
+          "source": "Les Échos"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "remove_fossil_subsidies",
+      "family": "CLIMATE",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Supprimer les niches fiscales 'brunes' (fossiles)",
+      "description": "Supprimer les subventions et exonérations fiscales qui favorisent les énergies fossiles (ex: gazole non routier).",
+      "fixedImpactEur": 2000000000,
+      "massMapping": {
+        "05": 1
+      },
+      "cofogMapping": {
+        "05": 1
+      },
+      "missionMapping": {
+        "M_ENVIRONMENT": 0.7692682926829268,
+        "M_TRANSPORT": 0.23121951219512196
+      },
+      "multiYearImpact": {
+        "2026": 2000000000,
+        "2027": 2100000000,
+        "2028": 2200000000
+      },
+      "pushbacks": [
+        {
+          "type": "sector",
+          "description": "Forte opposition des transporteurs routiers et du secteur du BTP dénonçant une hausse des coûts insupportable.",
+          "source": "Le Monde (2025)"
+        },
+        {
+          "type": "economic",
+          "description": "Risque de répercussion sur les prix de vente finaux (inflation) et perte de compétitivité des entreprises françaises.",
+          "source": "Note de la DG Trésor"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "cut_foreign_aid",
+      "family": "SUBSIDIES",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Réduire l'aide publique au développement",
+      "description": "Réduire le budget de la France consacré à l'aide internationale et au développement.",
+      "fixedImpactEur": 700000000,
+      "massMapping": {
+        "01": 1
+      },
+      "cofogMapping": {
+        "01": 1
+      },
+      "missionMapping": {
+        "M_DIPLO": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 700000000,
+        "2027": 750000000,
+        "2028": 800000000
+      },
+      "pushbacks": [
+        {
+          "type": "diplomatic",
+          "description": "Affaiblissement du 'soft power' français et de son influence dans les pays du Sud global.",
+          "source": "Focus 2030 (2025)"
+        },
+        {
+          "type": "ethical",
+          "description": "Dénonciation par les ONG humanitaires d'un désengagement de la France vis-à-vis des objectifs de développement durable (ODD).",
+          "source": "Alternatives Économiques"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "cut_association_subsidies",
+      "family": "SUBSIDIES",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Réduire les subventions aux associations",
+      "description": "Diminuer les subventions de l'État accordées à diverses associations (culturelles, communautaires, etc.).",
+      "fixedImpactEur": 1600000000,
+      "massMapping": {
+        "8": 1
+      },
+      "cofogMapping": {
+        "8": 1
+      },
+      "missionMapping": {
+        "M_CULTURE": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 1600000000,
+        "2027": 1600000000,
+        "2028": 1600000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Risque de fragilisation du tissu associatif local et de réduction des services de proximité (sport, aide sociale).",
+          "source": "Le Monde (2025)"
+        },
+        {
+          "type": "political",
+          "description": "Contestation par les élus locaux qui craignent un report de charge sur les collectivités territoriales.",
+          "source": "Sénat"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "cut_public_investments",
+      "family": "OTHER",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Réduire ou reporter les investissements publics",
+      "description": "Annuler, réduire ou reporter des programmes d'investissement public prévus (ex: infrastructures, plan France 2030).",
+      "fixedImpactEur": 800000000,
+      "massMapping": {
+        "04": 1
+      },
+      "cofogMapping": {
+        "04": 1
+      },
+      "missionMapping": {
+        "M_ECONOMIC": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 800000000,
+        "2027": 800000000,
+        "2028": 800000000
+      },
+      "pushbacks": [
+        {
+          "type": "economic",
+          "description": "Risque de dégradation du potentiel de croissance à long terme et du patrimoine public (infrastructures).",
+          "source": "Note de la DG Trésor (2025)"
+        },
+        {
+          "type": "environmental",
+          "description": "Crainte d'un ralentissement de la transition écologique si les investissements verts sont touchés.",
+          "source": "Haut Conseil pour le Climat"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "hire_teachers",
+      "family": "STAFFING",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Embaucher des enseignants supplémentaires",
+      "description": "Recruter davantage d'enseignants pour réduire la taille des classes (ex: 10 000 postes).",
+      "fixedImpactEur": -80000000,
+      "massMapping": {
+        "9": 1
+      },
+      "cofogMapping": {
+        "9": 1
+      },
+      "missionMapping": {
+        "M_EDU": 1.0
+      },
+      "multiYearImpact": {
+        "2026": -80000000,
+        "2027": -240000000,
+        "2028": -250000000
+      },
+      "pushbacks": [
+        {
+          "type": "administrative",
+          "description": "Difficultés de recrutement chroniques sur certains concours.",
+          "source": "Sénat (2025)"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "cut_local_transfers",
+      "family": "OTHER",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Réduire les dotations aux collectivités locales",
+      "description": "Réduire ou geler les dotations de l'État aux mairies, départements et régions (ex: DGF).",
+      "fixedImpactEur": 1500000000,
+      "massMapping": {
+        "01": 1
+      },
+      "cofogMapping": {
+        "01": 1
+      },
+      "missionMapping": {
+        "M_TERRITORIES": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 1500000000,
+        "2027": 1550000000,
+        "2028": 1600000000
+      },
+      "pushbacks": [
+        {
+          "type": "political",
+          "description": "Forte opposition des associations d'élus locaux (AMF, ADF, Régions de France) dénonçant une mise en péril des services publics locaux.",
+          "source": "Le Monde (2025)"
+        },
+        {
+          "type": "social",
+          "description": "Risque de dégradation des services de proximité (écoles, voirie, action sociale) ou de hausse des impôts locaux pour compenser.",
+          "source": "Sénat"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "green_transport_tax",
+      "family": "CLIMATE",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Taxe verte sur les transports (Avion, Livraisons)",
+      "description": "Prélever de nouvelles taxes écologiques (ex: sur les billets d'avion, le kérosène, ou les livraisons e-commerce).",
+      "fixedImpactEur": 580000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 580000000,
+        "2027": 600000000,
+        "2028": 620000000
+      },
+      "pushbacks": [
+        {
+          "type": "sector",
+          "description": "Inquiétude des exploitants d'infrastructures sur la hausse de la taxe de 4,6% à 10%.",
+          "source": "Banque des Territoires (2025)"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "efficient_procurement",
+      "family": "PROCUREMENT",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Améliorer l'efficacité des achats publics",
+      "description": "Rationaliser les achats de l'État (achats groupés, meilleurs appels d'offres) pour réduire les coûts.",
+      "fixedImpactEur": 1000000000,
+      "massMapping": {
+        "02": 0.5,
+        "07": 0.5
+      },
+      "cofogMapping": {
+        "02": 0.5,
+        "07": 0.5
+      },
+      "missionMapping": {
+        "M_ADMIN": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 1000000000,
+        "2027": 1100000000,
+        "2028": 1200000000
+      },
+      "pushbacks": [
+        {
+          "type": "operational",
+          "description": "Complexité de mise en œuvre technique et administrative pour massifier les achats sans nuire à la réactivité locale.",
+          "source": "Rapport de la Cour des Comptes (2025)"
+        },
+        {
+          "type": "economic",
+          "description": "Risque d'éviction des PME locales au profit des grands groupes lors de la massification des contrats.",
+          "source": "Note de la Direction des Achats de l'État (DAE)"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "freeze_spending_one_year",
+      "family": "OPERATIONS",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Gel des dépenses de l'État en valeur (1 an)",
+      "description": "Geler les dépenses publiques en valeur (zéro augmentation nominale) pendant un an.",
+      "fixedImpactEur": 7000000000,
+      "massMapping": {
+        "9": 0.1,
+        "10": 0.5,
+        "07": 0.2,
+        "04": 0.1,
+        "01": 0.1
+      },
+      "cofogMapping": {
+        "9": 0.1,
+        "10": 0.5,
+        "07": 0.2,
+        "04": 0.1,
+        "01": 0.1
+      },
+      "missionMapping": {
+        "M_ADMIN": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 7000000000,
+        "2027": 7000000000,
+        "2028": 7000000000
+      },
+      "pushbacks": [
+        {
+          "type": "operational",
+          "description": "Extrême difficulté de mise en œuvre uniforme : risque de blocage des services publics essentiels (éducation, sécurité).",
+          "source": "Note de la DG Trésor (2025)"
+        },
+        {
+          "type": "political",
+          "description": "Mesure de rigueur extrême souvent critiquée pour son caractère aveugle et non sélectif.",
+          "source": "Le Monde"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "build_social_housing",
+      "family": "OTHER",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Construction massive de logements sociaux",
+      "description": "Lancer un grand programme public de construction de logements sociaux (ex: 200 000 par an).",
+      "fixedImpactEur": -33800000000,
+      "massMapping": {
+        "06": 1
+      },
+      "cofogMapping": {
+        "06": 1
+      },
+      "missionMapping": {
+        "M_HOUSING": 1.0
+      },
+      "multiYearImpact": {
+        "2026": -33800000000,
+        "2027": -33800000000,
+        "2028": -33800000000
+      },
+      "pushbacks": [
+        {
+          "type": "financial",
+          "description": "Coût budgétaire massif pour l'État et risque de hausse de la dette publique.",
+          "source": "Note de la DG Trésor (2025)"
+        },
+        {
+          "type": "operational",
+          "description": "Difficultés de mise en œuvre liées à la disponibilité du foncier et aux délais de construction.",
+          "source": "Union Sociale pour l'Habitat (USH)"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "free_school_services",
+      "family": "OTHER",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Gratuité de la cantine et des fournitures scolaires",
+      "description": "Rendre gratuites les dépenses liées à l'école (cantine, fournitures, activités périscolaires) pour les familles.",
+      "fixedImpactEur": -9000000000,
+      "massMapping": {
+        "9": 1
+      },
+      "cofogMapping": {
+        "9": 1
+      },
+      "missionMapping": {
+        "M_EDU": 1.0
+      },
+      "multiYearImpact": {
+        "2026": -9000000000,
+        "2027": -9000000000,
+        "2028": -9000000000
+      },
+      "pushbacks": [
+        {
+          "type": "financial",
+          "description": "Coût budgétaire très important (7 à 9 Md€ pour la gratuité totale) nécessitant un transfert massif du coût des familles vers les finances publiques.",
+          "source": "France Stratégie (2025)"
+        },
+        {
+          "type": "political",
+          "description": "Débat sur la répartition du financement entre l'État et les collectivités territoriales (communes, départements, régions).",
+          "source": "Sénat"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "pen_age_plus3m_per_year",
+      "family": "PENSIONS",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Retraite : maintien du rythme de la réforme (+3 mois par an)",
+      "description": "Poursuivre l'augmentation progressive de l'âge légal de la retraite de 3 mois par an pour atteindre 64 ans, comme prévu par la réforme de 2023.",
+      "fixedImpactEur": 300000000,
+      "massMapping": {
+        "10": 1
+      },
+      "cofogMapping": {
+        "10": 1
+      },
+      "missionMapping": {
+        "M_SOLIDARITY": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 300000000,
+        "2027": 600000000,
+        "2028": 900000000
+      },
+      "pushbacks": [
+        {
+          "type": "labor",
+          "description": "Injustice dénoncée pour les carrières longues et pénibles, avec un risque de basculement vers le chômage senior ou l'invalidité.",
+          "source": "Note de l'OFCE (2025)"
+        },
+        {
+          "type": "social",
+          "description": "Forte opposition de l'opinion publique au recul de l'âge de départ, perçu comme une dégradation de la qualité de vie.",
+          "source": "Sondage IFOP"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "is_rate_33_5",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Augmenter l'Impôt sur les Sociétés (IS) à 33,5%",
+      "description": "Augmenter le taux de l'Impôt sur les Sociétés (IS) de 25% à 33,5%.",
+      "fixedImpactEur": 8000000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 8000000000,
+        "2027": 8000000000,
+        "2028": 8000000000
+      },
+      "pushbacks": [
+        {
+          "type": "economic",
+          "description": "Perte de compétitivité des entreprises françaises face à la moyenne européenne (21-25%).",
+          "source": "OECD Tax Database"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "transfer_pricing_enforcement",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Renforcer le contrôle des prix de transfert (multinationales)",
+      "description": "Contrôles accrus sur les prix de transfert entre filiales de multinationales (optimisation fiscale).",
+      "fixedImpactEur": 4600000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 4600000000,
+        "2027": 4600000000,
+        "2028": 4600000000
+      },
+      "pushbacks": [
+        {
+          "type": "administrative",
+          "description": "Charge de conformité accrue pour les ETI (Entreprises de Taille Intermédiaire) entrant dans le nouveau seuil de 150M€.",
+          "source": "PwC Avocats (2025)"
+        },
+        {
+          "type": "legal",
+          "description": "Risque de multiplication des contentieux fiscaux sur l'évaluation des actifs incorporels difficiles à évaluer.",
+          "source": "Deloitte"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "vat_normal_plus1",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Augmenter le taux normal de TVA de 1 point",
+      "description": "Augmenter le taux normal de TVA (de 20% à 21%).",
+      "fixedImpactEur": 8200000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 8200000000,
+        "2027": 8200000000,
+        "2028": 8200000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Effet régressif sur le pouvoir d'achat des ménages les plus modestes.",
+          "source": "INSEE"
+        },
+        {
+          "type": "vigilance",
+          "description": "Impact inflationniste direct pesant sur le pouvoir d'achat des ménages.",
+          "source": "Gemini Research"
+        },
+        {
+          "type": "vigilance",
+          "description": "Impôt régressif touchant proportionnellement plus les ménages modestes.",
+          "source": "Gemini Research"
+        },
+        {
+          "type": "vigilance",
+          "description": "Risque de ralentissement de la consommation, moteur de la croissance.",
+          "source": "Gemini Research"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "vat_all_rates_plus1",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Augmenter tous les taux de TVA de 1 point",
+      "description": "Augmenter tous les taux de TVA (normal, intermédiaire, réduit) de 1 point.",
+      "fixedImpactEur": 12000000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 12000000000,
+        "2027": 12000000000,
+        "2028": 12000000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Effet inflationniste direct sur les prix à la consommation et baisse du pouvoir d'achat pour l'ensemble des ménages.",
+          "source": "INSEE (2025)"
+        },
+        {
+          "type": "economic",
+          "description": "Risque de freinage de la consommation intérieure, principal moteur de la croissance française.",
+          "source": "Note de la DG Trésor"
+        }
+      ],
+      "impact": {
+        "householdsImpacted": 30000000,
+        "decile1ImpactEur": -250,
+        "decile10ImpactEur": -600,
+        "gdpImpactPct": -0.2,
+        "jobsImpactCount": -10000
+      }
+    },
+    {
+      "id": "vat_intermediate_12_5",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Augmenter le taux intermédiaire de TVA à 12,5%",
+      "description": "Augmenter le taux intermédiaire de TVA de 10% à 12,5% (concerne restauration, transports...)",
+      "fixedImpactEur": 3000000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 3000000000,
+        "2027": 3100000000,
+        "2028": 3200000000
+      },
+      "pushbacks": [
+        {
+          "type": "sector",
+          "description": "Risque de ralentissement du secteur du bâtiment (rénovation) et des transports si la répercussion sur les prix est totale.",
+          "source": "FFB (Fédération Française du Bâtiment) 2025"
+        },
+        {
+          "type": "economic",
+          "description": "Effet inflationniste modéré mais réel sur les services concernés.",
+          "source": "Note de la DG Trésor"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "vat_franchise_threshold_halved",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Réduire le seuil de la franchise de TVA (petites entreprises)",
+      "description": "Diviser par deux le seuil de chiffre d'affaires permettant aux petites entreprises de ne pas facturer la TVA.",
+      "fixedImpactEur": 2200000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 2200000000,
+        "2027": 2200000000,
+        "2028": 2200000000
+      },
+      "pushbacks": [
+        {
+          "type": "administrative",
+          "description": "Complexification administrative majeure pour environ 200 000 petites entreprises et auto-entrepreneurs entrant dans le champ de la TVA.",
+          "source": "Sénat (2025)"
+        },
+        {
+          "type": "economic",
+          "description": "Risque de perte de marge pour les petites structures ne pouvant pas répercuter la TVA sur leurs prix de vente.",
+          "source": "Les Échos"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "cap_quotient_conjugal",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Plafonner le quotient conjugal",
+      "description": "Plafonner le bénéfice du quotient conjugal pour hauts revenus.",
+      "fixedImpactEur": 1100000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 1100000000,
+        "2027": 1100000000,
+        "2028": 1100000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Hausse d'impôt ciblée sur les 10% des couples mariés ou pacsés les plus aisés avec de fortes disparités de revenus.",
+          "source": "Note de l'OFCE (2025)"
+        },
+        {
+          "type": "political",
+          "description": "Mesure sensible touchant à l'institution du mariage et à la politique familiale.",
+          "source": "Le Figaro"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "abolish_quotient_conjugal",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Supprimer le quotient conjugal",
+      "description": "Supprimer le quotient conjugal.",
+      "fixedImpactEur": 7000000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 7000000000,
+        "2027": 7000000000,
+        "2028": 7000000000
+      },
+      "pushbacks": [
+        {
+          "type": "labor",
+          "description": "Injustice dénoncée pour les foyers avec un seul revenu ou de fortes disparités, pouvant désinciter au travail du conjoint le moins rémunéré.",
+          "source": "Note de l'OFCE (2025)"
+        },
+        {
+          "type": "political",
+          "description": "Réforme radicale remettant en cause un pilier historique du système fiscal français depuis 1945.",
+          "source": "Sénat"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "abolish_qf_demi_parts_noneffective",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Supprimer les demi-parts fiscales 'non effectives'",
+      "description": "Supprimer les demi-parts qui ne reflètent pas des charges réelles.",
+      "fixedImpactEur": 2890000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 2890000000,
+        "2027": 2890000000,
+        "2028": 2890000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Forte opposition des associations de retraités et de veufs/veuves dénonçant une hausse d'impôt ciblée sur les seniors.",
+          "source": "Le Monde (2025)"
+        },
+        {
+          "type": "political",
+          "description": "Mesure souvent qualifiée de 'petite économie' au coût politique disproportionné.",
+          "source": "Sénat"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "wealth_minimum_tax_2pct_100m",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Impôt minimum de 2% (Patrimoine > 100 M€)",
+      "description": "Créer un impôt minimum de 2% sur le patrimoine financier des personnes détenant plus de 100 M€.",
+      "fixedImpactEur": 4800000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 4800000000,
+        "2027": 4800000000,
+        "2028": 4800000000
+      },
+      "pushbacks": [
+        {
+          "type": "economic",
+          "description": "Risque massif d'expatriation fiscale des plus grandes fortunes mondiales résidant en France.",
+          "source": "EU Tax Observatory (2025)"
+        },
+        {
+          "type": "legal",
+          "description": "Complexité de mise en œuvre sans un accord international (coordination au niveau du G20).",
+          "source": "Note de la DG Trésor"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "restore_taxe_habitation_top20",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Rétablir la Taxe d'Habitation (20% plus aisés)",
+      "description": "Réinstaurer la Taxe d'Habitation pour les 20% des ménages les plus aisés.",
+      "fixedImpactEur": 8000000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 8000000000,
+        "2027": 8000000000,
+        "2028": 8000000000
+      },
+      "pushbacks": [
+        {
+          "type": "political",
+          "description": "Refus catégorique du gouvernement de revenir sur la suppression de la taxe d'habitation sur la résidence principale.",
+          "source": "Maire-Info (2025)"
+        },
+        {
+          "type": "social",
+          "description": "Injustice perçue pour les 20% de ménages concernés, avec un risque de disparités territoriales accrues.",
+          "source": "Note de l'IPP"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "restore_taxe_habitation_all",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Rétablir la Taxe d'Habitation (Tous)",
+      "description": "Réinstaurer la Taxe d'Habitation sur les résidences principales pour tous les ménages.",
+      "fixedImpactEur": 21800000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 21800000000,
+        "2027": 21800000000,
+        "2028": 21800000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Revalorisation d'un impôt jugé injuste et obsolète par une grande partie de la population française.",
+          "source": "Note de l'IPP (2025)"
+        },
+        {
+          "type": "political",
+          "description": "Brise une promesse majeure du quinquennat précédent, avec un risque de désaveu électoral massif.",
+          "source": "Le Figaro"
+        }
+      ],
+      "impact": {
+        "householdsImpacted": 30000000,
+        "decile1ImpactEur": -200,
+        "decile10ImpactEur": -1500,
+        "gdpImpactPct": -0.3,
+        "jobsImpactCount": -15000
+      }
+    },
+    {
+      "id": "airline_ticket_tax_increase",
+      "family": "CLIMATE",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Augmenter la taxe sur les billets d'avion",
+      "description": "Augmenter le barème de la taxe de solidarité ('taxe Chirac') sur les billets d'avion.",
+      "fixedImpactEur": 850000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 850000000,
+        "2027": 850000000,
+        "2028": 850000000
+      },
+      "pushbacks": [
+        {
+          "type": "economic",
+          "description": "Risque de perte de compétitivité du hub de Paris-CDG face aux concurrents européens (Francfort, Amsterdam).",
+          "source": "Air France-KLM (2025)"
+        },
+        {
+          "type": "environmental",
+          "description": "Débat sur l'efficacité réelle de la taxe pour la décarbonation vs. simple rendement budgétaire.",
+          "source": "Haut Conseil pour le Climat"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "ecotax_heavy_trucks",
+      "family": "CLIMATE",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Écotaxe kilométrique (Poids lourds)",
+      "description": "Instaurer un péage kilométrique (hors autoroutes) pour les poids lourds (transport de marchandises).",
+      "fixedImpactEur": 600000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 600000000,
+        "2027": 800000000,
+        "2028": 1000000000
+      },
+      "pushbacks": [
+        {
+          "type": "sector",
+          "description": "Forte opposition des transporteurs routiers (OTRE, FNTR) dénonçant une distorsion de concurrence.",
+          "source": "Auto-Infos (2025)"
+        },
+        {
+          "type": "social",
+          "description": "Risque de répercussion sur les prix des biens de consommation (inflation par les coûts de transport).",
+          "source": "La Tribune"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "abolish_tonnage_tax",
+      "family": "TAX_EXPENDITURES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Supprimer la taxe au tonnage (transport maritime)",
+      "description": "Supprimer le régime favorable de la taxe au tonnage pour les transporteurs maritimes (retour à l'IS normal).",
+      "fixedImpactEur": 1375000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {
+        "M_ADMIN": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 1375000000,
+        "2027": 1375000000,
+        "2028": 1375000000
+      },
+      "pushbacks": [
+        {
+          "type": "economic",
+          "description": "Risque de perte de compétitivité du pavillon français et de délocalisation des flottes vers des pays pratiquant la taxe au tonnage.",
+          "source": "Armateurs de France (2025)"
+        },
+        {
+          "type": "sector",
+          "description": "Inquiétude sur les conséquences indirectes pour la filière navale et logistique française.",
+          "source": "CFE CGC Marine"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "cir_cut_large_firms_half",
+      "family": "TAX_EXPENDITURES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "CIR : Réduire de 50% (Grandes Entreprises)",
+      "description": "Réduire de moitié le Crédit d'Impôt Recherche (CIR) pour les grandes entreprises.",
+      "fixedImpactEur": 2500000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {
+        "M_HIGHER_EDU": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 2500000000,
+        "2027": 2600000000,
+        "2028": 2700000000
+      },
+      "pushbacks": [
+        {
+          "type": "economic",
+          "description": "Risque de baisse massive des investissements en R&D des grands groupes en France et perte d'attractivité technologique.",
+          "source": "Conseil d'Analyse Économique (2025)"
+        },
+        {
+          "type": "labor",
+          "description": "Inquiétude sur le maintien de l'emploi scientifique hautement qualifié (chercheurs, ingénieurs) dans le secteur privé.",
+          "source": "Note du Trésor"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "cir_remove_5pct_above_100m",
+      "family": "TAX_EXPENDITURES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "CIR : Supprimer le taux à 5% (> 100 M€)",
+      "description": "Supprimer le taux réduit de 5% du CIR pour les dépenses de recherche dépassant 100 M€.",
+      "fixedImpactEur": 250000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {
+        "M_HIGHER_EDU": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 250000000,
+        "2027": 260000000,
+        "2028": 270000000
+      },
+      "pushbacks": [
+        {
+          "type": "economic",
+          "description": "Risque de perte d'attractivité pour les centres de R&D mondiaux des grandes entreprises, même si l'impact marginal de la tranche à 5% est jugé limité par certains rapports.",
+          "source": "Commission des Finances (Sénat) 2025"
+        },
+        {
+          "type": "sector",
+          "description": "Inquiétude des grands donneurs d'ordres technologiques sur la stabilité fiscale à long terme.",
+          "source": "Note du Trésor"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "remove_ticpe_air_exemption",
+      "family": "TAX_EXPENDITURES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": false,
+      "label": "Supprimer l'exonération de TICPE (Kérosène)",
+      "description": "Supprimer l'exonération de taxe (TICPE) sur le kérosène utilisé par le transport aérien.",
+      "fixedImpactEur": 660000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {
+        "M_ENVIRONMENT": 0.7692682926829268,
+        "M_TRANSPORT": 0.23121951219512196
+      },
+      "multiYearImpact": {
+        "2026": 660000000,
+        "2027": 660000000,
+        "2028": 660000000
+      },
+      "pushbacks": [
+        {
+          "type": "legal",
+          "description": "Contraintes liées aux accords internationaux (Convention de Chicago de 1944) et aux directives européennes limitant la taxation du kérosène.",
+          "source": "Les Échos (2025)"
+        },
+        {
+          "type": "economic",
+          "description": "Risque de perte de compétitivité pour les compagnies aériennes françaises et report vers des hubs étrangers.",
+          "source": "Air Journal"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "apl_flat_minus5",
+      "family": "SOCIAL_SECURITY",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "APL : Baisse forfaitaire de 5€",
+      "description": "Baisse forfaitaire des APL de 5€.",
+      "fixedImpactEur": 400000000,
+      "massMapping": {
+        "10": 1
+      },
+      "cofogMapping": {
+        "10": 1
+      },
+      "missionMapping": {
+        "M_HOUSING": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 400000000,
+        "2027": 410000000,
+        "2028": 420000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Baisse de revenu direct pour environ 6,5 millions de bénéficiaires, perçue comme une mesure injuste pour les plus modestes.",
+          "source": "Le Monde (2025)"
+        },
+        {
+          "type": "political",
+          "description": "Symbole de la rigueur budgétaire du début du premier quinquennat, restant une mesure hautement contestée.",
+          "source": "L'Express"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "apl_means_test_18920",
+      "family": "SOCIAL_SECURITY",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "APL : Durcir le seuil d'accès (Revenu 18 920€)",
+      "description": "Conditionner l'accès aux APL à un seuil de revenu net global de 18 920€.",
+      "fixedImpactEur": 108000000,
+      "massMapping": {
+        "10": 1
+      },
+      "cofogMapping": {
+        "10": 1
+      },
+      "missionMapping": {
+        "M_HOUSING": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 108000000,
+        "2027": 115000000,
+        "2028": 120000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Baisse de revenu réel pour les ménages modestes dans un contexte de crise du logement.",
+          "source": "Sénat (2025)"
+        },
+        {
+          "type": "political",
+          "description": "Mesure dénoncée comme une 'économie sur le dos des plus pauvres' par les partis d'opposition.",
+          "source": "Capital.fr"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "apl_means_test_39020",
+      "family": "SOCIAL_SECURITY",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "APL : Durcir le seuil d'accès (Revenu 39 020€)",
+      "description": "Conditionner l'accès aux APL à un seuil de revenu net global de 39 020€.",
+      "fixedImpactEur": 50000000,
+      "massMapping": {
+        "10": 1
+      },
+      "cofogMapping": {
+        "10": 1
+      },
+      "missionMapping": {
+        "M_HOUSING": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 50000000,
+        "2027": 52000000,
+        "2028": 54000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Risque de précarisation accrue des étudiants étrangers et dégradation de l'attractivité universitaire de la France.",
+          "source": "Le Monde (2025)"
+        },
+        {
+          "type": "political",
+          "description": "Mesure controversée dénoncée comme discriminatoire par les organisations étudiantes.",
+          "source": "Note de l'Unef"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "private_ed_subsidy_75_to_50",
+      "family": "OTHER",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Réduire les subventions à l'enseignement privé",
+      "description": "Baisser la subvention publique aux établissements d'enseignement privé.",
+      "fixedImpactEur": 3500000000,
+      "massMapping": {
+        "9": 1
+      },
+      "cofogMapping": {
+        "9": 1
+      },
+      "missionMapping": {
+        "M_EDU": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 3500000000,
+        "2027": 3500000000,
+        "2028": 3500000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Risque de hausse massive des frais de scolarité pour les familles et menace sur la viabilité économique des petits établissements privés sous contrat.",
+          "source": "Enseignement Catholique (SGEC) 2025"
+        },
+        {
+          "type": "political",
+          "description": "Débat passionné sur la 'guerre scolaire' et le financement public de l'enseignement privé.",
+          "source": "Le Monde"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "higher_ed_tuition_uniform_increase",
+      "family": "OTHER",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Augmenter les frais d'inscription à l'université",
+      "description": "Augmenter les frais d'inscription (ex: Licence 730€, Master 887€, Doctorat 1 380€).",
+      "fixedImpactEur": 400000000,
+      "massMapping": {
+        "9": 1
+      },
+      "cofogMapping": {
+        "9": 1
+      },
+      "missionMapping": {
+        "M_HIGHER_EDU": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 400000000,
+        "2027": 420000000,
+        "2028": 440000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Risque de précarisation accrue des étudiants et de remise en cause du modèle d'université quasi-gratuite.",
+          "source": "Note de l'IPP (2025)"
+        },
+        {
+          "type": "political",
+          "description": "Forte mobilisation des syndicats étudiants (UNEF, FAGE) et contestation politique sur l'égalité d'accès aux études supérieures.",
+          "source": "Le Monde"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "education_demography_adjust",
+      "family": "OTHER",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Ajuster les dépenses d'éducation à la démographie",
+      "description": "Aligner les dépenses d'éducation sur la baisse du nombre d'élèves (baisse démographique).",
+      "fixedImpactEur": 450000000,
+      "massMapping": {
+        "9": 1
+      },
+      "cofogMapping": {
+        "9": 1
+      },
+      "missionMapping": {
+        "M_EDU": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 450000000,
+        "2027": 900000000,
+        "2028": 1350000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Risque de fermetures de classes dans les zones rurales ou périurbaines touchées par la baisse démographique.",
+          "source": "Sénat (2025)"
+        },
+        {
+          "type": "political",
+          "description": "Débat sur l'opportunité d'utiliser la baisse démographique pour réduire la taille des classes plutôt que pour faire des économies.",
+          "source": "Sud Éducation"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "freeze_local_transfers_value",
+      "family": "OTHER",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Geler les dotations de l'État (collectivités)",
+      "description": "Geler en valeur (sans inflation) les transferts financiers de l'État aux collectivités locales.",
+      "fixedImpactEur": 3408000000,
+      "massMapping": {
+        "01": 1
+      },
+      "cofogMapping": {
+        "01": 1
+      },
+      "missionMapping": {
+        "M_TERRITORIES": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 3408000000,
+        "2027": 3408000000,
+        "2028": 3408000000
+      },
+      "pushbacks": [
+        {
+          "type": "financial",
+          "description": "Baisse de revenu réel pour les collectivités locales en raison de l'inflation, pouvant entraîner une hausse de la fiscalité locale.",
+          "source": "Note de La Banque Postale (2025)"
+        },
+        {
+          "type": "political",
+          "description": "Forte contestation des associations d'élus (AMF) dénonçant une rupture du contrat de confiance avec l'État.",
+          "source": "Maire-Info"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "freeze_apul_budget_value",
+      "family": "OTHER",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Geler les budgets des collectivités locales (hors dette)",
+      "description": "Geler en valeur le budget des collectivités locales (hors charges de dette).",
+      "fixedImpactEur": 5000000000,
+      "massMapping": {
+        "01": 1
+      },
+      "cofogMapping": {
+        "01": 1
+      },
+      "missionMapping": {
+        "M_TERRITORIES": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 5000000000,
+        "2027": 5000000000,
+        "2028": 5000000000
+      },
+      "pushbacks": [
+        {
+          "type": "financial",
+          "description": "Effort financier massif imposé aux collectivités territoriales (3Md€ de ponctions sur recettes), menaçant leurs capacités d'autofinancement.",
+          "source": "Maire-Info (2025)"
+        },
+        {
+          "type": "political",
+          "description": "Forte opposition des élus locaux dénonçant un transfert du déficit de l'État vers les territoires.",
+          "source": "Le Monde"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "apply_35h_local",
+      "family": "STAFFING",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Appliquer les 35h (collectivités locales)",
+      "description": "Harmoniser la durée légale du travail (1607h/an) dans les collectivités locales.",
+      "fixedImpactEur": 1200000000,
+      "massMapping": {
+        "01": 1
+      },
+      "cofogMapping": {
+        "01": 1
+      },
+      "missionMapping": {
+        "M_TERRITORIES": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 1200000000,
+        "2027": 1250000000,
+        "2028": 1300000000
+      },
+      "pushbacks": [
+        {
+          "type": "legal",
+          "description": "Contestation par certaines municipalités invoquant le principe de libre administration des collectivités territoriales.",
+          "source": "Vie-publique.fr (2025)"
+        },
+        {
+          "type": "social",
+          "description": "Risque de tensions sociales locales liées à la suppression de jours de congés extralégaux ('jours du maire').",
+          "source": "Lettre du Cadre"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "pensions_freeze_base_plus_compl_2026",
+      "family": "PENSIONS",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Geler les retraites (base + compl.) en 2026",
+      "description": "Gel ponctuel des retraites de base et complémentaires en 2026.",
+      "fixedImpactEur": 3600000000,
+      "massMapping": {
+        "10": 1
+      },
+      "cofogMapping": {
+        "10": 1
+      },
+      "missionMapping": {
+        "M_SOLIDARITY": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 3600000000,
+        "2027": 3800000000,
+        "2028": 4000000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Forte opposition des syndicats de retraités.",
+          "source": "Le Revenu (2025)"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "pensions_deindex_above_2000",
+      "family": "PENSIONS",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "Désindexer les retraites de plus de 2 000€",
+      "description": "Désindexer de l'inflation les pensions de retraite supérieures à 2 000€.",
+      "fixedImpactEur": 2500000000,
+      "massMapping": {
+        "10": 1
+      },
+      "cofogMapping": {
+        "10": 1
+      },
+      "missionMapping": {
+        "M_SOLIDARITY": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 2500000000,
+        "2027": 2500000000,
+        "2028": 2500000000
+      },
+      "pushbacks": [
+        {
+          "type": "political",
+          "description": "Mesure jugée injuste pour les classes moyennes supérieures.",
+          "source": "Public Sénat"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "maprimerenov_focus_deep",
+      "family": "CLIMATE",
+      "budgetSide": "SPENDING",
+      "majorAmendment": false,
+      "label": "'MaPrimeRénov' : Cibler les rénovations d'ampleur",
+      "description": "Recentrer l'aide MaPrimeRénov' sur les rénovations globales ('d'ampleur') et la sortie des 'passoires thermiques'.",
+      "fixedImpactEur": 1000000000,
+      "massMapping": {
+        "06": 1
+      },
+      "cofogMapping": {
+        "06": 1
+      },
+      "missionMapping": {
+        "M_ENVIRONMENT": 0.7692682926829268,
+        "M_TRANSPORT": 0.23121951219512196
+      },
+      "multiYearImpact": {
+        "2026": 1000000000,
+        "2027": 1100000000,
+        "2028": 1200000000
+      },
+      "pushbacks": [
+        {
+          "type": "operational",
+          "description": "Risque de sous-consommation des crédits si les ménages ne s'engagent pas dans des rénovations globales (plus complexes et coûteuses que les gestes simples).",
+          "source": "Rapport de l'ANAH (2025)"
+        },
+        {
+          "type": "sector",
+          "description": "Inquiétude de la filière du bâtiment (FFB, CAPEB) sur une baisse d'activité si les mono-gestes sont trop pénalisés.",
+          "source": "Les Échos"
+        }
+      ],
+      "impact": null
+    }
+  ],
+  "popularIntents": [
+    {
+      "id": "hire_more_nurses",
+      "label": "Hire more nurses",
+      "emoji": "🩺",
+      "massId": "M_HEALTH",
+      "seed": {
+        "amount_eur": 2000000000,
+        "op": "increase"
+      }
+    },
+    {
+      "id": "raise_carbon_tax",
+      "label": "Raise carbon tax",
+      "emoji": "🌍",
+      "massId": "M_ENVIRONMENT",
+      "seed": {
+        "amount_eur": 3000000000,
+        "op": "increase"
+      }
+    },
+    {
+      "id": "rural_er_coverage",
+      "label": "Rural ER coverage",
+      "emoji": "🚑",
+      "massId": "M_HEALTH",
+      "seed": {
+        "amount_eur": 1000000000,
+        "op": "increase"
+      }
+    },
+    {
+      "id": "reduce_defense_procurement",
+      "label": "Trim defense procurement",
+      "emoji": "⚓",
+      "massId": "M_DEFENSE",
+      "seed": {
+        "amount_eur": -3000000000,
+        "op": "decrease"
+      }
+    }
+  ]
+}

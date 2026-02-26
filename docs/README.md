@@ -11,6 +11,7 @@ If you prefer French navigation, start from **`TABLE_DES_MATIERES.md`**.
 - `DATA_MANIFEST.md` - data inventory + pipelines (warmers, dbt, seeds)
 - `LEGO_METHOD.md` - budget decomposition model + macro/deficit logic
 - `ADMIN_LENS.md` - "ADMIN / missions" lens: mappings, data, API behavior
+- `QUALTRICS_INTEGRATION.md` - Qualtrics embed runbook (iframe URL, JS listener, Embedded Data CBL_*)
 - `REFACTOR_PLAN.md` - warehouse/dbt refactor log (living technical plan)
 
 ## Archives

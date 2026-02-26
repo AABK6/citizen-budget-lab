@@ -1,0 +1,51 @@
+year,entry_type,subsector,key,cofog,na_item,mass_id,weight,source,source_url,note
+2026,local_mass,local,M_CIVIL_PROT,GF03,TE,M_CIVIL_PROT,1,DGCL APUL 2026 verified bridge,https://www.collectivites-locales.gouv.fr/finances-locales/les-donnees-des-finances-locales,APUL local mass bridge for M_CIVIL_PROT
+2026,local_mass,local,M_CULTURE,GF08,TE,M_CULTURE,1,DGCL APUL 2026 verified bridge,https://www.collectivites-locales.gouv.fr/finances-locales/les-donnees-des-finances-locales,APUL local mass bridge for M_CULTURE
+2026,local_mass,local,M_EDU,GF09,TE,M_EDU,1,DGCL APUL 2026 verified bridge,https://www.collectivites-locales.gouv.fr/finances-locales/les-donnees-des-finances-locales,APUL local mass bridge for M_EDU
+2026,local_mass,local,M_ENVIRONMENT,GF05,TE,M_ENVIRONMENT,1,DGCL APUL 2026 verified bridge,https://www.collectivites-locales.gouv.fr/finances-locales/les-donnees-des-finances-locales,APUL local mass bridge for M_ENVIRONMENT
+2026,local_mass,local,M_HOUSING,GF06,TE,M_HOUSING,1,DGCL APUL 2026 verified bridge,https://www.collectivites-locales.gouv.fr/finances-locales/les-donnees-des-finances-locales,APUL local mass bridge for M_HOUSING
+2026,local_mass,local,M_SOLIDARITY,GF10,TE,M_SOLIDARITY,1,DGCL APUL 2026 verified bridge,https://www.collectivites-locales.gouv.fr/finances-locales/les-donnees-des-finances-locales,APUL local mass bridge for M_SOLIDARITY
+2026,local_mass,local,M_TRANSPORT,GF04,TE,M_TRANSPORT,1,DGCL APUL 2026 verified bridge,https://www.collectivites-locales.gouv.fr/finances-locales/les-donnees-des-finances-locales,APUL local mass bridge for M_TRANSPORT
+2026,social_branch,social,at_mp,GF04,TE,M_EMPLOYMENT,0.7,LFSS 2026 verified branch bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053226384,LFSS branch at_mp to simulation mass bridge
+2026,social_branch,social,at_mp,GF07,TE,M_HEALTH,0.3,LFSS 2026 verified branch bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053226384,LFSS branch at_mp to simulation mass bridge
+2026,social_branch,social,autonomie,GF07,TE,M_HEALTH,0.3,LFSS 2026 verified branch bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053226384,LFSS branch autonomie to simulation mass bridge
+2026,social_branch,social,autonomie,GF10,TE,M_SOLIDARITY,0.7,LFSS 2026 verified branch bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053226384,LFSS branch autonomie to simulation mass bridge
+2026,social_branch,social,famille,GF10,TE,M_SOLIDARITY,1,LFSS 2026 verified branch bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053226384,LFSS branch famille to simulation mass bridge
+2026,social_branch,social,maladie,GF07,TE,M_HEALTH,1,LFSS 2026 verified branch bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053226384,LFSS branch maladie to simulation mass bridge
+2026,social_branch,social,vieillesse,GF10,TE,M_PENSIONS,1,LFSS 2026 verified branch bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053226384,LFSS branch vieillesse to simulation mass bridge
+2026,state_mission,state,AA,GF01,TE,M_DIPLO,1,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission AA to simulation mass bridge
+2026,state_mission,state,AB,GF01,TE,M_ADMIN,1,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission AB to simulation mass bridge
+2026,state_mission,state,AC,GF04,TE,M_AGRI,1,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission AC to simulation mass bridge
+2026,state_mission,state,AD,GF01,TE,M_DIPLO,1,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission AD to simulation mass bridge
+2026,state_mission,state,AV,GF04,TE,M_ECONOMIC,1,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission AV to simulation mass bridge
+2026,state_mission,state,CA,GF01,TE,M_ADMIN,1,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission CA to simulation mass bridge
+2026,state_mission,state,CB,GF08,TE,M_CULTURE,1,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission CB to simulation mass bridge
+2026,state_mission,state,DA,GF02,TE,M_DEFENSE,1,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission DA to simulation mass bridge
+2026,state_mission,state,DB,GF04,TE,M_ECONOMIC,1,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission DB to simulation mass bridge
+2026,state_mission,state,DC,GF01,TE,M_ADMIN,1,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission DC to simulation mass bridge
+2026,state_mission,state,EB,GF01,TE,M_DEBT,1,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission EB to simulation mass bridge
+2026,state_mission,state,EC,GF09,TE,M_EDU,1,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission EC to simulation mass bridge
+2026,state_mission,state,GA,GF01,TE,M_ADMIN,1,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission GA to simulation mass bridge
+2026,state_mission,state,IA,GF03,TE,M_SECURITY,0.4,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission IA to simulation mass bridge
+2026,state_mission,state,IA,GF10,TE,M_SOLIDARITY,0.6,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission IA to simulation mass bridge
+2026,state_mission,state,JA,GF03,TE,M_JUSTICE,1,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission JA to simulation mass bridge
+2026,state_mission,state,MA,GF08,TE,M_CULTURE,1,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission MA to simulation mass bridge
+2026,state_mission,state,MB,GF02,TE,M_DEFENSE,1,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission MB to simulation mass bridge
+2026,state_mission,state,OA,GF06,TE,M_TERRITORIES,1,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission OA to simulation mass bridge
+2026,state_mission,state,PB,GF01,TE,M_ADMIN,1,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission PB to simulation mass bridge
+2026,state_mission,state,PC,GF01,TE,M_ADMIN,1,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission PC to simulation mass bridge
+2026,state_mission,state,RA,GF09,TE,M_HIGHER_EDU,1,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission RA to simulation mass bridge
+2026,state_mission,state,RB,GF10,TE,M_PENSIONS,1,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission RB to simulation mass bridge
+2026,state_mission,state,RC,GF06,TE,M_TERRITORIES,1,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission RC to simulation mass bridge
+2026,state_mission,state,RD,GF00,TE,M_UNKNOWN,1,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission RD to simulation mass bridge
+2026,state_mission,state,SA,GF07,TE,M_HEALTH,1,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission SA to simulation mass bridge
+2026,state_mission,state,SB,GF03,TE,M_SECURITY,1,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission SB to simulation mass bridge
+2026,state_mission,state,SE,GF10,TE,M_SOLIDARITY,1,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission SE to simulation mass bridge
+2026,state_mission,state,SF,GF08,TE,M_CULTURE,0.5,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission SF to simulation mass bridge
+2026,state_mission,state,SF,GF09,TE,M_EDU,0.5,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission SF to simulation mass bridge
+2026,state_mission,state,TA,GF05,TE,M_ENVIRONMENT,0.45,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission TA to simulation mass bridge
+2026,state_mission,state,TA,GF04,TE,M_TRANSPORT,0.55,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission TA to simulation mass bridge
+2026,state_mission,state,TB,GF04,TE,M_EMPLOYMENT,1,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission TB to simulation mass bridge
+2026,state_mission,state,TR,GF01,TE,M_ADMIN,1,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission TR to simulation mass bridge
+2026,state_mission,state,VA,GF06,TE,M_HOUSING,0.4,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission VA to simulation mass bridge
+2026,state_mission,state,VA,GF06,TE,M_TERRITORIES,0.6,LFI 2026 ETAT B verified mission bridge,https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155,LFI mission VA to simulation mass bridge

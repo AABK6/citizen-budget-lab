@@ -22,8 +22,13 @@ data/.http_cache/
 data/cache/*
 !data/cache/
 !data/cache/lego_baseline_2026.json
+!data/cache/lego_baseline_2027.json
+!data/cache/lego_baseline_2027.meta.json
 !data/cache/build_page_2026.json
 !data/cache/build_page_2026.meta.json
+!data/cache/build_page_2027.json
+!data/cache/build_page_2027.meta.json
+!data/cache/eu_cofog_shares_2027.json
 data/warehouse.duckdb
 data/warehouse.duckdb.wal
 data/policy_levers.yaml.*.bak

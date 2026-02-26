@@ -412,3 +412,54 @@ def test_sync_votes_from_file_store_requires_scenarios(
             votes_file_path=str(votes_path),
             scenarios_dsl_path=str(tmp_path / "missing.json"),
         )
+
+
+def test_sync_votes_extracts_qualtrics_snapshot_fields(tmp_path, monkeypatch):
+    sqlite_path = tmp_path / "votes.sqlite3"
+    duckdb_path = tmp_path / "warehouse.duckdb"
+    monkeypatch.setattr(wh, "policy_lever_columns", lambda: [])
+    con = _create_sqlite_store(str(sqlite_path))
+    dsl = {
+        "version": 0.1,
+        "baseline_year": 2026,
+        "actions": [],
+    }
+    _insert_scenario(con, "s1", dsl)
+    _insert_vote(
+        con,
+        "0001",
+        "s1",
+        111.0,
+        {
+            "timestamp": 111.0,
+            "respondentId": "resp-1",
+            "channel": "qualtrics",
+            "finalVoteSnapshotSha256": "c" * 64,
+            "finalVoteSnapshotVersion": 1,
+            "finalVoteSnapshotTruncated": True,
+        },
+    )
+    con.commit()
+    con.close()
+
+    wh_con = duckdb.connect(str(duckdb_path))
+    inserted = wh.sync_votes(
+        wh_con,
+        "sqlite",
+        sqlite_path=str(sqlite_path),
+    )
+
+    row = wh_con.execute(
+        """
+        select respondent_id, entry_channel, final_vote_snapshot_sha256,
+               final_vote_snapshot_version, final_vote_snapshot_truncated
+        from user_preferences_wide
+        """
+    ).fetchone()
+
+    assert inserted == 1
+    assert row[0] == "resp-1"
+    assert row[1] == "qualtrics"
+    assert row[2] == "c" * 64
+    assert row[3] == 1.0
+    assert row[4] is True

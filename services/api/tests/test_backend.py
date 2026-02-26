@@ -28,6 +28,7 @@ def test_root_and_health_endpoints():
     r = client.get("/health")
     assert r.status_code == 200
     assert r.json().get("status") == "healthy"
+    assert "votes_store" in r.json()
 
 
 def test_allocation_by_mission_and_cofog_sample_data(monkeypatch):

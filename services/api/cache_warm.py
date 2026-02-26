@@ -25,6 +25,7 @@ import os
 import re
 import tempfile
 import time
+import unicodedata
 from pathlib import Path
 from typing import Any, Dict, Iterable, List
 
@@ -39,11 +40,18 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 DATA_DIR = os.path.join(ROOT, "data")
 CACHE_DIR = os.path.join(DATA_DIR, "cache")
 LOG = logging.getLogger("cbl.warmers")
-DEFAULT_PLF_2026_URL = "https://www.budget.gouv.fr/documentation/file-download/30589"
+DEFAULT_PLF_2026_URL = "https://www.budget.gouv.fr/documentation/file-download/30420"
 
 
 def _ensure_dir(path: str) -> None:
     os.makedirs(path, exist_ok=True)
+
+
+def _env_flag(name: str, default: bool = False) -> bool:
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    return str(raw).strip().lower() not in {"0", "false", "no", "off"}
 
 
 def _ods_results(js: Dict[str, Any]) -> List[Dict[str, Any]]:
@@ -409,6 +417,120 @@ def _sanitize_label(raw: Any) -> str:
     return str(raw).strip()
 
 
+def _label_key(raw: Any) -> str:
+    if raw is None:
+        return ""
+    text = str(raw)
+    text = text.replace("&", " et ").replace("*", " ")
+    text = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("ascii")
+    text = text.lower()
+    text = re.sub(r"[^a-z0-9]+", " ", text)
+    return text.strip()
+
+
+_PLF_2026_MISSION_LABEL_TO_CODE = {
+    "Action extérieure de l'État": "AA",
+    "Administration générale et territoriale de l'État": "AB",
+    "Agriculture, alimentation, forêt et affaires rurales": "AC",
+    "Aide publique au développement": "AD",
+    "Anciens combattants, mémoire et liens avec la Nation": "MB",
+    "Cohésion des territoires": "VA",
+    "Conseil et contrôle de l'État": "CA",
+    "Crédits non répartis": "PC",
+    "Culture": "CB",
+    "Défense": "DA",
+    "Direction de l'action du Gouvernement": "DC",
+    "Écologie, développement et mobilité durables": "TA",
+    "Économie": "DB",
+    "Engagements financiers de l'État": "EB",
+    "Enseignement scolaire": "EC",
+    "Gestion des finances publiques": "GA",
+    "Immigration, asile et intégration": "IA",
+    "Investir pour la France de 2030": "AV",
+    "Justice": "JA",
+    "Médias, livre et industries culturelles": "MA",
+    "Outre-mer": "OA",
+    "Pouvoirs publics": "PB",
+    "Recherche et enseignement supérieur": "RA",
+    "Régimes sociaux et de retraite": "RB",
+    "Relations avec les collectivités territoriales": "RC",
+    "Remboursements et dégrèvements": "RD",
+    "Santé": "SA",
+    "Sécurités": "SB",
+    "Solidarité, insertion et égalité des chances": "SE",
+    "Sport, jeunesse et vie associative": "SF",
+    "Transformation et fonction publiques": "TR",
+    "Travail, emploi et administration des ministères sociaux": "TB",
+}
+_PLF_2026_MISSION_KEY_TO_CODE = {
+    _label_key(label): code for label, code in _PLF_2026_MISSION_LABEL_TO_CODE.items()
+}
+_PLF_2026_MISSION_KEY_TO_CODE.update(
+    {
+        # 2026 nomenclature rename in some sources
+        _label_key("Monde combattant, mémoire et liens avec la Nation"): "MB",
+    }
+)
+_PLF_2026_CODE_TO_LABEL = {
+    code: label for label, code in _PLF_2026_MISSION_LABEL_TO_CODE.items()
+}
+_PLF_2026_PDF_ROW_RE = re.compile(
+    r"^(?P<label>.+?)\s+(?P<v2025>-?\d+(?:,\d+)?)\s+(?P<v2026>-?\d+(?:,\d+)?)\s+(?P<delta>[+\-]?\d+(?:,\d+)?|-)\s*$"
+)
+_PLF_2026_CODE_RE = re.compile(r"^(?:[A-Z]{2}|[0-9]{3})$")
+
+
+def _looks_like_plf_rows(entries: List[tuple[str, str, float]]) -> bool:
+    if not entries:
+        return False
+    valid_code = 0
+    valid_label = 0
+    valid_amount = 0
+    for code, label, amount in entries:
+        if _PLF_2026_CODE_RE.match(code):
+            valid_code += 1
+        if label and not re.fullmatch(r"\d+", label):
+            valid_label += 1
+        if 10_000_000.0 <= abs(float(amount)) <= 500_000_000_000.0:
+            valid_amount += 1
+    n = float(len(entries))
+    return (valid_code / n) >= 0.75 and (valid_label / n) >= 0.75 and (valid_amount / n) >= 0.75
+
+
+def _parse_plf_2026_pdf_text(path: str) -> List[tuple[str, str, float]]:
+    try:
+        import pdfplumber  # type: ignore
+    except Exception as exc:  # pragma: no cover - dependency missing should raise upstream
+        raise RuntimeError("pdfplumber is required to parse PLF 2026 PDF sources") from exc
+
+    entries: dict[str, tuple[str, float]] = {}
+    with pdfplumber.open(path) as pdf:
+        for page in pdf.pages:
+            try:
+                text = page.extract_text() or ""
+            except Exception:
+                continue
+            if not text:
+                continue
+            for line in text.splitlines():
+                row = line.strip()
+                if not row:
+                    continue
+                match = _PLF_2026_PDF_ROW_RE.match(row)
+                if not match:
+                    continue
+                raw_label = _sanitize_label(match.group("label")).replace("*", "").strip()
+                code = _PLF_2026_MISSION_KEY_TO_CODE.get(_label_key(raw_label), "")
+                if not code:
+                    continue
+                try:
+                    amount_md = float(match.group("v2026").replace(",", "."))
+                except Exception:
+                    continue
+                entries[code] = (_PLF_2026_CODE_TO_LABEL.get(code, raw_label), amount_md * 1_000_000_000.0)
+    return [(code, label, amount) for code, (label, amount) in entries.items()]
+
+
 def _coerce_plafond_amount(raw: Any, header_hint: str | None = None) -> float | None:
     if raw is None:
         return None
@@ -558,14 +680,21 @@ def _parse_plf_2026_pdf(path: str) -> List[tuple[str, str, float]]:
                         entries[code] = (label, existing_amount + amount_val)
                     else:
                         entries[code] = (label, amount_val)
-    return [(code, label, amount) for code, (label, amount) in entries.items()]
+    table_entries = [(code, label, amount) for code, (label, amount) in entries.items()]
+    if _looks_like_plf_rows(table_entries):
+        return table_entries
+
+    text_entries = _parse_plf_2026_pdf_text(path)
+    if text_entries:
+        return text_entries
+    return table_entries
 
 
 def warm_plf_2026_plafonds(source: str | None = None, output_csv: str | None = None) -> str:
     """Download and normalize the PLF 2026 spending ceilings by mission.
 
-    The official data is only available as PDF/XLSX. We prefer XLSX when present
-    and extract a minimal CSV with mission_code, mission_label, and ceiling euros.
+    The official data is only available as PDF/XLS/XLSX. We normalize it into a
+    minimal CSV with mission_code, mission_label, and ceiling euros.
 
     Parameters
     ----------
@@ -593,7 +722,36 @@ def warm_plf_2026_plafonds(source: str | None = None, output_csv: str | None = N
                 with httpx.Client(timeout=60.0) as client:
                     resp = client.get(url)
                     resp.raise_for_status()
-                    suffix = Path(url).suffix or ".xlsx"
+                    content_type = str(resp.headers.get("content-type") or "").lower()
+                    if content_type.startswith("text/html"):
+                        raise RuntimeError(
+                            f"Expected file download but received HTML ({content_type or 'unknown content-type'})"
+                        )
+
+                    suffix = Path(url).suffix.lower()
+                    content_disposition = str(resp.headers.get("content-disposition") or "")
+                    filename_match = re.search(
+                        r"filename\*=UTF-8''([^;]+)|filename=\"?([^\";]+)\"?",
+                        content_disposition,
+                        flags=re.IGNORECASE,
+                    )
+                    if filename_match:
+                        filename = filename_match.group(1) or filename_match.group(2) or ""
+                        filename = filename.strip().strip("\"'")
+                        ext = Path(filename).suffix.lower()
+                        if ext:
+                            suffix = ext
+                    if not suffix:
+                        if "pdf" in content_type:
+                            suffix = ".pdf"
+                        elif (
+                            "spreadsheetml" in content_type
+                            or "officedocument" in content_type
+                            or "application/vnd.ms-excel" in content_type
+                        ):
+                            suffix = ".xlsx" if "spreadsheetml" in content_type else ".xls"
+                        else:
+                            suffix = ".bin"
                     fd, tmp_path = tempfile.mkstemp(suffix=suffix)
                     cleanup = True
                     with os.fdopen(fd, "wb") as fh:
@@ -613,9 +771,15 @@ def warm_plf_2026_plafonds(source: str | None = None, output_csv: str | None = N
         def _parse_entries(path: str) -> List[tuple[str, str, float]]:
             suffix = Path(path).suffix.lower()
             if suffix in {".xlsx", ".xlsm", ".xls"}:
-                return _parse_plf_2026_xlsx(path)
+                try:
+                    return _parse_plf_2026_xlsx(path)
+                except Exception:
+                    return _parse_plf_2026_pdf(path)
             if suffix in {".pdf"}:
-                return _parse_plf_2026_pdf(path)
+                try:
+                    return _parse_plf_2026_pdf(path)
+                except Exception:
+                    return _parse_plf_2026_xlsx(path)
             # Try Excel first, fallback to PDF heuristics
             try:
                 return _parse_plf_2026_xlsx(path)
@@ -933,6 +1097,7 @@ def warm_lego_baseline(year: int, country: str = "FR", scope: str = "S13") -> st
     _ensure_dir(CACHE_DIR)
     t0 = time.time()
     LOG.info("[LEGO] build baseline year=%s", year)
+    strict_official = _env_flag("STRICT_OFFICIAL", default=False)
     cfg = _load_lego_config()
 
     # Prepare warning aggregator
@@ -1037,17 +1202,30 @@ def warm_lego_baseline(year: int, country: str = "FR", scope: str = "S13") -> st
             exp_amounts[pid] = exp_amounts.get(pid, 0.0) + (total_mio * share * 1_000_000.0)
 
     # Fill debt_interest from COFOG 01.7 total (TE), since D.41 is not exposed in gov_10a_exp
+    # In strict official mode this proxy is forbidden to prevent silent methodological drift.
     try:
         key_di = f"A.MIO_EUR.{scope}.GF0107.TE.{country}"
         di_mio = eu.sdmx_value("gov_10a_exp", key_di, time=str(year))
         if di_mio is None:
+            if strict_official:
+                raise RuntimeError(
+                    "STRICT_OFFICIAL=1 forbids temporal fallback for debt_interest proxy "
+                    f"(missing gov_10a_exp {key_di} at {year})."
+                )
             di_mio = eu.sdmx_value("gov_10a_exp", key_di, time=None)
         di_mio = float(di_mio or 0.0)
         if di_mio > 0:
+            if strict_official:
+                raise RuntimeError(
+                    "STRICT_OFFICIAL=1 forbids debt_interest proxy from COFOG 01.7 TE "
+                    "(D.41 direct source required)."
+                )
             exp_amounts["debt_interest"] = di_mio * 1_000_000.0
             warn_parts.append("debt_interest from COFOG 01.7 TE (D.41 not exposed in gov_10a_exp)")
-    except Exception:
-        pass
+    except Exception as exc:
+        if strict_official:
+            raise
+        LOG.warning("[LEGO] debt_interest proxy failed: %s", exc)
 
     # If all zeros, fallback to major-only approximation
     dep_total = sum(exp_amounts.values())
@@ -1068,6 +1246,11 @@ def warm_lego_baseline(year: int, country: str = "FR", scope: str = "S13") -> st
     def _sdmx_value_fallback(flow: str, key: str, y: int) -> float:
         v = eu.sdmx_value(flow, key, time=str(y))
         if v is None:
+            if strict_official:
+                raise RuntimeError(
+                    "STRICT_OFFICIAL=1 forbids temporal fallback: "
+                    f"{flow} key={key} missing for year {y}"
+                )
             v = eu.sdmx_value(flow, key, time=None)
         return float(v or 0.0)
 
@@ -1110,8 +1293,8 @@ def warm_lego_baseline(year: int, country: str = "FR", scope: str = "S13") -> st
     for c in taxag_codes:
         taxag_vals[c] = _sdmx_value_fallback("gov_10a_taxag", f"A.MIO_EUR.{scope}.{c}.{country}", year)
 
-    # gov_10a_main exposes sales/service revenue and totals
-    main_codes = ["P11", "P12"]
+    # gov_10a_main exposes sales/service revenue and selected received-transfers income
+    main_codes = ["P11", "P12", "D4REC", "D7REC"]
     main_vals: Dict[str, float] = {}
     for c in main_codes:
         main_vals[c] = _sdmx_value_fallback("gov_10a_main", f"A.MIO_EUR.{scope}.{c}.{country}", year)
@@ -1141,6 +1324,12 @@ def warm_lego_baseline(year: int, country: str = "FR", scope: str = "S13") -> st
                 if code in ("P11", "P12"):
                     flow = "main"
                     base = code
+                elif code in ("D4", "D4R", "D4REC"):
+                    flow = "main"
+                    base = "D4REC"
+                elif code in ("D7_RES", "D7R", "D7REC", "D7"):
+                    flow = "main"
+                    base = "D7REC"
                 elif code == "D211":
                     base = "D211"
                     # Split by piece id into standard/reduced

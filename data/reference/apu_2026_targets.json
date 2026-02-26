@@ -1,0 +1,1113 @@
+{
+  "year": 2026,
+  "generated_at": "2026-02-26T21:48:52.927754+00:00",
+  "sources": {
+    "state_b_csv": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_b_cp_verified.csv",
+    "state_a_csv": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_a_aggregates_verified.csv",
+    "state_a_lines_csv": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_a_line_items_verified.csv",
+    "lfss_branch_csv": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfss_2026_branch_equilibre_verified.csv",
+    "lfss_asso_csv": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfss_2026_asso_pct_verified.csv",
+    "apul_csv": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/apul_2026_verified.csv",
+    "cofog_bridge_csv": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/cofog_bridge_apu_2026.csv"
+  },
+  "targets": {
+    "expenditure": [
+      {
+        "mass_id": "M_DIPLO",
+        "subsector": "S1311",
+        "amount_eur": 3454425325.0,
+        "cofog": "GF01",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission AA bridge (GF01/TE)"
+      },
+      {
+        "mass_id": "M_ADMIN",
+        "subsector": "S1311",
+        "amount_eur": 5081543463.0,
+        "cofog": "GF01",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission AB bridge (GF01/TE)"
+      },
+      {
+        "mass_id": "M_AGRI",
+        "subsector": "S1311",
+        "amount_eur": 4125856189.0,
+        "cofog": "GF04",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission AC bridge (GF04/TE)"
+      },
+      {
+        "mass_id": "M_DIPLO",
+        "subsector": "S1311",
+        "amount_eur": 3569384015.0,
+        "cofog": "GF01",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission AD bridge (GF01/TE)"
+      },
+      {
+        "mass_id": "M_ECONOMIC",
+        "subsector": "S1311",
+        "amount_eur": 4397829332.0,
+        "cofog": "GF04",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission AV bridge (GF04/TE)"
+      },
+      {
+        "mass_id": "M_ADMIN",
+        "subsector": "S1311",
+        "amount_eur": 866116724.0,
+        "cofog": "GF01",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission CA bridge (GF01/TE)"
+      },
+      {
+        "mass_id": "M_CULTURE",
+        "subsector": "S1311",
+        "amount_eur": 3744547181.0,
+        "cofog": "GF08",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission CB bridge (GF08/TE)"
+      },
+      {
+        "mass_id": "M_DEFENSE",
+        "subsector": "S1311",
+        "amount_eur": 66475476236.0,
+        "cofog": "GF02",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission DA bridge (GF02/TE)"
+      },
+      {
+        "mass_id": "M_ECONOMIC",
+        "subsector": "S1311",
+        "amount_eur": 3512606546.0,
+        "cofog": "GF04",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission DB bridge (GF04/TE)"
+      },
+      {
+        "mass_id": "M_ADMIN",
+        "subsector": "S1311",
+        "amount_eur": 1052475340.0,
+        "cofog": "GF01",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission DC bridge (GF01/TE)"
+      },
+      {
+        "mass_id": "M_DEBT",
+        "subsector": "S1311",
+        "amount_eur": 60341209199.0,
+        "cofog": "GF01",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission EB bridge (GF01/TE)"
+      },
+      {
+        "mass_id": "M_EDU",
+        "subsector": "S1311",
+        "amount_eur": 89621003132.0,
+        "cofog": "GF09",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission EC bridge (GF09/TE)"
+      },
+      {
+        "mass_id": "M_ADMIN",
+        "subsector": "S1311",
+        "amount_eur": 11017882630.0,
+        "cofog": "GF01",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission GA bridge (GF01/TE)"
+      },
+      {
+        "mass_id": "M_SECURITY",
+        "subsector": "S1311",
+        "amount_eur": 852233781.6,
+        "cofog": "GF03",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission IA bridge (GF03/TE)"
+      },
+      {
+        "mass_id": "M_SOLIDARITY",
+        "subsector": "S1311",
+        "amount_eur": 1278350672.3999999,
+        "cofog": "GF10",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission IA bridge (GF10/TE)"
+      },
+      {
+        "mass_id": "M_JUSTICE",
+        "subsector": "S1311",
+        "amount_eur": 12966577407.0,
+        "cofog": "GF03",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission JA bridge (GF03/TE)"
+      },
+      {
+        "mass_id": "M_CULTURE",
+        "subsector": "S1311",
+        "amount_eur": 702973552.0,
+        "cofog": "GF08",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission MA bridge (GF08/TE)"
+      },
+      {
+        "mass_id": "M_DEFENSE",
+        "subsector": "S1311",
+        "amount_eur": 1729987774.0,
+        "cofog": "GF02",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission MB bridge (GF02/TE)"
+      },
+      {
+        "mass_id": "M_TERRITORIES",
+        "subsector": "S1311",
+        "amount_eur": 3277446171.0,
+        "cofog": "GF06",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission OA bridge (GF06/TE)"
+      },
+      {
+        "mass_id": "M_ADMIN",
+        "subsector": "S1311",
+        "amount_eur": 1140179221.0,
+        "cofog": "GF01",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission PB bridge (GF01/TE)"
+      },
+      {
+        "mass_id": "M_HIGHER_EDU",
+        "subsector": "S1311",
+        "amount_eur": 31633945500.0,
+        "cofog": "GF09",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission RA bridge (GF09/TE)"
+      },
+      {
+        "mass_id": "M_PENSIONS",
+        "subsector": "S1311",
+        "amount_eur": 6067878084.0,
+        "cofog": "GF10",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission RB bridge (GF10/TE)"
+      },
+      {
+        "mass_id": "M_TERRITORIES",
+        "subsector": "S1311",
+        "amount_eur": 3959044081.0,
+        "cofog": "GF06",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission RC bridge (GF06/TE)"
+      },
+      {
+        "mass_id": "M_HEALTH",
+        "subsector": "S1311",
+        "amount_eur": 1888133258.0,
+        "cofog": "GF07",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission SA bridge (GF07/TE)"
+      },
+      {
+        "mass_id": "M_SECURITY",
+        "subsector": "S1311",
+        "amount_eur": 25844617241.0,
+        "cofog": "GF03",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission SB bridge (GF03/TE)"
+      },
+      {
+        "mass_id": "M_SOLIDARITY",
+        "subsector": "S1311",
+        "amount_eur": 31281524154.0,
+        "cofog": "GF10",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission SE bridge (GF10/TE)"
+      },
+      {
+        "mass_id": "M_CULTURE",
+        "subsector": "S1311",
+        "amount_eur": 629447950.0,
+        "cofog": "GF08",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission SF bridge (GF08/TE)"
+      },
+      {
+        "mass_id": "M_EDU",
+        "subsector": "S1311",
+        "amount_eur": 629447950.0,
+        "cofog": "GF09",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission SF bridge (GF09/TE)"
+      },
+      {
+        "mass_id": "M_ENVIRONMENT",
+        "subsector": "S1311",
+        "amount_eur": 10243270350.9,
+        "cofog": "GF05",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission TA bridge (GF05/TE)"
+      },
+      {
+        "mass_id": "M_TRANSPORT",
+        "subsector": "S1311",
+        "amount_eur": 12519552651.1,
+        "cofog": "GF04",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission TA bridge (GF04/TE)"
+      },
+      {
+        "mass_id": "M_EMPLOYMENT",
+        "subsector": "S1311",
+        "amount_eur": 20820551935.0,
+        "cofog": "GF04",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission TB bridge (GF04/TE)"
+      },
+      {
+        "mass_id": "M_ADMIN",
+        "subsector": "S1311",
+        "amount_eur": 518293247.0,
+        "cofog": "GF01",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission TR bridge (GF01/TE)"
+      },
+      {
+        "mass_id": "M_HOUSING",
+        "subsector": "S1311",
+        "amount_eur": 9028359445.6,
+        "cofog": "GF06",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission VA bridge (GF06/TE)"
+      },
+      {
+        "mass_id": "M_TERRITORIES",
+        "subsector": "S1311",
+        "amount_eur": 13542539168.4,
+        "cofog": "GF06",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+        "method_note": "LFI ETAT B mission VA bridge (GF06/TE)"
+      },
+      {
+        "mass_id": "M_HEALTH",
+        "subsector": "S1314",
+        "amount_eur": 271300000000.0,
+        "cofog": "GF07",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053226384",
+        "method_note": "LFSS branch maladie bridge (GF07/TE)"
+      },
+      {
+        "mass_id": "M_EMPLOYMENT",
+        "subsector": "S1314",
+        "amount_eur": 12600000000.0,
+        "cofog": "GF04",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053226384",
+        "method_note": "LFSS branch at_mp bridge (GF04/TE)"
+      },
+      {
+        "mass_id": "M_HEALTH",
+        "subsector": "S1314",
+        "amount_eur": 5400000000.0,
+        "cofog": "GF07",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053226384",
+        "method_note": "LFSS branch at_mp bridge (GF07/TE)"
+      },
+      {
+        "mass_id": "M_PENSIONS",
+        "subsector": "S1314",
+        "amount_eur": 310400000000.0,
+        "cofog": "GF10",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053226384",
+        "method_note": "LFSS branch vieillesse bridge (GF10/TE)"
+      },
+      {
+        "mass_id": "M_SOLIDARITY",
+        "subsector": "S1314",
+        "amount_eur": 59700000000.0,
+        "cofog": "GF10",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053226384",
+        "method_note": "LFSS branch famille bridge (GF10/TE)"
+      },
+      {
+        "mass_id": "M_HEALTH",
+        "subsector": "S1314",
+        "amount_eur": 13080000000.0,
+        "cofog": "GF07",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053226384",
+        "method_note": "LFSS branch autonomie bridge (GF07/TE)"
+      },
+      {
+        "mass_id": "M_SOLIDARITY",
+        "subsector": "S1314",
+        "amount_eur": 30519999999.999996,
+        "cofog": "GF10",
+        "na_item": "TE",
+        "source_quality": "voted",
+        "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053226384",
+        "method_note": "LFSS branch autonomie bridge (GF10/TE)"
+      },
+      {
+        "mass_id": "M_TRANSPORT",
+        "subsector": "S1313",
+        "amount_eur": 18500000000.0,
+        "cofog": "GF04",
+        "na_item": "TE",
+        "source_quality": "estimated",
+        "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+        "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged. [GF04/TE]"
+      },
+      {
+        "mass_id": "M_EDU",
+        "subsector": "S1313",
+        "amount_eur": 27500000000.0,
+        "cofog": "GF09",
+        "na_item": "TE",
+        "source_quality": "estimated",
+        "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+        "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged. [GF09/TE]"
+      },
+      {
+        "mass_id": "M_SOLIDARITY",
+        "subsector": "S1313",
+        "amount_eur": 31000000000.0,
+        "cofog": "GF10",
+        "na_item": "TE",
+        "source_quality": "estimated",
+        "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+        "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged. [GF10/TE]"
+      },
+      {
+        "mass_id": "M_HOUSING",
+        "subsector": "S1313",
+        "amount_eur": 14000000000.0,
+        "cofog": "GF06",
+        "na_item": "TE",
+        "source_quality": "estimated",
+        "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+        "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged. [GF06/TE]"
+      },
+      {
+        "mass_id": "M_CIVIL_PROT",
+        "subsector": "S1313",
+        "amount_eur": 12000000000.0,
+        "cofog": "GF03",
+        "na_item": "TE",
+        "source_quality": "estimated",
+        "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+        "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged. [GF03/TE]"
+      },
+      {
+        "mass_id": "M_ENVIRONMENT",
+        "subsector": "S1313",
+        "amount_eur": 10500000000.0,
+        "cofog": "GF05",
+        "na_item": "TE",
+        "source_quality": "estimated",
+        "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+        "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged. [GF05/TE]"
+      },
+      {
+        "mass_id": "M_CULTURE",
+        "subsector": "S1313",
+        "amount_eur": 7000000000.0,
+        "cofog": "GF08",
+        "na_item": "TE",
+        "source_quality": "estimated",
+        "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+        "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged. [GF08/TE]"
+      }
+    ],
+    "revenue": [
+      {
+        "group_id": "state_fiscal",
+        "subsector": "S1311",
+        "amount_eur": 290339000000.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_a_aggregates_verified.csv",
+        "method_note": "LFI ETAT A fiscal receipts net of PSR"
+      },
+      {
+        "group_id": "state_non_fiscal",
+        "subsector": "S1311",
+        "amount_eur": 28900000000.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_a_aggregates_verified.csv",
+        "method_note": "LFI ETAT A non-fiscal receipts"
+      },
+      {
+        "group_id": "social_security",
+        "subsector": "S1314",
+        "amount_eur": 664800000000.0,
+        "source_quality": "voted",
+        "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfss_2026_branch_equilibre_verified.csv",
+        "method_note": "LFSS all branches receipts (hors transferts entre branches)"
+      }
+    ]
+  },
+  "pillars": {
+    "state": {
+      "expenditure": [
+        {
+          "mass_id": "M_DIPLO",
+          "subsector": "S1311",
+          "amount_eur": 3454425325.0,
+          "cofog": "GF01",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission AA bridge (GF01/TE)"
+        },
+        {
+          "mass_id": "M_ADMIN",
+          "subsector": "S1311",
+          "amount_eur": 5081543463.0,
+          "cofog": "GF01",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission AB bridge (GF01/TE)"
+        },
+        {
+          "mass_id": "M_AGRI",
+          "subsector": "S1311",
+          "amount_eur": 4125856189.0,
+          "cofog": "GF04",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission AC bridge (GF04/TE)"
+        },
+        {
+          "mass_id": "M_DIPLO",
+          "subsector": "S1311",
+          "amount_eur": 3569384015.0,
+          "cofog": "GF01",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission AD bridge (GF01/TE)"
+        },
+        {
+          "mass_id": "M_ECONOMIC",
+          "subsector": "S1311",
+          "amount_eur": 4397829332.0,
+          "cofog": "GF04",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission AV bridge (GF04/TE)"
+        },
+        {
+          "mass_id": "M_ADMIN",
+          "subsector": "S1311",
+          "amount_eur": 866116724.0,
+          "cofog": "GF01",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission CA bridge (GF01/TE)"
+        },
+        {
+          "mass_id": "M_CULTURE",
+          "subsector": "S1311",
+          "amount_eur": 3744547181.0,
+          "cofog": "GF08",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission CB bridge (GF08/TE)"
+        },
+        {
+          "mass_id": "M_DEFENSE",
+          "subsector": "S1311",
+          "amount_eur": 66475476236.0,
+          "cofog": "GF02",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission DA bridge (GF02/TE)"
+        },
+        {
+          "mass_id": "M_ECONOMIC",
+          "subsector": "S1311",
+          "amount_eur": 3512606546.0,
+          "cofog": "GF04",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission DB bridge (GF04/TE)"
+        },
+        {
+          "mass_id": "M_ADMIN",
+          "subsector": "S1311",
+          "amount_eur": 1052475340.0,
+          "cofog": "GF01",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission DC bridge (GF01/TE)"
+        },
+        {
+          "mass_id": "M_DEBT",
+          "subsector": "S1311",
+          "amount_eur": 60341209199.0,
+          "cofog": "GF01",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission EB bridge (GF01/TE)"
+        },
+        {
+          "mass_id": "M_EDU",
+          "subsector": "S1311",
+          "amount_eur": 89621003132.0,
+          "cofog": "GF09",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission EC bridge (GF09/TE)"
+        },
+        {
+          "mass_id": "M_ADMIN",
+          "subsector": "S1311",
+          "amount_eur": 11017882630.0,
+          "cofog": "GF01",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission GA bridge (GF01/TE)"
+        },
+        {
+          "mass_id": "M_SECURITY",
+          "subsector": "S1311",
+          "amount_eur": 852233781.6,
+          "cofog": "GF03",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission IA bridge (GF03/TE)"
+        },
+        {
+          "mass_id": "M_SOLIDARITY",
+          "subsector": "S1311",
+          "amount_eur": 1278350672.3999999,
+          "cofog": "GF10",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission IA bridge (GF10/TE)"
+        },
+        {
+          "mass_id": "M_JUSTICE",
+          "subsector": "S1311",
+          "amount_eur": 12966577407.0,
+          "cofog": "GF03",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission JA bridge (GF03/TE)"
+        },
+        {
+          "mass_id": "M_CULTURE",
+          "subsector": "S1311",
+          "amount_eur": 702973552.0,
+          "cofog": "GF08",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission MA bridge (GF08/TE)"
+        },
+        {
+          "mass_id": "M_DEFENSE",
+          "subsector": "S1311",
+          "amount_eur": 1729987774.0,
+          "cofog": "GF02",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission MB bridge (GF02/TE)"
+        },
+        {
+          "mass_id": "M_TERRITORIES",
+          "subsector": "S1311",
+          "amount_eur": 3277446171.0,
+          "cofog": "GF06",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission OA bridge (GF06/TE)"
+        },
+        {
+          "mass_id": "M_ADMIN",
+          "subsector": "S1311",
+          "amount_eur": 1140179221.0,
+          "cofog": "GF01",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission PB bridge (GF01/TE)"
+        },
+        {
+          "mass_id": "M_HIGHER_EDU",
+          "subsector": "S1311",
+          "amount_eur": 31633945500.0,
+          "cofog": "GF09",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission RA bridge (GF09/TE)"
+        },
+        {
+          "mass_id": "M_PENSIONS",
+          "subsector": "S1311",
+          "amount_eur": 6067878084.0,
+          "cofog": "GF10",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission RB bridge (GF10/TE)"
+        },
+        {
+          "mass_id": "M_TERRITORIES",
+          "subsector": "S1311",
+          "amount_eur": 3959044081.0,
+          "cofog": "GF06",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission RC bridge (GF06/TE)"
+        },
+        {
+          "mass_id": "M_HEALTH",
+          "subsector": "S1311",
+          "amount_eur": 1888133258.0,
+          "cofog": "GF07",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission SA bridge (GF07/TE)"
+        },
+        {
+          "mass_id": "M_SECURITY",
+          "subsector": "S1311",
+          "amount_eur": 25844617241.0,
+          "cofog": "GF03",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission SB bridge (GF03/TE)"
+        },
+        {
+          "mass_id": "M_SOLIDARITY",
+          "subsector": "S1311",
+          "amount_eur": 31281524154.0,
+          "cofog": "GF10",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission SE bridge (GF10/TE)"
+        },
+        {
+          "mass_id": "M_CULTURE",
+          "subsector": "S1311",
+          "amount_eur": 629447950.0,
+          "cofog": "GF08",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission SF bridge (GF08/TE)"
+        },
+        {
+          "mass_id": "M_EDU",
+          "subsector": "S1311",
+          "amount_eur": 629447950.0,
+          "cofog": "GF09",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission SF bridge (GF09/TE)"
+        },
+        {
+          "mass_id": "M_ENVIRONMENT",
+          "subsector": "S1311",
+          "amount_eur": 10243270350.9,
+          "cofog": "GF05",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission TA bridge (GF05/TE)"
+        },
+        {
+          "mass_id": "M_TRANSPORT",
+          "subsector": "S1311",
+          "amount_eur": 12519552651.1,
+          "cofog": "GF04",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission TA bridge (GF04/TE)"
+        },
+        {
+          "mass_id": "M_EMPLOYMENT",
+          "subsector": "S1311",
+          "amount_eur": 20820551935.0,
+          "cofog": "GF04",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission TB bridge (GF04/TE)"
+        },
+        {
+          "mass_id": "M_ADMIN",
+          "subsector": "S1311",
+          "amount_eur": 518293247.0,
+          "cofog": "GF01",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission TR bridge (GF01/TE)"
+        },
+        {
+          "mass_id": "M_HOUSING",
+          "subsector": "S1311",
+          "amount_eur": 9028359445.6,
+          "cofog": "GF06",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission VA bridge (GF06/TE)"
+        },
+        {
+          "mass_id": "M_TERRITORIES",
+          "subsector": "S1311",
+          "amount_eur": 13542539168.4,
+          "cofog": "GF06",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053508155",
+          "method_note": "LFI ETAT B mission VA bridge (GF06/TE)"
+        }
+      ],
+      "revenue": [
+        {
+          "group_id": "state_fiscal",
+          "subsector": "S1311",
+          "amount_eur": 290339000000.0,
+          "source_quality": "voted",
+          "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_a_aggregates_verified.csv",
+          "method_note": "LFI ETAT A fiscal receipts net of PSR"
+        },
+        {
+          "group_id": "state_non_fiscal",
+          "subsector": "S1311",
+          "amount_eur": 28900000000.0,
+          "source_quality": "voted",
+          "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfi_2026_etat_a_aggregates_verified.csv",
+          "method_note": "LFI ETAT A non-fiscal receipts"
+        }
+      ]
+    },
+    "social": {
+      "expenditure": [
+        {
+          "mass_id": "M_HEALTH",
+          "subsector": "S1314",
+          "amount_eur": 271300000000.0,
+          "cofog": "GF07",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053226384",
+          "method_note": "LFSS branch maladie bridge (GF07/TE)"
+        },
+        {
+          "mass_id": "M_EMPLOYMENT",
+          "subsector": "S1314",
+          "amount_eur": 12600000000.0,
+          "cofog": "GF04",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053226384",
+          "method_note": "LFSS branch at_mp bridge (GF04/TE)"
+        },
+        {
+          "mass_id": "M_HEALTH",
+          "subsector": "S1314",
+          "amount_eur": 5400000000.0,
+          "cofog": "GF07",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053226384",
+          "method_note": "LFSS branch at_mp bridge (GF07/TE)"
+        },
+        {
+          "mass_id": "M_PENSIONS",
+          "subsector": "S1314",
+          "amount_eur": 310400000000.0,
+          "cofog": "GF10",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053226384",
+          "method_note": "LFSS branch vieillesse bridge (GF10/TE)"
+        },
+        {
+          "mass_id": "M_SOLIDARITY",
+          "subsector": "S1314",
+          "amount_eur": 59700000000.0,
+          "cofog": "GF10",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053226384",
+          "method_note": "LFSS branch famille bridge (GF10/TE)"
+        },
+        {
+          "mass_id": "M_HEALTH",
+          "subsector": "S1314",
+          "amount_eur": 13080000000.0,
+          "cofog": "GF07",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053226384",
+          "method_note": "LFSS branch autonomie bridge (GF07/TE)"
+        },
+        {
+          "mass_id": "M_SOLIDARITY",
+          "subsector": "S1314",
+          "amount_eur": 30519999999.999996,
+          "cofog": "GF10",
+          "na_item": "TE",
+          "source_quality": "voted",
+          "source_ref": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053226384",
+          "method_note": "LFSS branch autonomie bridge (GF10/TE)"
+        }
+      ],
+      "revenue": [
+        {
+          "group_id": "social_security",
+          "subsector": "S1314",
+          "amount_eur": 664800000000.0,
+          "source_quality": "voted",
+          "source_ref": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/lfss_2026_branch_equilibre_verified.csv",
+          "method_note": "LFSS all branches receipts (hors transferts entre branches)"
+        }
+      ]
+    },
+    "local": {
+      "expenditure": [
+        {
+          "mass_id": "M_TRANSPORT",
+          "subsector": "S1313",
+          "amount_eur": 18500000000.0,
+          "cofog": "GF04",
+          "na_item": "TE",
+          "source_quality": "estimated",
+          "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+          "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged. [GF04/TE]"
+        },
+        {
+          "mass_id": "M_EDU",
+          "subsector": "S1313",
+          "amount_eur": 27500000000.0,
+          "cofog": "GF09",
+          "na_item": "TE",
+          "source_quality": "estimated",
+          "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+          "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged. [GF09/TE]"
+        },
+        {
+          "mass_id": "M_SOLIDARITY",
+          "subsector": "S1313",
+          "amount_eur": 31000000000.0,
+          "cofog": "GF10",
+          "na_item": "TE",
+          "source_quality": "estimated",
+          "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+          "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged. [GF10/TE]"
+        },
+        {
+          "mass_id": "M_HOUSING",
+          "subsector": "S1313",
+          "amount_eur": 14000000000.0,
+          "cofog": "GF06",
+          "na_item": "TE",
+          "source_quality": "estimated",
+          "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+          "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged. [GF06/TE]"
+        },
+        {
+          "mass_id": "M_CIVIL_PROT",
+          "subsector": "S1313",
+          "amount_eur": 12000000000.0,
+          "cofog": "GF03",
+          "na_item": "TE",
+          "source_quality": "estimated",
+          "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+          "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged. [GF03/TE]"
+        },
+        {
+          "mass_id": "M_ENVIRONMENT",
+          "subsector": "S1313",
+          "amount_eur": 10500000000.0,
+          "cofog": "GF05",
+          "na_item": "TE",
+          "source_quality": "estimated",
+          "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+          "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged. [GF05/TE]"
+        },
+        {
+          "mass_id": "M_CULTURE",
+          "subsector": "S1313",
+          "amount_eur": 7000000000.0,
+          "cofog": "GF08",
+          "na_item": "TE",
+          "source_quality": "estimated",
+          "source_ref": "https://www.collectivites-locales.gouv.fr/index.php/etudes-et-statistiques/acces-aux-statistiques-par-thematique/budget ; https://www.collectivites-locales.gouv.fr/etudes-et-statistiques/observatoire-des-finances-et-de-la-gestion-publique-locale-ofgl ; https://data.ofgl.fr",
+          "method_note": "DGCL-first APUL bridge estimate for 2026. Used to make APUL contribution explicit and source-tagged. [GF08/TE]"
+        }
+      ],
+      "revenue": []
+    }
+  },
+  "summary": {
+    "expenditure_by_mass_eur": {
+      "M_DIPLO": 7023809340.0,
+      "M_ADMIN": 19676490625.0,
+      "M_AGRI": 4125856189.0,
+      "M_ECONOMIC": 7910435878.0,
+      "M_CULTURE": 12076968683.0,
+      "M_DEFENSE": 68205464010.0,
+      "M_DEBT": 60341209199.0,
+      "M_EDU": 117750451082.0,
+      "M_SECURITY": 26696851022.6,
+      "M_SOLIDARITY": 153779874826.4,
+      "M_JUSTICE": 12966577407.0,
+      "M_TERRITORIES": 20779029420.4,
+      "M_HIGHER_EDU": 31633945500.0,
+      "M_PENSIONS": 316467878084.0,
+      "M_HEALTH": 291668133258.0,
+      "M_ENVIRONMENT": 20743270350.9,
+      "M_TRANSPORT": 31019552651.1,
+      "M_EMPLOYMENT": 33420551935.0,
+      "M_HOUSING": 23028359445.6,
+      "M_CIVIL_PROT": 12000000000.0
+    },
+    "expenditure_by_cofog_eur": {
+      "GF01": 87041509164.0,
+      "GF04": 76476396653.1,
+      "GF08": 12076968683.0,
+      "GF02": 68205464010.0,
+      "GF09": 149384396582.0,
+      "GF03": 51663428429.6,
+      "GF10": 470247752910.4,
+      "GF06": 43807388866.0,
+      "GF07": 291668133258.0,
+      "GF05": 20743270350.9
+    },
+    "revenue_by_group_eur": {
+      "state_fiscal": 290339000000.0,
+      "state_non_fiscal": 28900000000.0,
+      "social_security": 664800000000.0
+    },
+    "by_pillar": {
+      "state": {
+        "expenditure_eur": 447814708907.0,
+        "revenue_eur": 319239000000.0,
+        "expenditure_rows": 34,
+        "revenue_rows": 2
+      },
+      "social": {
+        "expenditure_eur": 703000000000.0,
+        "revenue_eur": 664800000000.0,
+        "expenditure_rows": 7,
+        "revenue_rows": 1
+      },
+      "local": {
+        "expenditure_eur": 120500000000.0,
+        "revenue_eur": 0,
+        "expenditure_rows": 7,
+        "revenue_rows": 0
+      }
+    }
+  },
+  "notes": [
+    "APU targets are explicit rows with source_quality tags (voted/observed/estimated).",
+    "Bridge table is versioned (cofog_bridge_apu_2026.csv) and required to build targets.",
+    "Local APUL rows are DGCL-first bridge estimates until full observed accounts are available.",
+    "Values are meant for transparent calibration; warn-level quality checks are performed in overlay stage."
+  ]
+}

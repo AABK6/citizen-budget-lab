@@ -58,3 +58,28 @@ def test_flatten_scenario_extracts_macro_stats():
 
     assert flat["macro_deficit_final_eur"] == 200.0
     assert flat["macro_debt_final_eur"] == 1750.0
+
+
+def test_flatten_scenario_extracts_panel_metadata():
+    dsl = {"version": 0.1, "baseline_year": 2026, "actions": []}
+    meta = {
+        "timestamp": 1700001234,
+        "respondentId": "abc-123",
+        "sessionDurationSec": 42.5,
+        "channel": "qualtrics",
+        "entryPath": "/build?ID=abc-123",
+        "finalVoteSnapshotSha256": "b" * 64,
+        "finalVoteSnapshotVersion": 1,
+        "finalVoteSnapshotTruncated": False,
+    }
+
+    flat = flatten_scenario(dsl, meta)
+
+    assert flat["vote_timestamp"] == 1700001234.0
+    assert flat["respondent_id"] == "abc-123"
+    assert flat["session_duration_sec"] == 42.5
+    assert flat["entry_channel"] == "qualtrics"
+    assert flat["entry_path"] == "/build?ID=abc-123"
+    assert flat["final_vote_snapshot_sha256"] == "b" * 64
+    assert flat["final_vote_snapshot_version"] == 1.0
+    assert flat["final_vote_snapshot_truncated"] is False

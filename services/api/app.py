@@ -16,6 +16,10 @@ def create_app() -> FastAPI:
 
     # CORS for local frontend dev (configurable via env CORS_ALLOW_ORIGINS)
     settings = get_settings()
+    from .votes_store import validate_vote_store_configuration
+
+    # Fail fast on unsafe vote persistence config (especially important in production runtimes).
+    validate_vote_store_configuration()
     origins_raw = (settings.cors_allow_origins or "http://localhost:3000,http://127.0.0.1:3000").split(",")
     origins = [o.strip() for o in origins_raw if o.strip()]
     app.add_middleware(
@@ -79,7 +83,13 @@ def create_app() -> FastAPI:
             wh = warehouse_status()
         except Exception:  # pragma: no cover
             wh = {"enabled": False, "available": False, "ready": False, "missing": []}
-        return {"status": "healthy", "warehouse": wh}
+        try:
+            from .votes_store import get_vote_store_status
+
+            votes_store = get_vote_store_status()
+        except Exception:
+            votes_store = {"ok": False, "errors": ["failed to inspect vote store configuration"]}
+        return {"status": "healthy", "warehouse": wh, "votes_store": votes_store}
 
     @app.get("/build-snapshot")
     def build_snapshot(year: int = 2026) -> Response:
@@ -174,9 +184,17 @@ def create_app() -> FastAPI:
         except Exception:
             dbt_ver = None
 
+        try:
+            from .votes_store import get_vote_store_status
+
+            votes_store = get_vote_store_status()
+        except Exception:
+            votes_store = {"ok": False, "errors": ["failed to inspect vote store configuration"]}
+
         return {
             "status": "healthy",
             "warehouse": wh,
+            "votes_store": votes_store,
             "rows": counts,
             "dbt": {"version": dbt_ver},
         }

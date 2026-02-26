@@ -136,6 +136,7 @@ Reproducibility
    *> Note: The 2026 baseline was manually updated on 2025-12-30 to reflect the official PLF/PLFSS 2026 figures, overriding the Eurostat warmer output until official statistics are available.*
 
 3) Inspect outputs under `data/cache/lego_baseline_2026.json` including `depenses_total_eur`, `recettes_total_eur`, and per‑piece amounts; see `meta.warning` for any fallbacks/proxies.
+   - When voted overlays are applied, inspect `meta.voted_2026_overlay.quality` for source-coverage, sentinel block checks, explicit residual adjustments, and double-count risk signals.
 4) Query via GraphQL:
 
    query { legoBaseline(year: 2026) { year scope pib depensesTotal recettesTotal pieces { id type amountEur } } }

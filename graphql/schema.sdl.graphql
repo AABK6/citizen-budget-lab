@@ -187,6 +187,17 @@ type Query {
 type Mutation {
   runScenario(input: RunScenarioInput!): RunScenarioPayload!
   saveScenario(id: ID!, title: String, description: String): Boolean!
-  submitVote(scenarioId: ID!, userEmail: String): Boolean!
+  submitVote(
+    scenarioId: ID!,
+    userEmail: String,
+    respondentId: String,
+    sessionDurationSec: Float,
+    channel: String,
+    entryPath: String,
+    finalVoteSnapshotB64: String,
+    finalVoteSnapshotSha256: String,
+    finalVoteSnapshotVersion: Int,
+    finalVoteSnapshotTruncated: Boolean
+  ): Boolean!
   deleteScenario(id: ID!): Boolean!
 }
