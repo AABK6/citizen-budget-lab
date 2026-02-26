@@ -238,6 +238,78 @@ def _mission_totals_from_baseline(
     return dict(totals)
 
 
+def _seed_zero_mass_targets(
+    baseline: dict,
+    piece_missions: Dict[str, List[Tuple[str, float]]],
+    target_masses: Dict[str, float],
+) -> Dict[str, float]:
+    """Seed strictly-positive target masses that are currently zero.
+
+    This allows true-level overlay to activate masses that exist in the
+    mission bridge but happen to be zero in the cached baseline (e.g. housing).
+    """
+    exp_entries: Dict[str, dict] = {
+        str(ent.get("id")): ent
+        for ent in baseline.get("pieces", [])
+        if str(ent.get("type")) == "expenditure"
+    }
+    current_totals = _mission_totals_from_baseline(baseline, piece_missions)
+    seeded: Dict[str, float] = {}
+
+    for mass_id, target in target_masses.items():
+        target_val = float(target or 0.0)
+        if target_val <= 0.0:
+            continue
+        if float(current_totals.get(mass_id, 0.0)) > 0.0:
+            continue
+
+        candidates: List[Tuple[str, float, bool]] = []
+        for pid, missions in piece_missions.items():
+            if pid not in exp_entries:
+                continue
+            mass_weight = sum(weight for code, weight in missions if code == mass_id)
+            if mass_weight <= 0.0:
+                continue
+            is_pure = len(missions) == 1 and missions[0][0] == mass_id
+            candidates.append((pid, mass_weight, is_pure))
+        if not candidates:
+            continue
+
+        selected = [item for item in candidates if item[2]] or candidates
+        current_amounts = {
+            pid: max(float(exp_entries[pid].get("amount_eur") or 0.0), 0.0)
+            for pid, _, _ in selected
+        }
+        current_total = sum(current_amounts.values())
+
+        if current_total > 0.0:
+            shares = {
+                pid: current_amounts[pid] / current_total
+                for pid, _, _ in selected
+            }
+        else:
+            if all(is_pure for _, _, is_pure in selected):
+                equal = 1.0 / float(len(selected))
+                shares = {pid: equal for pid, _, _ in selected}
+            else:
+                weight_total = sum(mass_weight for _, mass_weight, _ in selected)
+                shares = {
+                    pid: (mass_weight / weight_total if weight_total > 0.0 else 0.0)
+                    for pid, mass_weight, _ in selected
+                }
+
+        for pid, mass_weight, _ in selected:
+            share = float(shares.get(pid, 0.0))
+            contribution_target = target_val * share
+            required_piece_amount = contribution_target / mass_weight if mass_weight > 0.0 else 0.0
+            exp_entries[pid]["amount_eur"] = max(required_piece_amount, 0.0)
+
+        current_totals = _mission_totals_from_baseline(baseline, piece_missions)
+        seeded[mass_id] = float(current_totals.get(mass_id, 0.0))
+
+    return seeded
+
+
 def _iterative_rebalance(
     baseline: dict,
     piece_missions: Dict[str, List[Tuple[str, float]]],
@@ -578,6 +650,9 @@ def _apply_expenditure_overlay(
     iterations: int,
     mode: str,
 ) -> tuple[float, Dict[str, float]]:
+    if mode == "true_level":
+        _seed_zero_mass_targets(baseline, piece_missions, target_masses)
+
     current_totals = _mission_totals_from_baseline(baseline, piece_missions)
     masses = sorted(set(current_totals.keys()) & set(target_masses.keys()))
     if not masses:

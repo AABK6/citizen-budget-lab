@@ -3,200 +3,200 @@
   "scope": "S13",
   "country": "FR",
   "pib_eur": 3027000000000.0,
-  "depenses_total_eur": 1248286349461.4001,
-  "recettes_total_eur": 1096936349461.4003,
+  "depenses_total_eur": 1271314708907.0,
+  "recettes_total_eur": 1119964708907.0,
   "pieces": [
     {
       "id": "ed_schools_staff_ops",
       "type": "expenditure",
       "amount_eur": 60261721028.633766,
-      "share": 0.04827555877274071
+      "share": 0.047401104232045875
     },
     {
       "id": "ed_secondary",
       "type": "expenditure",
       "amount_eur": 57488730053.36624,
-      "share": 0.04605412057751892
+      "share": 0.045219904757329205
     },
     {
       "id": "ed_universities",
       "type": "expenditure",
       "amount_eur": 15889018197.162367,
-      "share": 0.012728664544011095
+      "share": 0.012498099869247001
     },
     {
       "id": "ed_research_public",
       "type": "expenditure",
       "amount_eur": 15744927302.837631,
-      "share": 0.012613233581886974
+      "share": 0.012384759802216223
     },
     {
       "id": "health_hospitals",
       "type": "expenditure",
       "amount_eur": 64017598454.52779,
-      "share": 0.05128438557559293
+      "share": 0.05035542970282022
     },
     {
       "id": "health_citycare",
       "type": "expenditure",
       "amount_eur": 158683706842.74005,
-      "share": 0.1271212385773565
+      "share": 0.12481858797902745
     },
     {
       "id": "health_public_health",
       "type": "expenditure",
       "amount_eur": 68966827960.7322,
-      "share": 0.05524920463200563
+      "share": 0.05424843076033135
     },
     {
       "id": "soc_pensions",
       "type": "expenditure",
       "amount_eur": 316467878084.0,
-      "share": 0.2535218607657985
+      "share": 0.24892961268109615
     },
     {
       "id": "soc_family",
       "type": "expenditure",
       "amount_eur": 85433263792.44444,
-      "share": 0.06844043742792386
+      "share": 0.06720072000574494
     },
     {
       "id": "soc_unemployment",
       "type": "expenditure",
       "amount_eur": 22866900200.033634,
-      "share": 0.018318633549025066
+      "share": 0.01798681320984103
     },
     {
       "id": "soc_disability_dependence",
       "type": "expenditure",
       "amount_eur": 68346611033.95555,
-      "share": 0.05475234994233908
+      "share": 0.05376057600459595
     },
     {
       "id": "soc_housing",
       "type": "expenditure",
-      "amount_eur": 0.0,
-      "share": 0.0
+      "amount_eur": 23028359445.6,
+      "share": 0.018113815001321268
     },
     {
       "id": "sec_police_gendarmerie",
       "type": "expenditure",
       "amount_eur": 26696851022.6,
-      "share": 0.021386800419726553
+      "share": 0.02099940387345345
     },
     {
       "id": "sec_justice_prisons",
       "type": "expenditure",
       "amount_eur": 12966577407.0,
-      "share": 0.010387502364817742
+      "share": 0.010199345068655647
     },
     {
       "id": "sec_civil_protection",
       "type": "expenditure",
       "amount_eur": 12000000000.0,
-      "share": 0.009613178903364326
+      "share": 0.00943904755913418
     },
     {
       "id": "defense_personnel",
       "type": "expenditure",
       "amount_eur": 28362242798.526512,
-      "share": 0.02272094284357432
+      "share": 0.022309379888250224
     },
     {
       "id": "defense_equipment",
       "type": "expenditure",
       "amount_eur": 39843221211.47349,
-      "share": 0.03191833446601791
+      "share": 0.03134017166035017
     },
     {
       "id": "transport_ops",
       "type": "expenditure",
       "amount_eur": 9511042490.692892,
-      "share": 0.00761927941837755
+      "share": 0.007481265200549685
     },
     {
       "id": "transport_invest",
       "type": "expenditure",
       "amount_eur": 21508510160.407104,
-      "share": 0.0172304296764019
+      "share": 0.016918320860850284
     },
     {
       "id": "env_renov_energy",
       "type": "expenditure",
       "amount_eur": 5079803908.9689665,
-      "share": 0.004069421980910675
+      "share": 0.003995709223986149
     },
     {
       "id": "env_waste_sanitation",
       "type": "expenditure",
       "amount_eur": 7991954167.0162,
-      "share": 0.006402340432917895
+      "share": 0.006286369622740542
     },
     {
       "id": "env_water_biodiversity",
       "type": "expenditure",
       "amount_eur": 7671512274.914834,
-      "share": 0.006145634996509312
+      "share": 0.006034314101116898
     },
     {
       "id": "econ_business_support",
       "type": "expenditure",
       "amount_eur": 7910435878.0,
-      "share": 0.006337036274900488
+      "share": 0.006222248372160279
     },
     {
       "id": "agri_food",
       "type": "expenditure",
       "amount_eur": 4125856189.0,
-      "share": 0.0033052161395341613
+      "share": 0.0032453460658432584
     },
     {
       "id": "labor_market_services",
       "type": "expenditure",
       "amount_eur": 10553651734.966366,
-      "share": 0.008454511851002749
+      "share": 0.008301368387407207
     },
     {
       "id": "culture_heritage",
       "type": "expenditure",
       "amount_eur": 5888130783.144891,
-      "share": 0.004716971218731544
+      "share": 0.0046315288747088845
     },
     {
       "id": "sport_youth",
       "type": "expenditure",
       "amount_eur": 3089751404.009325,
-      "share": 0.0024751944178052292
+      "share": 0.002430359204028802
     },
     {
       "id": "media_public",
       "type": "expenditure",
       "amount_eur": 3099086495.8457837,
-      "share": 0.00248267274346383
+      "share": 0.0024377020686799037
     },
     {
       "id": "admin_services",
       "type": "expenditure",
       "amount_eur": 19676490625.0,
-      "share": 0.015762802047374663
+      "share": 0.01547727756718607
     },
     {
       "id": "europe_diplomacy",
       "type": "expenditure",
       "amount_eur": 7023809340.0,
-      "share": 0.005626761314045109
+      "share": 0.0055248392005459055
     },
     {
       "id": "grants_to_locals",
       "type": "expenditure",
       "amount_eur": 20779029420.4,
-      "share": 0.016646043938047996
+      "share": 0.01634452057765033
     },
     {
       "id": "debt_interest",
       "type": "expenditure",
       "amount_eur": 60341209199.0,
-      "share": 0.04833923660627668
+      "share": 0.047463628617085495
     },
     {
       "id": "rev_vat_standard",
@@ -309,7 +309,7 @@
     {
       "id": "rev_transfers_in",
       "type": "revenue",
-      "amount_eur": 129568071240.40015,
+      "amount_eur": 152596430686.0,
       "share": null
     },
     {
@@ -321,9 +321,9 @@
   ],
   "meta": {
     "source": "Eurostat SDMX 2.1 (dissemination): gov_10a_exp (exp) + gov_10a_taxag (taxes/contrib) + gov_10a_main (sales/totals)",
-    "warning": "gov_10a_main JSON failed: RetryError; debt_interest from COFOG 01.7 TE (D.41 not exposed in gov_10a_exp); Voted-2026 overlay applied from LFI ETAT A/ETAT B and LFSS branch balances (explicit residual and source-quality reporting enabled)",
+    "warning": "gov_10a_main JSON failed: RetryError; debt_interest from COFOG 01.7 TE (D.41 not exposed in gov_10a_exp); Voted-2026 overlay applied from LFI ETAT A/ETAT B and LFSS branch balances (explicit residual and source-quality reporting enabled); Voted-2026 overlay applied from LFI ETAT A/ETAT B and LFSS branch balances (explicit residual and source-quality reporting enabled)",
     "voted_2026_overlay": {
-      "applied_at": "2026-02-26T19:56:24.296017+00:00",
+      "applied_at": "2026-02-26T20:55:18.088186+00:00",
       "sources_bundle": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/voted_2026_aggregates.json",
       "apu_targets_path": "/home/aabecassis/Projects/citizen-budget-lab/data/reference/apu_2026_targets.json",
       "mode": "true_level",
@@ -346,6 +346,7 @@
         "M_ENVIRONMENT": 20743270350.9,
         "M_HEALTH": 291668133258.0,
         "M_HIGHER_EDU": 31633945500.0,
+        "M_HOUSING": 23028359445.6,
         "M_JUSTICE": 12966577407.0,
         "M_PENSIONS": 316467878084.0,
         "M_SECURITY": 26696851022.6,
@@ -356,12 +357,12 @@
       "applied_revenue_targets_eur": {
         "social_security": 664800000000.0,
         "state_fiscal": 290339000000.0,
-        "state_non_fiscal": 141797349461.40015,
-        "apu_macro_closure_state_non_fiscal_delta_eur": 112897349461.40015,
+        "state_non_fiscal": 164825708907.0,
+        "apu_macro_closure_state_non_fiscal_delta_eur": 135925708907.0,
         "macro_deficit_target_abs_eur": 151350000000.0
       },
       "post_checks": {
-        "mission_target_count": 19,
+        "mission_target_count": 20,
         "mission_max_abs_error_eur": 0.0,
         "mission_max_rel_error": 0.0,
         "revenue_group_target_count": 5,
@@ -636,24 +637,18 @@
         }
       },
       "quality": {
-        "warning_count": 2,
+        "warning_count": 1,
         "warnings": [
-          "Sentinel M_HOUSING: resulting amount is zero or negative",
           "Heuristic risk: state->local transfers and APUL-sensitive final-use blocks are both non-zero. Ensure transfers are not re-counted as additional final spending."
         ],
         "source_quality_coverage_pct": 100.0,
-        "residual_adjustments_total_eur": 112897349461.40039,
+        "residual_adjustments_total_eur": 135925708907.0,
         "residual_adjustments": [
           {
             "kind": "macro_deficit_closure",
             "group_id": "state_non_fiscal",
-            "amount_eur": 112897349461.40015,
+            "amount_eur": 135925708907.0,
             "note": "Applied to close to baseline deficit target in true_level mode"
-          },
-          {
-            "kind": "uncovered_expenditure_residual",
-            "amount_eur": 0.000244140625,
-            "note": "Difference between total expenditure and sum of explicitly targeted masses."
           }
         ],
         "sentinel_checks": [
@@ -680,10 +675,10 @@
           },
           {
             "mass_id": "M_HOUSING",
-            "status": "warn",
-            "amount_eur": 0.0,
-            "targeted": false,
-            "note": "resulting amount is zero or negative"
+            "status": "ok",
+            "amount_eur": 23028359445.6,
+            "targeted": true,
+            "note": "targeted and non-zero"
           },
           {
             "mass_id": "M_CIVIL_PROT",
@@ -705,7 +700,7 @@
             "name": "state_to_local_vs_local_final_use",
             "status": "warn",
             "value_eur": 20779029420.4,
-            "local_final_use_eur": 347370117593.4,
+            "local_final_use_eur": 370398477039.0,
             "note": "Heuristic risk: state->local transfers and APUL-sensitive final-use blocks are both non-zero. Ensure transfers are not re-counted as additional final spending."
           }
         ]
