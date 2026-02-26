@@ -522,6 +522,9 @@ The API applies schema migrations automatically on startup when the Postgres vot
 
 #### **6.3.1. Qualtrics Embed: Vote Metadata + Final Snapshot**
 
+Operational details (exact HTML + JavaScript snippets) are documented in:
+`docs/QUALTRICS_INTEGRATION.md`.
+
 The Build page can run inside a Qualtrics iframe and now sends two layers of data:
 
 1. **Backend persistence** (`submitVote`): stores panel metadata in `votes.meta_json`

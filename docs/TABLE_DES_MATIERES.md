@@ -22,6 +22,10 @@ Ce dossier contient la documentation technique et fonctionnelle du projet **Citi
     *   **Quoi :** L'inventaire de toutes les sources de données (Eurostat, PLF, etc.), des fichiers de configuration et des pipelines de données (warmers, dbt).
     *   **Pour qui :** Data engineers et développeurs travaillant sur la data.
 
+*   **[`QUALTRICS_INTEGRATION.md`](./QUALTRICS_INTEGRATION.md)**
+    *   **Quoi :** Runbook complet de l'integration Qualtrics (URL iframe, listener JavaScript, Embedded Data `CBL_*`, checks de validation).
+    *   **Pour qui :** Equipe etudes/polling + developpeurs responsables du questionnaire.
+
 ## 🏗️ Méthodologie & Architecture
 
 *   **[`LEGO_METHOD.md`](./LEGO_METHOD.md)**
