@@ -9,6 +9,7 @@ import type {
   MissionLabel,
   PolicyLever,
   PopularIntent,
+  RevenueFamily,
 } from './types';
 
 export type BuildState = {

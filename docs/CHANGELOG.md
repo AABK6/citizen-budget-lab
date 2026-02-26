@@ -2,6 +2,37 @@
 
 This changelog records **documentation** and **data pipeline conventions** changes that impact reproducibility.
 
+## 2026-02-25
+
+- **LFI 2026 enacted mission credits (CP) re-baselined with dual-source verification:**
+  - Added `tools/verify_lfi_2026_state_b.py` to enforce strict equality between:
+    - JO promulgated law `JORFTEXT000053508155` (ÉTAT B mission CP),
+    - Assemblée nationale annex raw table `PRJLANR5L17BTA0227.raw` (ÉTAT B mission CP).
+  - Added auditable reference table `data/reference/lfi_2026_etat_b_cp_verified.csv` (32 missions, JO vs annex, line refs, match flag).
+  - Added report `docs/verification_lfi2026_missions.md` (32/32 matches).
+  - Regenerated `warehouse/seeds/plf_2026_plafonds.csv` from the verified enacted CP values (source now cites both official URLs).
+
+- **PLF 2026 ceilings pipeline hardened (official sources):**
+  - Updated `DEFAULT_PLF_2026_URL` to the official Article 48 LOLF PDF (`https://www.budget.gouv.fr/documentation/file-download/30420`).
+  - Triple-checked official publication endpoints and content-types (`30420` PDF, `30423` XLS annexe indicateurs, `31621` XLS "dépenses selon destination").
+  - Added resilient PLF PDF parsing fallback (text extraction of Tableau 1bis) when table extraction is noisy.
+  - Aligned extracted PLF mission labels with existing mission code keys (AA/AB/.../RD) to preserve current simulation typology and repartition behavior.
+  - Regenerated `warehouse/seeds/plf_2026_plafonds.csv` with the full official 2026 mission table (32 rows).
+- **Baseline calibration:**
+  - Updated `data/baseline_deficit_debt.csv` 2026 deficit to `-151350000000` (EUR), consistent with the LFI 2026 public deficit target of 5.0% and the existing 2026 GDP baseline.
+- **Testing:**
+  - Added regression coverage for PDF text fallback extraction in `services/api/tests/test_plf_warmers.py`.
+- **LFI/LFSS voted 2026 full baseline overlay:**
+  - Added `tools/verify_lfi_2026_state_a.py` and `data/reference/lfi_2026_etat_a_aggregates_verified.csv` for ÉTAT A aggregate verification (recettes/solde).
+  - Added `tools/verify_lfss_2026.py` plus:
+    - `data/reference/lfss_2026_branch_equilibre_verified.csv`,
+    - `data/reference/lfss_2026_asso_pct_verified.csv`,
+    - `docs/verification_lfss2026.md`.
+  - Added `tools/build_voted_2026_aggregates.py` -> `data/reference/voted_2026_aggregates.json`.
+  - Added `tools/apply_voted_2026_to_lego_baseline.py` with a default `true_level` mode that applies absolute voted levels on covered blocks (while preserving simulation typology and mappings); `share_rebalance` remains available for comparability-only runs.
+  - Added strict post-checks in overlay metadata (`meta.voted_2026_overlay.post_checks`) to assert convergence/match to targeted official totals.
+  - Added `make warm-voted-2026-baseline` (fail-fast, now invoking `--mode true_level`) and switched default build snapshot year to 2026 in API/CLI/frontend defaults.
+
 ## 2026-01-02
 
 - **Policy Catalog Harmonization:**

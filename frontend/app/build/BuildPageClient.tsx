@@ -625,13 +625,16 @@ export default function BuildPageClient() {
     setScenarioError(null);
     try {
       let data: any | null = null;
-      try {
-        const snapshotRes = await fetch(`/api/build-snapshot?year=${year}`, { cache: 'no-store' });
-        if (snapshotRes.ok) {
-          data = await snapshotRes.json();
+      const useSnapshot = process.env.NEXT_PUBLIC_BUILD_SNAPSHOT !== '0';
+      if (useSnapshot) {
+        try {
+          const snapshotRes = await fetch(`/api/build-snapshot?year=${year}`, { cache: 'no-store' });
+          if (snapshotRes.ok) {
+            data = await snapshotRes.json();
+          }
+        } catch (err) {
+          data = null;
         }
-      } catch (err) {
-        data = null;
       }
       if (!data) {
         data = await gqlRequest(buildPageQuery, { year });

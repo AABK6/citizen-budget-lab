@@ -1,0 +1,159 @@
+{
+  "__warning__": "Eurostat fetch failed. Ensure EUROSTAT_BASE is reachable and EUROSTAT_COOKIE is set if required. Error: RetryError",
+  "FR": [
+    {
+      "code": "10",
+      "label": "Social protection",
+      "share": 0.4093158696885876
+    },
+    {
+      "code": "07",
+      "label": "Health",
+      "share": 0.15533006684241296
+    },
+    {
+      "code": "04",
+      "label": "Economic affairs",
+      "share": 0.11050212623848087
+    },
+    {
+      "code": "01",
+      "label": "General public services",
+      "share": 0.10872483797673324
+    },
+    {
+      "code": "09",
+      "label": "Education",
+      "share": 0.08806485733479175
+    },
+    {
+      "code": "02",
+      "label": "Defense",
+      "share": 0.0318402610538334
+    },
+    {
+      "code": "03",
+      "label": "Public order",
+      "share": 0.030304917417188555
+    },
+    {
+      "code": "08",
+      "label": "Recreation, culture",
+      "share": 0.025766573766732533
+    },
+    {
+      "code": "06",
+      "label": "Housing",
+      "share": 0.022148789287694867
+    },
+    {
+      "code": "05",
+      "label": "Environment",
+      "share": 0.018001700393544175
+    }
+  ],
+  "DE": [
+    {
+      "code": "10",
+      "label": "Social protection",
+      "share": 0.4061665111088065
+    },
+    {
+      "code": "07",
+      "label": "Health",
+      "share": 0.15559687304009442
+    },
+    {
+      "code": "01",
+      "label": "General public services",
+      "share": 0.12688731191079375
+    },
+    {
+      "code": "04",
+      "label": "Economic affairs",
+      "share": 0.12047585890161336
+    },
+    {
+      "code": "09",
+      "label": "Education",
+      "share": 0.09249667896314513
+    },
+    {
+      "code": "03",
+      "label": "Public order",
+      "share": 0.033250369141271226
+    },
+    {
+      "code": "02",
+      "label": "Defense",
+      "share": 0.022897623174664317
+    },
+    {
+      "code": "08",
+      "label": "Recreation, culture",
+      "share": 0.02075388771191672
+    },
+    {
+      "code": "05",
+      "label": "Environment",
+      "share": 0.012015486649184927
+    },
+    {
+      "code": "06",
+      "label": "Housing",
+      "share": 0.009459399398509608
+    }
+  ],
+  "IT": [
+    {
+      "code": "10",
+      "label": "Social protection",
+      "share": 0.39271155336099917
+    },
+    {
+      "code": "01",
+      "label": "General public services",
+      "share": 0.13785699998165704
+    },
+    {
+      "code": "07",
+      "label": "Health",
+      "share": 0.12077707793052907
+    },
+    {
+      "code": "04",
+      "label": "Economic affairs",
+      "share": 0.10838841318492418
+    },
+    {
+      "code": "06",
+      "label": "Housing",
+      "share": 0.08093886289331469
+    },
+    {
+      "code": "09",
+      "label": "Education",
+      "share": 0.07298980742505808
+    },
+    {
+      "code": "03",
+      "label": "Public order",
+      "share": 0.03199188018025022
+    },
+    {
+      "code": "02",
+      "label": "Defense",
+      "share": 0.02236182287158264
+    },
+    {
+      "code": "05",
+      "label": "Environment",
+      "share": 0.01665890730076263
+    },
+    {
+      "code": "08",
+      "label": "Recreation, culture",
+      "share": 0.015324674870922293
+    }
+  ]
+}

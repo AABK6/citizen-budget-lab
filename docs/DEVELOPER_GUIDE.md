@@ -121,6 +121,26 @@ The API includes two caching layers:
     python -m services.api.cache_warm macro-insee --config data/macro_series_config.json
     ```
 
+6.  **Verify enacted LFI 2026 mission CP (dual official sources):**
+    ```bash
+    make verify-lfi-2026
+    ```
+    This command compares JO (`JORFTEXT000053508155`, ÉTAT B) with the Assemblée nationale annex raw table (`PRJLANR5L17BTA0227.raw`), writes `data/reference/lfi_2026_etat_b_cp_verified.csv`, and updates `warehouse/seeds/plf_2026_plafonds.csv`.
+
+7.  **Verify enacted 2026 aggregates beyond ÉTAT B:**
+    ```bash
+    make verify-lfi-2026-state-a
+    make verify-lfss-2026
+    ```
+    These commands validate LFI ÉTAT A aggregate receipts/balance and LFSS branch/ASSO balances against official adopted AN texts.
+
+8.  **Rebuild the voted-2026 simulation baseline (APU scope preserved):**
+    ```bash
+    make warm-voted-2026-baseline
+    ```
+    This full chain warms the Eurostat baseline, runs all LFI/LFSS verifications, builds `data/reference/voted_2026_aggregates.json`, applies the voted overlay in `true_level` mode to `data/cache/lego_baseline_2026.json`, then regenerates `data/cache/build_page_2026.json`.
+    For comparability-only experiments, you can run `tools/apply_voted_2026_to_lego_baseline.py --mode share_rebalance` to keep global totals unchanged.
+
 #### **2.2. Semantic Layer (dbt)**
 
 -   **Overview:** The dbt project lives in `warehouse/` and uses DuckDB by default. It reads the warmed CSVs from `data/cache/` to produce the semantic models used by the API.
@@ -237,6 +257,7 @@ Macro baselines
 | `EUROSTAT_LANG` | Preferred language for Eurostat labels. Default: `en`. | No |
 | `EUROSTAT_COOKIE` | Optional cookie string for accessing gated Eurostat endpoints. | No |
 | `CORS_ALLOW_ORIGINS` | Comma-separated list of origins for CORS. | No |
+| `NEXT_PUBLIC_BUILD_SNAPSHOT` | Frontend toggle for `/build`: `1` (default) prefers precomputed snapshot, `0` forces live GraphQL loading (useful during local/testing refresh cycles). | No |
 | `NET_EXP_REFERENCE_RATE` | Annual growth rate for the Net Expenditure Rule compliance check. Default: `0.015`. | No |
 | `LEGO_BASELINE_STATIC` | Force LEGO baseline to use the warmed JSON snapshot even when the warehouse is enabled. Default: `1` (on). | No |
 | `MACRO_BASELINE_STATIC` | Force macro/baseline series to load from local snapshots (CSV/JSON) even when warehouse is enabled. Default: same as `LEGO_BASELINE_STATIC`. | No |
@@ -437,7 +458,7 @@ Tip: The frontend service can also rely on a build-time `NEXT_PUBLIC_GRAPHQL_URL
 
 #### **6.2.2. Build Page Snapshot (Temporary)**
 
-To reduce cold-start latency on the Build page, the API can serve a precomputed snapshot at `/build-snapshot?year=2026`. This is a temporary mitigation and can be removed once the GraphQL response time is consistently fast.
+To reduce cold-start latency on the Build page, the API can serve a precomputed snapshot at `/build-snapshot?year=<YEAR>`. This is a temporary mitigation and can be removed once the GraphQL response time is consistently fast.
 
 Generate/update the snapshot:
 
@@ -445,7 +466,7 @@ Generate/update the snapshot:
 python tools/build_snapshot.py --year 2026
 ```
 
-This writes `data/cache/build_page_2026.json` (and a `.meta.json` sidecar) which is baked into the API image at deploy time.
+This writes `data/cache/build_page_<YEAR>.json` (and a `.meta.json` sidecar) which is baked into the API image at deploy time.
 
 #### **6.3. Votes & Scenarios Persistence (Cloud SQL)**
 

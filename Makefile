@@ -4,18 +4,23 @@ SHELL := /bin/bash
 YEAR ?= 2026
 COUNTRIES ?= FR,DE,IT
 
-.PHONY: help warm-all warm-eurostat warm-eurostat-sub warm-plf warm-macro warm-decp summary sync-votes
+.PHONY: help warm-all warm-eurostat warm-eurostat-sub warm-plf warm-macro warm-decp summary sync-votes verify-lfi-2026 verify-lfi-2026-state-a verify-lfss-2026 build-voted-2026-aggregates warm-voted-2026-baseline
 
-	help:
-		@echo "Targets:"
-		@echo "  make warm-all YEAR=2026 COUNTRIES=FR,DE,IT  # Warm LEGO baseline (SDMX XML) + EU COFOG shares, then print summary"
-		@echo "  make warm-eurostat YEAR=2026 COUNTRIES=FR,DE,IT  # Only Eurostat warmers"
-		@echo "  make warm-eurostat-sub YEAR=2026 COUNTRIES=FR,DE,IT  # Eurostat COFOG subfunction shares"
-		@echo "  make warm-plf YEAR=2025 DATASET=plf25-depenses-2025-selon-destination  # Optional ODS snapshot"
-		@echo "  make warm-macro CFG=data/macro_config.json  # Warm INSEE BDM macro series cache"
-		@echo "  make warm-decp YEAR=2024 DATASET=decp-v3-marches-valides ENRICH=1 SIRENE_MAX=100 SIRENE_QPS=5  # DECP ingest"
-		@echo "  make sync-votes VOTES_STORE=sqlite VOTES_SQLITE_PATH=data/cache/votes.sqlite3  # Sync votes into DuckDB"
-		@echo "Env (optional): EUROSTAT_SDMX_BASE, EUROSTAT_COOKIE, EUROSTAT_BASE, INSEE_CLIENT_ID, INSEE_CLIENT_SECRET"
+help:
+	@echo "Targets:"
+	@echo "  make warm-all YEAR=2026 COUNTRIES=FR,DE,IT  # Warm LEGO baseline (SDMX XML) + EU COFOG shares, then print summary"
+	@echo "  make warm-eurostat YEAR=2026 COUNTRIES=FR,DE,IT  # Only Eurostat warmers"
+	@echo "  make warm-eurostat-sub YEAR=2026 COUNTRIES=FR,DE,IT  # Eurostat COFOG subfunction shares"
+	@echo "  make warm-plf YEAR=2025 DATASET=plf25-depenses-2025-selon-destination  # Optional ODS snapshot"
+	@echo "  make warm-macro CFG=data/macro_config.json  # Warm INSEE BDM macro series cache"
+	@echo "  make warm-decp YEAR=2024 DATASET=decp-v3-marches-valides ENRICH=1 SIRENE_MAX=100 SIRENE_QPS=5  # DECP ingest"
+	@echo "  make verify-lfi-2026  # Verify 2026 enacted mission CP (JO vs AN ÉTAT B) and update seed"
+	@echo "  make verify-lfi-2026-state-a  # Verify 2026 enacted ETAT A aggregate receipts/balance"
+	@echo "  make verify-lfss-2026  # Verify 2026 enacted LFSS branch balances + ASSO article liminaire"
+	@echo "  make build-voted-2026-aggregates  # Consolidate verified LFI/LFSS values into one JSON bundle"
+	@echo "  make warm-voted-2026-baseline  # Rebuild 2026 baseline + apply voted overlay (true_level) + regenerate build snapshot"
+	@echo "  make sync-votes VOTES_STORE=sqlite VOTES_SQLITE_PATH=data/cache/votes.sqlite3  # Sync votes into DuckDB"
+	@echo "Env (optional): EUROSTAT_SDMX_BASE, EUROSTAT_COOKIE, EUROSTAT_BASE, INSEE_CLIENT_ID, INSEE_CLIENT_SECRET"
 
 warm-eurostat:
 	@echo "==> Warming LEGO baseline for $(YEAR) (Eurostat SDMX XML)"
@@ -76,6 +81,33 @@ sync-votes:
 	echo "==> Syncing votes to warehouse (store=$(VOTES_STORE))"; \
 	if [ -f .venv/bin/activate ]; then source .venv/bin/activate; fi; \
 	PYTHONPATH=. python tools/sync_votes_to_warehouse.py
+
+verify-lfi-2026:
+	@if [ -f .venv/bin/activate ]; then source .venv/bin/activate; fi; \
+	PYTHONPATH=. python tools/verify_lfi_2026_state_b.py --update-seed
+
+verify-lfi-2026-state-a:
+	@if [ -f .venv/bin/activate ]; then source .venv/bin/activate; fi; \
+	PYTHONPATH=. python tools/verify_lfi_2026_state_a.py
+
+verify-lfss-2026:
+	@if [ -f .venv/bin/activate ]; then source .venv/bin/activate; fi; \
+	PYTHONPATH=. python tools/verify_lfss_2026.py
+
+build-voted-2026-aggregates:
+	@if [ -f .venv/bin/activate ]; then source .venv/bin/activate; fi; \
+	PYTHONPATH=. python tools/build_voted_2026_aggregates.py
+
+warm-voted-2026-baseline:
+	@set -euo pipefail; \
+	if [ -f .venv/bin/activate ]; then source .venv/bin/activate; fi; \
+	PYTHONPATH=. python -m services.api.cache_warm lego --year 2026; \
+	PYTHONPATH=. python tools/verify_lfi_2026_state_b.py --update-seed; \
+	PYTHONPATH=. python tools/verify_lfi_2026_state_a.py; \
+	PYTHONPATH=. python tools/verify_lfss_2026.py; \
+	PYTHONPATH=. python tools/build_voted_2026_aggregates.py; \
+	PYTHONPATH=. python tools/apply_voted_2026_to_lego_baseline.py --year 2026 --mode true_level; \
+	PYTHONPATH=. python tools/build_snapshot.py --year 2026
 
 .PHONY: verify-warmers
 verify-warmers:

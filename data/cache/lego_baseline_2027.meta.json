@@ -1,0 +1,9 @@
+{
+  "extraction_ts": "2026-02-25T19:07:57.998034+00:00",
+  "year": 2027,
+  "country": "FR",
+  "scope": "S13",
+  "method": "Eurostat SDMX 2.1 (gov_10a_exp/taxag/main) with mapping-based fallback",
+  "pieces": 52,
+  "warning": "gov_10a_main JSON failed: RetryError; debt_interest from COFOG 01.7 TE (D.41 not exposed in gov_10a_exp)"
+}

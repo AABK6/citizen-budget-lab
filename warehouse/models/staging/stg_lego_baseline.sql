@@ -11,5 +11,5 @@ select
     -- Add filename for better traceability
     t.filename
 from
-    read_json_auto('data/cache/lego_baseline_2026.json', filename=true) as t,
+    read_json_auto('{{ var('lego_baseline_glob') }}', filename=true) as t,
     unnest(t.pieces) as piece_tbl(piece)

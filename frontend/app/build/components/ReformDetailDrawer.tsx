@@ -88,7 +88,7 @@ export function ReformDetailDrawer({ reform, onClose, onToggle, isSelected, side
                         </span>
 
                         <div className={`text-sm font-black px-3 py-1 rounded-lg ${impact > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>
-                            {impact > 0 ? '+' : ''}{(impact / 1e9).toFixed(1)} Md€ <span className="text-xs font-medium opacity-70 ml-1">(2026)</span>
+                            {impact > 0 ? '+' : ''}{(impact / 1e9).toFixed(1)} Md€ <span className="text-xs font-medium opacity-70 ml-1">(2027)</span>
                         </div>
                     </div>
                 </div>

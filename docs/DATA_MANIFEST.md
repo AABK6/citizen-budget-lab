@@ -73,7 +73,7 @@ This document provides a central inventory of all data sources, configuration fi
 
 *   **Purpose:** Provides the baseline multi-year path for core metrics like GDP, deficit, and debt.
 *   **Source Files:** `data/gdp_series.csv`, `data/baseline_deficit_debt.csv`
-*   **Status:** **Exists, with sample data.** 2026 deficit updated to -148.9 Md€ on **2025-12-30**.
+*   **Status:** **Partially calibrated.** 2026 public deficit updated to **-151.35 Md€** on **2026-02-25** (5.0% of 2026 GDP baseline), aligned with the LFI 2026 target published by budget.gouv.fr on 20/02/2026.
 *   **Pipeline:** Read by the `runScenario` mutation to calculate compliance and macro paths. The GraphQL payload now surfaces these series explicitly (`baselineDeficitPath`, `baselineDebtPath`) so clients can reconstruct absolute levels without re-fetching the CSV.
 
 ### 3.4. Warmed Snapshots (Eurostat, PLF, DECP)
@@ -83,12 +83,32 @@ This document provides a central inventory of all data sources, configuration fi
 *   **PLF 2026 Ceilings (`plf_2026_plafonds.csv`):**
     * The dedicated warmer `services/api/cache_warm.py:warm_plf_2026_plafonds` normalizes the "plafonds" (ceilings) by mission into a minimal CSV (`year`, `mission_code`, `mission_label`, `plf_ceiling_eur`, `source`) under `data/cache/plf_2026_plafonds.csv` (+ `.meta.json` provenance sidecar).
     * Source selection:
-        * By default, it downloads the official XLSX/PDF from the Assemblée/Budget portal (defaulting to `DEFAULT_PLF_2026_URL` in code).
+        * By default, it downloads the official **Article 48 LOLF** report PDF (`https://www.budget.gouv.fr/documentation/file-download/30420`) and extracts **Tableau 1bis** (mission ceilings, budget général).
+        * The companion XLS (`https://www.budget.gouv.fr/documentation/file-download/30423`) is retained for cross-checking publication provenance but is not used for mission ceiling extraction (performance annex format).
+        * A third official cross-check source is available at `https://www.budget.gouv.fr/documentation/file-download/31621` (`PLF26 - Dépenses 2026 selon destination.xls`).
         * You can override via `PLF_2026_PLAFONDS_URL` (URL **or** local path).
         * If download is unavailable, it falls back to the bundled deterministic sample workbook `data/reference/plf_2026_plafonds_sample.xlsx` so CI remains hermetic.
-    * The warehouse keeps a small deterministic seed at `warehouse/seeds/plf_2026_plafonds.csv` as a sanity fixture; replace it with the full official mission table when a stable machine-readable source is available.
+    * **Enacted-law verification path (used for 2026 baseline publication):**
+        * Canonical verification script: `tools/verify_lfi_2026_state_b.py`.
+        * Canonical reference table: `data/reference/lfi_2026_etat_b_cp_verified.csv` (JO vs AN ÉTAT B, mission-by-mission CP, line refs, match flag).
+        * Human audit report: `docs/verification_lfi2026_missions.md`.
+    * `warehouse/seeds/plf_2026_plafonds.csv` is generated from this verified enacted table (32 missions) with mission codes aligned to the existing simulation typology (AA/AB/.../RD).
+*   **LFI 2026 aggregate receipts/balance (ÉTAT A):**
+    * Canonical verification script: `tools/verify_lfi_2026_state_a.py`.
+    * Canonical reference table: `data/reference/lfi_2026_etat_a_aggregates_verified.csv` (fiscal/non-fiscal receipts, net resources/charges, general balance).
+    * Human audit report: `docs/verification_lfi2026_state_a.md`.
+*   **LFSS 2026 social aggregates:**
+    * Canonical verification script: `tools/verify_lfss_2026.py`.
+    * Canonical reference tables:
+      * `data/reference/lfss_2026_branch_equilibre_verified.csv` (branch recettes/dépenses/solde),
+      * `data/reference/lfss_2026_asso_pct_verified.csv` (ASSO article liminaire, % PIB).
+    * Human audit report: `docs/verification_lfss2026.md`.
+*   **Consolidated voted bundle (`voted_2026_aggregates.json`):**
+    * Built by `tools/build_voted_2026_aggregates.py` from verified LFI/LFSS tables.
+    * Contains the official targets used to calibrate baseline revenues/expenditures while preserving current APU typology/repartition behavior.
 *   **LEGO Baseline (`lego_baseline_2026.json`):**
-    * See §1.2 — warmed for 2026 with Eurostat SDMX sources; meta includes warning strings for any fallback use.
+    * See §1.2 — warmed for 2026 with Eurostat SDMX sources, then overlaid with voted 2026 LFI/LFSS targets via `tools/apply_voted_2026_to_lego_baseline.py`.
+    * Overlay metadata is recorded under `meta.voted_2026_overlay` (source bundle path, mappings, excluded mission codes, execution timestamp).
 *   **Eurostat COFOG Shares (`eu_cofog_shares_{YEAR}.json`, `eu_cofog_subshares_{YEAR}.json`):**
     * 2026 FR/DE/IT shares and subshares refreshed 2025-09-22 via `eurostat-cofog` and `eurostat-cofog-sub` warmers.
 *   **Procurement Contracts (`procurement_contracts_{YEAR}.csv`):**
