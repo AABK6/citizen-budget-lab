@@ -67,6 +67,11 @@ class Settings:
 
     # Voter preferences storage
     votes_store: str = os.getenv("VOTES_STORE", "file")  # file|sqlite|postgres
+    # Guardrail: require Postgres in production-like runtimes (Cloud Run sets K_SERVICE).
+    votes_require_postgres: bool = os.getenv(
+        "VOTES_REQUIRE_POSTGRES",
+        "1" if os.getenv("K_SERVICE") else "0",
+    ) in ("1", "true", "True")
     votes_db_dsn: str | None = os.getenv("VOTES_DB_DSN")
     votes_db_pool_min: int = int(os.getenv("VOTES_DB_POOL_MIN", "1"))
     votes_db_pool_max: int = int(os.getenv("VOTES_DB_POOL_MAX", "5"))
