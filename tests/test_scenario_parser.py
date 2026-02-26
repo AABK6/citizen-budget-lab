@@ -68,6 +68,9 @@ def test_flatten_scenario_extracts_panel_metadata():
         "sessionDurationSec": 42.5,
         "channel": "qualtrics",
         "entryPath": "/build?ID=abc-123",
+        "finalVoteSnapshotSha256": "b" * 64,
+        "finalVoteSnapshotVersion": 1,
+        "finalVoteSnapshotTruncated": False,
     }
 
     flat = flatten_scenario(dsl, meta)
@@ -77,3 +80,6 @@ def test_flatten_scenario_extracts_panel_metadata():
     assert flat["session_duration_sec"] == 42.5
     assert flat["entry_channel"] == "qualtrics"
     assert flat["entry_path"] == "/build?ID=abc-123"
+    assert flat["final_vote_snapshot_sha256"] == "b" * 64
+    assert flat["final_vote_snapshot_version"] == 1.0
+    assert flat["final_vote_snapshot_truncated"] is False

@@ -42,6 +42,98 @@ import { FloatingShareCard } from './components/FloatingShareCard';
 const cloneCategories = (categories: MassCategory[]) =>
   categories.map((category) => ({ ...category }));
 
+const QUALTRICS_MESSAGE_TYPE = 'CBL_VOTE_SUBMITTED_V1';
+const FINAL_SNAPSHOT_VERSION = 1;
+const MAX_SNAPSHOT_B64_LEN = 20_000;
+
+type SnapshotMode = 'full' | 'ids' | 'minimal';
+
+type EncodedSnapshot = {
+  mode: SnapshotMode;
+  encoded: string | null;
+  sha256: string | null;
+  truncated: boolean;
+  dropped: boolean;
+};
+
+function toBase64Url(bytes: Uint8Array): string {
+  let binary = '';
+  const chunkSize = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    const chunk = bytes.subarray(i, i + chunkSize);
+    binary += String.fromCharCode(...chunk);
+  }
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
+}
+
+async function gzipMaybe(bytes: Uint8Array): Promise<Uint8Array> {
+  if (typeof CompressionStream === 'undefined') {
+    return bytes;
+  }
+  try {
+    const stream = new CompressionStream('gzip');
+    const writer = stream.writable.getWriter();
+    await writer.write(bytes);
+    await writer.close();
+    const buffer = await new Response(stream.readable).arrayBuffer();
+    return new Uint8Array(buffer);
+  } catch {
+    return bytes;
+  }
+}
+
+async function sha256Hex(bytes: Uint8Array): Promise<string | null> {
+  if (typeof crypto === 'undefined' || !crypto.subtle) {
+    return null;
+  }
+  try {
+    const digest = await crypto.subtle.digest('SHA-256', bytes);
+    return Array.from(new Uint8Array(digest))
+      .map((value) => value.toString(16).padStart(2, '0'))
+      .join('');
+  } catch {
+    return null;
+  }
+}
+
+async function encodeSnapshotPayload(payload: Record<string, unknown>): Promise<{ encoded: string; sha256: string | null }> {
+  const raw = new TextEncoder().encode(JSON.stringify(payload));
+  const compressed = await gzipMaybe(raw);
+  return {
+    encoded: toBase64Url(compressed),
+    sha256: await sha256Hex(raw),
+  };
+}
+
+async function selectSnapshotCandidate(
+  candidates: Array<{ mode: SnapshotMode; payload: Record<string, unknown> }>,
+): Promise<EncodedSnapshot> {
+  let smallest: { mode: SnapshotMode; encoded: string; sha256: string | null } | null = null;
+  for (const candidate of candidates) {
+    const { encoded, sha256 } = await encodeSnapshotPayload(candidate.payload);
+    if (!smallest || encoded.length < smallest.encoded.length) {
+      smallest = { mode: candidate.mode, encoded, sha256 };
+    }
+    if (encoded.length <= MAX_SNAPSHOT_B64_LEN) {
+      return {
+        mode: candidate.mode,
+        encoded,
+        sha256,
+        truncated: candidate.mode !== 'full',
+        dropped: false,
+      };
+    }
+  }
+
+  return {
+    mode: smallest?.mode ?? 'minimal',
+    encoded: null,
+    sha256: smallest?.sha256 ?? null,
+    truncated: true,
+    dropped: true,
+  };
+}
+
 const REVENUE_FAMILY_FALLBACK: Record<string, string> = {
     "rev_pit": "REV_HOUSEHOLDS",
     "rev_csg_crds": "REV_HOUSEHOLDS",
@@ -1114,6 +1206,168 @@ export default function BuildPageClient() {
     return Number(elapsed.toFixed(1));
   };
 
+  const postQualtricsVoteMessage = useCallback(
+    (embeddedData: Record<string, string>, backendPersisted: boolean, backendError: string | null) => {
+      if (typeof window === 'undefined') return;
+      if (window.self === window.top) return;
+      try {
+        window.parent.postMessage(
+          {
+            type: QUALTRICS_MESSAGE_TYPE,
+            source: 'citizen-budget-lab',
+            at: Date.now(),
+            backendPersisted,
+            backendError: backendError,
+            embeddedData,
+          },
+          '*',
+        );
+      } catch (error) {
+        console.warn('Failed to post Qualtrics vote message', error);
+      }
+    },
+    [],
+  );
+
+  const buildVotePayload = useCallback(
+    async (scenarioIdValue: string, sessionDurationSec: number | null) => {
+      const channel = isQualtricsChannel ? 'qualtrics' : 'direct';
+      const normalizedRespondentId = (respondentId || '').trim().slice(0, 128) || null;
+      const normalizedEntryPath = (entryPathRef.current || '').slice(0, 1024) || null;
+      const submittedAt = Math.floor(Date.now() / 1000);
+
+      const debtNow = Array.isArray(scenarioResult?.accounting?.debtPath) && scenarioResult.accounting.debtPath.length > 0
+        ? Number(scenarioResult.accounting.debtPath[0])
+        : null;
+      const deficitSeries = scenarioResult
+        ? computeDeficitTotals(scenarioResult.accounting, scenarioResult.macro?.deltaDeficit)
+        : [];
+      const deficitNow = deficitSeries.length > 0 ? deficitSeries[0] : null;
+      let deficitRatioNow: number | null = null;
+      const deficitRatioPath = scenarioResult?.accounting?.deficitRatioPath;
+      if (Array.isArray(deficitRatioPath) && deficitRatioPath.length > 0) {
+        const raw = Number(deficitRatioPath[0]);
+        if (Number.isFinite(raw)) {
+          deficitRatioNow = raw;
+        }
+      } else if (deficitNow !== null) {
+        const gdpPath = scenarioResult?.accounting?.gdpPath;
+        if (Array.isArray(gdpPath) && gdpPath.length > 0) {
+          const gdpNow = Number(gdpPath[0]);
+          if (Number.isFinite(gdpNow) && gdpNow !== 0) {
+            deficitRatioNow = deficitNow / gdpNow;
+          }
+        }
+      }
+      const eu3pctNow = scenarioResult?.compliance?.eu3pct?.[0] ?? null;
+      const eu60pctNow = scenarioResult?.compliance?.eu60pct?.[0] ?? null;
+      const netExpNow = scenarioResult?.compliance?.netExpenditure?.[0] ?? null;
+      const snapshotResolutionPct =
+        typeof scenarioResult?.resolution?.overallPct === 'number'
+          ? Number(scenarioResult.resolution.overallPct)
+          : null;
+
+      const snapshotBase = {
+        v: FINAL_SNAPSHOT_VERSION,
+        scenarioId: scenarioIdValue,
+        respondentId: normalizedRespondentId,
+        channel,
+        entryPath: normalizedEntryPath,
+        sessionDurationSec,
+        submittedAt,
+        outcome: {
+          deficitNowEur: deficitNow,
+          deficitRatioNow: deficitRatioNow,
+          debtNowEur: debtNow,
+          resolutionPct: snapshotResolutionPct,
+          eu3pctNow,
+          eu60pctNow,
+          netExpNow,
+        },
+      };
+
+      const actions = Array.isArray(dslObject.actions) ? dslObject.actions : [];
+      const snapshotCandidates: Array<{ mode: SnapshotMode; payload: Record<string, unknown> }> = [
+        {
+          mode: 'full',
+          payload: {
+            ...snapshotBase,
+            dsl: {
+              baselineYear: dslObject.baseline_year,
+              actions,
+            },
+          },
+        },
+        {
+          mode: 'ids',
+          payload: {
+            ...snapshotBase,
+            dsl: {
+              baselineYear: dslObject.baseline_year,
+              actionIds: actions.map((action) => action.id),
+              actionCount: actions.length,
+            },
+          },
+        },
+        {
+          mode: 'minimal',
+          payload: {
+            ...snapshotBase,
+            dsl: {
+              baselineYear: dslObject.baseline_year,
+              actionCount: actions.length,
+            },
+          },
+        },
+      ];
+      const snapshot = await selectSnapshotCandidate(snapshotCandidates);
+
+      const embeddedData: Record<string, string> = {
+        CBL_SCENARIO_ID: scenarioIdValue,
+        CBL_RESPONDENT_ID: normalizedRespondentId ?? '',
+        CBL_SESSION_SEC: sessionDurationSec !== null ? String(sessionDurationSec) : '',
+        CBL_CHANNEL: channel,
+        CBL_ENTRY_PATH: normalizedEntryPath ?? '',
+        CBL_SUBMIT_TS: String(submittedAt),
+        CBL_SNAPSHOT_V: String(FINAL_SNAPSHOT_VERSION),
+        CBL_SNAPSHOT_SHA256: snapshot.sha256 ?? '',
+        CBL_SNAPSHOT_TRUNCATED: snapshot.truncated ? '1' : '0',
+        CBL_SNAPSHOT_MODE: snapshot.mode,
+        CBL_SNAPSHOT_B64: snapshot.encoded ?? '',
+      };
+
+      return {
+        mutationVariables: {
+          scenarioId: scenarioIdValue,
+          respondentId: normalizedRespondentId,
+          sessionDurationSec,
+          channel,
+          entryPath: normalizedEntryPath,
+          finalVoteSnapshotB64: snapshot.encoded,
+          finalVoteSnapshotSha256: snapshot.sha256,
+          finalVoteSnapshotVersion: FINAL_SNAPSHOT_VERSION,
+          finalVoteSnapshotTruncated: snapshot.truncated,
+        },
+        embeddedData,
+      };
+    },
+    [
+      dslObject.actions,
+      dslObject.baseline_year,
+      isQualtricsChannel,
+      respondentId,
+      scenarioResult?.accounting?.debtPath,
+      scenarioResult?.accounting?.deficitRatioPath,
+      scenarioResult?.accounting?.gdpPath,
+      scenarioResult?.compliance?.eu3pct,
+      scenarioResult?.compliance?.eu60pct,
+      scenarioResult?.compliance?.netExpenditure,
+      scenarioResult?.macro?.deltaDeficit,
+      scenarioResult?.resolution?.overallPct,
+      scenarioResult?.accounting,
+    ],
+  );
+
   const deficitPath = scenarioResult ? computeDeficitTotals(scenarioResult.accounting, scenarioResult.macro?.deltaDeficit) : [];
   const latestDeficit = deficitPath.length > 0 ? deficitPath[0] : null;
   const latestDeficitRatio = useMemo(() => {
@@ -1660,19 +1914,30 @@ export default function BuildPageClient() {
           isOpen={isDebriefOpen}
           onClose={() => setIsDebriefOpen(false)}
           onConfirmVote={async () => {
+            let backendPersisted = false;
+            let backendError: string | null = null;
+            let embeddedData: Record<string, string> = {};
             try {
               if (scenarioResult?.id) {
-                await gqlRequest(submitVoteMutation, {
-                  scenarioId: scenarioResult.id,
-                  respondentId: respondentId ?? null,
-                  sessionDurationSec: getSessionDurationSec(),
-                  channel: isQualtricsChannel ? 'qualtrics' : 'direct',
-                  entryPath: entryPathRef.current,
-                });
-                setIsShareCardOpen(true);
+                const payload = await buildVotePayload(scenarioResult.id, getSessionDurationSec());
+                embeddedData = payload.embeddedData;
+                const response = await gqlRequest(submitVoteMutation, payload.mutationVariables);
+                backendPersisted = Boolean(response?.submitVote);
+                if (!backendPersisted) {
+                  backendError = 'submitVote returned false';
+                }
               }
             } catch (e) {
               console.error(e);
+              backendError = e instanceof Error ? e.message : String(e);
+            }
+            postQualtricsVoteMessage(embeddedData, backendPersisted, backendError);
+            if (backendPersisted || isQualtricsChannel) {
+              if (!backendPersisted && isQualtricsChannel) {
+                setShareFeedback('Vote transmis au questionnaire, sauvegarde serveur indisponible.');
+              }
+              setIsShareCardOpen(true);
+            } else {
               alert("Erreur lors de l'enregistrement du vote.");
             }
             setIsDebriefOpen(false);

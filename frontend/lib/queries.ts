@@ -141,7 +141,11 @@ export const submitVoteMutation = `
     $respondentId: String,
     $sessionDurationSec: Float,
     $channel: String,
-    $entryPath: String
+    $entryPath: String,
+    $finalVoteSnapshotB64: String,
+    $finalVoteSnapshotSha256: String,
+    $finalVoteSnapshotVersion: Int,
+    $finalVoteSnapshotTruncated: Boolean
   ) {
     submitVote(
       scenarioId: $scenarioId,
@@ -149,7 +153,11 @@ export const submitVoteMutation = `
       respondentId: $respondentId,
       sessionDurationSec: $sessionDurationSec,
       channel: $channel,
-      entryPath: $entryPath
+      entryPath: $entryPath,
+      finalVoteSnapshotB64: $finalVoteSnapshotB64,
+      finalVoteSnapshotSha256: $finalVoteSnapshotSha256,
+      finalVoteSnapshotVersion: $finalVoteSnapshotVersion,
+      finalVoteSnapshotTruncated: $finalVoteSnapshotTruncated
     )
   }
 `;

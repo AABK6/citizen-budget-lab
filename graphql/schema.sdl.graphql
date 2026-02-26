@@ -193,7 +193,11 @@ type Mutation {
     respondentId: String,
     sessionDurationSec: Float,
     channel: String,
-    entryPath: String
+    entryPath: String,
+    finalVoteSnapshotB64: String,
+    finalVoteSnapshotSha256: String,
+    finalVoteSnapshotVersion: Int,
+    finalVoteSnapshotTruncated: Boolean
   ): Boolean!
   deleteScenario(id: ID!): Boolean!
 }

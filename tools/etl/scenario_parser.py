@@ -167,6 +167,27 @@ def _flatten_meta(meta: Dict[str, Any], flat: Dict[str, Any]) -> None:
     if entry_path:
         flat["entry_path"] = entry_path
 
+    snapshot_sha256 = _first_text(
+        meta,
+        ("finalVoteSnapshotSha256", "final_vote_snapshot_sha256"),
+    )
+    if snapshot_sha256:
+        flat["final_vote_snapshot_sha256"] = snapshot_sha256
+
+    snapshot_version = _first_number(
+        meta,
+        ("finalVoteSnapshotVersion", "final_vote_snapshot_version"),
+    )
+    if snapshot_version is not None:
+        flat["final_vote_snapshot_version"] = snapshot_version
+
+    snapshot_truncated = _first_bool(
+        meta,
+        ("finalVoteSnapshotTruncated", "final_vote_snapshot_truncated"),
+    )
+    if snapshot_truncated is not None:
+        flat["final_vote_snapshot_truncated"] = snapshot_truncated
+
     deficit_path = _extract_path(meta, ("deficit_path", "deficitPath"))
     if deficit_path:
         flat["macro_deficit_final_eur"] = deficit_path[-1]
@@ -220,4 +241,25 @@ def _first_text(data: Dict[str, Any], keys: Iterable[str]) -> Optional[str]:
         text = str(value).strip()
         if text:
             return text
+    return None
+
+
+def _first_bool(data: Dict[str, Any], keys: Iterable[str]) -> Optional[bool]:
+    for key in keys:
+        if key not in data:
+            continue
+        value = data.get(key)
+        if isinstance(value, bool):
+            return value
+        if isinstance(value, (int, float)):
+            if value == 1:
+                return True
+            if value == 0:
+                return False
+        if isinstance(value, str):
+            text = value.strip().lower()
+            if text in {"true", "1", "yes"}:
+                return True
+            if text in {"false", "0", "no"}:
+                return False
     return None
