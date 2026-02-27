@@ -2,6 +2,15 @@
 
 This changelog records **documentation** and **data pipeline conventions** changes that impact reproducibility.
 
+## 2026-02-27
+
+- **Documentation accuracy refresh (global):**
+  - Updated Cloud Run deployment commands in `docs/DEVELOPER_GUIDE.md` to use repository Cloud Build configs (`cloudbuild-api.yaml`, `frontend/cloudbuild.yaml`) and current `gcr.io` image paths.
+  - Removed stale hardcoded backend GraphQL URL from manual deploy examples and switched to dynamic `API_URL` resolution.
+  - Clarified current production runtime guidance (`GRAPHQL_URL` set at deploy time).
+  - Archived historical verification/incident docs under `docs/archive/` and updated references in maintained docs.
+  - Updated documentation indexes (`docs/README.md`, `docs/TABLE_DES_MATIERES.md`, `docs/archive/README.md`) to reflect active vs archived content.
+
 ## 2026-02-26
 
 - **APU hardening P2/P3 implementation (bridge + strict pipeline):**
@@ -49,7 +58,7 @@ This changelog records **documentation** and **data pipeline conventions** chang
     - JO promulgated law `JORFTEXT000053508155` (ÉTAT B mission CP),
     - Assemblée nationale annex raw table `PRJLANR5L17BTA0227.raw` (ÉTAT B mission CP).
   - Added auditable reference table `data/reference/lfi_2026_etat_b_cp_verified.csv` (32 missions, JO vs annex, line refs, match flag).
-  - Added report `docs/verification_lfi2026_missions.md` (32/32 matches).
+  - Added report `docs/archive/verification_lfi2026_missions.md` (32/32 matches).
   - Regenerated `warehouse/seeds/plf_2026_plafonds.csv` from the verified enacted CP values (source now cites both official URLs).
 
 - **PLF 2026 ceilings pipeline hardened (official sources):**
@@ -67,7 +76,7 @@ This changelog records **documentation** and **data pipeline conventions** chang
   - Added `tools/verify_lfss_2026.py` plus:
     - `data/reference/lfss_2026_branch_equilibre_verified.csv`,
     - `data/reference/lfss_2026_asso_pct_verified.csv`,
-    - `docs/verification_lfss2026.md`.
+    - `docs/archive/verification_lfss2026.md`.
   - Added `tools/build_voted_2026_aggregates.py` -> `data/reference/voted_2026_aggregates.json`.
   - Added `tools/apply_voted_2026_to_lego_baseline.py` with a default `true_level` mode that applies absolute voted levels on covered blocks (while preserving simulation typology and mappings); `share_rebalance` remains available for comparability-only runs.
   - Added strict post-checks in overlay metadata (`meta.voted_2026_overlay.post_checks`) to assert convergence/match to targeted official totals.

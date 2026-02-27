@@ -36,6 +36,14 @@ Ce dossier contient la documentation technique et fonctionnelle du projet **Citi
     *   **Quoi :** Historique et plan de la refonte technique majeure (migration vers un data warehouse dbt).
     *   **Pour qui :** Tech leads (utile pour comprendre l'état actuel de la dette technique).
 
+*   **[`BASELINE_2026_STRICT_RUNBOOK.md`](./BASELINE_2026_STRICT_RUNBOOK.md)**
+    *   **Quoi :** Runbook strict pour reconstruire la baseline 2026 votee avec controles officiels.
+    *   **Pour qui :** Developpeurs/data responsables des rebuilds baseline.
+
+*   **[`APU_P0_P3_VERIFICATION_MATRIX.md`](./APU_P0_P3_VERIFICATION_MATRIX.md)**
+    *   **Quoi :** Matrice de verification robuste P0->P3 avec commandes reproductibles.
+    *   **Pour qui :** Equipe technique chargee des controles qualite APU.
+
 ## 📂 Références & Migrations
 
 *   **[`plf_missions_programmes.md`](./plf_missions_programmes.md)**
@@ -62,3 +70,24 @@ Ce dossier contient la documentation technique et fonctionnelle du projet **Citi
 
 *   **[`archive/admin_lens_migration.md`](./archive/admin_lens_migration.md)**
     *   **Quoi :** Ancien plan de migration (historique) vers la vue administrative.
+
+*   **[`archive/BUG_REPORT_SCENARIO_RACE.md`](./archive/BUG_REPORT_SCENARIO_RACE.md)**
+    *   **Quoi :** Analyse detaillee d'un incident de race condition frontend (historique d'architecture).
+
+*   **[`archive/verification_lfi2026_missions.md`](./archive/verification_lfi2026_missions.md)**
+    *   **Quoi :** Rapport de verification LFI 2026 mission par mission (historique d'audit).
+
+*   **[`archive/verification_lfi2026_state_a.md`](./archive/verification_lfi2026_state_a.md)**
+    *   **Quoi :** Rapport de verification LFI 2026 ETAT A (historique d'audit).
+
+*   **[`archive/verification_lfss2026.md`](./archive/verification_lfss2026.md)**
+    *   **Quoi :** Rapport de verification LFSS 2026 (historique d'audit).
+
+*   **[`archive/verification_apul2026.md`](./archive/verification_apul2026.md)**
+    *   **Quoi :** Rapport de verification APUL 2026 (historique d'audit).
+
+*   **[`archive/session_2026-02-26_budget-baseline-log.md`](./archive/session_2026-02-26_budget-baseline-log.md)**
+    *   **Quoi :** Journal technique detaille d'une session de diagnostic baseline (historique).
+
+*   **[`archive/treemap_diff_vs_live_2026.md`](./archive/treemap_diff_vs_live_2026.md)**
+    *   **Quoi :** Comparatif ponctuel entre treemap locale et production (historique).

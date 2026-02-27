@@ -91,22 +91,22 @@ This document provides a central inventory of all data sources, configuration fi
     * **Enacted-law verification path (used for 2026 baseline publication):**
         * Canonical verification script: `tools/verify_lfi_2026_state_b.py`.
         * Canonical reference table: `data/reference/lfi_2026_etat_b_cp_verified.csv` (JO vs AN ÉTAT B, mission-by-mission CP, line refs, match flag).
-        * Human audit report: `docs/verification_lfi2026_missions.md`.
+        * Human audit report: `docs/archive/verification_lfi2026_missions.md`.
     * `warehouse/seeds/plf_2026_plafonds.csv` is generated from this verified enacted table (32 missions) with mission codes aligned to the existing simulation typology (AA/AB/.../RD).
 *   **LFI 2026 aggregate receipts/balance (ÉTAT A):**
     * Canonical verification script: `tools/verify_lfi_2026_state_a.py`.
     * Canonical reference table: `data/reference/lfi_2026_etat_a_aggregates_verified.csv` (fiscal/non-fiscal receipts, net resources/charges, general balance).
-    * Human audit report: `docs/verification_lfi2026_state_a.md`.
+    * Human audit report: `docs/archive/verification_lfi2026_state_a.md`.
 *   **LFSS 2026 social aggregates:**
     * Canonical verification script: `tools/verify_lfss_2026.py`.
     * Canonical reference tables:
       * `data/reference/lfss_2026_branch_equilibre_verified.csv` (branch recettes/dépenses/solde),
       * `data/reference/lfss_2026_asso_pct_verified.csv` (ASSO article liminaire, % PIB).
-    * Human audit report: `docs/verification_lfss2026.md`.
+    * Human audit report: `docs/archive/verification_lfss2026.md`.
 *   **APUL 2026 bridge (DGCL-first, source-tagged):**
     * Canonical verification script: `tools/verify_apul_2026.py`.
     * Canonical reference table: `data/reference/apul_2026_verified.csv` (APUL-sensitive treemap blocks with source tags and quality level).
-    * Human audit report: `docs/verification_apul2026.md`.
+    * Human audit report: `docs/archive/verification_apul2026.md`.
 *   **Consolidated voted bundle (`voted_2026_aggregates.json`):**
     * Built by `tools/build_voted_2026_aggregates.py` from verified LFI/LFSS/APUL tables.
     * Contains state/social/local calibration inputs used by the overlay.

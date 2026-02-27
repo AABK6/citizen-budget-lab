@@ -12,5 +12,12 @@ Archived items (non-exhaustive):
 - `tutorial-review.md`
 - `admin_lens_migration.md`
 - `design_mockups/`
+- `BUG_REPORT_SCENARIO_RACE.md`
+- `session_2026-02-26_budget-baseline-log.md`
+- `treemap_diff_vs_live_2026.md`
+- `verification_lfi2026_missions.md`
+- `verification_lfi2026_state_a.md`
+- `verification_lfss2026.md`
+- `verification_apul2026.md`
 
 If you resurrect an archived plan, create a new "current" doc at `docs/` and link back here.

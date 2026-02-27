@@ -12,7 +12,10 @@ If you prefer French navigation, start from **`TABLE_DES_MATIERES.md`**.
 - `LEGO_METHOD.md` - budget decomposition model + macro/deficit logic
 - `ADMIN_LENS.md` - "ADMIN / missions" lens: mappings, data, API behavior
 - `QUALTRICS_INTEGRATION.md` - Qualtrics embed runbook (iframe URL, JS listener, Embedded Data CBL_*)
+- `BASELINE_2026_STRICT_RUNBOOK.md` - strict operational chain for voted-2026 baseline rebuild
+- `APU_P0_P3_VERIFICATION_MATRIX.md` - robust verification matrix and reproducible checks
 - `REFACTOR_PLAN.md` - warehouse/dbt refactor log (living technical plan)
+- `CHANGELOG.md` - docs + data-facing conventions changelog
 
 ## Archives
 

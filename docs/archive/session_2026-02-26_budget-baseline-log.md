@@ -92,10 +92,10 @@ The following workspace changes were made during this chat (tracked in current b
 - `docs/CHANGELOG.md`
 - `docs/DATA_MANIFEST.md`
 - `docs/DEVELOPER_GUIDE.md`
-- `docs/treemap_diff_vs_live_2026.md`
-- `docs/verification_lfi2026_missions.md`
-- `docs/verification_lfi2026_state_a.md`
-- `docs/verification_lfss2026.md`
+- `docs/archive/treemap_diff_vs_live_2026.md`
+- `docs/archive/verification_lfi2026_missions.md`
+- `docs/archive/verification_lfi2026_state_a.md`
+- `docs/archive/verification_lfss2026.md`
 
 ## 3) Key Investigations Performed During Chat
 
@@ -156,4 +156,3 @@ User requested:
 - Clean repository state.
 
 This file is created to satisfy that documentation requirement before final cleanup/commit.
-

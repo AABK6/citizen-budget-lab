@@ -133,7 +133,7 @@ The API includes two caching layers:
     make verify-lfss-2026
     make verify-apul-2026
     ```
-    These commands validate LFI ÉTAT A aggregate receipts/balance, LFSS branch/ASSO balances, and build a DGCL-first APUL bridge artifact (`data/reference/apul_2026_verified.csv` + `docs/verification_apul2026.md`).
+    These commands validate LFI ÉTAT A aggregate receipts/balance, LFSS branch/ASSO balances, and build a DGCL-first APUL bridge artifact (`data/reference/apul_2026_verified.csv` + `docs/archive/verification_apul2026.md`).
 
 8.  **Rebuild the voted-2026 simulation baseline (APU scope preserved):**
     ```bash
@@ -344,16 +344,16 @@ Note: Settings are resolved at instantiation time. To change feature flags like 
 
 The application is deployed as two separate services on Google Cloud Run, providing a scalable and independent architecture for the backend and frontend.
 
-*   **Backend URLs**: [https://citizen-budget-api-613407570343.europe-west1.run.app](https://citizen-budget-api-613407570343.europe-west1.run.app), [https://citizen-budget-api-szwctolrdq-ew.a.run.app](https://citizen-budget-api-szwctolrdq-ew.a.run.app)
-*   **Frontend URLs**: [https://citizen-budget-frontend-613407570343.europe-west1.run.app](https://citizen-budget-frontend-613407570343.europe-west1.run.app), [https://citizen-budget-frontend-szwctolrdq-ew.a.run.app](https://citizen-budget-frontend-szwctolrdq-ew.a.run.app)
+*   **Backend URL**: [https://citizen-budget-api-szwctolrdq-ew.a.run.app](https://citizen-budget-api-szwctolrdq-ew.a.run.app)
+*   **Frontend URL**: [https://citizen-budget-frontend-szwctolrdq-ew.a.run.app](https://citizen-budget-frontend-szwctolrdq-ew.a.run.app)
 
 Cloud Run exposes two default domains per service (project-number `run.app` and legacy `a.run.app`); both map to the same service.
 
 **Current production (reviewflow-nrciu, europe-west1):**
 *   Services are public (unauthenticated) and listen on the Cloud Run default port (`PORT=8080`).
-*   Backend image: `europe-west1-docker.pkg.dev/reviewflow-nrciu/mcp-cloud-run-deployments/citizen-budget-api`
-*   Frontend image: `europe-west1-docker.pkg.dev/reviewflow-nrciu/mcp-cloud-run-deployments/citizen-budget-frontend`
-*   Frontend build metadata records a `NEXT_PUBLIC_GRAPHQL_URL` pointing to the backend `run.app` URL; runtime `GRAPHQL_URL` is not set.
+*   Backend image: `gcr.io/reviewflow-nrciu/citizen-budget-api`
+*   Frontend image: `gcr.io/reviewflow-nrciu/citizen-budget-frontend`
+*   Frontend runtime env sets `GRAPHQL_URL` to the backend `/graphql` URL.
 *   Backend vote persistence must be configured with Cloud SQL + `VOTES_DB_DSN` (startup now fails fast otherwise).
 
 #### **6.1. Architecture**
@@ -363,13 +363,12 @@ Cloud Run exposes two default domains per service (project-number `run.app` and 
 
 #### **6.2. Build & Deploy Process**
 
-The deployment process requires building and pushing container images to Artifact Registry, then deploying them to Cloud Run.
+The deployment process builds images via the repository Cloud Build configs, then deploys them to Cloud Run.
 
 **Prerequisites:**
 
 *   `gcloud` CLI installed and authenticated.
-*   A GCP project with Cloud Build, Cloud Run, and Artifact Registry APIs enabled.
-*   An Artifact Registry Docker repo in your region (create with `gcloud artifacts repositories create [AR_REPO] --repository-format=docker --location [REGION]`).
+*   A GCP project with Cloud Build and Cloud Run APIs enabled.
 
 **Step 1: Prepare Data Warehouse (Mandatory)**
 
@@ -391,41 +390,39 @@ make dbt-build
 The backend is deployed from the root of the repository. A `.gcloudignore` file is used to ensure the `data/warehouse.duckdb` file is included in the upload.
 
 ```bash
-# Build the container image using Cloud Build
-gcloud builds submit --tag [REGION]-docker.pkg.dev/[PROJECT_ID]/[AR_REPO]/citizen-budget-api --file services/api/Dockerfile .
+# Build the backend image (uses cloudbuild-api.yaml + services/api/Dockerfile)
+gcloud builds submit --project [PROJECT_ID] --config cloudbuild-api.yaml .
 
 # Deploy the image to Cloud Run
 gcloud run deploy citizen-budget-api \
-  --image [REGION]-docker.pkg.dev/[PROJECT_ID]/[AR_REPO]/citizen-budget-api \
+  --image gcr.io/[PROJECT_ID]/citizen-budget-api \
   --project [PROJECT_ID] \
   --region [REGION] \
   --allow-unauthenticated \
   --port 8080
 ```
-*Replace `[PROJECT_ID]`, `[REGION]`, and `[AR_REPO]` with your GCP settings.*
+*Replace `[PROJECT_ID]` and `[REGION]` with your GCP settings.*
 
 **Step 3: Build & Deploy Frontend**
 
 The frontend deployment requires the backend's URL to be injected as an environment variable at runtime.
 
 ```bash
-# Build the container image from the 'frontend' directory
-cd frontend
-gcloud builds submit --tag [REGION]-docker.pkg.dev/[PROJECT_ID]/[AR_REPO]/citizen-budget-frontend .
-cd ..
+# Build the frontend image (uses frontend/cloudbuild.yaml + frontend/Dockerfile)
+gcloud builds submit --project [PROJECT_ID] --config frontend/cloudbuild.yaml frontend
 
 # Deploy the image to Cloud Run, setting the API URL
 gcloud run deploy citizen-budget-frontend \
-  --image [REGION]-docker.pkg.dev/[PROJECT_ID]/[AR_REPO]/citizen-budget-frontend \
+  --image gcr.io/[PROJECT_ID]/citizen-budget-frontend \
   --project [PROJECT_ID] \
   --region [REGION] \
   --allow-unauthenticated \
   --port 8080 \
   --set-env-vars GRAPHQL_URL=[BACKEND_URL]/graphql
 ```
-*Replace `[PROJECT_ID]`, `[REGION]`, `[AR_REPO]`, and `[BACKEND_URL]` with the appropriate values.*
+*Replace `[PROJECT_ID]`, `[REGION]`, and `[BACKEND_URL]` with the appropriate values.*
 
-Note: The frontend proxy resolves the backend URL in this order: `GRAPHQL_URL` (runtime) -> `NEXT_PUBLIC_GRAPHQL_URL` (build-time or runtime) -> `http://localhost:8000/graphql` (default). Production currently records `NEXT_PUBLIC_GRAPHQL_URL` at build time.
+Note: The frontend proxy resolves the backend URL in this order: `GRAPHQL_URL` (runtime) -> `NEXT_PUBLIC_GRAPHQL_URL` (build-time or runtime) -> `http://localhost:8000/graphql` (default). In production, set `GRAPHQL_URL` explicitly at deploy time.
 
 #### **6.2.1. Manual Deploy (Current Production CLI)**
 
@@ -437,12 +434,10 @@ gcloud config set project reviewflow-nrciu
 gcloud config set run/region europe-west1
 
 # Build + deploy backend (from repo root)
-gcloud builds submit \
-  --tag europe-west1-docker.pkg.dev/reviewflow-nrciu/mcp-cloud-run-deployments/citizen-budget-api \
-  --file services/api/Dockerfile .
+gcloud builds submit --project reviewflow-nrciu --config cloudbuild-api.yaml .
 
 gcloud run deploy citizen-budget-api \
-  --image europe-west1-docker.pkg.dev/reviewflow-nrciu/mcp-cloud-run-deployments/citizen-budget-api \
+  --image gcr.io/reviewflow-nrciu/citizen-budget-api \
   --project reviewflow-nrciu \
   --region europe-west1 \
   --allow-unauthenticated \
@@ -451,18 +446,20 @@ gcloud run deploy citizen-budget-api \
   --set-env-vars VOTES_STORE=postgres,VOTES_REQUIRE_POSTGRES=1,VOTES_DB_DSN="postgresql://[USER]:[PASSWORD]@/votes_db?host=/cloudsql/reviewflow-nrciu:europe-west1:citizen-budget-db"
 
 # Build + deploy frontend
-cd frontend
-gcloud builds submit \
-  --tag europe-west1-docker.pkg.dev/reviewflow-nrciu/mcp-cloud-run-deployments/citizen-budget-frontend .
-cd ..
+gcloud builds submit --project reviewflow-nrciu --config frontend/cloudbuild.yaml frontend
+
+API_URL=$(gcloud run services describe citizen-budget-api \
+  --project reviewflow-nrciu \
+  --region europe-west1 \
+  --format='value(status.url)')
 
 gcloud run deploy citizen-budget-frontend \
-  --image europe-west1-docker.pkg.dev/reviewflow-nrciu/mcp-cloud-run-deployments/citizen-budget-frontend \
+  --image gcr.io/reviewflow-nrciu/citizen-budget-frontend \
   --project reviewflow-nrciu \
   --region europe-west1 \
   --allow-unauthenticated \
   --port 8080 \
-  --set-env-vars GRAPHQL_URL=https://citizen-budget-api-613407570343.europe-west1.run.app/graphql
+  --set-env-vars GRAPHQL_URL=${API_URL}/graphql
 ```
 
 Tip: The frontend service can also rely on a build-time `NEXT_PUBLIC_GRAPHQL_URL`, but manual deploys should set `GRAPHQL_URL` at runtime to avoid stale defaults.
@@ -503,7 +500,7 @@ VOTES_DB_DSN=postgresql://[USER]:[PASSWORD]@/[DBNAME]?host=/cloudsql/[PROJECT]:[
 
 ```bash
 gcloud run deploy citizen-budget-api \
-  --image [REGION]-docker.pkg.dev/[PROJECT_ID]/[AR_REPO]/citizen-budget-api \
+  --image gcr.io/[PROJECT_ID]/citizen-budget-api \
   --project [PROJECT_ID] \
   --region [REGION] \
   --allow-unauthenticated \
@@ -655,4 +652,4 @@ To prevent this, we implement a `skipFetchRef` pattern:
 
 **Key Takeaway:** Always use this pattern when syncing local state to URL parameters to avoid self-canceling updates during rapid state transitions.
 
-> **Status Update (Jan 2026):** While the above pattern mitigates common issues, the underlying "Read-After-Write" architecture remains prone to race conditions. See `docs/BUG_REPORT_SCENARIO_RACE.md` for the full analysis and the recommended permanent fix (Optimistic UI).
+> **Status Update (Jan 2026):** While the above pattern mitigates common issues, the underlying "Read-After-Write" architecture remains prone to race conditions. See `docs/archive/BUG_REPORT_SCENARIO_RACE.md` for the full analysis and the recommended permanent fix (Optimistic UI).

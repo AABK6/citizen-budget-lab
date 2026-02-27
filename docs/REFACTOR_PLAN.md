@@ -2,7 +2,7 @@
 
 _Last updated: 2025-12-30_
 
-> **Status:** The remediation program is complete. The dbt warehouse is now the single source of truth, PLF 2026 data flows end-to-end, and Phase 3 UX polish (permalinks, the builder refactor, `/compare`) is live. The scenario engine subsequently gained explicit baseline + delta fiscal paths so the UI can display absolute deficits without client-side guesswork. **(Update 2025-12-30: 2026 data manually refreshed to align with adopted budget.)** **(Update 2026-01-02: Mitigated critical race condition in scenario loading/navigation; architectural fix proposed in `docs/BUG_REPORT_SCENARIO_RACE.md`.)** This plan is retained as an architectural log and an operational checklist.
+> **Status:** The remediation program is complete. The dbt warehouse is now the single source of truth, PLF 2026 data flows end-to-end, and Phase 3 UX polish (permalinks, the builder refactor, `/compare`) is live. The scenario engine subsequently gained explicit baseline + delta fiscal paths so the UI can display absolute deficits without client-side guesswork. **(Update 2025-12-30: 2026 data manually refreshed to align with adopted budget.)** **(Update 2026-01-02: Mitigated critical race condition in scenario loading/navigation; architectural fix proposed in `docs/archive/BUG_REPORT_SCENARIO_RACE.md`.)** This plan is retained as an architectural log and an operational checklist.
 
 Historically, it mirrored the canonical roadmap in `current_dev_plan.md`. As of late 2025, this file is the authoritative, living refactor log for the warehouse migration; treat `current_dev_plan.md` as historical context unless explicitly updated.
 

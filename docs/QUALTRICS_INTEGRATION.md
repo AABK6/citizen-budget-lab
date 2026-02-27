@@ -47,6 +47,7 @@ Points importants:
 - `source=qualtrics` active le canal Qualtrics dans l'app.
 - `ID=...` est l'identifiant repondant transmis a la simulation.
 - Tu peux remplacer `${e://Field/ResponseID}` par un autre champ panel si necessaire.
+- Erreur frequente: une iframe en `https://www.budget-citoyen.fr/build` sans `?source=qualtrics&ID=...` affiche bien la simulation, mais ne permet pas un suivi panel fiable (`respondentId` absent).
 
 ## 4. JavaScript Qualtrics a ajouter sur la question
 
