@@ -14,6 +14,7 @@ const data = [
   { year: '2023', deficit: 5.5, interest: 50 },
   { year: '2024', deficit: 6.1, interest: 55 },
   { year: '2025', deficit: 6.2, interest: 62 },
+  { year: '2026', deficit: 5.0, interest: 70 },
 ];
 const latest = data[data.length - 1];
 
@@ -72,9 +73,9 @@ export default function LandingPage() {
           </div>
 
           <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight leading-[1.1] text-white order-2">
-            L'État est bloqué. <br />
+            Les derniers budgets ont fracturé le pays. <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">
-              Prenez les clés.
+              Écrivez celui de 2027.
             </span>
           </h1>
 
@@ -82,11 +83,11 @@ export default function LandingPage() {
 
           <div className="space-y-6 text-base sm:text-lg text-slate-400 leading-relaxed font-light max-w-xl order-5 md:order-4">
             <p>
-              1er Janvier 2026. La procédure parlementaire s'est enrayée. Le budget n'a pas été voté. Une 'Loi Spéciale' assure le fonctionnement provisoire de l'État, mais aucun arbitrage d'avenir n'est tranché.
+              Parlement bloqué, lois spéciales... L'adoption des deux derniers budgets a révélé un pays fracturé. Le débat sur le budget 2027 s'ouvre déjà. Plutôt que d'attendre la prochaine crise politique, la session citoyenne s'ouvre dès aujourd'hui.
             </p>
             <div className="pt-4 border-l-2 border-indigo-500/50 pl-6">
               <p className="italic text-slate-300 font-serif text-lg sm:text-xl">
-                "Face à l'impasse, nous ouvrons une session citoyenne. Votre mandat : explorer les comptes, confronter les réalités et dessiner une issue."
+                "Prenez les clés des finances publiques. Affrontez les vrais chiffres de l'État, simulez l'impact de vos réformes et construisez un budget qui rassemble."
               </p>
             </div>
           </div>
@@ -122,8 +123,8 @@ export default function LandingPage() {
               <p className="text-slate-500 text-sm">Le déficit tendanciel se creuse.</p>
             </div>
             <div className="text-right">
-              <span className="block text-3xl font-bold text-red-500">55 Md€</span>
-              <span className="text-xs text-slate-500 uppercase tracking-wide">Intérêts payés en 2024</span>
+              <span className="block text-3xl font-bold text-red-500">~70 Md€</span>
+              <span className="text-xs text-slate-500 uppercase tracking-wide">Charge de la dette prévue pour 2026</span>
             </div>
           </div>
 
