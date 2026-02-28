@@ -59,9 +59,12 @@ warehouse/dbt_packages/
 .vscode/
 .idea/
 
+output/
+
 # Miscellaneous
 cookies.txt
 firebase-debug.log
+tools/cloud-sql-proxy
 
 .gemini/
 # .github/ (un-ignored to allow workflows)

@@ -45,6 +45,7 @@ const cloneCategories = (categories: MassCategory[]) =>
 const QUALTRICS_MESSAGE_TYPE = 'CBL_VOTE_SUBMITTED_V1';
 const FINAL_SNAPSHOT_VERSION = 1;
 const MAX_SNAPSHOT_B64_LEN = 20_000;
+const GZIP_TIMEOUT_MS = 1500;
 
 type SnapshotMode = 'full' | 'ids' | 'minimal';
 
@@ -70,14 +71,24 @@ async function gzipMaybe(bytes: Uint8Array): Promise<Uint8Array> {
   if (typeof CompressionStream === 'undefined') {
     return bytes;
   }
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
   try {
-    const stream = new CompressionStream('gzip');
-    const writer = stream.writable.getWriter();
-    await writer.write(bytes);
-    await writer.close();
-    const buffer = await new Response(stream.readable).arrayBuffer();
-    return new Uint8Array(buffer);
+    const gzipPromise = (async () => {
+      const stream = new CompressionStream('gzip');
+      const writer = stream.writable.getWriter();
+      await writer.write(bytes);
+      await writer.close();
+      const buffer = await new Response(stream.readable).arrayBuffer();
+      return new Uint8Array(buffer);
+    })();
+    const timeoutPromise = new Promise<Uint8Array>((resolve) => {
+      timeoutId = setTimeout(() => resolve(bytes), GZIP_TIMEOUT_MS);
+    });
+    const result = await Promise.race([gzipPromise, timeoutPromise]);
+    if (timeoutId) clearTimeout(timeoutId);
+    return result;
   } catch {
+    if (timeoutId) clearTimeout(timeoutId);
     return bytes;
   }
 }
@@ -431,6 +442,8 @@ export default function BuildPageClient() {
   const latestRunRef = useRef(0);
   const sessionStartedAtRef = useRef<number | null>(null);
   const entryPathRef = useRef<string | null>(null);
+  const voteSubmitInFlightRef = useRef(false);
+  const [isVoteSubmitting, setIsVoteSubmitting] = useState(false);
 
 
   const addPieceToBucket = (bucket: Map<string, LegoPiece[]>, key: string, piece: LegoPiece) => {
@@ -1935,6 +1948,11 @@ export default function BuildPageClient() {
           isOpen={isDebriefOpen}
           onClose={() => setIsDebriefOpen(false)}
           onConfirmVote={async () => {
+            if (voteSubmitInFlightRef.current) {
+              return;
+            }
+            voteSubmitInFlightRef.current = true;
+            setIsVoteSubmitting(true);
             let backendPersisted = false;
             let backendError: string | null = null;
             let embeddedData: Record<string, string> = {};
@@ -1951,6 +1969,9 @@ export default function BuildPageClient() {
             } catch (e) {
               console.error(e);
               backendError = e instanceof Error ? e.message : String(e);
+            } finally {
+              voteSubmitInFlightRef.current = false;
+              setIsVoteSubmitting(false);
             }
             postQualtricsVoteMessage(embeddedData, backendPersisted, backendError);
             if (backendPersisted || isQualtricsChannel) {
@@ -1963,6 +1984,7 @@ export default function BuildPageClient() {
             }
             setIsDebriefOpen(false);
           }}
+          isSubmitting={isVoteSubmitting}
           scenarioResult={scenarioResult}
           deficit={latestDeficit}
         />

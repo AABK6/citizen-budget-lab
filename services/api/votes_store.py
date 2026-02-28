@@ -51,6 +51,11 @@ class VoteStore:
         pass
 
 
+def _idempotency_key_from_meta(meta: Dict[str, Any]) -> str | None:
+    key = str(meta.get("idempotencyKey") or "").strip()
+    return key or None
+
+
 def _normalize_meta(meta: Optional[Dict[str, Any]], user_email: Optional[str]) -> Dict[str, Any]:
     normalized = dict(meta or {})
     if user_email and not normalized.get("userEmail"):
@@ -170,6 +175,15 @@ class FileVoteStore(VoteStore):
 
     def add_vote(self, scenario_id: str, user_email: Optional[str], meta: Dict[str, Any]) -> None:
         normalized = _normalize_meta(meta, user_email)
+        idempotency_key = _idempotency_key_from_meta(normalized)
+        if idempotency_key:
+            for existing in self._votes:
+                if existing.get("scenarioId") != scenario_id:
+                    continue
+                existing_meta = existing.get("meta")
+                if isinstance(existing_meta, dict):
+                    if _idempotency_key_from_meta(existing_meta) == idempotency_key:
+                        return
         ts = float(normalized.get("timestamp") or time.time())
         record = {
             "id": uuid.uuid4().hex,
@@ -224,10 +238,37 @@ class SqliteVoteStore(VoteStore):
 
     def add_vote(self, scenario_id: str, user_email: Optional[str], meta: Dict[str, Any]) -> None:
         normalized = _normalize_meta(meta, user_email)
+        idempotency_key = _idempotency_key_from_meta(normalized)
         ts = float(normalized.get("timestamp") or time.time())
         payload = json.dumps(normalized, ensure_ascii=False)
         vote_id = uuid.uuid4().hex
         with self._connect() as conn:
+            if idempotency_key:
+                try:
+                    row = conn.execute(
+                        """
+                        SELECT 1
+                        FROM votes
+                        WHERE scenario_id = ?
+                          AND json_extract(meta_json, '$.idempotencyKey') = ?
+                        LIMIT 1
+                        """,
+                        (scenario_id, idempotency_key),
+                    ).fetchone()
+                    if row:
+                        return
+                except sqlite3.OperationalError:
+                    rows = conn.execute(
+                        "SELECT meta_json FROM votes WHERE scenario_id = ?",
+                        (scenario_id,),
+                    ).fetchall()
+                    for item in rows:
+                        try:
+                            existing_meta = json.loads(item[0])
+                        except Exception:
+                            continue
+                        if isinstance(existing_meta, dict) and _idempotency_key_from_meta(existing_meta) == idempotency_key:
+                            return
             conn.execute(
                 "INSERT INTO votes (id, scenario_id, timestamp, user_email, meta_json) VALUES (?, ?, ?, ?, ?)",
                 (vote_id, scenario_id, ts, normalized.get("userEmail"), payload),
@@ -301,11 +342,26 @@ class PostgresVoteStore(VoteStore):
 
     def add_vote(self, scenario_id: str, user_email: Optional[str], meta: Dict[str, Any]) -> None:
         normalized = _normalize_meta(meta, user_email)
+        idempotency_key = _idempotency_key_from_meta(normalized)
         ts = float(normalized.get("timestamp") or time.time())
         payload = json.dumps(normalized, ensure_ascii=False)
         vote_id = uuid.uuid4().hex
         with self._pool.connection() as conn:
             with conn.cursor() as cur:
+                if idempotency_key:
+                    cur.execute(
+                        """
+                        SELECT 1
+                        FROM votes
+                        WHERE scenario_id = %s
+                          AND meta_json::jsonb ->> 'idempotencyKey' = %s
+                        LIMIT 1
+                        """,
+                        (scenario_id, idempotency_key),
+                    )
+                    if cur.fetchone():
+                        conn.commit()
+                        return
                 # 1. Insert raw vote
                 cur.execute(
                     """

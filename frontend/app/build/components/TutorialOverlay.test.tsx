@@ -46,4 +46,23 @@ describe('TutorialOverlay', () => {
     expect(localStorage.getItem(STORAGE_KEY)).toBe('true');
     expect(onComplete).toHaveBeenCalled();
   });
+
+  it('does not crash when localStorage is unavailable', async () => {
+    const getSpy = vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new DOMException('Access denied', 'SecurityError');
+    });
+    const setSpy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new DOMException('Access denied', 'SecurityError');
+    });
+
+    const onComplete = vi.fn();
+    render(<TutorialOverlay onComplete={onComplete} />);
+
+    expect(await screen.findByText(/Point de/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Passer' }));
+    expect(onComplete).toHaveBeenCalled();
+
+    getSpy.mockRestore();
+    setSpy.mockRestore();
+  });
 });

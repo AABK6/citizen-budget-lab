@@ -4,12 +4,20 @@ import { ScenarioResult } from '@/lib/types';
 interface DebriefModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onConfirmVote: () => void;
+    onConfirmVote: () => void | Promise<void>;
+    isSubmitting?: boolean;
     scenarioResult: ScenarioResult | null;
     deficit: number | null;
 }
 
-export function DebriefModal({ isOpen, onClose, onConfirmVote, scenarioResult, deficit }: DebriefModalProps) {
+export function DebriefModal({
+    isOpen,
+    onClose,
+    onConfirmVote,
+    isSubmitting = false,
+    scenarioResult,
+    deficit,
+}: DebriefModalProps) {
     if (!isOpen) return null;
 
     const deficitBillions = deficit ? (deficit / 1e9).toFixed(1) : '0';
@@ -54,16 +62,18 @@ export function DebriefModal({ isOpen, onClose, onConfirmVote, scenarioResult, d
                 <div className="p-4 border-t border-gray-100 flex gap-3 bg-gray-50">
                     <button
                         onClick={onClose}
-                        className="flex-1 py-3 px-4 bg-white hover:bg-gray-50 text-slate-700 border border-slate-300 rounded-xl font-bold transition-all"
+                        disabled={isSubmitting}
+                        className="flex-1 py-3 px-4 bg-white hover:bg-gray-50 text-slate-700 border border-slate-300 rounded-xl font-bold transition-all disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                         Revoir ma copie
                     </button>
                     <button
                         onClick={onConfirmVote}
-                        className="flex-1 py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-lg shadow-blue-200 transition-all flex items-center justify-center gap-2"
+                        disabled={isSubmitting}
+                        className="flex-1 py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-lg shadow-blue-200 transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                         <span className="material-icons">how_to_vote</span>
-                        Déposer mon vote
+                        {isSubmitting ? 'Envoi en cours…' : 'Déposer mon vote'}
                     </button>
                 </div>
             </div>

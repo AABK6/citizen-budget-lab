@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import base64
+import hashlib
 import logging
 import math
 import re
@@ -36,6 +37,23 @@ _SNAPSHOT_MAX_LEN = 30_000
 _MAX_SESSION_DURATION_SEC = 6 * 60 * 60
 _SHA256_HEX_RE = re.compile(r"^[0-9a-f]{64}$")
 _B64URLISH_RE = re.compile(r"^[A-Za-z0-9\-_]+=*$")
+
+
+def _derive_vote_idempotency_key(scenario_id: str, meta: dict[str, object]) -> str | None:
+    respondent_id = str(meta.get("respondentId") or "").strip()
+    if not respondent_id:
+        return None
+
+    snapshot_sha = str(meta.get("finalVoteSnapshotSha256") or "").strip().lower()
+    if snapshot_sha and _SHA256_HEX_RE.match(snapshot_sha):
+        return f"v1:{scenario_id}:{respondent_id}:{snapshot_sha}"
+
+    snapshot_b64 = str(meta.get("finalVoteSnapshotB64") or "").strip()
+    if snapshot_b64:
+        snapshot_digest = hashlib.sha256(snapshot_b64.encode("utf-8")).hexdigest()
+        return f"v1:{scenario_id}:{respondent_id}:{snapshot_digest}"
+
+    return f"v1:{scenario_id}:{respondent_id}"
 
 
 def _normalize_submit_vote_meta(
@@ -1826,6 +1844,9 @@ class Mutation:
                     str(scenarioId),
                     warnings,
                 )
+            idempotency_key = _derive_vote_idempotency_key(str(scenarioId), meta)
+            if idempotency_key:
+                meta["idempotencyKey"] = idempotency_key
             get_vote_store().add_vote(str(scenarioId), userEmail, meta)
             return True
         except Exception:

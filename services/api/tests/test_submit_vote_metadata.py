@@ -77,6 +77,7 @@ def test_submit_vote_persists_qualtrics_metadata(monkeypatch):
     assert meta["finalVoteSnapshotSha256"] == "a" * 64
     assert meta["finalVoteSnapshotVersion"] == 1
     assert meta["finalVoteSnapshotTruncated"] is False
+    assert meta["idempotencyKey"] == "v1:scenario-qualtrics-1:panel-abc-123:" + ("a" * 64)
     assert "timestamp" in meta
 
 
@@ -114,6 +115,7 @@ def test_submit_vote_sanitizes_invalid_metadata(monkeypatch, caplog):
     assert "finalVoteSnapshotB64" not in meta
     assert "finalVoteSnapshotSha256" not in meta
     assert "finalVoteSnapshotVersion" not in meta
+    assert "idempotencyKey" not in meta
     # Invalid channel is normalized.
     assert meta["channel"] == "unknown"
     # Explicit flag is preserved.

@@ -75,6 +75,24 @@ const STEPS: TutorialStep[] = [
 const TUTORIAL_VERSION = 'v8';
 const STORAGE_KEY = `has_seen_tutorial_${TUTORIAL_VERSION}`;
 
+function readTutorialSeenFlag(): string | null {
+    try {
+        if (typeof window === 'undefined') return null;
+        return window.localStorage.getItem(STORAGE_KEY);
+    } catch {
+        return null;
+    }
+}
+
+function writeTutorialSeenFlag(): void {
+    try {
+        if (typeof window === 'undefined') return;
+        window.localStorage.setItem(STORAGE_KEY, 'true');
+    } catch {
+        // Some embedded contexts (e.g. sandboxed iframes) block localStorage access.
+    }
+}
+
 export function TutorialOverlay({
     onComplete,
     startSignal,
@@ -101,7 +119,7 @@ export function TutorialOverlay({
     }, [currentStepIndex, isVisible, onStepChange]);
 
     useEffect(() => {
-        const hasSeen = localStorage.getItem(STORAGE_KEY);
+        const hasSeen = readTutorialSeenFlag();
         if (!hasSeen) {
             setIsVisible(true);
         } else {
@@ -302,7 +320,7 @@ export function TutorialOverlay({
     };
 
     const handleClose = () => {
-        localStorage.setItem(STORAGE_KEY, 'true');
+        writeTutorialSeenFlag();
         setIsVisible(false);
         onComplete();
     };

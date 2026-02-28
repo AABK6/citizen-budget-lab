@@ -36,6 +36,18 @@ def test_file_vote_store_summary(tmp_path):
     assert summary[0].votes == 2
 
 
+def test_file_vote_store_deduplicates_on_idempotency_key(tmp_path):
+    store = FileVoteStore(str(tmp_path / "votes.json"))
+    meta = {"idempotencyKey": "k1"}
+    store.add_vote("scenario-a", None, meta)
+    store.add_vote("scenario-a", None, meta)
+    store.add_vote("scenario-a", None, {"idempotencyKey": "k2"})
+
+    summary = store.summary()
+    assert summary[0].scenario_id == "scenario-a"
+    assert summary[0].votes == 2
+
+
 def test_sqlite_vote_store_summary(tmp_path):
     store = SqliteVoteStore(str(tmp_path / "votes.sqlite3"))
     store.add_vote("scenario-a", None, {"timestamp": 100.0})
@@ -49,6 +61,18 @@ def test_sqlite_vote_store_summary(tmp_path):
     with sqlite3.connect(str(tmp_path / "votes.sqlite3")) as conn:
         rows = conn.execute("SELECT name FROM vote_migrations").fetchall()
         assert rows
+
+
+def test_sqlite_vote_store_deduplicates_on_idempotency_key(tmp_path):
+    store = SqliteVoteStore(str(tmp_path / "votes.sqlite3"))
+    meta = {"idempotencyKey": "k1"}
+    store.add_vote("scenario-a", None, meta)
+    store.add_vote("scenario-a", None, meta)
+    store.add_vote("scenario-a", None, {"idempotencyKey": "k2"})
+
+    summary = store.summary()
+    assert summary[0].scenario_id == "scenario-a"
+    assert summary[0].votes == 2
 
 
 def test_vote_migrations_apply_idempotent(tmp_path):
