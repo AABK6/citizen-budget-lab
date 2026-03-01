@@ -47,10 +47,10 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="relative min-h-screen w-full flex items-start sm:items-center justify-center overflow-hidden bg-slate-950 font-['Outfit'] py-10 sm:py-0">
+    <div className="relative min-h-screen w-full flex items-start sm:items-center justify-center bg-slate-950 font-['Outfit'] py-10 sm:py-0">
 
       {/* Background Ambience */}
-      <div className={`absolute inset-0 z-0 transition-opacity duration-1000 ${isExiting ? 'opacity-0' : 'opacity-100'}`}>
+      <div className={`absolute inset-0 z-0 transition-opacity duration-1000 ${isExiting ? 'opacity-0' : 'opacity-100'} overflow-hidden`}>
         <div className="absolute top-0 left-0 w-full h-full bg-[url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop')] bg-cover bg-center opacity-10 mix-blend-overlay grayscale"></div>
         <div className="absolute inset-0 bg-gradient-to-b from-slate-950/95 via-slate-900/90 to-slate-950"></div>
       </div>
@@ -58,7 +58,7 @@ export default function LandingPage() {
       <div className={`relative z-10 max-w-6xl px-6 sm:px-8 w-full grid lg:grid-cols-2 gap-10 lg:gap-16 items-center transition-all duration-700 ${isExiting ? 'scale-105 opacity-0' : 'scale-100 opacity-100'}`}>
 
         {/* Left Column: The Narrative */}
-        <div className="text-left flex flex-col gap-8 sm:gap-10">
+        <div className="text-left flex flex-col gap-6 lg:gap-8">
           <div className="flex flex-col gap-4 order-1">
             <div className="inline-flex items-center gap-3 px-3 sm:px-4 py-1.5 rounded-full bg-slate-800/50 border border-slate-700/50 text-slate-300 text-[10px] sm:text-xs font-bold tracking-widest backdrop-blur-md w-fit">
               <span className="relative flex h-2 w-2">
@@ -72,8 +72,8 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight leading-[1.1] text-white order-2">
-            Les derniers budgets ont fracturé le pays. <br />
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold tracking-tight leading-[1.1] text-white order-2">
+            Les derniers budgets ont fracturé le pays. <br className="hidden xl:block" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">
               Écrivez celui de 2027.
             </span>
@@ -123,7 +123,7 @@ export default function LandingPage() {
               <p className="text-slate-500 text-sm">Le déficit tendanciel se creuse.</p>
             </div>
             <div className="text-right">
-              <span className="block text-3xl font-bold text-red-500">~70 Md€</span>
+              <span className="block text-3xl font-bold text-red-500">&gt;70 Md€</span>
               <span className="text-xs text-slate-500 uppercase tracking-wide">Charge de la dette prévue pour 2026</span>
             </div>
           </div>
@@ -170,7 +170,7 @@ export default function LandingPage() {
           </div>
 
           <div className="mt-6 text-xs text-slate-500 text-center">
-            Source: Insee, Projections Bercy • La charge de la dette est devenue le 2ème budget de l'État.
+            Source: Insee, PLF 2026 (Bercy) • La charge de la dette est devenue le 2ème budget de l'État.
           </div>
         </div>
 
