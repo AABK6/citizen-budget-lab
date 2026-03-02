@@ -43,6 +43,7 @@ const cloneCategories = (categories: MassCategory[]) =>
   categories.map((category) => ({ ...category }));
 
 const QUALTRICS_MESSAGE_TYPE = 'CBL_VOTE_SUBMITTED_V1';
+const QUALTRICS_TASK_DONE_MESSAGE = 'iframeTaskDone';
 const FINAL_SNAPSHOT_VERSION = 1;
 const MAX_SNAPSHOT_B64_LEN = 20_000;
 const GZIP_TIMEOUT_MS = 1500;
@@ -1243,6 +1244,16 @@ export default function BuildPageClient() {
     [],
   );
 
+  const postQualtricsTaskDoneMessage = useCallback(() => {
+    if (!isQualtricsChannel || typeof window === 'undefined') return;
+    if (window.self === window.top) return;
+    try {
+      window.parent.postMessage(QUALTRICS_TASK_DONE_MESSAGE, '*');
+    } catch (error) {
+      console.warn('Failed to post Qualtrics task done message', error);
+    }
+  }, [isQualtricsChannel]);
+
   const buildVotePayload = useCallback(
     async (scenarioIdValue: string, sessionDurationSec: number | null) => {
       const channel = isQualtricsChannel ? 'qualtrics' : 'direct';
@@ -1829,14 +1840,6 @@ export default function BuildPageClient() {
       />
 
       <div className="w-full flex-1 min-h-0 flex flex-col overflow-hidden relative">
-        {isQualtricsChannel && (
-          <div className="mx-3 mt-3 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-900 sm:mx-4">
-            <p className="font-semibold">Consigne questionnaire</p>
-            <p className="mt-1">
-              Apr&egrave;s avoir cliqu&eacute; sur &laquo; D&eacute;poser mon vote &raquo;, faites d&eacute;filer vers le bas puis cliquez sur la fl&egrave;che bleue &laquo; Next &raquo; de Qualtrics pour passer &agrave; la question suivante.
-            </p>
-          </div>
-        )}
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-[380px_1fr_350px] gap-3 sm:gap-4 p-3 sm:p-4 min-h-0">
 
 
@@ -1974,6 +1977,7 @@ export default function BuildPageClient() {
               setIsVoteSubmitting(false);
             }
             postQualtricsVoteMessage(embeddedData, backendPersisted, backendError);
+            postQualtricsTaskDoneMessage();
             if (backendPersisted || isQualtricsChannel) {
               if (!backendPersisted && isQualtricsChannel) {
                 setShareFeedback('Vote transmis au questionnaire, sauvegarde serveur indisponible.');

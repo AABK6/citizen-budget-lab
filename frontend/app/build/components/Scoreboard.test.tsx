@@ -15,21 +15,25 @@ const defaultProps = {
   year: 2026,
   displayMode: 'amount' as const,
   setDisplayMode: vi.fn(),
+  isDetailsOpen: false,
+  onToggleDetails: vi.fn(),
 };
 
 describe('Scoreboard', () => {
-  it('toggles the details panel on mobile', () => {
-    const { getByRole, getByTestId } = render(<Scoreboard {...defaultProps} />);
+  it('renders details panel from props and triggers toggle callback', () => {
+    const onToggleDetails = vi.fn();
+    const { container, rerender } = render(
+      <Scoreboard {...defaultProps} isDetailsOpen={false} onToggleDetails={onToggleDetails} />,
+    );
 
-    const toggle = getByRole('button', { name: /details/i });
-    const details = getByTestId('scoreboard-details');
+    const toggle = container.querySelector('#scoreboard-details-toggle');
+    expect(toggle).toBeInTheDocument();
+    expect(container.querySelector('#scoreboard-dashboard-mobile')).not.toBeInTheDocument();
 
-    expect(toggle).toHaveAttribute('aria-expanded', 'false');
-    expect(details.className).toMatch(/\bhidden\b/);
+    fireEvent.click(toggle as Element);
+    expect(onToggleDetails).toHaveBeenCalledTimes(1);
 
-    fireEvent.click(toggle);
-
-    expect(toggle).toHaveAttribute('aria-expanded', 'true');
-    expect(details.className).toMatch(/\bblock\b/);
+    rerender(<Scoreboard {...defaultProps} isDetailsOpen={true} onToggleDetails={onToggleDetails} />);
+    expect(container.querySelector('#scoreboard-dashboard-mobile')).toBeInTheDocument();
   });
 });

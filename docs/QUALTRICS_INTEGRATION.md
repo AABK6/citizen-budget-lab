@@ -9,6 +9,7 @@ Flux 1 (`Qualtrics -> simulation`):
 
 Flux 2 (`simulation -> Qualtrics`):
 - Quand l'utilisateur clique "Deposer mon vote", la simulation envoie un message `postMessage` au parent avec un objet `embeddedData` (`CBL_*`).
+- La simulation envoie aussi un signal texte `"iframeTaskDone"` pour permettre l'avancement automatique de la page Qualtrics.
 - Le JavaScript Qualtrics capte ce message et ecrit ces valeurs dans les Embedded Data Qualtrics.
 
 ## 2. Embedded Data a creer dans Survey Flow
@@ -55,6 +56,7 @@ Dans la question, clique `Add JavaScript` et colle ce code:
 
 ```javascript
 Qualtrics.SurveyEngine.addOnload(function () {
+  const q = this;
   const allowedOrigins = new Set([
     "https://www.budget-citoyen.fr",
     "https://budget-citoyen.fr"
@@ -64,6 +66,13 @@ Qualtrics.SurveyEngine.addOnload(function () {
 
   const onMessage = (event) => {
     if (!allowedOrigins.has(event.origin)) return;
+
+    if (event.data === "iframeTaskDone") {
+      try {
+        q.clickNextButton();
+      } catch (_) {}
+      return;
+    }
 
     const data = event.data || {};
     if (data.type !== "CBL_VOTE_SUBMITTED_V1") return;
@@ -123,7 +132,7 @@ Checklist rapide:
 
 1. Lancer un preview Qualtrics.
 2. Faire un vote dans l'iframe.
-3. Cliquer `Next` dans Qualtrics.
+3. Verifier que Qualtrics passe automatiquement a la question suivante (via `"iframeTaskDone"`).
 4. Exporter la reponse test et verifier que les champs `CBL_*` sont remplis.
 
 Verification cote code:
@@ -140,6 +149,10 @@ Si les champs `CBL_*` restent vides:
 - Verifier que le JS est bien attache a la meme question que l'iframe.
 - Verifier les `allowedOrigins` dans le listener.
 - Verifier que la mutation backend deployee expose bien les arguments `submitVote` attendus.
+
+Si la page Qualtrics n'avance pas automatiquement:
+- Verifier que le listener traite bien `event.data === "iframeTaskDone"`.
+- Verifier que le script est bien sur la question qui contient l'iframe (pas sur un bloc different).
 
 Si `CBL_BACKEND_PERSISTED=0`:
 - Le message est bien recu par Qualtrics mais la sauvegarde serveur a echoue.
