@@ -5912,6 +5912,253 @@
         }
       ],
       "impact": null
+    },
+    {
+      "id": "def_lpm_execution_2025",
+      "family": "DEFENSE",
+      "budgetSide": "SPENDING",
+      "majorAmendment": true,
+      "label": "Exécution de la LPM - Année 2 (+3.3 Md€)",
+      "description": "Mise en œuvre de l'augmentation prévue du budget du ministère des Armées selon la Loi de Programmation Militaire 2024-2030 (munitions, dissuasion nucléaire, fidélisation).",
+      "fixedImpactEur": 3300000000,
+      "massMapping": {
+        "02.1": 1
+      },
+      "cofogMapping": {
+        "02.1": 1
+      },
+      "missionMapping": {
+        "M_DEFENSE": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 3300000000,
+        "2027": 3000000000,
+        "2028": 3000000000
+      },
+      "pushbacks": [
+        {
+          "type": "economic",
+          "description": "Accumulation possible d'un mur de dette (report de charges) si les capacités de paiement ne suivent pas les autorisations.",
+          "source": "Commission des Finances du Sénat"
+        },
+        {
+          "type": "operational",
+          "description": "L'inflation pourrait absorber jusqu'à 30% de l'augmentation nominale.",
+          "source": "Sénat"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "def_senate_adjustment",
+      "family": "DEFENSE",
+      "budgetSide": "SPENDING",
+      "majorAmendment": true,
+      "label": "Régulation du budget Défense (Sénat)",
+      "description": "Réduction de l'augmentation prévue du budget de la Défense de 1.7 Md€ pour l'aligner sur les capacités réelles de production industrielle et réduire les impayés.",
+      "fixedImpactEur": -1700000000,
+      "massMapping": {
+        "02.1": 1
+      },
+      "cofogMapping": {
+        "02.1": 1
+      },
+      "missionMapping": {
+        "M_DEFENSE": 1.0
+      },
+      "multiYearImpact": {
+        "2026": -1700000000,
+        "2027": -1700000000,
+        "2028": -1700000000
+      },
+      "pushbacks": [
+        {
+          "type": "strategic",
+          "description": "Risque d'envoyer un signal négatif aux alliés quant à l'engagement français pour la \"Haute Intensité\".",
+          "source": "Public Sénat"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "trans_aviation_tax_tsba",
+      "family": "TAXES",
+      "budgetSide": "REVENUE",
+      "majorAmendment": true,
+      "label": "Hausse de la taxe de solidarité sur les billets d'avion (TSBA)",
+      "description": "Triplement de la TSBA sur les vols commerciaux et taxation spécifique de l'aviation d'affaires pour financer les infrastructures ferroviaires et réduire la dette.",
+      "fixedImpactEur": 1000000000,
+      "massMapping": {},
+      "cofogMapping": {},
+      "missionMapping": {},
+      "multiYearImpact": {
+        "2026": 1000000000,
+        "2027": 1000000000,
+        "2028": 1000000000
+      },
+      "pushbacks": [
+        {
+          "type": "economic",
+          "description": "Perte de compétitivité pour le hub de Paris-CDG face aux concurrents européens.",
+          "source": "FNAM"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "trans_afitf_cut",
+      "family": "OPERATIONS",
+      "budgetSide": "SPENDING",
+      "majorAmendment": true,
+      "label": "Baisse des ressources de l'AFIT France (TICPE)",
+      "description": "Réduction de la part de TICPE affectée à l'Agence de financement des infrastructures de transport, limitant sa capacité d'investissement.",
+      "fixedImpactEur": -800000000,
+      "massMapping": {
+        "04.5": 1
+      },
+      "cofogMapping": {
+        "04.5": 1
+      },
+      "missionMapping": {
+        "M_TRANSPORT": 1.0
+      },
+      "multiYearImpact": {
+        "2026": -800000000,
+        "2027": -800000000,
+        "2028": -800000000
+      },
+      "pushbacks": [
+        {
+          "type": "infrastructure",
+          "description": "Risque de dégradation du réseau ferroviaire (dette grise) et retards sur les RER métropolitains (SERM).",
+          "source": "Sénat"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "sec_lopmi_increase",
+      "family": "DEFENSE",
+      "budgetSide": "SPENDING",
+      "majorAmendment": true,
+      "label": "Exécution de la LOPMI (+587 M€)",
+      "description": "Augmentation du budget de l'Intérieur pour créer 80 nouvelles brigades de Gendarmerie, moderniser l'équipement et financer les revalorisations salariales.",
+      "fixedImpactEur": 587000000,
+      "massMapping": {
+        "03.1": 1
+      },
+      "cofogMapping": {
+        "03.1": 1
+      },
+      "missionMapping": {
+        "M_SECURITY": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 587000000,
+        "2027": 600000000,
+        "2028": 600000000
+      },
+      "pushbacks": [
+        {
+          "type": "operational",
+          "description": "Paradoxe d'efficacité où la \"présence sur le terrain\" n'augmente pas proportionnellement aux budgets en raison du poids administratif.",
+          "source": "Cour des Comptes"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "cult_heritage_plan",
+      "family": "OTHER",
+      "budgetSide": "SPENDING",
+      "majorAmendment": true,
+      "label": "Plan Exceptionnel Patrimoine",
+      "description": "Plan d'investissement ponctuel pour la restauration de monuments historiques et du patrimoine religieux, notamment en zone rurale.",
+      "fixedImpactEur": 300000000,
+      "massMapping": {
+        "08.2": 1
+      },
+      "cofogMapping": {
+        "08.2": 1
+      },
+      "missionMapping": {
+        "M_CULTURE": 1.0
+      },
+      "multiYearImpact": {
+        "2026": 300000000,
+        "2027": 0,
+        "2028": 0
+      },
+      "pushbacks": [
+        {
+          "type": "operational",
+          "description": "Doutes sur la capacité d'absorption rapide des crédits par le secteur de la restauration du patrimoine.",
+          "source": "Sénat"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "cult_audiovisual_cut",
+      "family": "OTHER",
+      "budgetSide": "SPENDING",
+      "majorAmendment": true,
+      "label": "Coupe budgétaire dans l'Audiovisuel Public",
+      "description": "Réduction de la dotation de l'État à France Télévisions et Radio France pour forcer des gains d'efficacité.",
+      "fixedImpactEur": -50000000,
+      "massMapping": {
+        "08.3": 1
+      },
+      "cofogMapping": {
+        "08.3": 1
+      },
+      "missionMapping": {
+        "M_CULTURE": 1.0
+      },
+      "multiYearImpact": {
+        "2026": -71000000,
+        "2027": -71000000,
+        "2028": -71000000
+      },
+      "pushbacks": [
+        {
+          "type": "social",
+          "description": "Risque de mouvements sociaux (grèves) et baisse de la diversité des créations.",
+          "source": "Sénat"
+        }
+      ],
+      "impact": null
+    },
+    {
+      "id": "cult_pass_culture_reform",
+      "family": "OTHER",
+      "budgetSide": "SPENDING",
+      "majorAmendment": true,
+      "label": "Réforme du Pass Culture",
+      "description": "Réduction de la part individuelle du Pass Culture et resserrement des conditions d'éligibilité.",
+      "fixedImpactEur": -43000000,
+      "massMapping": {
+        "08.2": 1
+      },
+      "cofogMapping": {
+        "08.2": 1
+      },
+      "missionMapping": {
+        "M_CULTURE": 1.0
+      },
+      "multiYearImpact": {
+        "2026": -43000000,
+        "2027": -43000000,
+        "2028": -43000000
+      },
+      "pushbacks": [
+        {
+          "type": "economic",
+          "description": "Risque de baisse de revenus pour les librairies et commerces culturels ciblés.",
+          "source": "Assemblée Nationale"
+        }
+      ],
+      "impact": null
     }
   ],
   "popularIntents": [

@@ -5070,7 +5070,7 @@
   cofog_mapping:
     '02.1': 1
   multi_year_impact:
-    '2026': 6700000000
+    '2026': 3300000000
     '2027': 3000000000
     '2028': 3000000000
   pushbacks:
@@ -5087,7 +5087,15 @@
   authoritative_sources:
     - Ministère des Armées
     - Sénat
-  target_revenue_category_id: null
+  feasibility:
+    law: true
+    adminLagMonths: 0
+    notes: Trajectoire déjà prévue par la LPM 2024-2030.
+  conflicts_with: []
+  sources:
+    - https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000048799386
+    - https://www.senat.fr/rap/l24-144-39/l24-144-394.html
+  params_schema: {}
   mission_mapping:
     M_DEFENSE: 1.0
 - id: def_senate_adjustment
@@ -5113,6 +5121,16 @@
     - Risque de ralentir les investissements industriels.
   authoritative_sources:
     - Commission des Finances du Sénat
+  feasibility:
+    law: true
+    adminLagMonths: 1
+    notes: Arbitrage budgétaire en loi de finances.
+  conflicts_with:
+    - def_lpm_execution_2025
+  sources:
+    - https://www.senat.fr/rap/l24-144-39/l24-144-3916.html
+    - https://www.senat.fr/rap/l24-144-39/l24-144-394.html
+  params_schema: {}
   mission_mapping:
     M_DEFENSE: 1.0
 - id: trans_aviation_tax_tsba
@@ -5137,9 +5155,18 @@
     - Risque d'impact sur le tourisme dans les Outre-mer.
   authoritative_sources:
     - Assemblée Nationale
+  feasibility:
+    law: true
+    adminLagMonths: 2
+    notes: Modification de barème fiscal en loi de finances.
+  conflicts_with: []
+  sources:
+    - https://www.legifrance.gouv.fr/loda/article_lc/LEGIARTI000051173095
+    - https://www.service-public.fr/particuliers/actualites/A18080
+  params_schema: {}
   target_revenue_category_id: rev_prod_taxes
 - id: trans_afitf_cut
-  family: TRANSPORT
+  family: OPERATIONS
   label: Baisse des ressources de l'AFIT France (TICPE)
   description: Réduction de la part de TICPE affectée à l'Agence de financement des
     infrastructures de transport, limitant sa capacité d'investissement.
@@ -5160,10 +5187,19 @@
     - Retard dans la transition écologique.
   authoritative_sources:
     - Sénat
+  feasibility:
+    law: true
+    adminLagMonths: 2
+    notes: Réaffectation de taxe affectée en loi de finances.
+  conflicts_with: []
+  sources:
+    - https://www.senat.fr/enseance/2024-2025/143/Amdt_I-585.html
+    - https://www.senat.fr/rap/a24-148-2/a24-148-2_mono.html
+  params_schema: {}
   mission_mapping:
     M_TRANSPORT: 1.0
 - id: sec_lopmi_increase
-  family: SECURITY
+  family: DEFENSE
   label: Exécution de la LOPMI (+587 M€)
   description: Augmentation du budget de l'Intérieur pour créer 80 nouvelles brigades
     de Gendarmerie, moderniser l'équipement et financer les revalorisations salariales.
@@ -5185,10 +5221,19 @@
   authoritative_sources:
     - Libération
     - Cour des Comptes
+  feasibility:
+    law: true
+    adminLagMonths: 4
+    notes: Montée en charge opérationnelle (recrutement, équipements).
+  conflicts_with: []
+  sources:
+    - https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000047004481
+    - https://www.ccomptes.fr/fr/publications/police-et-gendarmerie-nationales-des-forces-sous-tension
+  params_schema: {}
   mission_mapping:
     M_SECURITY: 1.0
 - id: cult_heritage_plan
-  family: CULTURE
+  family: OTHER
   label: Plan Exceptionnel Patrimoine
   description: Plan d'investissement ponctuel pour la restauration de monuments historiques
     et du patrimoine religieux, notamment en zone rurale.
@@ -5197,7 +5242,7 @@
   cofog_mapping:
     '08.2': 1
   multi_year_impact:
-    '2026': 0
+    '2026': 300000000
     '2027': 0
     '2028': 0
   pushbacks:
@@ -5209,10 +5254,19 @@
     - Pérennité du financement au-delà de 2025 incertaine.
   authoritative_sources:
     - Banque des Territoires
+  feasibility:
+    law: true
+    adminLagMonths: 6
+    notes: Programmes d'investissement à déployer avec maîtrise d'ouvrage locale.
+  conflicts_with: []
+  sources:
+    - https://www.senat.fr/seances/s202501/s20250117/s20250117003.html
+    - https://www.senat.fr/rap/a24-149-21/a24-149-21_mono.html
+  params_schema: {}
   mission_mapping:
     M_CULTURE: 1.0
 - id: cult_audiovisual_cut
-  family: CULTURE
+  family: OTHER
   label: Coupe budgétaire dans l'Audiovisuel Public
   description: Réduction de la dotation de l'État à France Télévisions et Radio France
     pour forcer des gains d'efficacité.
@@ -5234,10 +5288,19 @@
   authoritative_sources:
     - Vie Publique
     - Sénat
+  feasibility:
+    law: true
+    adminLagMonths: 3
+    notes: Ajustement de dotations en PLF.
+  conflicts_with: []
+  sources:
+    - https://www.senat.fr/seances/s202501/s20250117/s20250117010.html
+    - https://www.senat.fr/rap/l24-144-319/l24-144-319_mono.html
+  params_schema: {}
   mission_mapping:
     M_CULTURE: 1.0
 - id: cult_pass_culture_reform
-  family: CULTURE
+  family: OTHER
   label: Réforme du Pass Culture
   description: Réduction de la part individuelle du Pass Culture et resserrement des
     conditions d'éligibilité.
@@ -5258,5 +5321,14 @@
     - Mesure impopulaire chez les jeunes.
   authoritative_sources:
     - Sénat
+  feasibility:
+    law: true
+    adminLagMonths: 3
+    notes: Paramétrage budgétaire et réglementaire du dispositif.
+  conflicts_with: []
+  sources:
+    - https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000051261329
+    - https://www.senat.fr/rap/l25-139-37/l25-139-370.html
+  params_schema: {}
   mission_mapping:
     M_CULTURE: 1.0
