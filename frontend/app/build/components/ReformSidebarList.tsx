@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import type { PolicyLever } from '../types';
 import { ReformDetailDrawer } from './ReformDetailDrawer';
+import { formatImpactEur, getImpactTone } from '../impactUtils';
 
 interface ReformSidebarListProps {
     onSelectReform: (reform: PolicyLever) => void;
@@ -120,8 +121,7 @@ const groupByFamily = (items: PolicyLever[]) => {
 const formatImpactShort = (lever: PolicyLever) => {
     const impact = lever.fixedImpactEur ?? 0;
     if (!impact) return "Impact non chiffré";
-    const sign = impact > 0 ? '+' : '';
-    return `${sign}${(impact / 1e9).toFixed(1)} Md€`;
+    return formatImpactEur(impact);
 };
 
 const formatBadgeLabel = (lever: PolicyLever) => {
@@ -167,6 +167,8 @@ export function ReformSidebarList({
 
     const renderLeverCompact = (lever: PolicyLever) => {
         const isSelected = isLeverSelected(lever.id);
+        const impact = lever.fixedImpactEur ?? 0;
+        const tone = getImpactTone(impact);
         
         // Exact styling from MassCategoryPanel for harmony
         return (
@@ -194,7 +196,7 @@ export function ReformSidebarList({
                         </div>
                     </div>
 
-                    <div className={`text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-50 border border-slate-100 ${(lever.fixedImpactEur || 0) > 0 ? 'text-emerald-700' : 'text-rose-700'}`}>
+                    <div className={`text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-50 border border-slate-100 ${tone.text}`}>
                         {formatImpactShort(lever)}
                     </div>
                 </div>

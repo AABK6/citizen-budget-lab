@@ -1362,6 +1362,7 @@ def run_scenario(dsl_b64: str, *, lens: str | None = None) -> tuple[str, Account
 
         for lid in applied_ids:
             lever_def = levers_by_id_map[lid]
+            lever_side = str(lever_def.get("budget_side") or "SPENDING").upper()
             
             # Prefer multi_year_impact (dict of years) > impact_schedule_eur (list) > fixed_impact_eur (number)
             multi_year = lever_def.get("multi_year_impact")
@@ -1429,21 +1430,19 @@ def run_scenario(dsl_b64: str, *, lens: str | None = None) -> tuple[str, Account
                         shocks_pct_gdp.setdefault(major, [0.0] * horizon_years)[i] += 100.0 * shock_eur / gdp_series[i]
 
             mission_mapping = lever_def.get("mission_mapping") or convert_cofog_mapping_to_missions(raw_cofog_mapping)
-            for mission_code, weight in mission_mapping.items():
-                try:
-                    weight_val = float(weight)
-                except Exception:
-                    continue
-                if weight_val == 0:
-                    continue
-                target_dim = "ae" if lever_dim == "ae" else "cp"
-                # For resolution (progress bars), we typically use the Year 0 impact or an average? 
-                # Currently the UI progress bars are single-value. Using Year 0 is standard for budget building.
-                # However, if Year 0 is small (ramp-up), it might mislead.
-                # Let's stick to Year 0 for the resolution meter to match the "2026 budget" exercise,
-                # but the deficit trajectory will show the long term pain.
-                resolution_specified_by_mission_dim[target_dim][mission_code] += -impact_schedule[0] * weight_val
-                resolution_specified_by_mission_total[mission_code] += -impact_schedule[0] * weight_val
+            if lever_side != "REVENUE":
+                for mission_code, weight in mission_mapping.items():
+                    try:
+                        weight_val = float(weight)
+                    except Exception:
+                        continue
+                    if weight_val == 0:
+                        continue
+                    target_dim = "ae" if lever_dim == "ae" else "cp"
+                    # Keep revenue-side measures out of the expenditure treemap resolution:
+                    # they improve the fiscal balance, but should not move mission tiles.
+                    resolution_specified_by_mission_dim[target_dim][mission_code] += -impact_schedule[0] * weight_val
+                    resolution_specified_by_mission_total[mission_code] += -impact_schedule[0] * weight_val
 
     # Pieces
     for act in actions:

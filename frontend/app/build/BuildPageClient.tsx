@@ -38,6 +38,14 @@ import { TutorialOverlay } from './components/TutorialOverlay';
 import { DebriefModal } from './components/DebriefModal';
 import { NewsTicker } from './components/NewsTicker';
 import { FloatingShareCard } from './components/FloatingShareCard';
+import {
+  findConflictingLeverIds,
+  getLeverFiscalImpactEur,
+  getLeverMissionDeltaEur,
+  getLeverRevenueDeltaForCategoryEur,
+  getLeverRevenueDeltaForFamilyEur,
+  resolveBudgetSide,
+} from './impactUtils';
 
 const cloneCategories = (categories: MassCategory[]) =>
   categories.map((category) => ({ ...category }));
@@ -316,9 +324,6 @@ const TARGET_PERCENT_DEFAULT_RANGE = 10;
 const TARGET_PERCENT_EXPANDED_RANGE = 25;
 const TARGET_PERCENT_STEP = 0.5;
 const EPSILON = 1e-6;
-const revenueFamilies = new Set(['TAXES', 'TAX_EXPENDITURES']);
-const resolveBudgetSide = (lever: PolicyLever) =>
-  lever.budgetSide ?? (revenueFamilies.has(lever.family) ? 'REVENUE' : 'SPENDING');
 
 export default function BuildPageClient() {
   const { t } = useI18n();
@@ -392,6 +397,14 @@ export default function BuildPageClient() {
         targetRevenueCategoryId: lever.targetRevenueCategoryId || POLICY_TARGET_FALLBACK[lever.id]
       })),
     [policyLevers],
+  );
+  const allLevers = useMemo(
+    () => [...spendingLevers, ...revenueLevers],
+    [revenueLevers, spendingLevers],
+  );
+  const leversById = useMemo(
+    () => new Map(allLevers.map((lever) => [lever.id, lever])),
+    [allLevers],
   );
 
   const [shareFeedback, setShareFeedback] = useState<string | null>(null);
@@ -923,25 +936,46 @@ export default function BuildPageClient() {
   };
 
   const addLeverToDsl = (lever: PolicyLever) => {
+    const conflictLabels: string[] = [];
     setDslObject(currentDslObject => {
+      const selectedIds = currentDslObject.actions
+        .map((action) => action.id)
+        .filter((id) => leversById.has(id));
+      const conflictingIds = findConflictingLeverIds(lever, selectedIds, leversById);
+      conflictingIds.forEach((id) => {
+        const label = leversById.get(id)?.label;
+        if (label) {
+          conflictLabels.push(label);
+        }
+      });
+
+      const impact = getLeverFiscalImpactEur(lever, year);
       const isRevenue = resolveBudgetSide(lever) === 'REVENUE';
       const op = (isRevenue
-        ? ((lever.fixedImpactEur || 0) >= 0 ? 'increase' : 'decrease')
-        : ((lever.fixedImpactEur || 0) >= 0 ? 'decrease' : 'increase')) as 'increase' | 'decrease';
+        ? (impact >= 0 ? 'increase' : 'decrease')
+        : (impact >= 0 ? 'decrease' : 'increase')) as 'increase' | 'decrease';
 
       const newAction: DslAction = {
         id: lever.id,
         target: `piece.${lever.id}`,
         op: op,
-        amount_eur: Math.abs(lever.fixedImpactEur || 0),
+        amount_eur: Math.abs(impact),
         recurring: true, // Assuming reforms are recurring
       };
+      const nextActions = currentDslObject.actions.filter(
+        (action: DslAction) => !conflictingIds.includes(action.id) && action.id !== lever.id,
+      );
       return {
         ...currentDslObject,
-        actions: [...currentDslObject.actions, newAction],
+        actions: [...nextActions, newAction],
       };
     });
-    setShareFeedback(`✅ "${lever.label}" appliquée`);
+    if (conflictLabels.length > 0) {
+      const replaced = conflictLabels.join(', ');
+      setShareFeedback(`"${lever.label}" remplace ${replaced} (mesures alternatives).`);
+      return;
+    }
+    setShareFeedback(`"${lever.label}" appliquée.`);
   };
 
   const removeLeverFromDsl = (leverId: string) => {
@@ -951,14 +985,22 @@ export default function BuildPageClient() {
         actions: currentDslObject.actions.filter((a: DslAction) => a.id !== leverId),
       };
     });
-    const lever = policyLevers.find(l => l.id === leverId);
+    const lever = leversById.get(leverId);
     if (lever) {
-      setShareFeedback(`❌ "${lever.label}" retirée`);
+      setShareFeedback(`"${lever.label}" retirée.`);
     }
   };
 
   const isLeverInDsl = (leverId: string) => {
     return dslObject.actions.some(a => a.id === leverId);
+  };
+
+  const toggleLeverSelection = (lever: PolicyLever) => {
+    if (isLeverInDsl(lever.id)) {
+      removeLeverFromDsl(lever.id);
+      return;
+    }
+    addLeverToDsl(lever);
   };
 
   const handleTargetRangeChange = (nextMax: number) => {
@@ -1143,6 +1185,142 @@ export default function BuildPageClient() {
     setRevenueTargetPercent(0);
     setRevenueTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
   };
+
+  const getSignedTargetDelta = (action: DslAction) => {
+    const amount = Number(action.amount_eur ?? 0);
+    if (!Number.isFinite(amount) || amount === 0) {
+      return 0;
+    }
+    return action.op === 'increase' ? amount : action.op === 'decrease' ? -amount : 0;
+  };
+
+  useEffect(() => {
+    if (!selectedCategory) {
+      return;
+    }
+
+    const baselineAmount = selectedCategory.baselineAmount ?? selectedCategory.amount ?? 0;
+    if (!Number.isFinite(baselineAmount) || baselineAmount === 0) {
+      setTargetPercent(0);
+      setTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
+      return;
+    }
+
+    const targetAction = dslObject.actions.find((action) => action.id === `target_${selectedCategory.id}`);
+    let rawPercent = 0;
+
+    if (targetAction) {
+      const signedAmount = getSignedTargetDelta(targetAction);
+      rawPercent = (signedAmount / baselineAmount) * 100;
+    } else {
+      const derivedDelta = dslObject.actions.reduce((sum, action) => {
+        const lever = leversById.get(action.id);
+        if (!lever) {
+          return sum;
+        }
+        return sum + getLeverMissionDeltaEur(lever, selectedCategory.id, year);
+      }, 0);
+      rawPercent = (derivedDelta / baselineAmount) * 100;
+    }
+
+    const snapped = Math.round(rawPercent / TARGET_PERCENT_STEP) * TARGET_PERCENT_STEP;
+    const safePercent = Number.isFinite(snapped) ? Number(snapped.toFixed(1)) : 0;
+    const boundedPercent = Math.max(-TARGET_PERCENT_EXPANDED_RANGE, Math.min(TARGET_PERCENT_EXPANDED_RANGE, safePercent));
+    setTargetPercent(boundedPercent);
+    setTargetRangeMax(
+      Math.abs(boundedPercent) > TARGET_PERCENT_DEFAULT_RANGE
+        ? TARGET_PERCENT_EXPANDED_RANGE
+        : TARGET_PERCENT_DEFAULT_RANGE,
+    );
+  }, [
+    dslObject.actions,
+    leversById,
+    selectedCategory,
+    setTargetPercent,
+    setTargetRangeMax,
+    year,
+  ]);
+
+  useEffect(() => {
+    if (!selectedRevenueCategory && !selectedRevenueFamily) {
+      return;
+    }
+
+    let baselineAmount = 0;
+    let delta = 0;
+    if (selectedRevenueCategory) {
+      baselineAmount = Number(selectedRevenueCategory.amountEur ?? 0);
+      const targetAction = dslObject.actions.find((action) => action.id === `target_${selectedRevenueCategory.id}`);
+      if (targetAction) {
+        delta = getSignedTargetDelta(targetAction);
+      } else {
+        delta = dslObject.actions.reduce((sum, action) => {
+          const lever = leversById.get(action.id);
+          if (!lever) {
+            return sum;
+          }
+          return sum + getLeverRevenueDeltaForCategoryEur(lever, selectedRevenueCategory.id, year);
+        }, 0);
+      }
+    } else if (selectedRevenueFamily) {
+      const familyPieceIds = new Set(
+        revenuePieces
+          .filter((piece) => piece.familyId === selectedRevenueFamily.id)
+          .map((piece) => piece.id),
+      );
+      baselineAmount = revenuePieces
+        .filter((piece) => familyPieceIds.has(piece.id))
+        .reduce((sum, piece) => sum + Number(piece.amountEur ?? 0), 0);
+      const targetActions = dslObject.actions.filter((action) => {
+        if (!action.id.startsWith('target_')) {
+          return false;
+        }
+        const target = String(action.target || '');
+        if (!target.startsWith('piece.')) {
+          return false;
+        }
+        const pieceId = target.slice('piece.'.length);
+        return familyPieceIds.has(pieceId);
+      });
+      if (targetActions.length > 0) {
+        delta = targetActions.reduce((sum, action) => sum + getSignedTargetDelta(action), 0);
+      } else {
+        delta = dslObject.actions.reduce((sum, action) => {
+          const lever = leversById.get(action.id);
+          if (!lever) {
+            return sum;
+          }
+          return sum + getLeverRevenueDeltaForFamilyEur(lever, familyPieceIds, year);
+        }, 0);
+      }
+    }
+
+    if (!Number.isFinite(baselineAmount) || baselineAmount === 0) {
+      setRevenueTargetPercent(0);
+      setRevenueTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
+      return;
+    }
+
+    const rawPercent = (delta / baselineAmount) * 100;
+    const snapped = Math.round(rawPercent / TARGET_PERCENT_STEP) * TARGET_PERCENT_STEP;
+    const safePercent = Number.isFinite(snapped) ? Number(snapped.toFixed(1)) : 0;
+    const boundedPercent = Math.max(-TARGET_PERCENT_EXPANDED_RANGE, Math.min(TARGET_PERCENT_EXPANDED_RANGE, safePercent));
+    setRevenueTargetPercent(boundedPercent);
+    setRevenueTargetRangeMax(
+      Math.abs(boundedPercent) > TARGET_PERCENT_DEFAULT_RANGE
+        ? TARGET_PERCENT_EXPANDED_RANGE
+        : TARGET_PERCENT_DEFAULT_RANGE,
+    );
+  }, [
+    dslObject.actions,
+    leversById,
+    revenuePieces,
+    selectedRevenueCategory,
+    selectedRevenueFamily,
+    setRevenueTargetPercent,
+    setRevenueTargetRangeMax,
+    year,
+  ]);
 
   const openMobileSpendingPanel = useCallback(() => {
     setActiveTab('missions');
@@ -1432,10 +1610,10 @@ export default function BuildPageClient() {
     // But currently Catalog doesn't easily show active state for preview.
     // Let's assume preview is for *toggling*. 
     const isAlreadyActive = isLeverInDsl(lever.id);
-    const impact = lever.fixedImpactEur || 0;
+    const impact = getLeverFiscalImpactEur(lever, year);
 
     return latestDeficit + (isAlreadyActive ? -impact : impact);
-  }, [previewReformId, latestDeficit, policyLevers, isLeverInDsl]);
+  }, [previewReformId, latestDeficit, policyLevers, isLeverInDsl, year]);
 
   const treemapData = useMemo(
     () => (masses || []).map((mission) => {
@@ -1482,6 +1660,47 @@ export default function BuildPageClient() {
     });
     return map;
   }, [revenuePieces, spendingPieces]);
+  const selectedCategoryResolvedAmount = useMemo(() => {
+    if (!selectedCategory) {
+      return 0;
+    }
+    return dslObject.actions.reduce((sum, action) => {
+      const lever = leversById.get(action.id);
+      if (!lever) {
+        return sum;
+      }
+      return sum + getLeverMissionDeltaEur(lever, selectedCategory.id, year);
+    }, 0);
+  }, [dslObject.actions, leversById, selectedCategory, year]);
+  const selectedRevenueCategoryResolvedAmount = useMemo(() => {
+    if (!selectedRevenueCategory) {
+      return 0;
+    }
+    return dslObject.actions.reduce((sum, action) => {
+      const lever = leversById.get(action.id);
+      if (!lever) {
+        return sum;
+      }
+      return sum + getLeverRevenueDeltaForCategoryEur(lever, selectedRevenueCategory.id, year);
+    }, 0);
+  }, [dslObject.actions, leversById, selectedRevenueCategory, year]);
+  const selectedRevenueFamilyResolvedAmount = useMemo(() => {
+    if (!selectedRevenueFamily) {
+      return 0;
+    }
+    const familyPieceIds = new Set(
+      revenuePieces
+        .filter((piece) => piece.familyId === selectedRevenueFamily.id)
+        .map((piece) => piece.id),
+    );
+    return dslObject.actions.reduce((sum, action) => {
+      const lever = leversById.get(action.id);
+      if (!lever) {
+        return sum;
+      }
+      return sum + getLeverRevenueDeltaForFamilyEur(lever, familyPieceIds, year);
+    }, 0);
+  }, [dslObject.actions, leversById, revenuePieces, selectedRevenueFamily, year]);
 
   const totalSpending = useMemo(() => {
     const sum = (masses || []).reduce((acc, m) => acc + Math.max(m.amount, 0), 0);
@@ -1623,13 +1842,7 @@ export default function BuildPageClient() {
             title={t('build.piece_dials')}
             subtitle="Ajustements structurels et réformes"
             levers={spendingLevers}
-            onSelectReform={(lever) => {
-              if (!isLeverInDsl(lever.id)) {
-                addLeverToDsl(lever);
-              } else {
-                removeLeverFromDsl(lever.id);
-              }
-            }}
+            onSelectReform={toggleLeverSelection}
             onHoverReform={setPreviewReformId}
             isLeverSelected={isLeverInDsl}
           />
@@ -1656,10 +1869,9 @@ export default function BuildPageClient() {
                   setTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
                 }}
                 onClose={handleBackClick}
+                resolvedAmount={selectedCategoryResolvedAmount}
                 suggestedLevers={suggestedLevers}
-                onLeverToggle={(lever) =>
-                  (isLeverInDsl(lever.id) ? removeLeverFromDsl(lever.id) : addLeverToDsl(lever))
-                }
+                onLeverToggle={toggleLeverSelection}
                 isLeverSelected={isLeverInDsl}
                 popularIntents={popularIntents}
                 onIntentClick={handleIntentClick}
@@ -1714,13 +1926,7 @@ export default function BuildPageClient() {
             title={t('build.piece_dials')}
             subtitle="Fiscalité et ressources collectives"
             levers={revenueLevers}
-            onSelectReform={(lever) => {
-              if (!isLeverInDsl(lever.id)) {
-                addLeverToDsl(lever);
-              } else {
-                removeLeverFromDsl(lever.id);
-              }
-            }}
+            onSelectReform={toggleLeverSelection}
             onHoverReform={setPreviewReformId}
             isLeverSelected={isLeverInDsl}
             side="right"
@@ -1751,10 +1957,9 @@ export default function BuildPageClient() {
                     setRevenueTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
                   }}
                   onBack={handleRevenueBackClick}
+                  resolvedAmount={selectedRevenueCategoryResolvedAmount}
                   suggestedLevers={suggestedLevers}
-                  onLeverToggle={(lever) =>
-                    (isLeverInDsl(lever.id) ? removeLeverFromDsl(lever.id) : addLeverToDsl(lever))
-                  }
+                  onLeverToggle={toggleLeverSelection}
                   isLeverSelected={isLeverInDsl}
                   popularIntents={popularIntents}
                   onIntentClick={handleIntentClick}
@@ -1778,12 +1983,11 @@ export default function BuildPageClient() {
                     setRevenueTargetRangeMax(TARGET_PERCENT_DEFAULT_RANGE);
                   }}
                   onBack={handleRevenueBackClick}
-                  onLeverToggle={(lever) =>
-                    (isLeverInDsl(lever.id) ? removeLeverFromDsl(lever.id) : addLeverToDsl(lever))
-                  }
+                  onLeverToggle={toggleLeverSelection}
                   isLeverSelected={isLeverInDsl}
                   formatCurrency={formatCurrency}
                   formatShare={formatShare}
+                  resolvedAmount={selectedRevenueFamilyResolvedAmount}
                 />
               )}
             </>
@@ -1991,6 +2195,11 @@ export default function BuildPageClient() {
           isSubmitting={isVoteSubmitting}
           scenarioResult={scenarioResult}
           deficit={latestDeficit}
+          actions={dslObject.actions}
+          policyLevers={allLevers}
+          baselineMasses={baselineMasses}
+          piecesById={piecesById}
+          year={year}
         />
         <FloatingShareCard
           isOpen={isShareCardOpen}

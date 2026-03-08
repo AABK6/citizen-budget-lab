@@ -2,6 +2,7 @@ import type { ChangeEvent, CSSProperties } from 'react';
 import { useState } from 'react';
 import type { LegoPiece, PolicyLever, RevenueFamily } from '../types';
 import { ReformDetailDrawer } from './ReformDetailDrawer';
+import { formatImpactEur, getImpactTone } from '../impactUtils';
 
 const lightenColor = (hex: string, amount = 0.25) => {
   if (!hex || hex[0] !== '#' || hex.length !== 7) return hex;
@@ -28,6 +29,7 @@ export type RevenueFamilyPanelProps = {
   isLeverSelected: (leverId: string) => boolean;
   formatCurrency: (value: number) => string;
   formatShare: (value: number) => string;
+  resolvedAmount: number;
 };
 
 export function RevenueFamilyPanel({
@@ -45,6 +47,7 @@ export function RevenueFamilyPanel({
   isLeverSelected,
   formatCurrency,
   formatShare,
+  resolvedAmount,
 }: RevenueFamilyPanelProps) {
   const [viewingReform, setViewingReform] = useState<PolicyLever | null>(null);
   
@@ -159,6 +162,12 @@ export function RevenueFamilyPanel({
                       {targetAmount > 0 ? '+' : ''}{formatCurrency(targetAmount)}
                     </span>
                   </div>
+                  <div className="flex flex-col items-end">
+                    <span className="text-[10px] text-slate-500 font-medium">Couvert par des mesures concrètes</span>
+                    <span className={`text-sm font-bold ${resolvedAmount !== 0 ? 'text-slate-800' : 'text-slate-400'}`}>
+                      {resolvedAmount > 0 ? '+' : ''}{formatCurrency(resolvedAmount)}
+                    </span>
+                  </div>
                 </div>
               </div>
             )}
@@ -174,30 +183,34 @@ export function RevenueFamilyPanel({
             <div className="space-y-2 pt-2">
               <div className="text-[10px] font-black uppercase tracking-wider text-slate-400 pl-1">Mesures concrètes ({levers.length})</div>
               <div className="space-y-1.5">
-                {levers.map((reform) => (
-                  <div
-                    key={reform.id}
-                    className={`group relative p-2 px-3 rounded-lg border transition-all duration-200 cursor-pointer ${isLeverSelected(reform.id)
-                      ? 'bg-emerald-50/50 border-emerald-200/50'
-                      : 'bg-white border-slate-100 hover:border-slate-300 hover:shadow-sm'
-                      }`}
-                    onClick={() => setViewingReform(reform)}
-                  >
-                    <div className="flex justify-between items-center gap-2">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold text-xs text-slate-800 truncate">{reform.label}</span>
-                          {isLeverSelected(reform.id) && <i className="material-icons text-[10px] text-emerald-600">check_circle</i>}
+                {levers.map((reform) => {
+                  const impact = reform.fixedImpactEur || 0;
+                  const tone = getImpactTone(impact);
+                  return (
+                    <div
+                      key={reform.id}
+                      className={`group relative p-2 px-3 rounded-lg border transition-all duration-200 cursor-pointer ${isLeverSelected(reform.id)
+                        ? 'bg-emerald-50/50 border-emerald-200/50'
+                        : 'bg-white border-slate-100 hover:border-slate-300 hover:shadow-sm'
+                        }`}
+                      onClick={() => setViewingReform(reform)}
+                    >
+                      <div className="flex justify-between items-center gap-2">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold text-xs text-slate-800 truncate">{reform.label}</span>
+                            {isLeverSelected(reform.id) && <i className="material-icons text-[10px] text-emerald-600">check_circle</i>}
+                          </div>
+                          <div className="text-[10px] text-slate-400 truncate opacity-70 group-hover:opacity-100">{reform.description}</div>
                         </div>
-                        <div className="text-[10px] text-slate-400 truncate opacity-70 group-hover:opacity-100">{reform.description}</div>
-                      </div>
 
-                      <div className={`text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-50 border border-slate-100 ${reform.fixedImpactEur && reform.fixedImpactEur > 0 ? 'text-emerald-700' : 'text-rose-700'}`}>
-                        {formatCurrency(reform.fixedImpactEur || 0)}
+                        <div className={`text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-50 border border-slate-100 ${tone.text}`}>
+                          {formatImpactEur(impact)}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}

@@ -1,29 +1,26 @@
-import pytest
 from services.api.policy_catalog import validate_policy_catalog_data
 
-def test_schema_rejects_missing_mission_mapping():
+def test_schema_accepts_revenue_lever_without_mission_mapping():
     """
-    Test that the schema now requires 'mission_mapping'.
+    Revenue levers do not need a mission mapping because they should not
+    project onto the expenditure treemap.
     """
     lever = {
-        "id": "test_lever_missing_mission",
+        "id": "test_revenue_lever_without_mission",
         "family": "TAXES",
         "label": "Test Lever",
         "description": "Desc",
         "fixed_impact_eur": 100.0,
         "cofog_mapping": {"01.1": 1.0},
-        # mission_mapping is missing
+        "budget_side": "REVENUE",
         "feasibility": {"law": True, "adminLagMonths": 0},
         "conflicts_with": [],
         "sources": [],
         "params_schema": {}
     }
-    
+
     errors = validate_policy_catalog_data([lever])
-    # Should fail because mission_mapping is required
-    # Note: Using snake_case 'mission_mapping' as per existing schema convention, 
-    # even though plan said 'missionMapping' (likely a typo/js-ism).
-    assert any("mission_mapping" in e for e in errors), f"Expected mission_mapping error, got: {errors}"
+    assert not errors, f"Expected no validation errors, got: {errors}"
 
 def test_schema_accepts_new_fields():
     """
@@ -50,6 +47,39 @@ def test_schema_accepts_new_fields():
     
     errors = validate_policy_catalog_data([lever])
     assert not errors, f"Expected no errors, got: {errors}"
+
+def test_schema_requires_reciprocal_conflicts():
+    levers = [
+        {
+            "id": "a",
+            "family": "TAXES",
+            "label": "A",
+            "description": "Desc",
+            "fixed_impact_eur": 100.0,
+            "cofog_mapping": {},
+            "mission_mapping": {"M_TEST": 1.0},
+            "feasibility": {"law": True, "adminLagMonths": 0},
+            "conflicts_with": ["b"],
+            "sources": [],
+            "params_schema": {},
+        },
+        {
+            "id": "b",
+            "family": "TAXES",
+            "label": "B",
+            "description": "Desc",
+            "fixed_impact_eur": 100.0,
+            "cofog_mapping": {},
+            "mission_mapping": {"M_TEST": 1.0},
+            "feasibility": {"law": True, "adminLagMonths": 0},
+            "conflicts_with": [],
+            "sources": [],
+            "params_schema": {},
+        },
+    ]
+
+    errors = validate_policy_catalog_data(levers)
+    assert any("missing reciprocal conflict" in e for e in errors), errors
 
 from fastapi.testclient import TestClient
 from services.api.app import create_app

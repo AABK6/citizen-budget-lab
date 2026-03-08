@@ -1,5 +1,11 @@
 import { useMemo } from 'react';
 import type { DslAction, PolicyLever } from '../types';
+import {
+  formatImpactEur,
+  getImpactTone,
+  resolveBudgetSide,
+  summarizeScenarioActions,
+} from '../impactUtils';
 
 interface ScenarioDashboardProps {
   baselineTotals: { spending: number; revenue: number };
@@ -11,56 +17,8 @@ interface ScenarioDashboardProps {
   policyLevers: PolicyLever[];
 }
 
-const revenueFamilies = new Set(['TAXES', 'TAX_EXPENDITURES']);
-
 const formatTotal = (value: number) => `${(Math.abs(value) / 1e9).toFixed(1)} Md€`;
-const formatDelta = (value: number) => {
-  const sign = value > 0 ? '+' : value < 0 ? '-' : '';
-  return `${sign}${(Math.abs(value) / 1e9).toFixed(1)} Md€`;
-};
-
-const resolveBudgetSide = (lever: PolicyLever) =>
-  lever.budgetSide ?? (revenueFamilies.has(lever.family) ? 'REVENUE' : 'SPENDING');
-
-const resolveImpact = (action: DslAction, lever: PolicyLever) => {
-  const leverImpact = Number(lever.fixedImpactEur ?? 0);
-  if (Number.isFinite(leverImpact) && leverImpact !== 0) {
-    return leverImpact;
-  }
-  const amount = Number(action.amount_eur ?? 0);
-  if (!Number.isFinite(amount) || amount === 0) {
-    return 0;
-  }
-  const side = resolveBudgetSide(lever);
-  if (side === 'REVENUE') {
-    return action.op === 'increase' ? amount : -amount;
-  }
-  if (side === 'SPENDING') {
-    return action.op === 'increase' ? -amount : amount;
-  }
-  return action.op === 'increase' ? amount : -amount;
-};
-
-const resolveDelta = (action: DslAction) => {
-  const amount = Number(action.amount_eur ?? 0);
-  if (!Number.isFinite(amount) || amount === 0) {
-    return 0;
-  }
-  if (action.op === 'increase') {
-    return amount;
-  }
-  if (action.op === 'decrease') {
-    return -amount;
-  }
-  return 0;
-};
-
-const formatOrientationLabel = (verb: string, percent: number | null, amount: number, label: string) => {
-  if (Number.isFinite(percent)) {
-    return `${verb} de ${percent!.toFixed(1)}% ${label}`;
-  }
-  return `${verb} ${formatTotal(amount)} ${label}`;
-};
+const formatDelta = (value: number) => formatImpactEur(value);
 
 export function ScenarioDashboard({
   baselineTotals,
@@ -76,107 +34,34 @@ export function ScenarioDashboard({
   const revenueDelta = useMemo(() => {
     if (!actions?.length) return 0;
     const leverMap = new Map(policyLevers.map((lever) => [lever.id, lever]));
-    let delta = 0;
-    for (const action of actions) {
-      const lever = leverMap.get(action.id);
-      if (lever) {
-        const side = resolveBudgetSide(lever);
-        if (side === 'REVENUE' || side === 'BOTH') {
-          delta += resolveImpact(action, lever);
+    return summarizeScenarioActions({
+      actions,
+      baselineMasses,
+      piecesById,
+      policyLevers,
+    })
+      .filter((item) => {
+        if (!item.id.startsWith('target_')) {
+          const lever = leverMap.get(item.id);
+          const side = lever ? resolveBudgetSide(lever) : null;
+          return side === 'REVENUE' || side === 'BOTH';
         }
-        continue;
-      }
-      if (!action.id?.startsWith('target_')) {
-        continue;
-      }
-      const target = String(action.target || '');
-      if (!target.startsWith('piece.')) {
-        continue;
-      }
-      const pieceId = target.slice('piece.'.length);
-      const piece = piecesById?.get(pieceId);
-      if (piece?.type !== 'revenue') {
-        continue;
-      }
-      delta += resolveDelta(action);
-    }
-    return delta;
-  }, [actions, piecesById, policyLevers]);
+        const target = actions.find((action) => action.id === item.id)?.target ?? '';
+        if (!String(target).startsWith('piece.')) {
+          return false;
+        }
+        const pieceId = String(target).slice('piece.'.length);
+        return piecesById?.get(pieceId)?.type === 'revenue';
+      })
+      .reduce((sum, item) => sum + item.impact, 0);
+  }, [actions, baselineMasses, piecesById, policyLevers]);
 
   const levers = useMemo(() => {
-    if (!actions?.length) return [];
-    const leverMap = new Map(policyLevers.map((lever) => [lever.id, lever]));
-    const seen = new Set<string>();
-    const items: Array<{ id: string; label: string; fullLabel: string; impact: number }> = [];
-
-    for (const action of actions) {
-      const lever = leverMap.get(action.id);
-      if (lever) {
-        if (seen.has(lever.id)) continue;
-        seen.add(lever.id);
-        items.push({
-          id: lever.id,
-          label: lever.shortLabel || lever.label,
-          fullLabel: lever.label,
-          impact: resolveImpact(action, lever),
-        });
-        continue;
-      }
-
-      const target = String(action.target || '');
-      const delta = resolveDelta(action);
-      if (!delta) {
-        continue;
-      }
-      const isOrientation = action.id?.startsWith('target_') || target.startsWith('mission.');
-      if (!isOrientation) {
-        continue;
-      }
-
-      if (target.startsWith('mission.')) {
-        const massId = target.slice('mission.'.length).toUpperCase();
-        const base = baselineMasses?.get(massId);
-        const baseAmount = Math.abs(base?.amount ?? 0);
-        const percent = baseAmount > 0 ? (Math.abs(delta) / baseAmount) * 100 : null;
-        const name = base?.name ?? massId;
-        const verb = delta >= 0 ? 'Augmenter' : 'Diminuer';
-        const label = formatOrientationLabel(verb, percent, Math.abs(delta), name);
-        const impact = -delta;
-        const itemId = action.id || target;
-        if (!seen.has(itemId)) {
-          seen.add(itemId);
-          items.push({ id: itemId, label, fullLabel: label, impact });
-        }
-        continue;
-      }
-
-      if (target.startsWith('piece.')) {
-        const pieceId = target.slice('piece.'.length);
-        const piece = piecesById?.get(pieceId);
-        const baseAmount = Math.abs(piece?.amount ?? 0);
-        const percent = baseAmount > 0 ? (Math.abs(delta) / baseAmount) * 100 : null;
-        const name = piece?.label ?? pieceId;
-        const verb = delta >= 0 ? 'Augmenter' : 'Diminuer';
-        const label = formatOrientationLabel(verb, percent, Math.abs(delta), name);
-        let impact = delta;
-        if (piece?.type === 'expenditure') {
-          impact = -delta;
-        } else if (piece?.type === 'revenue') {
-          impact = delta;
-        }
-        const itemId = action.id || target;
-        if (!seen.has(itemId)) {
-          seen.add(itemId);
-          items.push({ id: itemId, label, fullLabel: label, impact });
-        }
-      }
-    }
-
-    return items.sort((a, b) => {
-      const impactA = Math.abs(a.impact);
-      const impactB = Math.abs(b.impact);
-      if (impactA !== impactB) return impactB - impactA;
-      return a.fullLabel.localeCompare(b.fullLabel, 'fr');
+    return summarizeScenarioActions({
+      actions,
+      baselineMasses,
+      piecesById,
+      policyLevers,
     });
   }, [actions, baselineMasses, piecesById, policyLevers]);
 
@@ -258,7 +143,7 @@ export function ScenarioDashboard({
               <div className="flex flex-col gap-[1px]">
                 {topLevers.map((lever) => (
                   <div key={lever.id} className="flex items-center gap-2 w-full">
-                    <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${lever.impact > 0 ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
+                    <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${getImpactTone(lever.impact).dot}`}></span>
                     <div className="flex items-baseline gap-1 min-w-0 flex-1">
                       <span className="text-[10px] font-semibold text-slate-700 truncate leading-none">
                         {lever.label}

@@ -25,7 +25,8 @@
   feasibility:
     law: true
     adminLagMonths: 6
-  conflicts_with: []
+  conflicts_with:
+    - wealth_tax
   sources:
     - Assemblée nat. 2025, amendements PLF[7]
     - https://www.publicsenat.fr/
@@ -66,7 +67,8 @@
   feasibility:
     law: true
     adminLagMonths: 6
-  conflicts_with: []
+  conflicts_with:
+    - freeze_tax_brackets
   sources:
     - Assemblée nat., PLF 2026[8]
     - https://www.publicsenat.fr/actualites/economie/budget-2026-le-senat-vote-la-reindexation-du-bareme-de-l-impot-sur-le-revenu
@@ -920,7 +922,8 @@
   feasibility:
     law: true
     adminLagMonths: 6
-  conflicts_with: []
+  conflicts_with:
+    - pen_age_plus3m_per_year
   sources:
     - PLFSS 2026 adopté[29]
   params_schema: {}
@@ -1474,7 +1477,8 @@
     law: true
     adminLagMonths: 12
     notes: Requires new tax law; politically symbolic and contested.
-  conflicts_with: []
+  conflicts_with:
+    - amend_ifi_to_fortune_improductive
   sources:
     - 'FIPECO (2018) Rendement historique ISF ~5Md€: https://www.fipeco.fr/fiche/Fallait-il-supprimer-lISF-et-comment-fallait-il-le-remplacer-%3F'
     - Institut Montaigne [1]
@@ -1833,7 +1837,9 @@
     law: true
     adminLagMonths: 6
     notes: Change in tax code; risk of pushback from industry and research sectors.
-  conflicts_with: []
+  conflicts_with:
+    - cir_cut_large_firms_half
+    - cir_remove_5pct_above_100m
   sources:
     - La Finance Pour Tous [16]
     - https://www.cae-eco.fr/pour-une-reforme-du-credit-dimpot-recherche
@@ -1966,7 +1972,8 @@
     adminLagMonths: 3
     notes: Simple change via finance law; may be unpopular as it affects take-home
       pay.
-  conflicts_with: []
+  conflicts_with:
+    - expand_overtime_exemption
   sources:
     - La Finance Pour Tous [19]
     - https://www.capital.fr/votre-argent/impots-vers-une-suppression-de-lexoneration-des-heures-supplementaires-1505231
@@ -2353,7 +2360,8 @@
     adminLagMonths: 0
     notes: Enacted via annual budget; quick fiscal gain but effectively a stealth
       tax increase on all taxpayers.
-  conflicts_with: []
+  conflicts_with:
+    - amend_ir_bracket_indexation_1pct
   sources:
     - 'Public Sénat (2025) Gel barème IR: https://www.publicsenat.fr/actualites/economie/budget-2026-le-senat-vote-la-reindexation-du-bareme-de-l-impot-sur-le-revenu'
     - 'Public Sénat (2025) Rendement du gel du barème IR + CSG estimé à 2.2Md€: https://www.publicsenat.fr/actualites/economie/budget-2026-le-senat-vote-la-reindexation-du-bareme-de-l-impot-sur-le-revenu'
@@ -2592,7 +2600,8 @@
     adminLagMonths: 3
     notes: Change enacted via Social Security law; immediate budget relief but reduces
       retirees' purchasing power.
-  conflicts_with: []
+  conflicts_with:
+    - pensions_freeze_base_plus_compl_2026
   sources:
     - 'Public Sénat (2025) Économie gel indexation ~4Md€: https://www.publicsenat.fr/actualites/economie/budget-2026-le-senat-vote-la-reindexation-du-bareme-de-l-impot-sur-le-revenu'
     - L'Express [26]
@@ -2913,7 +2922,10 @@
     adminLagMonths: 6
     notes: Change in Social Security or budget law; directly affects low-income renters,
       likely controversial.
-  conflicts_with: []
+  conflicts_with:
+    - apl_flat_minus5
+    - apl_means_test_18920
+    - apl_means_test_39020
   sources:
     - L'Express [31]
     - https://www.budget.gouv.fr/
@@ -3547,7 +3559,8 @@
     adminLagMonths: 12
     notes: Implemented via finance law; politically sensitive for affected sectors
       (transport, agriculture) but aligns with green transition.
-  conflicts_with: []
+  conflicts_with:
+    - remove_ticpe_air_exemption
   sources:
     - The Guardian [46]
     - https://www.budget.gouv.fr/
@@ -3704,7 +3717,9 @@
     adminLagMonths: 3
     notes: Done via budget law; shifts financial pressure to local governments (potentially
       causing local service cuts or tax hikes).
-  conflicts_with: []
+  conflicts_with:
+    - freeze_local_transfers_value
+    - freeze_apul_budget_value
   sources:
     - Est.
     - https://www.budget.gouv.fr/
@@ -5091,7 +5106,8 @@
     law: true
     adminLagMonths: 0
     notes: Trajectoire déjà prévue par la LPM 2024-2030.
-  conflicts_with: []
+  conflicts_with:
+    - def_senate_adjustment
   sources:
     - https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000048799386
     - https://www.senat.fr/rap/l24-144-39/l24-144-394.html
@@ -5104,14 +5120,14 @@
   description: Réduction de l'augmentation prévue du budget de la Défense de 1.7 Md€
     pour l'aligner sur les capacités réelles de production industrielle et réduire
     les impayés.
-  fixed_impact_eur: -1700000000
+  fixed_impact_eur: 1700000000
   major_amendment: true
   cofog_mapping:
     '02.1': 1
   multi_year_impact:
-    '2026': -1700000000
-    '2027': -1700000000
-    '2028': -1700000000
+    '2026': 1700000000
+    '2027': 1700000000
+    '2028': 1700000000
   pushbacks:
     - type: strategic
       description: Risque d'envoyer un signal négatif aux alliés quant à l'engagement

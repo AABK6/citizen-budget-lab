@@ -143,3 +143,43 @@ def test_run_scenario_uses_multi_year_impact():
         # Acc.deficit_delta_path should be [-1000, -2000, -3000]
         # (Negative because it's a saving/revenue increase in this context)
         assert acc.deficit_delta_path == pytest.approx([-1000.0, -2000.0, -3000.0])
+
+
+def test_run_scenario_ignores_revenue_levers_in_mission_resolution():
+    """
+    Revenue-side levers may improve the balance, but they should not move mission tiles
+    in the expenditure treemap resolution.
+    """
+    lever_id = "test_revenue_only"
+    mock_lever = {
+        "id": lever_id,
+        "family": "CLIMATE",
+        "budget_side": "REVENUE",
+        "label": "Green tax",
+        "description": "Desc",
+        "fixed_impact_eur": 1_500.0,
+        "cofog_mapping": {"05": 1.0},
+        "mission_mapping": {"M_ENVIRONMENT": 1.0},
+        "feasibility": {"law": True, "adminLagMonths": 0},
+        "conflicts_with": [],
+        "sources": [],
+        "params_schema": {},
+    }
+
+    with patch("services.api.policy_catalog.levers_by_id", return_value={lever_id: mock_lever}):
+        with patch("services.api.policy_catalog.load_policy_catalog", return_value=[mock_lever]):
+            pol._load_catalog_cached.cache_clear()
+
+            dsl = {
+                "version": 0.1,
+                "baseline_year": 2026,
+                "assumptions": {"horizon_years": 1, "lens": "MISSION"},
+                "actions": [
+                    {"id": lever_id, "target": f"lever.{lever_id}", "op": "activate"}
+                ],
+            }
+
+            _, acc, _, _, resolution, _ = run_scenario(_encode(dsl))
+
+            assert acc.deficit_delta_path == pytest.approx([-1500.0])
+            assert resolution["byMass"] == []

@@ -11,6 +11,53 @@ from .schema import schema
 from .settings import get_settings
 
 
+def _serialize_policy_levers_snapshot() -> list[dict]:
+    from . import policy_catalog as pol
+
+    out: list[dict] = []
+    for it in pol.list_policy_levers():
+        impact = it.get("impact") or {}
+        out.append(
+            {
+                "id": str(it.get("id")),
+                "family": str(it.get("family")),
+                "budgetSide": str(it.get("budget_side") or ""),
+                "majorAmendment": bool(it.get("major_amendment", False)),
+                "label": str(it.get("label")),
+                "shortLabel": it.get("short_label"),
+                "description": str(it.get("description") or ""),
+                "fixedImpactEur": it.get("fixed_impact_eur"),
+                "cofogMapping": it.get("cofog_mapping") or it.get("mass_mapping") or {},
+                "missionMapping": it.get("mission_mapping") or {},
+                "multiYearImpact": it.get("multi_year_impact"),
+                "pushbacks": [
+                    {
+                        "type": str(p.get("type")),
+                        "description": str(p.get("description")),
+                        "source": p.get("source"),
+                    }
+                    for p in (it.get("pushbacks") or [])
+                ],
+                "impact": {
+                    "householdsImpacted": impact.get("householdsImpacted"),
+                    "decile1ImpactEur": impact.get("decile1ImpactEur"),
+                    "decile10ImpactEur": impact.get("decile10ImpactEur"),
+                    "gdpImpactPct": impact.get("gdpImpactPct"),
+                    "jobsImpactCount": impact.get("jobsImpactCount"),
+                }
+                if impact
+                else None,
+                "conflictsWith": [str(value) for value in (it.get("conflicts_with") or [])],
+                "sources": [str(value) for value in (it.get("sources") or [])],
+                "vigilancePoints": [str(value) for value in (it.get("vigilance_points") or [])],
+                "authoritativeSources": [str(value) for value in (it.get("authoritative_sources") or [])],
+                "targetRevenueCategoryId": it.get("target_revenue_category_id"),
+                "popularity": it.get("popularity"),
+            }
+        )
+    return out
+
+
 def create_app() -> FastAPI:
     app = FastAPI(title="Citizen Budget Lab API", version="0.1.0")
 
@@ -99,6 +146,7 @@ def create_app() -> FastAPI:
             return JSONResponse(status_code=404, content={"error": "snapshot not found"})
         with open(path, "r", encoding="utf-8") as f:
             payload = json.load(f)
+        payload["policyLevers"] = _serialize_policy_levers_snapshot()
         response = JSONResponse(content=payload)
         response.headers["Cache-Control"] = "public, max-age=300"
         return response

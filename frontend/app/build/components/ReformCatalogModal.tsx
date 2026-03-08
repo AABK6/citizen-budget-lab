@@ -1,7 +1,8 @@
 import type { PolicyLever } from '../types';
 import { ImpactBadge } from '@/components/reform/ImpactBadge';
 import { DistributionChart } from '@/components/reform/DistributionChart';
-import { Users, AlertTriangle } from 'lucide-react'; // Retain or add needed icons if any
+import { AlertTriangle } from 'lucide-react';
+import { formatImpactEur, getImpactTone } from '../impactUtils';
 
 
 interface ReformCatalogModalProps {
@@ -41,7 +42,10 @@ export function ReformCatalogModal({ isOpen, onClose, onSelectReform, levers, on
                             </div>
                         )}
 
-                        {levers.map((lever) => (
+                        {levers.map((lever) => {
+                            const impact = lever.fixedImpactEur || 0;
+                            const tone = getImpactTone(impact);
+                            return (
                             <button
                                 key={lever.id}
                                 onClick={() => { onSelectReform(lever); }}
@@ -53,9 +57,8 @@ export function ReformCatalogModal({ isOpen, onClose, onSelectReform, levers, on
 
                                 <div className="flex justify-between items-start mb-1 gap-4">
                                     <h3 className="font-bold text-slate-800 group-hover:text-violet-700 transition-colors flex-1">{lever.label}</h3>
-                                    <span className={`shrink-0 px-2 py-1 rounded text-xs font-bold ${(lever.fixedImpactEur || 0) > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
-                                        }`}>
-                                        {(lever.fixedImpactEur || 0) > 0 ? '+' : ''}{((lever.fixedImpactEur || 0) / 1e9).toFixed(1)} Md€
+                                    <span className={`shrink-0 px-2 py-1 rounded text-xs font-bold ${tone.badge}`}>
+                                        {formatImpactEur(impact)}
                                     </span>
                                 </div>
                                 <p className="text-sm text-slate-500 line-clamp-2 mb-3">{lever.description || "Pas de description disponible."}</p>
@@ -96,7 +99,8 @@ export function ReformCatalogModal({ isOpen, onClose, onSelectReform, levers, on
                                     )}
                                 </div>
                             </button>
-                        ))}
+                            );
+                        })}
                     </div>
                 </div>
 

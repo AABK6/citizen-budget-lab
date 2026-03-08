@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { CSSProperties, ChangeEvent } from 'react';
 import type { LegoPiece, PolicyLever, PopularIntent, DslAction, RevenueFamily } from '../types';
 import { ReformDetailDrawer } from './ReformDetailDrawer';
+import { formatImpactEur, getImpactTone } from '../impactUtils';
 
 const lightenColor = (hex: string, amount = 0.25) => {
   if (!hex || hex[0] !== '#' || hex.length !== 7) return hex;
@@ -29,6 +30,7 @@ export type RevenueCategoryPanelProps = {
   onApplyTarget: () => void;
   onClearTarget: () => void;
   onBack: () => void;
+  resolvedAmount: number;
   suggestedLevers: PolicyLever[];
   onLeverToggle: (lever: PolicyLever) => void;
   isLeverSelected: (leverId: string) => boolean;
@@ -50,6 +52,7 @@ export function RevenueCategoryPanel({
   onApplyTarget,
   onClearTarget,
   onBack,
+  resolvedAmount,
   suggestedLevers,
   onLeverToggle,
   isLeverSelected,
@@ -106,11 +109,6 @@ export function RevenueCategoryPanel({
     const share = lever.cofogMapping[category.id];
     return typeof share === 'number' && share > 0;
   });
-
-  // Calculate Resolved Amount from selected reforms
-  const resolvedAmount = (filteredLevers.length ? filteredLevers : suggestedLevers)
-    .filter(l => isLeverSelected(l.id))
-    .reduce((sum, l) => sum + (l.fixedImpactEur || 0), 0);
 
   const relevantIntents = popularIntents.filter((intent) => {
     const actions = intent.seed?.actions as DslAction[] | undefined;
@@ -289,35 +287,39 @@ export function RevenueCategoryPanel({
           </div>
 
           {/* Reforms Section */}
-          <div className="space-y-2">
-            <div className="text-[10px] font-black uppercase tracking-wider text-slate-400 pl-1">Réformes ({filteredLevers.length || suggestedLevers.length})</div>
-            <div className="space-y-1.5">
-              {(filteredLevers.length ? filteredLevers : suggestedLevers).map((reform) => (
-                <div
-                  key={reform.id}
-                  className={`group relative p-2 px-3 rounded-lg border transition-all duration-200 cursor-pointer ${isLeverSelected(reform.id)
-                    ? 'bg-emerald-50/50 border-emerald-200/50'
-                    : 'bg-white border-slate-100 hover:border-slate-300 hover:shadow-sm'
-                    }`}
-                  onClick={() => setViewingReform(reform)}
-                >
-                  <div className="flex justify-between items-center gap-2">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold text-xs text-slate-800 truncate">{reform.label}</span>
-                        {isLeverSelected(reform.id) && <i className="material-icons text-[10px] text-emerald-600">check_circle</i>}
-                      </div>
-                      <div className="text-[10px] text-slate-400 truncate opacity-70 group-hover:opacity-100">{reform.description}</div>
-                    </div>
+            <div className="space-y-2">
+              <div className="text-[10px] font-black uppercase tracking-wider text-slate-400 pl-1">Réformes ({filteredLevers.length || suggestedLevers.length})</div>
+              <div className="space-y-1.5">
+                {(filteredLevers.length ? filteredLevers : suggestedLevers).map((reform) => {
+                  const impact = reform.fixedImpactEur || 0;
+                  const tone = getImpactTone(impact);
+                  return (
+                    <div
+                      key={reform.id}
+                      className={`group relative p-2 px-3 rounded-lg border transition-all duration-200 cursor-pointer ${isLeverSelected(reform.id)
+                        ? 'bg-emerald-50/50 border-emerald-200/50'
+                        : 'bg-white border-slate-100 hover:border-slate-300 hover:shadow-sm'
+                        }`}
+                      onClick={() => setViewingReform(reform)}
+                    >
+                      <div className="flex justify-between items-center gap-2">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold text-xs text-slate-800 truncate">{reform.label}</span>
+                            {isLeverSelected(reform.id) && <i className="material-icons text-[10px] text-emerald-600">check_circle</i>}
+                          </div>
+                          <div className="text-[10px] text-slate-400 truncate opacity-70 group-hover:opacity-100">{reform.description}</div>
+                        </div>
 
-                    <div className={`text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-50 border border-slate-100 ${reform.fixedImpactEur && reform.fixedImpactEur > 0 ? 'text-emerald-700' : 'text-rose-700'}`}>
-                      {formatCurrency(reform.fixedImpactEur || 0)}
+                        <div className={`text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-50 border border-slate-100 ${tone.text}`}>
+                          {formatImpactEur(impact)}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              ))}
+                  );
+                })}
+              </div>
             </div>
-          </div>
 
           {/* Popular Reforms */}
           {relevantIntents.length > 0 && (

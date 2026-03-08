@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { PolicyLever, PopularIntent, MassCategory } from '../types';
 import type { CSSProperties, ChangeEvent } from 'react';
 import { ReformDetailDrawer } from './ReformDetailDrawer';
+import { formatImpactEur, getImpactTone } from '../impactUtils';
 
 export type MassCategoryPanelProps = {
   category: MassCategory;
@@ -12,6 +13,7 @@ export type MassCategoryPanelProps = {
   onApplyTarget: () => void;
   onClearTarget: () => void;
   onClose: () => void;
+  resolvedAmount: number;
   suggestedLevers: PolicyLever[];
   onLeverToggle: (lever: PolicyLever) => void;
   isLeverSelected: (leverId: string) => boolean;
@@ -31,6 +33,7 @@ export function MassCategoryPanel({
   onApplyTarget,
   onClearTarget,
   onClose,
+  resolvedAmount,
   suggestedLevers,
   onLeverToggle,
   isLeverSelected,
@@ -49,11 +52,6 @@ export function MassCategoryPanel({
   const percentLabel = `${targetPercent > 0 ? '+' : targetPercent < 0 ? '' : ''}${targetPercent.toFixed(1)}%`;
   const baselineAmount = category.baselineAmount ?? category.amount ?? 0;
   const targetAmount = (baselineAmount) * targetPercent / 100;
-
-  // Calculate Resolved Amount from selected reforms
-  const resolvedAmount = suggestedLevers
-    .filter(l => isLeverSelected(l.id))
-    .reduce((sum, l) => sum + (l.fixedImpactEur || 0), 0);
 
   // Unresolved is the difference between the Target and the Resolved reforms
   // Note: targetAmount is signed (negative for cuts). resolvedAmount is also signed (negative for savings).
@@ -290,7 +288,10 @@ export function MassCategoryPanel({
               <div className="space-y-2">
                 <div className="text-[10px] font-black uppercase tracking-wider text-slate-400 pl-1">Réformes ({suggestedLevers.length})</div>
                 <div className="space-y-1.5">
-                  {suggestedLevers.map((reform) => (
+                  {suggestedLevers.map((reform) => {
+                    const impact = reform.fixedImpactEur || 0;
+                    const tone = getImpactTone(impact);
+                    return (
                     <div
                       key={reform.id}
                       className={`group relative p-2 px-3 rounded-lg border transition-all duration-200 cursor-pointer ${isLeverSelected(reform.id)
@@ -308,12 +309,13 @@ export function MassCategoryPanel({
                           <div className="text-[10px] text-slate-400 truncate opacity-70 group-hover:opacity-100">{reform.description}</div>
                         </div>
 
-                        <div className={`text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-50 border border-slate-100 ${reform.fixedImpactEur && reform.fixedImpactEur > 0 ? 'text-emerald-700' : 'text-rose-700'}`}>
-                          {formatCurrency(reform.fixedImpactEur || 0)}
+                        <div className={`text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-50 border border-slate-100 ${tone.text}`}>
+                          {formatImpactEur(impact)}
                         </div>
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 

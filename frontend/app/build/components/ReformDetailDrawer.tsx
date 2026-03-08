@@ -2,6 +2,7 @@ import { useRef, useEffect } from 'react';
 import type { PolicyLever } from '../types';
 import { ImpactBadge } from '@/components/reform/ImpactBadge';
 import { DistributionChart } from '@/components/reform/DistributionChart';
+import { formatImpactEur, getImpactTone } from '../impactUtils';
 
 interface ReformDetailDrawerProps {
     reform: PolicyLever | null;
@@ -50,6 +51,7 @@ export function ReformDetailDrawer({ reform, onClose, onToggle, isSelected, side
     if (!reform) return null;
 
     const impact = reform.fixedImpactEur ?? 0;
+    const tone = getImpactTone(impact);
 
     // Calculate position classes based on side
     const positionClass = side === 'left'
@@ -87,8 +89,8 @@ export function ReformDetailDrawer({ reform, onClose, onToggle, isSelected, side
                             {familyLabels[reform.family] || 'Autre'}
                         </span>
 
-                        <div className={`text-sm font-black px-3 py-1 rounded-lg ${impact > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>
-                            {impact > 0 ? '+' : ''}{(impact / 1e9).toFixed(1)} Md€ <span className="text-xs font-medium opacity-70 ml-1">(2027)</span>
+                        <div className={`text-sm font-black px-3 py-1 rounded-lg ${tone.badge}`}>
+                            {formatImpactEur(impact)} <span className="text-xs font-medium opacity-70 ml-1">(2027)</span>
                         </div>
                     </div>
                 </div>

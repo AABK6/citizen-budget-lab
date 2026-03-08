@@ -1,6 +1,7 @@
 import { ShareButtons } from '@/components/ShareButtons';
 import type { DslAction, PolicyLever } from '../types';
 import { useMemo } from 'react';
+import { getImpactTone, summarizeScenarioActions } from '../impactUtils';
 
 interface FloatingShareCardProps {
   isOpen: boolean;
@@ -35,6 +36,7 @@ export function FloatingShareCard({
   deficitDelta,
   actions,
   policyLevers,
+  baselineMasses,
   piecesById,
   year,
   shareUrl,
@@ -49,40 +51,16 @@ export function FloatingShareCard({
   const deficitColor = safeDeficit < -3 ? 'text-rose-600' : 'text-emerald-600';
   const shareText = "J'ai voté mon budget citoyen sur Citizen Budget Lab. À vous de jouer !";
 
-  // Robustly extract top reforms for display
+  // Robustly extract top actions for display, sorted by absolute impact
   const topReforms = useMemo(() => {
-    const leverMap = new Map(policyLevers.map(l => [l.id, l]));
-    const items: Array<{ id: string; label: string }> = [];
-
-    for (const action of actions) {
-      // 1. Try direct match with PolicyLever
-      if (action.id && leverMap.has(action.id)) {
-        const l = leverMap.get(action.id)!;
-        items.push({ id: l.id, label: l.label });
-        continue;
-      }
-      // 2. Try parsing target piece
-      if (action.target?.startsWith('piece.')) {
-        const id = action.target.replace('piece.', '');
-        // Try matching lever again by ID
-        if (leverMap.has(id)) {
-          const l = leverMap.get(id)!;
-          items.push({ id: l.id, label: l.label });
-          continue;
-        }
-        // Fallback to piece label
-        if (piecesById?.has(id)) {
-          const p = piecesById.get(id)!;
-          items.push({ id, label: p.label });
-        }
-      }
-    }
-
-    // Deduplicate by ID and slice
-    const unique = new Map<string, { id: string; label: string }>();
-    items.forEach(i => unique.set(i.id, i));
-    return Array.from(unique.values()).slice(0, 5);
-  }, [actions, policyLevers, piecesById]);
+    return summarizeScenarioActions({
+      actions,
+      baselineMasses,
+      piecesById,
+      policyLevers,
+      year,
+    }).slice(0, 5);
+  }, [actions, baselineMasses, piecesById, policyLevers, year]);
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 font-['Outfit']">
@@ -142,8 +120,8 @@ export function FloatingShareCard({
               <ul className="space-y-2">
                 {topReforms.map(reform => (
                   <li key={reform.id} className="flex items-start gap-2.5 text-sm text-slate-700 p-2 rounded-lg hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
-                    <span className="material-icons text-[16px] text-emerald-500 mt-0.5 shrink-0">check_circle</span>
-                    <span className="leading-snug font-medium line-clamp-2">{reform.label}</span>
+                    <span className={`material-icons text-[16px] mt-0.5 shrink-0 ${getImpactTone(reform.impact).text}`}>check_circle</span>
+                    <span className="leading-snug font-medium line-clamp-2">{reform.fullLabel}</span>
                   </li>
                 ))}
               </ul>

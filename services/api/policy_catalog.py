@@ -125,6 +125,13 @@ def validate_policy_catalog_data(data: list[dict]) -> list[str]:
         for conflict in conflicts:
             if conflict not in known:
                 errors.append(f"{lever_id}.conflicts_with: unknown id '{conflict}'")
+                continue
+            target = next((candidate for candidate in data if candidate.get("id") == conflict), None)
+            target_conflicts = (target or {}).get("conflicts_with") or []
+            if lever_id not in target_conflicts:
+                errors.append(
+                    f"{lever_id}.conflicts_with: missing reciprocal conflict from '{conflict}'"
+                )
 
         # Check impact consistency
         fixed_impact = item.get("fixed_impact_eur")
